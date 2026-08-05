@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { computeQuote } from "@/lib/pricing";
+import { computeQuote, computeDeposit } from "@/lib/pricing";
 import { getSupabaseServer } from "@/lib/supabase";
 import {
   normalizePhone,
@@ -17,7 +17,12 @@ function eur(n: number) {
   return `${n} €`;
 }
 
-function summaryHtml(payload: BookingPayload, subtotal: number, deposit: number) {
+function summaryHtml(
+  payload: BookingPayload,
+  subtotal: number,
+  deliveryCost: number,
+  deposit: number,
+) {
   const quote = computeQuote(payload.items);
   const rows = quote.lines
     .map(
@@ -28,16 +33,21 @@ function summaryHtml(payload: BookingPayload, subtotal: number, deposit: number)
     )
     .join("");
   const e = payload.event;
+  const d = payload.delivery;
+  const grand = subtotal + deliveryCost;
   return `
   <div style="font-family:Arial,sans-serif;background:${NAVY};color:#F5F5F0;padding:24px;border-radius:12px;max-width:600px;">
     <h2 style="color:${GOLD};margin:0 0 12px;">Anabella Party — pieteikuma kopsavilkums</h2>
     <p style="margin:4px 0;"><b>Datums:</b> ${e.date}${e.time ? " " + e.time : ""}</p>
     <p style="margin:4px 0;"><b>Veids:</b> ${e.type}</p>
     <p style="margin:4px 0;"><b>Vieta:</b> ${e.location}</p>
+    ${d?.address ? `<p style="margin:4px 0;"><b>Piegādes adrese:</b> ${d.address}${d.km ? ` (~${d.km} km)` : ""}</p>` : ""}
     ${e.guestCount ? `<p style="margin:4px 0;"><b>Viesi:</b> ${e.guestCount}</p>` : ""}
     <table style="width:100%;border-collapse:collapse;margin-top:12px;border-top:1px solid ${GOLD};">${rows}</table>
-    <p style="margin:12px 0 4px;text-align:right;"><b>Kopā (orientējoši):</b> ${eur(subtotal)}</p>
-    <p style="margin:0;text-align:right;color:${GOLD};"><b>Priekšapmaksa (20%):</b> ${eur(deposit)}</p>
+    <p style="margin:12px 0 2px;text-align:right;">Inventārs: ${eur(subtotal)}</p>
+    <p style="margin:0 0 2px;text-align:right;">Piegāde: ${deliveryCost > 0 ? eur(deliveryCost) : "bez maksas"}</p>
+    <p style="margin:0 0 4px;text-align:right;"><b>Kopā (orientējoši):</b> ${eur(grand)}</p>
+    <p style="margin:0;text-align:right;color:${GOLD};"><b>Avanss (50%):</b> ${eur(deposit)}</p>
     ${quote.hasContactOnly ? `<p style="font-size:12px;color:#E8A87C;">* Daži produkti — cena vienojoties, nav iekļauti summā.</p>` : ""}
     <p style="font-size:12px;color:#F5F5F0;opacity:.7;margin-top:12px;">Cenas norādītas bez PVN. Aprēķins orientējošs — precīzu piedāvājumu nosūtīsim atsevišķi.</p>
   </div>`;
@@ -60,6 +70,9 @@ export async function POST(req: Request) {
   // 2. Cenu pārrēķina servera pusē
   const quote = computeQuote(payload.items);
   const phone = normalizePhone(payload.contact.phone);
+  const deliveryCost = Math.max(0, Number(payload.delivery?.cost) || 0);
+  const deliveryKm = Number(payload.delivery?.km) || null;
+  const deposit = computeDeposit(quote.subtotal, deliveryCost);
 
   // 3. Ieraksta Supabase
   const supabase = getSupabaseServer();
@@ -93,6 +106,9 @@ export async function POST(req: Request) {
     description: payload.description?.trim() || null,
     items: payload.items,
     estimated_total: quote.subtotal,
+    delivery_address: payload.delivery?.address?.trim() || null,
+    delivery_distance_km: deliveryKm,
+    delivery_cost: deliveryCost || null,
     status: "new",
   });
 
@@ -111,7 +127,7 @@ export async function POST(req: Request) {
   if (resendKey) {
     try {
       const resend = new Resend(resendKey);
-      const html = summaryHtml(payload, quote.subtotal, quote.deposit);
+      const html = summaryHtml(payload, quote.subtotal, deliveryCost, deposit);
 
       // Robertam
       await resend.emails.send({
@@ -137,7 +153,8 @@ export async function POST(req: Request) {
   return NextResponse.json({
     ok: true,
     subtotal: quote.subtotal,
-    deposit: quote.deposit,
+    deliveryCost,
+    deposit,
     emailsSent: Boolean(resendKey),
   });
 }

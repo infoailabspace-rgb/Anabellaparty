@@ -1,9 +1,22 @@
 "use client";
 
-import { computeQuote, type CartItem } from "@/lib/pricing";
+import { computeQuote, computeDeposit, type CartItem } from "@/lib/pricing";
 
-export default function PricePanel({ items }: { items: CartItem[] }) {
+export default function PricePanel({
+  items,
+  deliveryCost,
+  deliveryKm,
+  deliveryComputed = false,
+}: {
+  items: CartItem[];
+  deliveryCost?: number;
+  deliveryKm?: number;
+  deliveryComputed?: boolean;
+}) {
   const quote = computeQuote(items);
+  const delivery = deliveryComputed ? deliveryCost ?? 0 : 0;
+  const grand = quote.subtotal + delivery;
+  const deposit = computeDeposit(quote.subtotal, delivery);
 
   return (
     <div className="rounded-2xl border border-gold/25 bg-navy/40 p-6">
@@ -21,8 +34,7 @@ export default function PricePanel({ items }: { items: CartItem[] }) {
             <li key={l.slug}>
               <div className="flex justify-between gap-3">
                 <span className="text-text/85">
-                  {l.name}{" "}
-                  <span className="text-text/40">({l.tierLabel})</span>
+                  {l.name} <span className="text-text/40">({l.tierLabel})</span>
                 </span>
                 <span className="font-mono text-gold">
                   {l.contactOnly ? "vienojoties" : `${l.lineTotal} €`}
@@ -50,37 +62,45 @@ export default function PricePanel({ items }: { items: CartItem[] }) {
         </ul>
       )}
 
-      <div className="mt-4 border-t border-gold/15 pt-4">
+      <div className="mt-4 space-y-2 border-t border-gold/15 pt-4 text-sm">
         <div className="flex justify-between">
-          <span className="font-semibold">Kopā</span>
-          <span className="font-mono text-lg font-bold text-gold">
-            {quote.subtotal} €
+          <span>Inventārs</span>
+          <span className="font-mono">{quote.subtotal} €</span>
+        </div>
+        <div className="flex justify-between text-text/70">
+          <span>
+            Piegāde
+            {deliveryComputed && deliveryKm ? ` (~${deliveryKm} km)` : ""}
+          </span>
+          <span className="font-mono">
+            {deliveryComputed
+              ? delivery > 0
+                ? `${delivery} €`
+                : "bez maksas"
+              : "aprēķina 2. solī"}
           </span>
         </div>
         {quote.hasContactOnly && (
-          <p className="mt-1 text-xs text-rose-gold">
+          <p className="text-xs text-rose-gold">
             * Daži produkti — cena vienojoties, nav iekļauti summā.
           </p>
         )}
-        <div className="mt-3 space-y-1 text-xs text-text/60">
-          <div className="flex justify-between">
-            <span>Piegāde Pierīgā</span>
-            <span>bez maksas</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Ārpus Pierīgas</span>
-            <span className="font-mono">+0.50 €/km</span>
-          </div>
+      </div>
+
+      <div className="mt-3 space-y-2 border-t border-gold/15 pt-3">
+        <div className="flex justify-between">
+          <span className="font-semibold">Kopā</span>
+          <span className="font-mono text-lg font-bold text-gold">{grand} €</span>
         </div>
-        <div className="mt-3 flex justify-between border-t border-gold/15 pt-3">
-          <span className="text-sm">Priekšapmaksa (20%)</span>
-          <span className="font-mono font-bold text-gold">{quote.deposit} €</span>
+        <div className="flex justify-between">
+          <span className="text-sm">Avanss (50%)</span>
+          <span className="font-mono font-bold text-gold">{deposit} €</span>
         </div>
       </div>
 
       <p className="mt-4 text-[11px] leading-relaxed text-text/40">
-        Aprēķins ir orientējošs. Cenas bez PVN. Precīzu piedāvājumu nosūtīsim pēc
-        pieteikuma saņemšanas.
+        Aprēķins ir orientējošs. Cenas bez PVN. Piegāde Pierīgā (līdz 25 km no
+        Ķekavas) bez maksas. Precīzu piedāvājumu nosūtīsim pēc pieteikuma.
       </p>
     </div>
   );

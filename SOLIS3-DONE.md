@@ -69,5 +69,20 @@
 5. **Telegram** paziņojums — vajag? (šobrīd nē)
 
 ## Tālāk
-- SOLIS4: Stripe 20% depozīts.
-- SOLIS5: Multilingua + SEO + AI čatbots.
+- SOLIS4: Multilingua + SEO (Stripe netiek izmantots — depozīts ar pārskaitījumu).
+- SOLIS5: AI čatbots.
+
+---
+
+## PAPILDINĀJUMS — piegādes aprēķins + avanss 50%
+
+- **Avanss = 50%** no kopsummas (inventārs + piegāde) — apstiprināts, atrisina JĀAPSTIPRINA #1. `lib/pricing.ts` `computeDeposit()`.
+- **Automātisks piegādes aprēķins:** anketas 2. solī lauks "Piegādes adrese"; pēc `blur` `/api/distance` aprēķina attālumu no **Vecozolu iela 14, Ķekava** un cenu.
+  - **OpenRouteService** (ģeokodēšana + braukšanas maršruts), atslēga `ORS_API_KEY` (`.env.local` + Vercel). Nomināli 1000 pieprasījumi/dienā.
+  - Likums: **bezmaksas ≤ 25 km** (Pierīga), tālāk **pilns attālums × €0.50** (viens virziens). `FREE_RADIUS_KM` konfigurējams. `lib/delivery.ts`.
+  - Fallback: ja adrese neatrodas — "Piegādes cenu norādīsim manuāli" (nebloķē pieteikumu).
+- Cenu panelis rāda inventāru + piegādi + kopsummu + avansu 50%.
+- Supabase: pievienotas kolonnas `delivery_address`, `delivery_distance_km`, `delivery_cost`.
+- Pārbaudīts (dev): Talsi 135 km → 68 €; tuvā adrese ≤25 km → bez maksas; pilns pieteikums inventārs 260 + piegāde 68 = 328 → avanss 164 (50%).
+
+**Env kopsavilkums (Vercel + `.env.local`):** `NEXT_PUBLIC_SB_URL`, `NEXT_PUBLIC_SB_ANON_KEY`, `BOOKING_NOTIFY_EMAIL`, `ORS_API_KEY`. Vēl jāpievieno: `RESEND_API_KEY` (+ `BOOKING_FROM_EMAIL`).

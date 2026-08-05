@@ -1,6 +1,11 @@
 import { getProductBySlug, type Product } from "@/lib/products";
 
-export const DEPOSIT_RATE = 0.2; // priekšapmaksa 20% [JĀAPSTIPRINA]
+export const DEPOSIT_RATE = 0.5; // avanss 50% no kopsummas
+
+// Avanss 50% no kopsummas (inventārs + piegāde).
+export function computeDeposit(subtotal: number, deliveryCost = 0): number {
+  return Math.round((subtotal + deliveryCost) * DEPOSIT_RATE);
+}
 
 export type CartItem = {
   slug: string;

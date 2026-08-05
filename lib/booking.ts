@@ -18,12 +18,19 @@ export type BookingEvent = {
   indoorOutdoor?: string;
 };
 
+export type BookingDelivery = {
+  address?: string;
+  km?: number;
+  cost?: number;
+};
+
 export type BookingPayload = {
   items: CartItem[];
   contact: BookingContact;
   event: BookingEvent;
   description?: string;
   consent?: boolean;
+  delivery?: BookingDelivery;
 };
 
 // Normalizē LV telefonu uz +371XXXXXXXX. Pieņem "+371 2X XX XX XX", "2XXXXXXX" utt.

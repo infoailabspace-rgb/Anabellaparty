@@ -60,6 +60,14 @@ export default function BookingForm() {
   const [event, setEvent] = useState<BookingEvent>(emptyEvent);
   const [description, setDescription] = useState("");
   const [consent, setConsent] = useState(false);
+  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [delivery, setDelivery] = useState<{ km: number; cost: number } | null>(
+    null,
+  );
+  const [deliveryStatus, setDeliveryStatus] = useState<
+    "idle" | "loading" | "ok" | "error"
+  >("idle");
+  const [deliveryError, setDeliveryError] = useState("");
   const [activeCat, setActiveCat] = useState(homeCategories[0].id);
   const [errors, setErrors] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -80,6 +88,11 @@ export default function BookingForm() {
         setEvent({ ...emptyEvent, ...(s.event ?? {}) });
         setDescription(s.description ?? "");
         setConsent(Boolean(s.consent));
+        setDeliveryAddress(s.deliveryAddress ?? "");
+        if (s.delivery) {
+          setDelivery(s.delivery);
+          setDeliveryStatus("ok");
+        }
       } else {
         const param = new URLSearchParams(window.location.search).get("item");
         const p = param ? getProductBySlug(param) : undefined;
@@ -102,12 +115,63 @@ export default function BookingForm() {
     try {
       sessionStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ step, items, contact, event, description, consent }),
+        JSON.stringify({
+          step,
+          items,
+          contact,
+          event,
+          description,
+          consent,
+          deliveryAddress,
+          delivery,
+        }),
       );
     } catch {
       /* ignore */
     }
-  }, [loaded, step, items, contact, event, description, consent]);
+  }, [
+    loaded,
+    step,
+    items,
+    contact,
+    event,
+    description,
+    consent,
+    deliveryAddress,
+    delivery,
+  ]);
+
+  async function computeDelivery(address: string) {
+    const a = address.trim();
+    if (!a) {
+      setDelivery(null);
+      setDeliveryStatus("idle");
+      setDeliveryError("");
+      return;
+    }
+    setDeliveryStatus("loading");
+    setDeliveryError("");
+    try {
+      const res = await fetch("/api/distance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address: a }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setDelivery({ km: data.km, cost: data.cost });
+        setDeliveryStatus("ok");
+      } else {
+        setDelivery(null);
+        setDeliveryStatus("error");
+        setDeliveryError(data.error ?? "Neizdevās aprēķināt piegādi.");
+      }
+    } catch {
+      setDelivery(null);
+      setDeliveryStatus("error");
+      setDeliveryError("Neizdevās aprēķināt piegādi. Norādīsim manuāli.");
+    }
+  }
 
   const has = (slug: string) => items.some((i) => i.slug === slug);
   const itemFor = (slug: string) => items.find((i) => i.slug === slug);
@@ -185,6 +249,11 @@ export default function BookingForm() {
           event,
           description,
           consent,
+          delivery: {
+            address: deliveryAddress,
+            km: delivery?.km,
+            cost: delivery?.cost,
+          },
         }),
       });
       const data = await res.json();
@@ -253,7 +322,17 @@ export default function BookingForm() {
               />
             )}
             {step === 2 && (
-              <StepEvent event={event} setEvent={setEvent} todayStr={todayStr} />
+              <StepEvent
+                event={event}
+                setEvent={setEvent}
+                todayStr={todayStr}
+                deliveryAddress={deliveryAddress}
+                setDeliveryAddress={setDeliveryAddress}
+                computeDelivery={computeDelivery}
+                delivery={delivery}
+                deliveryStatus={deliveryStatus}
+                deliveryError={deliveryError}
+              />
             )}
             {step === 3 && <StepContact contact={contact} setContact={setContact} />}
             {step === 4 && (
@@ -314,7 +393,12 @@ export default function BookingForm() {
 
       {/* Cenas panelis — sticky desktopā */}
       <aside className="lg:sticky lg:top-24 lg:self-start">
-        <PricePanel items={items} />
+        <PricePanel
+          items={items}
+          deliveryCost={delivery?.cost}
+          deliveryKm={delivery?.km}
+          deliveryComputed={deliveryStatus === "ok"}
+        />
       </aside>
     </div>
   );
@@ -506,10 +590,22 @@ function StepEvent({
   event,
   setEvent,
   todayStr,
+  deliveryAddress,
+  setDeliveryAddress,
+  computeDelivery,
+  delivery,
+  deliveryStatus,
+  deliveryError,
 }: {
   event: BookingEvent;
   setEvent: (e: BookingEvent) => void;
   todayStr: string;
+  deliveryAddress: string;
+  setDeliveryAddress: (v: string) => void;
+  computeDelivery: (address: string) => void;
+  delivery: { km: number; cost: number } | null;
+  deliveryStatus: "idle" | "loading" | "ok" | "error";
+  deliveryError: string;
 }) {
   const set = (patch: Partial<BookingEvent>) => setEvent({ ...event, ...patch });
   const field =
@@ -608,10 +704,46 @@ function StepEvent({
         </div>
       </div>
 
-      <p className="mt-5 rounded-xl border border-gold/20 bg-navy/25 p-4 text-xs text-text/60">
-        Piegāde Pierīgā ir bez maksas. Ārpus Pierīgas — €0.50/km; precīzu piegādes
-        cenu norādīsim piedāvājumā.
-      </p>
+      {/* Piegādes adrese ar auto-aprēķinu */}
+      <div className="mt-6">
+        <label className="block">
+          <span className="text-sm text-text/70">Piegādes adrese</span>
+          <input
+            type="text"
+            placeholder="Iela, māja, pilsēta / novads"
+            value={deliveryAddress}
+            onChange={(e) => setDeliveryAddress(e.target.value)}
+            onBlur={(e) => computeDelivery(e.target.value)}
+            className={`mt-1 ${field}`}
+          />
+        </label>
+
+        <div className="mt-2 rounded-xl border border-gold/20 bg-navy/25 p-4 text-sm">
+          {deliveryStatus === "loading" && (
+            <span className="text-text/60">Aprēķina attālumu…</span>
+          )}
+          {deliveryStatus === "ok" && delivery && (
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-text/75">
+                Attālums no Ķekavas: ~{delivery.km} km
+              </span>
+              <span className="font-mono font-semibold text-gold">
+                Piegāde:{" "}
+                {delivery.cost > 0 ? `${delivery.cost} €` : "bez maksas"}
+              </span>
+            </div>
+          )}
+          {deliveryStatus === "error" && (
+            <span className="text-rose-gold">{deliveryError}</span>
+          )}
+          {deliveryStatus === "idle" && (
+            <span className="text-text/50">
+              Ievadi piegādes adresi — automātiski aprēķināsim attālumu un cenu.
+              Pierīgā (līdz 25 km no Ķekavas) piegāde bez maksas, tālāk €0.50/km.
+            </span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

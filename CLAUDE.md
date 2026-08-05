@@ -26,9 +26,8 @@ Pastāvīgais konteksts. Lasi šo pirms katra soļa.
 | Animācijas | Framer Motion |
 | Hostings | Vercel |
 | DB (no SOLIS3) | Supabase |
-| Maksājumi (no SOLIS4) | Stripe |
-| E-pasts (no SOLIS4) | Resend |
-| AI čats (no SOLIS3) | Anthropic API |
+| E-pasts (no SOLIS3) | Resend |
+| AI čats (no SOLIS5) | Anthropic API |
 
 ---
 
@@ -105,6 +104,9 @@ Multilingua (no SOLIS5): `/en/...`, `/ru/...`. LV bez prefiksa.
 | Audio grāmata | €50 / pasākums |
 | Piegāde Pierīgā | bez maksas |
 | Piegāde ārpus | €0.50/km |
+| **Depozīts** | **50% no kopsummas** |
+
+Pilnais katalogs (40+ produkti) — `lib/products.ts`. Šī tabula ir tikai orientieris.
 
 ---
 
@@ -119,13 +121,17 @@ Multilingua (no SOLIS5): `/en/...`, `/ru/...`. LV bez prefiksa.
 
 | Solis | Saturs | Statuss |
 |---|---|---|
-| SOLIS0 | Setup, scaffold, home page, GitHub, Vercel LIVE | 🟡 |
-| SOLIS1 | Produktu lapas (4 gab.) | ⬜ |
-| SOLIS2 | Kontakti, FAQ, noteikumi, privātuma politika, cookie banner | ⬜ |
-| SOLIS3 | Rezervācijas lapa + anketa + Supabase + Resend | ✅ |
-| SOLIS4 | Stripe 20% depozīts (maksājumi) | ⬜ |
-| SOLIS5 | Multilingua LV/EN/RU + SEO + schema.org + AI čatbots | ⬜ |
-| SOLIS6 | DNS pārslēgšana, GSC, GA4, LIVE | ⬜ |
+| SOLIS0 | Setup, scaffold, home page, GitHub, Vercel LIVE | ✅ |
+| SOLIS1 | Produktu lapas + kontakti | ✅ |
+| SOLIS1B | Pilns produktu katalogs (40+ produkti), galerijas | ⬜ |
+| SOLIS1C | Dizains, kustība, Par mums, klientu logo | ⬜ |
+| SOLIS2 | FAQ, noteikumi, privātuma politika, sīkdatņu banneris | ⬜ |
+| SOLIS3 | Rezervācijas lapa: inventāra izvēle, cenas kalkulators, anketa | ⬜ |
+| SOLIS4 | Multilingua LV/EN/RU + SEO + schema.org | ⬜ |
+| SOLIS5 | AI čatbots (Anthropic API + pgvector) | ⬜ |
+| SOLIS6 | Admin panelis, DNS pārslēgšana, GSC, GA4, LIVE | ⬜ |
+
+**Maksājumi:** tiešsaistes maksājumu NAV. Depozīts 50% tiek samaksāts ar pārskaitījumu pēc piedāvājuma apstiprināšanas. Stripe netiek izmantots.
 
 ---
 
