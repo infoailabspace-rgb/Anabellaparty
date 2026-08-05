@@ -1,5 +1,8 @@
 import Link from "next/link";
 import Reveal from "@/components/reveal";
+import ProductCard from "@/components/product-card";
+import CtaSection from "@/components/cta-section";
+import { getFeaturedProducts } from "@/lib/products";
 
 const steps = [
   {
@@ -19,13 +22,6 @@ const steps = [
   },
 ];
 
-const products = [
-  { name: "SPOGULIS foto kaste", price: "€260 / 2h", extra: "+€110/h" },
-  { name: "INSTAGRAM foto kaste", price: "€220 / 2h", extra: "" },
-  { name: "Piepūšamā pils (balta)", price: "€230 / 10h", extra: "" },
-  { name: "Specefekti (dzirksteles)", price: "€35 / 24h", extra: "" },
-];
-
 const reviews = [
   {
     text: "Foto kaste bija mūsu kāzu ballītes highlight! Viesi to nemaz negribēja atstāt.",
@@ -42,6 +38,8 @@ const reviews = [
 ];
 
 export default function Home() {
+  const featured = getFeaturedProducts();
+
   return (
     <>
       {/* Hero */}
@@ -106,23 +104,9 @@ export default function Home() {
             </h2>
           </Reveal>
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {products.map((p, i) => (
-              <Reveal key={p.name} delay={i * 0.08}>
-                <div className="flex h-full flex-col justify-between rounded-2xl border-2 border-gold/30 bg-bg/60 p-6 transition-transform hover:-translate-y-1">
-                  <h3 className="font-display text-lg font-semibold">
-                    {p.name}
-                  </h3>
-                  <div className="mt-6">
-                    <p className="font-mono text-2xl font-bold text-gold">
-                      {p.price}
-                    </p>
-                    {p.extra && (
-                      <p className="font-mono text-sm text-rose-gold">
-                        {p.extra}
-                      </p>
-                    )}
-                  </div>
-                </div>
+            {featured.map((product, i) => (
+              <Reveal key={product.slug} delay={i * 0.08}>
+                <ProductCard product={product} />
               </Reveal>
             ))}
           </div>
@@ -151,23 +135,7 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="relative overflow-hidden py-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(212,169,96,0.12),transparent_70%)]" />
-        <Reveal className="relative z-10 mx-auto max-w-2xl px-6 text-center">
-          <h2 className="font-display text-4xl font-bold tracking-tight">
-            Gatavs svinēt?
-          </h2>
-          <p className="mt-4 text-lg text-text/80">
-            Rezervē inventāru jau šodien un padari savu pasākumu neaizmirstamu.
-          </p>
-          <Link
-            href="/rezervet"
-            className="mt-10 inline-block rounded-full bg-gold px-10 py-4 text-lg font-semibold text-black transition-shadow hover:shadow-[0_0_30px_rgba(212,169,96,0.6)]"
-          >
-            Rezervēt tagad
-          </Link>
-        </Reveal>
-      </section>
+      <CtaSection />
     </>
   );
 }
