@@ -111,6 +111,21 @@ body {
   animation: anabella-scroll-hint 2s ease-in-out infinite;
 }
 
+/* Maiga ikonu peldēšana kartītēs. */
+@keyframes anabella-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.anabella-float {
+  animation: anabella-float 3.5s ease-in-out infinite;
+}
+
 /* Smalka zelta punktu tekstūra navy sekcijām. */
 .anabella-navy-texture {
   background-image: radial-gradient(

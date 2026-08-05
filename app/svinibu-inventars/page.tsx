@@ -22,7 +22,7 @@ export default function SvinibuInventarsPage() {
         <div className="grid gap-6 sm:grid-cols-2">
           {inventarsSubcategories.map((category, i) => (
             <Reveal key={category.id} delay={i * 0.06}>
-              <CategoryCard category={category} />
+              <CategoryCard category={category} index={i} />
             </Reveal>
           ))}
         </div>
