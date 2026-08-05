@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getProductsByCategory } from "@/lib/products";
+import { getProductsByCategory, getProductBySlug } from "@/lib/products";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
@@ -12,7 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default function DecoMebelesPage() {
-  const items = getProductsByCategory("deco");
+  const usb = getProductBySlug("koka-usb");
+  const items = [...getProductsByCategory("deco"), ...(usb ? [usb] : [])];
 
   return (
     <>

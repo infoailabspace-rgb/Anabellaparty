@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SocialLinks } from "@/components/social-icons";
 
 export default function Footer() {
   return (
@@ -81,23 +82,8 @@ export default function Footer() {
                 Sīkdatņu politika
               </Link>
             </li>
-            <li className="flex gap-4 pt-1">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-gold"
-              >
-                Instagram
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-gold"
-              >
-                Facebook
-              </a>
+            <li className="pt-2">
+              <SocialLinks />
             </li>
           </ul>
         </div>

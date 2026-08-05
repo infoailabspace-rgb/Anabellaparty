@@ -16,7 +16,6 @@ const addOns = [
   { name: "Info statīvs (rāmītis)", price: "10 €" },
   { name: "USB koka kastīte ar personalizētu gravējumu", price: "20 €" },
   { name: "Video apsveikumu videomontāža (viens fails ar mūziku, tekstu)", price: "no 30 €" },
-  { name: "Personalizēts koka USB, 5 GB (pārdošana, ne noma)", price: "20 € + piegāde" },
 ];
 
 export default function AudioViesuGramatasPage() {

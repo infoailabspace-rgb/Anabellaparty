@@ -64,12 +64,36 @@ export type Product = {
   addOns?: AddOn[];
   specs?: { label: string; value: string }[];
   includes?: string[];
-  images: string[];
+  coverImage: string;        // galvenais attēls kartītei
+  gallery: string[];         // KATRAM produktam sava galerija
   featured?: boolean;
   contactOnly?: boolean;     // cena tikai vienojoties
   altPhone?: string;         // kubliem cits numurs
 };
 ```
+
+**Galerija ir katram produktam, ne lapai.** Katrai foto kastei, katrai atrakcijai, katram specefektam, katram telefonam, katram deco elementam, katram kublam — sava `gallery` masīvs.
+
+Attēlu ceļu konvencija:
+
+```
+/public/images/products/<slug>/cover.jpg
+/public/images/products/<slug>/01.jpg
+/public/images/products/<slug>/02.jpg
+...
+```
+
+Piemēram:
+```
+/images/products/foto-kaste-ozols/cover.jpg
+/images/products/foto-kaste-ozols/01.jpg
+/images/products/mega-balta-pils/cover.jpg
+/images/products/koka-usb/cover.jpg
+```
+
+Faili vēl neeksistē — `gallery` masīvos ieraksti pa 4 ceļiem katram produktam, un galerija lai krīt atpakaļ uz placeholder, ja attēls neielādējas. Kad Roberts iemet reālos failus, tie parādās bez koda izmaiņām.
+
+Izveido `/public/images/products/<slug>/.gitkeep` katram produktam, lai mapju struktūra ir gatava.
 
 ---
 
@@ -210,13 +234,16 @@ Visām ierīcēm nodrošināta instruktāža. Visas ir bērniem drošas.
 
 Visiem: svētku dienās cenas pēc vienošanās.
 
+**Četri produkti**, ne pieci — komplekts ir VIENS produkts ar diviem cenu variantiem (tā tas ir arī dzīvās lapas galerijā: Kubls ar terasi / VIP-LUX kubls / Pirts / Pirts + kubli).
+
 | Produkts | Detaļas | Cena/diena | Drošības nauda |
 |---|---|---|---|
 | **VIP / LUX kubls** | Līdz 6 cilvēkiem. Nav uz piekabes — novietojams pagalmā uz bruģa vai zālāja. Izmēri 2,20 × 2,20 m. Mūzikas sistēma, ūdens attīrīšanas filtrs, hidromasāža, gaisa burbuļu masāža, ūdens termometrs, krāsu mainošs LED iekšā un ārpusē, salokāms termovāks. | **100 €** | 100 € |
 | **Kubls ar 13 m² terasi** | 6–8 cilvēkiem. Saliktā: 2,60 × 4,30 m (+1,5 m dīstele). Atvērtā: 3,50–4,70 × 5,70 m (+1,5 m). Komplektā: uzstādīšana un novākšana, saules/lietus sargs ar LED, galds ar krēsliem, 13 m pagarinātājs, 20 m ūdens šļūtene, 10 m noliešanas šļūtene. Hidromasāža, gaisa burbuļi, krāsu mainošs LED, salokāms termovāks (uzsilst 1,5–2h atkarībā no āra temperatūras). | **80 €** | 100 € |
 | **Mobilā pirts** | Malkas krāsns. Iekšpuse dalīta: pirts telpa + atpūtas telpa. Ārpusē maza terase ar krēsliem, trepes, 10 m pagarinātājs, 4 atbalsta kājas. Izmēri: A 3,50 × P 2,50 × G 4,70 m (+1,4 m dīstele). | **90 €** | 100 € |
-| **Kubls ar terasi + Pirts** | Komplekts | **150 €** | 200 € |
-| **VIP/LUX kubls + Pirts** | Komplekts | **170 €** | 200 € |
+| **Pirts + kubls (komplekts)** | Divi varianti vienā produktā:<br>• Kubls ar terasi + Pirts<br>• VIP/LUX kubls + Pirts | **150 €**<br>**170 €** | 200 € |
+
+Katram no šiem četriem — sava galerija.
 
 ---
 
@@ -230,7 +257,21 @@ Visiem: svētku dienās cenas pēc vienošanās.
 6. **Izveido 4 apakšlapas**: audio-viesu-gramatas, specefekti, decomebeles, kublsballa.
 7. **Atjauno navbar** — apakšizvēlnes foto kastēm un svinību inventāram (dropdown desktopā, izvērsts saraksts mobilajā).
 8. **Atjauno home page** — produktu sekcija lai rāda kategorijas, ne atsevišķus produktus. 40+ produkti sākumlapā nav lasāmi.
-9. **Kublu lapā** — telefons 28286911, ne 29222761. Atzīme, ka kubli atrodas Jūrmalā.
+9. **Kublu lapā** — telefons 28286911, ne 29222761. Atzīme, ka kubli atrodas Jūrmalā. Četri produkti, ne pieci.
+
+10. **Galerija katram produktam** — `components/image-gallery.tsx` iebūvēta katrā produkta blokā. Galvenais attēls + sīktēlu rinda zem tā; klikšķis uz sīktēla maina galveno. Klikšķis uz galvenā atver lightbox (parasts fixed overlay ar useState, bez bibliotēkas), ar bultiņām un Esc aizvēršanu. Ja produkta `gallery` ir tukšs vai attēli neielādējas — placeholder, ne salauzta ikona.
+
+11. **Sociālo tīklu ikonas katrā lapā.** Footer jau ir visās lapās — pārbaudi, ka Instagram, Facebook un WhatsApp ikonas tur ir un strādā. Papildus pievieno tās navbar labajā pusē (desktopā blakus "Rezervēt" pogai, mobilajā izvērstās izvēlnes apakšā).
+
+    ```
+    Instagram: https://www.instagram.com/anabella_svetku_inventars/
+    Facebook:  https://www.facebook.com/anabellaparty.lv
+    WhatsApp:  https://wa.me/37129222761
+    ```
+
+    Ikonas kā inline SVG `components/social-icons.tsx` — **neinstalē lucide-react vai citu ikonu pakotni**. Zelta krāsa, hover uz gaišāku.
+
+12. **USB koka gravējums** — pilnvērtīgs produkts ar `coverImage` un galeriju, ne tikai teksta rinda. Ievieto to gan `/svinibu-inventars/audio-viesu-gramatas/`, gan `/svinibu-inventars/decomebeles/`.
 
 ---
 
@@ -273,10 +314,15 @@ git push
 - [ ] Cenas sakrīt ar anabellaparty.lv līdz centam
 - [ ] Ozols, Instagram = 220 €/2h + 100 €/h (NE 260/110 — tas ir Spogulis)
 - [ ] 350 € 12h piedāvājums ir savā izceltā blokā
+- [ ] **Katram produktam sava galerija** ar sīktēliem un lightbox
+- [ ] **Katrā lapā redzamas Instagram, Facebook, WhatsApp ikonas** (footer + navbar)
+- [ ] USB koka gravējums ir produkts ar attēlu, ne teksta rinda
+- [ ] Kubli — 4 produkti, komplekts ar 2 cenu variantiem
 - [ ] Kublu lapā telefons 28286911
 - [ ] Navbar apakšizvēlnes strādā
+- [ ] `/public/images/products/<slug>/` mapes izveidotas visiem produktiem
 - [ ] `npm run build` tīrs
-- [ ] Nav jaunu npm pakotņu
+- [ ] Nav jaunu npm pakotņu (ikonas — inline SVG)
 
 ---
 

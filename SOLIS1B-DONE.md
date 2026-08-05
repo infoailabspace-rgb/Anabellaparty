@@ -71,5 +71,18 @@ Atsevišķs tālrunis **28286911** (ne 29222761) — katras produkta “Zvanīt�
 ---
 
 ## Kas nepieciešams tālāk
-- Reālie produktu foto → `/public/images/products/<slug>-N.jpg` (slugi sakrīt ar `lib/products.ts`).
+- Reālie produktu foto → `/public/images/products/<slug>/cover.jpg`, `01.jpg`, `02.jpg`, `03.jpg` (mapes jau izveidotas visiem 38 produktiem).
 - SOLIS3: Supabase + AI čatbots.
+
+---
+
+## PAPILDINĀJUMS (atjaunotais solis1b.md)
+
+Atrisinātie `[JĀAPSTIPRINA]` (Roberta atbildes): **1.** e-pasts `info@anabellaparty.lv` · **2.** AI foto **+100 €** foto kastes cenai · **3.** cenas **bez PVN** · **4.** kubli/pirts paliek · **5.** "uz periodu"/"masu" — sazināties par cenu (contactOnly). Adrese: **Vecozolu iela 14, Ķekava**.
+
+Papildus izbūvēts:
+- **Galerija katram produktam** — `coverImage` + `gallery[]` modelis; jaunais ceļu formāts `/images/products/<slug>/cover.jpg` + `01–03.jpg`. `image-gallery.tsx` ar **lightbox** (bultiņas ◄ ►, Esc, klikšķis ārpus; placeholder fallback).
+- **Sociālo tīklu ikonas** — inline SVG `components/social-icons.tsx` (Instagram/Facebook/WhatsApp reālie URL), footerī un navbar (desktop + mobilais). Bez ikonu pakotnes.
+- **USB koka gravējums** — pilns produkts `koka-usb`, redzams gan audio, gan deco lapā.
+- **Kubli 4 produkti** (nevis 5) — komplekts = 1 produkts ar 2 cenu variantiem (150 € / 170 €).
+- `/public/images/products/<slug>/` mapes izveidotas visiem 38 produktiem (`.gitkeep`).

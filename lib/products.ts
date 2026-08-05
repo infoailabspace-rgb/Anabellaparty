@@ -29,7 +29,8 @@ export type Product = {
   addOns?: AddOn[];
   specs?: { label: string; value: string }[];
   includes?: string[];
-  images: string[];
+  coverImage: string; // galvenais attēls kartītei
+  gallery: string[]; // katram produktam sava galerija
   featured?: boolean;
   contactOnly?: boolean; // cena tikai vienojoties
   altPhone?: string; // kubliem cits numurs
@@ -37,7 +38,12 @@ export type Product = {
 
 export const KUBLI_PHONE = "28286911";
 
-const img = (slug: string, n = 1) => `/images/products/${slug}-${n}.jpg`;
+const cover = (slug: string) => `/images/products/${slug}/cover.jpg`;
+const gallery = (slug: string, n = 3) =>
+  Array.from(
+    { length: n },
+    (_, i) => `/images/products/${slug}/${String(i + 1).padStart(2, "0")}.jpg`,
+  );
 
 const fotoKasteIncludes = [
   "Neierobežots foto izdruku skaits",
@@ -69,7 +75,8 @@ export const products: Product[] = [
     hourlyExtra: 110,
     addOns: [{ name: "Sarkanais paklājs un stabiņi", price: 40 }],
     includes: fotoKasteIncludes,
-    images: [img("spogulis"), img("spogulis", 2)],
+    coverImage: cover("spogulis"),
+    gallery: gallery("spogulis"),
     featured: true,
   },
   {
@@ -85,7 +92,8 @@ export const products: Product[] = [
     ],
     hourlyExtra: 100,
     includes: fotoKasteIncludes,
-    images: [img("ozols"), img("ozols", 2)],
+    coverImage: cover("ozols"),
+    gallery: gallery("ozols"),
     featured: true,
   },
   {
@@ -101,7 +109,8 @@ export const products: Product[] = [
     ],
     hourlyExtra: 100,
     includes: fotoKasteIncludes,
-    images: [img("instagram"), img("instagram", 2)],
+    coverImage: cover("instagram"),
+    gallery: gallery("instagram"),
     featured: true,
   },
   {
@@ -123,7 +132,8 @@ export const products: Product[] = [
       "Attālināts tehniskais atbalsts visa pasākuma laikā",
       "Komplektā viens foto papīra rullis (līdz 800 izdrukām)",
     ],
-    images: [img("foto-kaste-uz-visu-dienu")],
+    coverImage: cover("foto-kaste-uz-visu-dienu"),
+    gallery: gallery("foto-kaste-uz-visu-dienu"),
     featured: true,
   },
   {
@@ -135,7 +145,8 @@ export const products: Product[] = [
     category: "foto-kaste",
     tiers: [],
     contactOnly: true,
-    images: [img("foto-kaste-uz-periodu")],
+    coverImage: cover("foto-kaste-uz-periodu"),
+    gallery: gallery("foto-kaste-uz-periodu"),
   },
   {
     slug: "foto-kaste-masu-pasakumiem",
@@ -146,7 +157,8 @@ export const products: Product[] = [
     category: "foto-kaste",
     tiers: [],
     contactOnly: true,
-    images: [img("foto-kaste-masu-pasakumiem")],
+    coverImage: cover("foto-kaste-masu-pasakumiem"),
+    gallery: gallery("foto-kaste-masu-pasakumiem"),
   },
 
   // ─────────────────────── PIEPŪŠAMĀS ATRAKCIJAS ───────────────────────
@@ -163,7 +175,8 @@ export const products: Product[] = [
       { label: "Svars", value: "līdz 250 kg" },
     ],
     includes: atrakcijasIncludes,
-    images: [img("mega-balta-pils")],
+    coverImage: cover("mega-balta-pils"),
+    gallery: gallery("mega-balta-pils"),
     featured: true,
   },
   {
@@ -180,7 +193,8 @@ export const products: Product[] = [
       { label: "Svars", value: "līdz 200 kg" },
     ],
     includes: atrakcijasIncludes,
-    images: [img("balta-pils-xl")],
+    coverImage: cover("balta-pils-xl"),
+    gallery: gallery("balta-pils-xl"),
   },
   {
     slug: "baltie-pils-torni",
@@ -196,7 +210,8 @@ export const products: Product[] = [
       { label: "Svars", value: "līdz 200 kg" },
     ],
     includes: atrakcijasIncludes,
-    images: [img("baltie-pils-torni")],
+    coverImage: cover("baltie-pils-torni"),
+    gallery: gallery("baltie-pils-torni"),
   },
   {
     slug: "baltais-pils-tornis-l",
@@ -211,7 +226,8 @@ export const products: Product[] = [
       { label: "Svars", value: "līdz 200 kg" },
     ],
     includes: atrakcijasIncludes,
-    images: [img("baltais-pils-tornis-l")],
+    coverImage: cover("baltais-pils-tornis-l"),
+    gallery: gallery("baltais-pils-tornis-l"),
   },
   {
     slug: "mini-pilskalnins",
@@ -226,7 +242,8 @@ export const products: Product[] = [
       { label: "Svars", value: "līdz 200 kg" },
     ],
     includes: atrakcijasIncludes,
-    images: [img("mini-pilskalnins")],
+    coverImage: cover("mini-pilskalnins"),
+    gallery: gallery("mini-pilskalnins"),
   },
   {
     slug: "baltais-pils-tornis-s",
@@ -241,7 +258,8 @@ export const products: Product[] = [
       { label: "Svars", value: "līdz 200 kg" },
     ],
     includes: atrakcijasIncludes,
-    images: [img("baltais-pils-tornis-s")],
+    coverImage: cover("baltais-pils-tornis-s"),
+    gallery: gallery("baltais-pils-tornis-s"),
   },
   {
     slug: "balta-bumbu-vanna",
@@ -255,7 +273,8 @@ export const products: Product[] = [
       { label: "Vecums", value: "1+" },
     ],
     includes: atrakcijasIncludes,
-    images: [img("balta-bumbu-vanna")],
+    coverImage: cover("balta-bumbu-vanna"),
+    gallery: gallery("balta-bumbu-vanna"),
   },
   {
     slug: "baltais-komplekts-1",
@@ -269,7 +288,8 @@ export const products: Product[] = [
       { label: "Svars", value: "līdz 200 kg" },
     ],
     includes: atrakcijasIncludes,
-    images: [img("baltais-komplekts-1")],
+    coverImage: cover("baltais-komplekts-1"),
+    gallery: gallery("baltais-komplekts-1"),
   },
   {
     slug: "baltais-komplekts-2",
@@ -283,7 +303,8 @@ export const products: Product[] = [
       { label: "Svars", value: "līdz 200 kg" },
     ],
     includes: atrakcijasIncludes,
-    images: [img("baltais-komplekts-2")],
+    coverImage: cover("baltais-komplekts-2"),
+    gallery: gallery("baltais-komplekts-2"),
   },
   {
     slug: "baltais-mega-komplekts",
@@ -297,7 +318,8 @@ export const products: Product[] = [
       { label: "Svars", value: "līdz 200 kg" },
     ],
     includes: atrakcijasIncludes,
-    images: [img("baltais-mega-komplekts")],
+    coverImage: cover("baltais-mega-komplekts"),
+    gallery: gallery("baltais-mega-komplekts"),
   },
 
   // ─────────────────── AUDIO/VIDEO VIESU GRĀMATAS ───────────────────
@@ -313,7 +335,8 @@ export const products: Product[] = [
       { duration: "48h", price: 250 },
       { duration: "72h", price: 350 },
     ],
-    images: [img("video-viesu-gramata-melns")],
+    coverImage: cover("video-viesu-gramata-melns"),
+    gallery: gallery("video-viesu-gramata-melns"),
     featured: true,
   },
   {
@@ -328,7 +351,8 @@ export const products: Product[] = [
       { duration: "72h", price: 120 },
     ],
     specs: [{ label: "Pieejamība", value: "tikai kāzām" }],
-    images: [img("audio-viesu-gramata-retro")],
+    coverImage: cover("audio-viesu-gramata-retro"),
+    gallery: gallery("audio-viesu-gramata-retro"),
   },
   {
     slug: "audio-viesu-gramata-balts",
@@ -341,7 +365,8 @@ export const products: Product[] = [
       { duration: "48h", price: 80 },
       { duration: "72h", price: 120 },
     ],
-    images: [img("audio-viesu-gramata-balts")],
+    coverImage: cover("audio-viesu-gramata-balts"),
+    gallery: gallery("audio-viesu-gramata-balts"),
   },
   {
     slug: "audio-viesu-gramata-melns",
@@ -354,7 +379,8 @@ export const products: Product[] = [
       { duration: "48h", price: 80 },
       { duration: "72h", price: 120 },
     ],
-    images: [img("audio-viesu-gramata-melns")],
+    coverImage: cover("audio-viesu-gramata-melns"),
+    gallery: gallery("audio-viesu-gramata-melns"),
   },
   {
     slug: "audio-viesu-gramata-dzeltens",
@@ -367,7 +393,8 @@ export const products: Product[] = [
       { duration: "48h", price: 80 },
       { duration: "72h", price: 120 },
     ],
-    images: [img("audio-viesu-gramata-dzeltens")],
+    coverImage: cover("audio-viesu-gramata-dzeltens"),
+    gallery: gallery("audio-viesu-gramata-dzeltens"),
   },
   {
     slug: "dekorativa-budina-audio",
@@ -380,7 +407,8 @@ export const products: Product[] = [
       { duration: "24h", price: 100 },
       { duration: "48h", price: 160 },
     ],
-    images: [img("dekorativa-budina-audio")],
+    coverImage: cover("dekorativa-budina-audio"),
+    gallery: gallery("dekorativa-budina-audio"),
   },
   {
     slug: "dekorativa-siena-video",
@@ -392,7 +420,23 @@ export const products: Product[] = [
       { duration: "24h", price: 50 },
       { duration: "48h", price: 80 },
     ],
-    images: [img("dekorativa-siena-video")],
+    coverImage: cover("dekorativa-siena-video"),
+    gallery: gallery("dekorativa-siena-video"),
+  },
+  {
+    slug: "koka-usb",
+    name: "Personalizēts koka USB (5 GB)",
+    tagline: "Koka USB ar personalizētu gravējumu — paliekoša piemiņa.",
+    description:
+      "Personalizēts koka USB, 5 GB, ar gravējumu. Ideāls, lai saglabātu pasākuma fotogrāfijas un video. Šis ir pārdošanas produkts (ne noma).",
+    category: "audio-video",
+    tiers: [{ duration: "gab.", price: 20, note: "+ piegāde (pārdošana)" }],
+    specs: [
+      { label: "Ietilpība", value: "5 GB" },
+      { label: "Materiāls", value: "koks ar gravējumu" },
+    ],
+    coverImage: cover("koka-usb"),
+    gallery: gallery("koka-usb"),
   },
 
   // ───────────────────────── SPECEFEKTI ─────────────────────────
@@ -411,7 +455,8 @@ export const products: Product[] = [
       { label: "Augstums", value: "1–5 m" },
     ],
     includes: ["Instruktāža", "Bērniem droša"],
-    images: [img("auksto-dzirstelu-ierice")],
+    coverImage: cover("auksto-dzirstelu-ierice"),
+    gallery: gallery("auksto-dzirstelu-ierice"),
     featured: true,
   },
   {
@@ -428,7 +473,8 @@ export const products: Product[] = [
       { label: "Pārklājums", value: "līdz 150 m²" },
     ],
     includes: ["Instruktāža", "Bērniem droša"],
-    images: [img("zemas-miglas-ierice")],
+    coverImage: cover("zemas-miglas-ierice"),
+    gallery: gallery("zemas-miglas-ierice"),
   },
   {
     slug: "burbulu-ierice",
@@ -444,7 +490,8 @@ export const products: Product[] = [
       { label: "Pārklājums", value: "30–40 m²" },
     ],
     includes: ["Instruktāža", "Bērniem droša"],
-    images: [img("burbulu-ierice")],
+    coverImage: cover("burbulu-ierice"),
+    gallery: gallery("burbulu-ierice"),
   },
 
   // ───────────────────────── DECO / MĒBELES ─────────────────────────
@@ -458,7 +505,8 @@ export const products: Product[] = [
     tiers: [{ duration: "24h", price: 80 }],
     addOns: [{ name: "Glāzes", price: 1, unit: "gb" }],
     specs: [{ label: "Ietilpība", value: "50 glāzes" }],
-    images: [img("sampaniesa-siena")],
+    coverImage: cover("sampaniesa-siena"),
+    gallery: gallery("sampaniesa-siena"),
     featured: true,
   },
   {
@@ -471,7 +519,8 @@ export const products: Product[] = [
       { duration: "24h", price: 100 },
       { duration: "48h", price: 160 },
     ],
-    images: [img("dekorativa-budina-viesu")],
+    coverImage: cover("dekorativa-budina-viesu"),
+    gallery: gallery("dekorativa-budina-viesu"),
   },
   {
     slug: "darza-kresli",
@@ -481,7 +530,8 @@ export const products: Product[] = [
     category: "deco",
     tiers: [{ duration: "24h", price: 8, note: "par 1 gb" }],
     specs: [{ label: "Pieejami", value: "10 gb" }],
-    images: [img("darza-kresli")],
+    coverImage: cover("darza-kresli"),
+    gallery: gallery("darza-kresli"),
   },
   {
     slug: "zelta-stabini-paklajs",
@@ -491,7 +541,8 @@ export const products: Product[] = [
     category: "deco",
     tiers: [{ duration: "24h", price: 40 }],
     specs: [{ label: "Paklājs", value: "2 × 2,40 m" }],
-    images: [img("zelta-stabini-paklajs")],
+    coverImage: cover("zelta-stabini-paklajs"),
+    gallery: gallery("zelta-stabini-paklajs"),
   },
   {
     slug: "led-tikko-precejusies",
@@ -501,7 +552,8 @@ export const products: Product[] = [
     category: "deco",
     tiers: [{ duration: "24h", price: 25 }],
     specs: [{ label: "Izmērs", value: "1018 × 199 mm" }],
-    images: [img("led-tikko-precejusies")],
+    coverImage: cover("led-tikko-precejusies"),
+    gallery: gallery("led-tikko-precejusies"),
   },
   {
     slug: "led-ballite",
@@ -511,7 +563,8 @@ export const products: Product[] = [
     category: "deco",
     tiers: [{ duration: "24h", price: 25 }],
     specs: [{ label: "Izmērs", value: "500 × 166 mm" }],
-    images: [img("led-ballite")],
+    coverImage: cover("led-ballite"),
+    gallery: gallery("led-ballite"),
   },
   {
     slug: "led-svinam-dzivi",
@@ -521,10 +574,11 @@ export const products: Product[] = [
     category: "deco",
     tiers: [{ duration: "24h", price: 25 }],
     specs: [{ label: "Izmērs", value: "787 × 157 mm" }],
-    images: [img("led-svinam-dzivi")],
+    coverImage: cover("led-svinam-dzivi"),
+    gallery: gallery("led-svinam-dzivi"),
   },
 
-  // ───────────────────────── KUBLI / PIRTS ─────────────────────────
+  // ───────────────────────── KUBLI / PIRTS (4 produkti) ─────────────────────────
   {
     slug: "vip-lux-kubls",
     name: "VIP / LUX kubls",
@@ -538,7 +592,8 @@ export const products: Product[] = [
       { label: "Izmēri", value: "2,20 × 2,20 m" },
       { label: "Drošības nauda", value: "100 €" },
     ],
-    images: [img("vip-lux-kubls")],
+    coverImage: cover("vip-lux-kubls"),
+    gallery: gallery("vip-lux-kubls"),
     altPhone: KUBLI_PHONE,
     featured: true,
   },
@@ -554,7 +609,8 @@ export const products: Product[] = [
       { label: "Ietilpība", value: "6–8 cilvēkiem" },
       { label: "Drošības nauda", value: "100 €" },
     ],
-    images: [img("kubls-ar-terasi")],
+    coverImage: cover("kubls-ar-terasi"),
+    gallery: gallery("kubls-ar-terasi"),
     altPhone: KUBLI_PHONE,
   },
   {
@@ -566,35 +622,34 @@ export const products: Product[] = [
     category: "kubli",
     tiers: [{ duration: "diena", price: 90 }],
     specs: [{ label: "Drošības nauda", value: "100 €" }],
-    images: [img("mobila-pirts")],
+    coverImage: cover("mobila-pirts"),
+    gallery: gallery("mobila-pirts"),
     altPhone: KUBLI_PHONE,
   },
   {
-    slug: "kubls-terase-pirts",
-    name: "Kubls ar terasi + Pirts",
-    tagline: "Komplekts — kubls ar terasi un mobilā pirts.",
-    description: "Komplekts: kubls ar 13 m² terasi un mobilā pirts.",
+    slug: "pirts-kubls-komplekts",
+    name: "Pirts + kubls (komplekts)",
+    tagline: "Divi varianti vienā komplektā.",
+    description:
+      "Komplekts ar diviem variantiem: Kubls ar terasi + Pirts, vai VIP/LUX kubls + Pirts.",
     category: "kubli",
-    tiers: [{ duration: "diena", price: 150 }],
+    tiers: [
+      { duration: "diena", price: 150, note: "Kubls ar terasi + Pirts" },
+      { duration: "diena", price: 170, note: "VIP/LUX kubls + Pirts" },
+    ],
     specs: [{ label: "Drošības nauda", value: "200 €" }],
-    images: [img("kubls-terase-pirts")],
-    altPhone: KUBLI_PHONE,
-  },
-  {
-    slug: "vip-kubls-pirts",
-    name: "VIP/LUX kubls + Pirts",
-    tagline: "Komplekts — VIP/LUX kubls un mobilā pirts.",
-    description: "Komplekts: VIP/LUX kubls un mobilā pirts.",
-    category: "kubli",
-    tiers: [{ duration: "diena", price: 170 }],
-    specs: [{ label: "Drošības nauda", value: "200 €" }],
-    images: [img("vip-kubls-pirts")],
+    coverImage: cover("pirts-kubls-komplekts"),
+    gallery: gallery("pirts-kubls-komplekts"),
     altPhone: KUBLI_PHONE,
   },
 ];
 
 export function getProductsByCategory(category: ProductCategory): Product[] {
   return products.filter((p) => p.category === category);
+}
+
+export function getProductBySlug(slug: string): Product | undefined {
+  return products.find((p) => p.slug === slug);
 }
 
 export function getFeaturedProducts(): Product[] {

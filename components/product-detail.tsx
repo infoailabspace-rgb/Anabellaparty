@@ -13,7 +13,10 @@ export default function ProductDetail({ product }: { product: Product }) {
       >
         <div className="grid gap-10 lg:grid-cols-2">
           {/* Galerija */}
-          <ImageGallery images={product.images} alt={product.name} />
+          <ImageGallery
+            images={[product.coverImage, ...product.gallery]}
+            alt={product.name}
+          />
 
           {/* Info */}
           <div className="flex flex-col">

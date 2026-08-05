@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { SocialLinks } from "@/components/social-icons";
 
 type NavLink = { href: string; label: string };
 type NavItem = { label: string; href?: string; children?: NavLink[] };
@@ -91,6 +92,7 @@ export default function Navbar() {
           >
             Rezervēt
           </Link>
+          <SocialLinks className="border-l border-gold/20 pl-4" iconClassName="h-5 w-5" />
         </div>
 
         {/* Mobile toggle */}
@@ -160,6 +162,7 @@ export default function Navbar() {
             >
               Rezervēt
             </Link>
+            <SocialLinks className="mt-4 justify-center" iconClassName="h-6 w-6" />
           </div>
         </div>
       )}
