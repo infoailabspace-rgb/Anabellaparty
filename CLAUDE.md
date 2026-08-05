@@ -20,9 +20,9 @@ Pastāvīgais konteksts. Lasi šo pirms katra soļa.
 
 | Slānis | Tehnoloģija |
 |---|---|
-| Framework | Next.js 14 App Router |
+| Framework | Next.js 16 App Router (React 19) |
 | Valoda | TypeScript (strict) |
-| Stils | Tailwind CSS |
+| Stils | Tailwind CSS v4 (bez `tailwind.config.ts` — tēma `app/globals.css` `@theme` blokā) |
 | Animācijas | Framer Motion |
 | Hostings | Vercel |
 | DB (no SOLIS3) | Supabase |
@@ -109,7 +109,7 @@ Multilingua (no SOLIS5): `/en/...`, `/ru/...`. LV bez prefiksa.
 
 | Solis | Saturs | Statuss |
 |---|---|---|
-| SOLIS0 | Setup, scaffold, home page, GitHub, Vercel LIVE | 🟡 |
+| SOLIS0 | Setup, scaffold, home page, GitHub, Vercel LIVE | ✅ |
 | SOLIS1 | Produktu lapas (4 gab.) | ⬜ |
 | SOLIS2 | Kontakti, FAQ, noteikumi, privātuma politika, cookie banner | ⬜ |
 | SOLIS3 | Supabase + AI čatbots | ⬜ |
