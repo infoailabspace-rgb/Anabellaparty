@@ -45,20 +45,17 @@ export default function Footer() {
           </h4>
           <ul className="mt-3 space-y-2 text-sm text-text/70">
             <li>
-              <a
-                href="https://instagram.com"
-                className="transition-colors hover:text-gold"
-              >
-                Instagram
-              </a>
+              <Link href="/faq" className="transition-colors hover:text-gold">
+                BUJ
+              </Link>
             </li>
             <li>
-              <a
-                href="https://facebook.com"
+              <Link
+                href="/musu-draugi"
                 className="transition-colors hover:text-gold"
               >
-                Facebook
-              </a>
+                Mūsu draugi
+              </Link>
             </li>
             <li>
               <Link
@@ -75,6 +72,32 @@ export default function Footer() {
               >
                 Privātuma politika
               </Link>
+            </li>
+            <li>
+              <Link
+                href="/sikdatnu-politika"
+                className="transition-colors hover:text-gold"
+              >
+                Sīkdatņu politika
+              </Link>
+            </li>
+            <li className="flex gap-4 pt-1">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-gold"
+              >
+                Instagram
+              </a>
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-gold"
+              >
+                Facebook
+              </a>
             </li>
           </ul>
         </div>
