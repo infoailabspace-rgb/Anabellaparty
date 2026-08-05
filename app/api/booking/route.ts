@@ -1,0 +1,143 @@
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
+import { computeQuote } from "@/lib/pricing";
+import { getSupabaseServer } from "@/lib/supabase";
+import {
+  normalizePhone,
+  validateBooking,
+  type BookingPayload,
+} from "@/lib/booking";
+
+export const runtime = "nodejs";
+
+const NAVY = "#1A3A4A";
+const GOLD = "#D4A960";
+
+function eur(n: number) {
+  return `${n} €`;
+}
+
+function summaryHtml(payload: BookingPayload, subtotal: number, deposit: number) {
+  const quote = computeQuote(payload.items);
+  const rows = quote.lines
+    .map(
+      (l) =>
+        `<tr><td style="padding:4px 8px;">${l.name} (${l.tierLabel})</td><td style="padding:4px 8px;text-align:right;">${
+          l.contactOnly ? "vienojoties" : eur(l.lineTotal)
+        }</td></tr>`,
+    )
+    .join("");
+  const e = payload.event;
+  return `
+  <div style="font-family:Arial,sans-serif;background:${NAVY};color:#F5F5F0;padding:24px;border-radius:12px;max-width:600px;">
+    <h2 style="color:${GOLD};margin:0 0 12px;">Anabella Party — pieteikuma kopsavilkums</h2>
+    <p style="margin:4px 0;"><b>Datums:</b> ${e.date}${e.time ? " " + e.time : ""}</p>
+    <p style="margin:4px 0;"><b>Veids:</b> ${e.type}</p>
+    <p style="margin:4px 0;"><b>Vieta:</b> ${e.location}</p>
+    ${e.guestCount ? `<p style="margin:4px 0;"><b>Viesi:</b> ${e.guestCount}</p>` : ""}
+    <table style="width:100%;border-collapse:collapse;margin-top:12px;border-top:1px solid ${GOLD};">${rows}</table>
+    <p style="margin:12px 0 4px;text-align:right;"><b>Kopā (orientējoši):</b> ${eur(subtotal)}</p>
+    <p style="margin:0;text-align:right;color:${GOLD};"><b>Priekšapmaksa (20%):</b> ${eur(deposit)}</p>
+    ${quote.hasContactOnly ? `<p style="font-size:12px;color:#E8A87C;">* Daži produkti — cena vienojoties, nav iekļauti summā.</p>` : ""}
+    <p style="font-size:12px;color:#F5F5F0;opacity:.7;margin-top:12px;">Cenas norādītas bez PVN. Aprēķins orientējošs — precīzu piedāvājumu nosūtīsim atsevišķi.</p>
+  </div>`;
+}
+
+export async function POST(req: Request) {
+  let payload: BookingPayload;
+  try {
+    payload = (await req.json()) as BookingPayload;
+  } catch {
+    return NextResponse.json({ ok: false, error: "Nederīgs pieprasījums." }, { status: 400 });
+  }
+
+  // 1. Servera validācija (neuzticas klientam)
+  const errors = validateBooking(payload);
+  if (errors.length > 0) {
+    return NextResponse.json({ ok: false, errors }, { status: 400 });
+  }
+
+  // 2. Cenu pārrēķina servera pusē
+  const quote = computeQuote(payload.items);
+  const phone = normalizePhone(payload.contact.phone);
+
+  // 3. Ieraksta Supabase
+  const supabase = getSupabaseServer();
+  if (!supabase) {
+    return NextResponse.json(
+      { ok: false, error: "Datubāze nav konfigurēta. Lūdzu, sazinies telefoniski." },
+      { status: 503 },
+    );
+  }
+
+  const guestCount =
+    payload.event.guestCount != null && payload.event.guestCount !== ""
+      ? Number(payload.event.guestCount)
+      : null;
+
+  // Bez .select() — anon lomai nav SELECT politikas, tāpēc INSERT…RETURNING
+  // izgāztos. Insert-only (return=minimal) atbilst publiskās formas RLS.
+  const { error } = await supabase.from("booking_requests").insert({
+    name: payload.contact.name.trim(),
+    phone,
+    email: payload.contact.email.trim(),
+    company: payload.contact.company?.trim() || null,
+    reg_nr: payload.contact.regNr?.trim() || null,
+    event_date: payload.event.date,
+    event_time: payload.event.time || null,
+    duration: payload.event.duration || null,
+    event_type: payload.event.type,
+    guest_count: Number.isFinite(guestCount) ? guestCount : null,
+    location: payload.event.location.trim(),
+    indoor_outdoor: payload.event.indoorOutdoor || null,
+    description: payload.description?.trim() || null,
+    items: payload.items,
+    estimated_total: quote.subtotal,
+    status: "new",
+  });
+
+  if (error) {
+    return NextResponse.json(
+      { ok: false, error: "Neizdevās saglabāt pieteikumu. Lūdzu, sazinies telefoniski." },
+      { status: 500 },
+    );
+  }
+
+  // 4. E-pasti caur Resend (ja konfigurēts — citādi izlaiž bez kļūdas)
+  const resendKey = process.env.RESEND_API_KEY;
+  const notify = process.env.BOOKING_NOTIFY_EMAIL || "info@anabellaparty.lv";
+  const from = process.env.BOOKING_FROM_EMAIL || "Anabella Party <onboarding@resend.dev>";
+
+  if (resendKey) {
+    try {
+      const resend = new Resend(resendKey);
+      const html = summaryHtml(payload, quote.subtotal, quote.deposit);
+
+      // Robertam
+      await resend.emails.send({
+        from,
+        to: notify,
+        replyTo: payload.contact.email.trim(),
+        subject: `Jauns pieteikums — ${payload.event.date} — ${payload.contact.name}`,
+        html: `<p style="font-family:Arial,sans-serif;">Jauns rezervācijas pieteikums no <b>${payload.contact.name}</b> (${phone}, ${payload.contact.email}).</p>${html}`,
+      });
+
+      // Klientam
+      await resend.emails.send({
+        from,
+        to: payload.contact.email.trim(),
+        subject: "Tavs pieteikums saņemts — Anabella Party",
+        html: `<p style="font-family:Arial,sans-serif;">Paldies, ${payload.contact.name}! Tavs pieteikums saņemts. Atbildēsim 24 stundu laikā ar precīzu piedāvājumu. Ja steidz — zvani +371 29222761.</p>${html}`,
+      });
+    } catch {
+      // E-pasta kļūme nedrīkst apturēt pieteikumu — tas jau saglabāts.
+    }
+  }
+
+  return NextResponse.json({
+    ok: true,
+    subtotal: quote.subtotal,
+    deposit: quote.deposit,
+    emailsSent: Boolean(resendKey),
+  });
+}

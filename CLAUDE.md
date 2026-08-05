@@ -122,9 +122,9 @@ Multilingua (no SOLIS5): `/en/...`, `/ru/...`. LV bez prefiksa.
 | SOLIS0 | Setup, scaffold, home page, GitHub, Vercel LIVE | 🟡 |
 | SOLIS1 | Produktu lapas (4 gab.) | ⬜ |
 | SOLIS2 | Kontakti, FAQ, noteikumi, privātuma politika, cookie banner | ⬜ |
-| SOLIS3 | Supabase + AI čatbots | ⬜ |
-| SOLIS4 | Rezervācija + Stripe 20% depozīts + Resend | ⬜ |
-| SOLIS5 | Multilingua LV/EN/RU + SEO + schema.org | ⬜ |
+| SOLIS3 | Rezervācijas lapa + anketa + Supabase + Resend | ✅ |
+| SOLIS4 | Stripe 20% depozīts (maksājumi) | ⬜ |
+| SOLIS5 | Multilingua LV/EN/RU + SEO + schema.org + AI čatbots | ⬜ |
 | SOLIS6 | DNS pārslēgšana, GSC, GA4, LIVE | ⬜ |
 
 ---
