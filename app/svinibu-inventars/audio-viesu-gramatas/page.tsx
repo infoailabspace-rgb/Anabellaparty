@@ -37,8 +37,8 @@ export default function AudioViesuGramatasPage() {
         </Reveal>
 
         <div className="space-y-12">
-          {items.map((product) => (
-            <ProductDetail key={product.slug} product={product} />
+          {items.map((product, i) => (
+            <ProductDetail key={product.slug} product={product} index={i} />
           ))}
         </div>
 

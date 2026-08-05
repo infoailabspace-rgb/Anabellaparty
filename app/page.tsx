@@ -17,8 +17,8 @@ export default function Home() {
       {/* Kā tas notiek — bg */}
       <Steps />
 
-      {/* Piedāvājums / kategorijas — navy */}
-      <section className="bg-navy py-24 md:py-32">
+      {/* Piedāvājums / kategorijas — navy ar smalku tekstūru */}
+      <section className="anabella-navy-texture bg-navy py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <Reveal>
             <h2 className="text-center font-display text-3xl font-bold tracking-tight md:text-4xl">

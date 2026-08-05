@@ -24,8 +24,8 @@ export default function PiepusamasAtrakcijasPage() {
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="space-y-12">
-          {items.map((product) => (
-            <ProductDetail key={product.slug} product={product} />
+          {items.map((product, i) => (
+            <ProductDetail key={product.slug} product={product} index={i} />
           ))}
         </div>
 

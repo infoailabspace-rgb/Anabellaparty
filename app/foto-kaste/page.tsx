@@ -56,8 +56,8 @@ export default function FotoKastePage() {
 
         {/* 3 kastes */}
         <div className="space-y-12">
-          {boxes.map((product) => (
-            <ProductDetail key={product!.slug} product={product!} />
+          {boxes.map((product, i) => (
+            <ProductDetail key={product!.slug} product={product!} index={i} />
           ))}
         </div>
 

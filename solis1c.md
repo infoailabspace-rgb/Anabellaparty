@@ -1,13 +1,13 @@
-# SOLIS1C — Sākumlapa: dizains, kustība, Par mums, klienti
+# SOLIS1C — Dizains, kustība, Par mums, klienti
 
-**Mērķis:** Sākumlapa, kas izskatās kā premium studijas darbs, ne kā scaffold. Kustība visā lapā.
+**Mērķis:** Lapa, kas izskatās kā premium studijas darbs, ne kā scaffold. Kustība visā lapā — sākumlapā un produktu lapās.
 
 **Priekšnosacījumi:** SOLIS1B ✅.
 
 **Pirms sāc:**
 1. Izlasi `CLAUDE.md`
-2. Izlasi `/mnt/skills/user/web-builder/SKILL.md` — motion, performance un komerc-UI principi
-3. Izlasi `/mnt/skills/public/frontend-design/SKILL.md` — vizuālais virziens
+2. Izlasi `skills/web-builder/SKILL.md` — motion, performance un komerc-UI principi
+3. Izlasi `skills/frontend-design/SKILL.md` — vizuālais virziens
 4. Parādi plānu. Gaidi apstiprinājumu.
 
 **Pakotnes:** Framer Motion jau instalēts. Neinstalē neko jaunu.
@@ -36,9 +36,43 @@ export const scaleIn = {
   hidden: { opacity: 0, scale: 0.96 },
   show: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
 };
+
+// Produktu blokiem — ieslīdēšana no sāna
+export const slideInLeft = {
+  hidden: { opacity: 0, x: -64 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+};
+
+export const slideInRight = {
+  hidden: { opacity: 0, x: 64 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+};
 ```
 
 Easing `[0.22, 1, 0.36, 1]` visur. Nekādu `ease: 'linear'` un nekādu atsperu, kas lec.
+
+### A1b. Inventāra ieslīdēšana
+
+**Katrs inventāra bloks animējas atsevišķi, kad ritinot nonāk skatā** — nevis visa sekcija reizē.
+
+**Produktu lapās** (`/foto-kaste`, `/piepusamas-atrakcijas`, apakšlapas) — pamīšus no sāniem:
+
+```tsx
+<motion.div
+  variants={index % 2 === 0 ? slideInLeft : slideInRight}
+  initial="hidden"
+  whileInView="show"
+  viewport={{ once: true, margin: '-80px' }}
+>
+```
+
+Pirmais produkts ieslīd no kreisās, otrais no labās, trešais no kreisās. Tas rada ritmu un vada aci zigzagā lejup.
+
+**Sākumlapas kategoriju režģī** — visi no apakšas ar stagger, ne pamīšus. Režģī pamīšus izskatītos haotiski.
+
+**Mobilajā (< 768px) sānu slīdēšana IZSLĒGTA.** Tikai `fadeUp`. Horizontāla kustība šaurā ekrānā rada pārplūdi un scroll-jank.
+
+Realizē ar `useMediaQuery` hooku (parasts `useState` + `matchMedia`, bez bibliotēkas) vai ar CSS-ievadītu varianta izvēli. Svarīgi: `overflow-x: hidden` uz vecāka konteinera, lai animācijas laikā nerodas horizontālais ritinājums.
 
 ### A2. Kur kustība jābūt
 
@@ -48,7 +82,8 @@ Easing `[0.22, 1, 0.36, 1]` visur. Nekādu `ease: 'linear'` un nekādu atsperu, 
 | Hero pogas | Fade-up ar 400ms aizturi pēc virsraksta |
 | Hero scroll indikators | Bezgalīga maiga pulsācija uz leju |
 | Sekciju virsraksti | `whileInView` fade-up, `viewport={{ once: true, margin: '-100px' }}` |
-| Produktu kartītes | Stagger režģī, katra ar 80ms nobīdi |
+| Produktu bloki (produktu lapās) | Pamīšus ieslīd no kreisās/labās, katrs atsevišķi |
+| Produktu kartītes (sākumlapas režģis) | Stagger no apakšas, katra ar 80ms nobīdi |
 | Kartīte hover | `y: -6`, zelta apmale spilgtāka, ēna dziļāka, attēls `scale: 1.04` |
 | Pogas hover | `scale: 1.03` + zelta glow ēna |
 | Skaitļi ("Kā tas notiek" 1-2-3) | Skaitās augšup, kad nonāk skatā |
@@ -187,6 +222,8 @@ git push
 
 - [ ] `lib/motion.ts` eksistē, visas sekcijas lieto tos pašus variantus
 - [ ] Katra sekcija animējas ienākot skatā, `once: true`
+- [ ] **Katrs inventāra bloks produktu lapās ieslīd atsevišķi, pamīšus no kreisās/labās**
+- [ ] **Mobilajā sānu slīdēšana izslēgta, nav horizontālā ritinājuma**
 - [ ] Hero virsraksts animējas pa vārdiem
 - [ ] Klientu logo lente ritinās bezgalīgi, apstājas uz hover
 - [ ] "Par mums" sekcija ar animētiem skaitļiem

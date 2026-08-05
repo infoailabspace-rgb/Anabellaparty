@@ -62,3 +62,17 @@
 ## Tālāk
 - Reālie attēli (hero, komanda, klientu logo, produktu galerijas) → attiecīgās `/public/images/...` mapes.
 - SOLIS3: Supabase + AI čatbots.
+
+---
+
+## PAPILDUS DARBI (atjaunotais solis1c.md — A1b)
+
+- **`lib/motion.ts`** — pievienoti `slideInLeft` (x −64→0) un `slideInRight` (x 64→0).
+- **`components/slide-reveal.tsx`** — katrs produkta bloks ieslīd **atsevišķi** skatā; desktopā **pamīšus** no kreisās/labās (zigzags), **mobilajā (<768px) tikai `fadeUp`** (nav horizontālas kustības); `matchMedia` bez bibliotēkas; `useReducedMotion` → statisks.
+- **`product-detail.tsx`** — `index` prop, lieto `SlideReveal`.
+- **Produktu lapas** — visas 6 (`/foto-kaste`, `/piepusamas-atrakcijas`, 4 inventāra apakšlapas) padod `index={i}`.
+- **`app/layout.tsx`** — `overflow-x-hidden` uz `<main>` (nav horizontālā ritinājuma slīdēšanas laikā).
+- **C2 tekstūra** — smalka zelta punktu tekstūra sākumlapas navy "Mūsu piedāvājums" sekcijai.
+- **AI foto galerija** — `/foto-kaste/ai-foto` tagad lieto `ImageGallery` (cover + 01–04, sīktēli + lightbox), nevis vienu placeholder. Mape `/public/images/ai-foto/`.
+
+Pieņemšanas kritēriji (jaunie): ✅ produktu bloki ieslīd atsevišķi pamīšus · ✅ mobilajā sānu slīdēšana izslēgta + `overflow-x-hidden`.

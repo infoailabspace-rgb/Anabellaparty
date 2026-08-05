@@ -25,6 +25,25 @@ export const scaleIn: Variants = {
   },
 };
 
+// Produktu blokiem — ieslīdēšana no sāna (tikai desktopā).
+export const slideInLeft: Variants = {
+  hidden: { opacity: 0, x: -64 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.7, ease: EASE },
+  },
+};
+
+export const slideInRight: Variants = {
+  hidden: { opacity: 0, x: 64 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.7, ease: EASE },
+  },
+};
+
 // Vārdu (word-by-word) stagger hero virsrakstam.
 export const wordStagger: Variants = {
   show: { transition: { staggerChildren: 0.06 } },

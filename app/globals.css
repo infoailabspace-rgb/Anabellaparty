@@ -111,6 +111,15 @@ body {
   animation: anabella-scroll-hint 2s ease-in-out infinite;
 }
 
+/* Smalka zelta punktu tekstūra navy sekcijām. */
+.anabella-navy-texture {
+  background-image: radial-gradient(
+    rgba(212, 169, 96, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
 /* prefers-reduced-motion — visas animācijas izslēdzas, saturs paliek redzams. */
 @media (prefers-reduced-motion: reduce) {
   *,

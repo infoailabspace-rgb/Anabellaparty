@@ -2,11 +2,17 @@ import Link from "next/link";
 import type { Product } from "@/lib/products";
 import ImageGallery from "@/components/image-gallery";
 import PriceBlock from "@/components/price-block";
-import Reveal from "@/components/reveal";
+import SlideReveal from "@/components/slide-reveal";
 
-export default function ProductDetail({ product }: { product: Product }) {
+export default function ProductDetail({
+  product,
+  index = 0,
+}: {
+  product: Product;
+  index?: number;
+}) {
   return (
-    <Reveal>
+    <SlideReveal index={index}>
       <article
         id={product.slug}
         className="scroll-mt-24 rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10"
@@ -76,6 +82,6 @@ export default function ProductDetail({ product }: { product: Product }) {
           </div>
         </div>
       </article>
-    </Reveal>
+    </SlideReveal>
   );
 }

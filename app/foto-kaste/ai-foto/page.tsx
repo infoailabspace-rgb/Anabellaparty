@@ -1,8 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SectionHero from "@/components/section-hero";
-import ImagePlaceholder from "@/components/image-placeholder";
+import ImageGallery from "@/components/image-gallery";
 import Reveal from "@/components/reveal";
+
+// AI foto galerija — dažādas tēmas (faili nāk vēlāk, galerija krīt uz placeholder).
+const aiGallery = [
+  "/images/ai-foto/cover.jpg",
+  "/images/ai-foto/01.jpg",
+  "/images/ai-foto/02.jpg",
+  "/images/ai-foto/03.jpg",
+  "/images/ai-foto/04.jpg",
+];
 
 export const metadata: Metadata = {
   title: "AI foto kaste | Anabella Party",
@@ -75,10 +84,7 @@ export default function AiFotoPage() {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <ImagePlaceholder
-              label="AI foto kaste"
-              className="aspect-[4/3] w-full"
-            />
+            <ImageGallery images={aiGallery} alt="AI foto kaste" />
           </Reveal>
         </div>
       </div>
