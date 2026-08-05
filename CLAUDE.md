@@ -68,19 +68,27 @@ Komponenti:
 ## URL STRUKTŪRA (nemainīga, saglabā SEO)
 
 ```
-/                        Sākums
-/foto-kaste/             Foto kastes
-/piepusamas-atrakcijas/  Piepūšamās atrakcijas
-/svinibu-inventars/      Svinību inventārs
-/rezervet/               Rezervācija
-/kontakti/               Kontakti
-/faq/                    BUJ
-/musu-draugi/            Mūsu draugi
-/noteikumi/              Nomas noteikumi
-/privatuma-politika/     Privātuma politika
+/                                          Sākums
+/foto-kaste/                               Foto kastes (3 kastes + īpašie bloki)
+/foto-kaste/ai-foto/                       AI foto kaste
+/piepusamas-atrakcijas/                    Piepūšamās atrakcijas
+/svinibu-inventars/                        Svinību inventārs (HUB — 4 kategorijas)
+/svinibu-inventars/audio-viesu-gramatas/   Audio/video viesu grāmatas
+/svinibu-inventars/specefekti/             Specefekti
+/svinibu-inventars/decomebeles/            Deco / mēbeles
+/svinibu-inventars/kublsballa/             Kubli / pirts (tālr. 28286911, Jūrmalā)
+/rezervet/                                 Rezervācija
+/kontakti/                                 Kontakti
+/faq/                                      BUJ
+/musu-draugi/                              Mūsu draugi
+/noteikumi/                                Nomas noteikumi
+/privatuma-politika/                       Privātuma politika
+/sikdatnu-politika/                        Sīkdatņu politika
 ```
 
 Multilingua (no SOLIS5): `/en/...`, `/ru/...`. LV bez prefiksa.
+
+**Produktu dati:** vienīgais patiesības avots ir `lib/products.ts` (SOLIS1B, ~38 produkti). Cenu tabula zemāk ir novecojusi — NElieto to, skaties `lib/products.ts`.
 
 ---
 

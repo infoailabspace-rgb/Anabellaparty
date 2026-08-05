@@ -1,30 +1,31 @@
 import type { Metadata } from "next";
-import { getProductsByCategory } from "@/lib/products";
 import SectionHero from "@/components/section-hero";
-import ProductDetail from "@/components/product-detail";
-import DeliveryNote from "@/components/delivery-note";
+import CategoryCard from "@/components/category-card";
 import CtaSection from "@/components/cta-section";
+import Reveal from "@/components/reveal";
+import { inventarsSubcategories } from "@/lib/categories";
 
 export const metadata: Metadata = {
   title: "Svinību inventāra noma | Anabella Party",
   description:
-    "Aukstās dzirksteles un audio grāmata svētkiem Latvijā. Iespaidīgi specefekti un sirsnīga piemiņa. No €35. Piegāde Pierīgā bez maksas.",
+    "Audio/video viesu grāmatas, specefekti, dekori un kubli svētkiem Latvijā. Viss Tavam pasākumam vienuviet. Piegāde Pierīgā bez maksas.",
 };
 
 export default function SvinibuInventarsPage() {
-  const items = getProductsByCategory("inventars");
-
   return (
     <>
       <SectionHero
         title="Svinību inventārs"
-        tagline="Detaļas, kas rada atmosfēru — specefekti un piemiņas, kas papildina Tavu pasākumu."
+        tagline="Detaļas, kas rada atmosfēru — izvēlies kategoriju un atrodi īsto Tavam pasākumam."
       />
-      <div className="mx-auto max-w-6xl space-y-12 px-6 py-16">
-        {items.map((product) => (
-          <ProductDetail key={product.slug} product={product} />
-        ))}
-        <DeliveryNote />
+      <div className="mx-auto max-w-6xl px-6 py-16">
+        <div className="grid gap-6 sm:grid-cols-2">
+          {inventarsSubcategories.map((category, i) => (
+            <Reveal key={category.id} delay={i * 0.06}>
+              <CategoryCard category={category} />
+            </Reveal>
+          ))}
+        </div>
       </div>
       <CtaSection />
     </>

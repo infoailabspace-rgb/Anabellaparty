@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Reveal from "@/components/reveal";
-import ProductCard from "@/components/product-card";
+import CategoryCard from "@/components/category-card";
 import CtaSection from "@/components/cta-section";
-import { getFeaturedProducts } from "@/lib/products";
+import { homeCategories } from "@/lib/categories";
 
 const steps = [
   {
@@ -38,8 +38,6 @@ const reviews = [
 ];
 
 export default function Home() {
-  const featured = getFeaturedProducts();
-
   return (
     <>
       {/* Hero */}
@@ -95,18 +93,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Produkti */}
+      {/* Kategorijas */}
       <section className="bg-navy/20 py-24">
         <div className="mx-auto max-w-6xl px-6">
           <Reveal>
             <h2 className="text-center font-display text-3xl font-bold tracking-tight">
-              Populārākais inventārs
+              Mūsu piedāvājums
             </h2>
+            <p className="mx-auto mt-4 max-w-xl text-center text-text/70">
+              No foto kastēm līdz kubliem — viss Tavam pasākumam vienuviet.
+            </p>
           </Reveal>
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((product, i) => (
-              <Reveal key={product.slug} delay={i * 0.08}>
-                <ProductCard product={product} />
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {homeCategories.map((category, i) => (
+              <Reveal key={category.id} delay={i * 0.06}>
+                <CategoryCard category={category} />
               </Reveal>
             ))}
           </div>

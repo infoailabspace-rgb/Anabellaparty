@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Product } from "@/lib/products";
 import ImageGallery from "@/components/image-gallery";
+import PriceBlock from "@/components/price-block";
 import Reveal from "@/components/reveal";
 
 export default function ProductDetail({ product }: { product: Product }) {
@@ -22,54 +23,52 @@ export default function ProductDetail({ product }: { product: Product }) {
             <p className="mt-2 text-gold">{product.tagline}</p>
             <p className="mt-4 text-text/80">{product.description}</p>
 
-            {/* Specifikācijas */}
-            <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
-              {product.specs.map((s) => (
-                <div key={s.label}>
-                  <dt className="text-xs uppercase tracking-wide text-text/50">
-                    {s.label}
-                  </dt>
-                  <dd className="text-sm text-text/90">{s.value}</dd>
-                </div>
-              ))}
-            </dl>
-
-            {/* Kas iekļauts */}
-            <div className="mt-6">
-              <h3 className="font-display text-sm font-semibold text-text">
-                Kas iekļauts
-              </h3>
-              <ul className="mt-3 space-y-2">
-                {product.includes.map((item) => (
-                  <li key={item} className="flex gap-2 text-sm text-text/80">
-                    <span className="text-gold">✓</span>
-                    <span>{item}</span>
-                  </li>
+            {product.specs && product.specs.length > 0 && (
+              <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
+                {product.specs.map((s) => (
+                  <div key={s.label}>
+                    <dt className="text-xs uppercase tracking-wide text-text/50">
+                      {s.label}
+                    </dt>
+                    <dd className="text-sm text-text/90">{s.value}</dd>
+                  </div>
                 ))}
-              </ul>
-            </div>
+              </dl>
+            )}
 
-            {/* Cena + poga */}
-            <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-gold/15 pt-6">
-              <div>
-                <p className="font-mono text-3xl font-bold text-gold">
-                  €{product.price.amount}{" "}
-                  <span className="text-lg text-text/60">
-                    / {product.price.unit}
-                  </span>
-                </p>
-                {product.price.extra && (
-                  <p className="font-mono text-sm text-rose-gold">
-                    {product.price.extra}
-                  </p>
-                )}
+            {product.includes && product.includes.length > 0 && (
+              <div className="mt-6">
+                <h3 className="font-display text-sm font-semibold text-text">
+                  Nomā iekļauts
+                </h3>
+                <ul className="mt-3 space-y-2">
+                  {product.includes.map((item) => (
+                    <li key={item} className="flex gap-2 text-sm text-text/80">
+                      <span className="text-gold">✓</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <Link
-                href="/rezervet"
-                className="rounded-full bg-gold px-7 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
-              >
-                Rezervēt
-              </Link>
+            )}
+
+            <div className="mt-8 flex flex-wrap items-end justify-between gap-4 border-t border-gold/15 pt-6">
+              <PriceBlock product={product} />
+              {product.altPhone ? (
+                <a
+                  href={`tel:+371${product.altPhone}`}
+                  className="rounded-full bg-gold px-7 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
+                >
+                  Zvanīt {product.altPhone}
+                </a>
+              ) : (
+                <Link
+                  href="/rezervet"
+                  className="rounded-full bg-gold px-7 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
+                >
+                  Rezervēt
+                </Link>
+              )}
             </div>
           </div>
         </div>

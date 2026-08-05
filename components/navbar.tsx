@@ -3,16 +3,38 @@
 import Link from "next/link";
 import { useState } from "react";
 
-const links = [
-  { href: "/", label: "Sākums" },
-  { href: "/foto-kaste", label: "Foto kastes" },
-  { href: "/piepusamas-atrakcijas", label: "Atrakcijas" },
-  { href: "/svinibu-inventars", label: "Inventārs" },
-  { href: "/kontakti", label: "Kontakti" },
+type NavLink = { href: string; label: string };
+type NavItem = { label: string; href?: string; children?: NavLink[] };
+
+const nav: NavItem[] = [
+  { label: "Sākums", href: "/" },
+  {
+    label: "Foto kastes",
+    children: [
+      { href: "/foto-kaste", label: "Foto kastes" },
+      { href: "/foto-kaste/ai-foto", label: "AI foto" },
+    ],
+  },
+  { label: "Atrakcijas", href: "/piepusamas-atrakcijas" },
+  {
+    label: "Svinību inventārs",
+    children: [
+      { href: "/svinibu-inventars", label: "Viss inventārs" },
+      {
+        href: "/svinibu-inventars/audio-viesu-gramatas",
+        label: "Audio/video viesu grāmatas",
+      },
+      { href: "/svinibu-inventars/specefekti", label: "Specefekti" },
+      { href: "/svinibu-inventars/decomebeles", label: "Deco / mēbeles" },
+      { href: "/svinibu-inventars/kublsballa", label: "Kubli / pirts" },
+    ],
+  },
+  { label: "Kontakti", href: "/kontakti" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
 
   return (
     <header className="sticky top-0 z-50 border-b border-gold/30 bg-bg/80 backdrop-blur-md">
@@ -20,22 +42,49 @@ export default function Navbar() {
         <Link
           href="/"
           className="font-display text-xl font-bold tracking-tight text-gold"
-          onClick={() => setOpen(false)}
+          onClick={close}
         >
           Anabella Party
         </Link>
 
         {/* Desktop */}
-        <div className="hidden items-center gap-8 md:flex">
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="text-sm text-text/80 transition-colors hover:text-gold"
-            >
-              {l.label}
-            </Link>
-          ))}
+        <div className="hidden items-center gap-7 md:flex">
+          {nav.map((item) =>
+            item.children ? (
+              <div key={item.label} className="group relative">
+                <button
+                  type="button"
+                  className="flex items-center gap-1 text-sm text-text/80 transition-colors hover:text-gold group-focus-within:text-gold"
+                >
+                  {item.label}
+                  <span aria-hidden className="text-xs">
+                    ▾
+                  </span>
+                </button>
+                <div className="invisible absolute left-0 top-full z-50 min-w-56 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                  <div className="rounded-xl border border-gold/25 bg-navy/95 p-2 shadow-2xl backdrop-blur">
+                    {item.children.map((c) => (
+                      <Link
+                        key={c.href}
+                        href={c.href}
+                        className="block rounded-lg px-4 py-2 text-sm text-text/85 transition-colors hover:bg-gold/10 hover:text-gold"
+                      >
+                        {c.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href!}
+                className="text-sm text-text/80 transition-colors hover:text-gold"
+              >
+                {item.label}
+              </Link>
+            ),
+          )}
           <Link
             href="/rezervet"
             className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black transition-shadow hover:shadow-[0_0_20px_rgba(212,169,96,0.5)]"
@@ -73,21 +122,41 @@ export default function Navbar() {
       {/* Mobile menu */}
       {open && (
         <div className="border-t border-gold/20 bg-bg/95 px-6 py-4 md:hidden">
-          <div className="flex flex-col gap-4">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="text-text/90 transition-colors hover:text-gold"
-              >
-                {l.label}
-              </Link>
-            ))}
+          <div className="flex flex-col gap-1">
+            {nav.map((item) =>
+              item.children ? (
+                <div key={item.label} className="py-2">
+                  <p className="text-xs uppercase tracking-wide text-text/50">
+                    {item.label}
+                  </p>
+                  <div className="mt-2 flex flex-col gap-2 pl-3">
+                    {item.children.map((c) => (
+                      <Link
+                        key={c.href}
+                        href={c.href}
+                        onClick={close}
+                        className="text-text/90 transition-colors hover:text-gold"
+                      >
+                        {c.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  key={item.href}
+                  href={item.href!}
+                  onClick={close}
+                  className="py-2 text-text/90 transition-colors hover:text-gold"
+                >
+                  {item.label}
+                </Link>
+              ),
+            )}
             <Link
               href="/rezervet"
-              onClick={() => setOpen(false)}
-              className="rounded-full bg-gold px-5 py-2 text-center font-semibold text-black"
+              onClick={close}
+              className="mt-3 rounded-full bg-gold px-5 py-2 text-center font-semibold text-black"
             >
               Rezervēt
             </Link>
