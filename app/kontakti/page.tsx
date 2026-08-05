@@ -50,7 +50,7 @@ export default function KontaktiPage() {
                     ✉️ info@anabellaparty.lv
                   </a>
                 </li>
-                <li>📍 Ķekava, Latvija</li>
+                <li>📍 Vecozolu iela 14, Ķekava, Latvija</li>
               </ul>
             </div>
 
@@ -71,7 +71,7 @@ export default function KontaktiPage() {
             <div className="overflow-hidden rounded-2xl border-2 border-gold/25">
               <iframe
                 title="Ķekava kartē"
-                src="https://www.google.com/maps?q=%C4%B6ekava,+Latvija&output=embed"
+                src="https://www.google.com/maps?q=Vecozolu+iela+14,+%C4%B6ekava,+Latvija&output=embed"
                 className="h-64 w-full"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

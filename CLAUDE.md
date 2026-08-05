@@ -10,7 +10,10 @@ Pastāvīgais konteksts. Lasi šo pirms katra soļa.
 
 - Esošā lapa: www.anabellaparty.lv (Mozello) → jaunā: Next.js 14 + Vercel
 - Īpašnieki: Roberts un Aiva Dimanti, Ķekava
+- Adrese: Vecozolu iela 14, Ķekava
 - Kontakti: +371 29222761 (WhatsApp), info@anabellaparty.lv
+- Kubli/pirts: atsevišķs tālr. 28286911, atrodas Jūrmalā
+- Cenas: norādītas **bez PVN**. AI foto funkcija: +100 € foto kastes cenai
 - GitHub: `infoailabspace-rgb/Anabellaparty`
 - Lokālais ceļš: `C:\Projekti\Anabellaparty\`
 

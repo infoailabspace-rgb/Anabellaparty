@@ -24,7 +24,7 @@ export default function PrivatumaPolitikaPage() {
         <p>
           Personas datu pārzinis ir Anabella Party. Saziņai par datu apstrādi:
           e-pasts info@anabellaparty.lv, tālrunis +371 29222761, adrese Ķekava,
-          Latvija. [JĀAPSTIPRINA: juridiskais nosaukums un reģistrācijas numurs].
+          Vecozolu iela 14. [JĀAPSTIPRINA: juridiskais nosaukums un reģistrācijas numurs].
         </p>
 
         <h2>2. Kādus datus vācam</h2>

@@ -25,7 +25,7 @@ export default function NoteikumiPage() {
         <p>
           Iznomātājs ir Anabella Party (turpmāk — Iznomātājs), kas nodarbojas ar
           pasākumu inventāra nomu Latvijā. Kontakti: tālrunis +371 29222761,
-          e-pasts info@anabellaparty.lv, adrese Ķekava, Latvija.{" "}
+          e-pasts info@anabellaparty.lv, adrese Vecozolu iela 14, Ķekava.{" "}
           [JĀAPSTIPRINA: juridiskā forma, reģistrācijas numurs, juridiskā adrese].
         </p>
         <p>

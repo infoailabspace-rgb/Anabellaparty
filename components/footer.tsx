@@ -35,7 +35,7 @@ export default function Footer() {
                 info@anabellaparty.lv
               </a>
             </li>
-            <li>Ķekava, Latvija</li>
+            <li>Vecozolu iela 14, Ķekava</li>
           </ul>
         </div>
 

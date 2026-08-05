@@ -52,9 +52,10 @@ export default function AiFotoPage() {
               ))}
             </ul>
 
-            <p className="mt-8 text-sm text-text/60">
-              AI funkciju iespējams pievienot jebkurai foto kastei. Cena atkarīga
-              no pasākuma — sazinies, un sagatavosim piedāvājumu.
+            <p className="mt-8 text-text/85">
+              AI funkciju iespējams pievienot jebkurai foto kastei —{" "}
+              <span className="font-mono font-semibold text-gold">+100 €</span>{" "}
+              papildus izvēlētās foto kastes cenai.
             </p>
 
             <div className="mt-6 flex flex-col gap-4 sm:flex-row">
