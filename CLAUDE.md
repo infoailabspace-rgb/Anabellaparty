@@ -10,10 +10,7 @@ Pastāvīgais konteksts. Lasi šo pirms katra soļa.
 
 - Esošā lapa: www.anabellaparty.lv (Mozello) → jaunā: Next.js 14 + Vercel
 - Īpašnieki: Roberts un Aiva Dimanti, Ķekava
-- Adrese: Vecozolu iela 14, Ķekava
 - Kontakti: +371 29222761 (WhatsApp), info@anabellaparty.lv
-- Kubli/pirts: atsevišķs tālr. 28286911, atrodas Jūrmalā
-- Cenas: norādītas **bez PVN**. AI foto funkcija: +100 € foto kastes cenai
 - GitHub: `infoailabspace-rgb/Anabellaparty`
 - Lokālais ceļš: `C:\Projekti\Anabellaparty\`
 
@@ -23,9 +20,9 @@ Pastāvīgais konteksts. Lasi šo pirms katra soļa.
 
 | Slānis | Tehnoloģija |
 |---|---|
-| Framework | Next.js 16 App Router (React 19) |
+| Framework | Next.js 14 App Router |
 | Valoda | TypeScript (strict) |
-| Stils | Tailwind CSS v4 (bez `tailwind.config.ts` — tēma `app/globals.css` `@theme` blokā) |
+| Stils | Tailwind CSS |
 | Animācijas | Framer Motion |
 | Hostings | Vercel |
 | DB (no SOLIS3) | Supabase |
@@ -44,6 +41,16 @@ Pastāvīgais konteksts. Lasi šo pirms katra soļa.
 5. **Latviešu UTF-8:** nekad PowerShell `-replace`. Tikai Node.js `fs` ar `utf8` vai pilns faila pārrakstīšana.
 6. **Parādi plānu pirms izmaiņām.** Vienmēr.
 7. **Pārbaudi faila reālo saturu** pirms piedāvā regex/replace.
+8. **Skili atrodas `skills/` mapē projekta saknē.** Ceļi `/mnt/skills/...` šeit neeksistē — tie ir Linux konteinera ceļi. Vienmēr lieto relatīvos ceļus no projekta saknes.
+
+---
+
+## SKILI (`skills/` mapē)
+
+| Skils | Kad lasīt |
+|---|---|
+| `skills/web-builder/SKILL.md` | Jebkuram frontend darbam — motion, performance, SEO, komerc-UI |
+| `skills/frontend-design/SKILL.md` | Vizuālais virziens, tipogrāfija, izkārtojums |
 
 ---
 
@@ -71,27 +78,19 @@ Komponenti:
 ## URL STRUKTŪRA (nemainīga, saglabā SEO)
 
 ```
-/                                          Sākums
-/foto-kaste/                               Foto kastes (3 kastes + īpašie bloki)
-/foto-kaste/ai-foto/                       AI foto kaste
-/piepusamas-atrakcijas/                    Piepūšamās atrakcijas
-/svinibu-inventars/                        Svinību inventārs (HUB — 4 kategorijas)
-/svinibu-inventars/audio-viesu-gramatas/   Audio/video viesu grāmatas
-/svinibu-inventars/specefekti/             Specefekti
-/svinibu-inventars/decomebeles/            Deco / mēbeles
-/svinibu-inventars/kublsballa/             Kubli / pirts (tālr. 28286911, Jūrmalā)
-/rezervet/                                 Rezervācija
-/kontakti/                                 Kontakti
-/faq/                                      BUJ
-/musu-draugi/                              Mūsu draugi
-/noteikumi/                                Nomas noteikumi
-/privatuma-politika/                       Privātuma politika
-/sikdatnu-politika/                        Sīkdatņu politika
+/                        Sākums
+/foto-kaste/             Foto kastes
+/piepusamas-atrakcijas/  Piepūšamās atrakcijas
+/svinibu-inventars/      Svinību inventārs
+/rezervet/               Rezervācija
+/kontakti/               Kontakti
+/faq/                    BUJ
+/musu-draugi/            Mūsu draugi
+/noteikumi/              Nomas noteikumi
+/privatuma-politika/     Privātuma politika
 ```
 
 Multilingua (no SOLIS5): `/en/...`, `/ru/...`. LV bez prefiksa.
-
-**Produktu dati:** vienīgais patiesības avots ir `lib/products.ts` (SOLIS1B, ~38 produkti). Cenu tabula zemāk ir novecojusi — NElieto to, skaties `lib/products.ts`.
 
 ---
 
@@ -120,9 +119,9 @@ Multilingua (no SOLIS5): `/en/...`, `/ru/...`. LV bez prefiksa.
 
 | Solis | Saturs | Statuss |
 |---|---|---|
-| SOLIS0 | Setup, scaffold, home page, GitHub, Vercel LIVE | ✅ |
-| SOLIS1 | Produktu lapas (4 gab.) | ✅ |
-| SOLIS2 | Kontakti, FAQ, noteikumi, privātuma politika, cookie banner | ✅ |
+| SOLIS0 | Setup, scaffold, home page, GitHub, Vercel LIVE | 🟡 |
+| SOLIS1 | Produktu lapas (4 gab.) | ⬜ |
+| SOLIS2 | Kontakti, FAQ, noteikumi, privātuma politika, cookie banner | ⬜ |
 | SOLIS3 | Supabase + AI čatbots | ⬜ |
 | SOLIS4 | Rezervācija + Stripe 20% depozīts + Resend | ⬜ |
 | SOLIS5 | Multilingua LV/EN/RU + SEO + schema.org | ⬜ |

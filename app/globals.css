@@ -34,3 +34,95 @@ body {
   background: var(--gold);
   color: #000;
 }
+
+/* Zelta fokusa gredzens visiem interaktīvajiem elementiem (piekļūstamība). */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Klientu logo bezgalīgā lente (marquee) — tīrs CSS. */
+@keyframes anabella-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.anabella-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: anabella-marquee 40s linear infinite;
+}
+
+.anabella-marquee:hover .anabella-marquee-track {
+  animation-play-state: paused;
+}
+
+/* Lēna zelta gradienta pulsācija CTA fonam. */
+@keyframes anabella-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.08);
+  }
+}
+
+.anabella-glow-pulse {
+  animation: anabella-glow-pulse 6s ease-in-out infinite;
+}
+
+/* Hero zelta hairline ievelkas (transform, ne width — bez CLS). */
+@keyframes anabella-hairline {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.anabella-hairline {
+  transform-origin: left center;
+  animation: anabella-hairline 0.9s 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Scroll indikatora maigā pulsācija. */
+@keyframes anabella-scroll-hint {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(6px);
+  }
+}
+
+.anabella-scroll-hint {
+  animation: anabella-scroll-hint 2s ease-in-out infinite;
+}
+
+/* prefers-reduced-motion — visas animācijas izslēdzas, saturs paliek redzams. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .anabella-hairline {
+    transform: scaleX(1);
+  }
+}
