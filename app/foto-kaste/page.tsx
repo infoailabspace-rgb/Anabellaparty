@@ -3,6 +3,7 @@ import Link from "next/link";
 import { products } from "@/lib/products";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
+import SlideReveal from "@/components/slide-reveal";
 import PriceBlock from "@/components/price-block";
 import ImagePlaceholder from "@/components/image-placeholder";
 import DeliveryNote from "@/components/delivery-note";
@@ -63,7 +64,7 @@ export default function FotoKastePage() {
 
         {/* Foto kaste uz visu dienu — izcelts bloks */}
         {visuDienu && (
-          <Reveal>
+          <SlideReveal index={3}>
             <div className="mt-12 rounded-3xl border-2 border-gold bg-gold/10 p-6 sm:p-10">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-wide text-black">
@@ -88,13 +89,13 @@ export default function FotoKastePage() {
                 <PriceBlock product={visuDienu} />
               </div>
             </div>
-          </Reveal>
+          </SlideReveal>
         )}
 
         {/* Uz periodu + masu pasākumiem */}
         <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {contactBlocks.map((product) => (
-            <Reveal key={product.slug}>
+          {contactBlocks.map((product, i) => (
+            <SlideReveal key={product.slug} index={4 + i}>
               <div className="flex h-full flex-col rounded-2xl border-2 border-gold/25 bg-navy/25 p-8">
                 <h3 className="font-display text-xl font-semibold">
                   {product.name}
@@ -106,12 +107,12 @@ export default function FotoKastePage() {
                   <PriceBlock product={product} />
                 </div>
               </div>
-            </Reveal>
+            </SlideReveal>
           ))}
         </div>
 
         {/* Foto rāmīšu dizaini */}
-        <Reveal>
+        <SlideReveal index={6}>
           <div className="mt-12 grid items-center gap-8 rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10 lg:grid-cols-2">
             <div>
               <h2 className="font-display text-2xl font-bold">
@@ -128,7 +129,7 @@ export default function FotoKastePage() {
               className="aspect-[4/3] w-full"
             />
           </div>
-        </Reveal>
+        </SlideReveal>
 
         <div className="mt-12">
           <DeliveryNote />
