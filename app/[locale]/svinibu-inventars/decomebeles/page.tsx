@@ -1,28 +1,34 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { getProductsByCategory, getProductBySlug } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
 import CtaSection from "@/components/cta-section";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Deco un mēbeles svētkiem | Anabella Party",
-  description:
-    "Šampanieša siena, LED uzraksti, dārza krēsli un dekori pasākumiem Latvijā. No €8. Piegāde Pierīgā bez maksas.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(locale, "deco", "/svinibu-inventars/decomebeles");
+}
 
 export const revalidate = 300;
 
 export default async function DecoMebelesPage() {
-  const usb = await getProductBySlug("koka-usb");
-  const items = [...(await getProductsByCategory("deco")), ...(usb ? [usb] : [])];
+  const [usb, deco, t] = await Promise.all([
+    getProductBySlug("koka-usb"),
+    getProductsByCategory("deco"),
+    getTranslations("pages"),
+  ]);
+  const items = [...deco, ...(usb ? [usb] : [])];
 
   return (
     <>
-      <SectionHero
-        title="Deco / mēbeles"
-        tagline="Detaļas, kas veido noskaņu — no šampanieša sienas līdz LED uzrakstiem."
-      />
+      <SectionHero title={t("decoTitle")} tagline={t("decoTagline")} />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="space-y-12">

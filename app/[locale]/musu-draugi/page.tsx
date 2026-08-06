@@ -1,20 +1,26 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import Reveal from "@/components/reveal";
 import { partners } from "@/lib/partners";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Mūsu draugi | Anabella Party",
-  description:
-    "Uzticami sadarbības partneri un draugi, ko iesakām Tavam pasākumam Latvijā — no svinību organizēšanas līdz papildu pakalpojumiem.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(locale, "musuDraugi", "/musu-draugi");
+}
 
-export default function MusuDraugiPage() {
+export default async function MusuDraugiPage() {
+  const t = await getTranslations("pages");
   return (
     <>
       <SectionHero
-        title="Mūsu draugi"
-        tagline="Uzticami partneri, ar kuriem kopā radām neaizmirstamus pasākumus."
+        title={t("musuDraugiTitle")}
+        tagline={t("musuDraugiTagline")}
       />
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -34,7 +40,7 @@ export default function MusuDraugiPage() {
                     rel="noopener noreferrer"
                     className="mt-4 inline-block text-sm font-semibold text-gold hover:underline"
                   >
-                    Apmeklēt →
+                    {t("visitLink")}
                   </a>
                 )}
               </div>

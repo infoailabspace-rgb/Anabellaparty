@@ -1,27 +1,35 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { getProductsByCategory } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
 import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Specefekti — dzirksteles, migla, burbuļi | Anabella Party",
-  description:
-    "Aukstās dzirksteles, zemā migla un burbuļu ierīces svētkiem Latvijā. Ugunsdroši, bērniem droši efekti. No €35. Piegāde Pierīgā bez maksas.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(locale, "specefekti", "/svinibu-inventars/specefekti");
+}
 
 export const revalidate = 300;
 
 export default async function SpecefektiPage() {
-  const items = await getProductsByCategory("specefekti");
+  const [items, t] = await Promise.all([
+    getProductsByCategory("specefekti"),
+    getTranslations("pages"),
+  ]);
 
   return (
     <>
       <SectionHero
-        title="Specefekti"
-        tagline="Iespaidīgi mirkļi — dzirksteles, migla un burbuļi. Visām ierīcēm instruktāža, visas bērniem drošas."
+        title={t("specefektiTitle")}
+        tagline={t("specefektiTagline")}
       />
 
       <div className="mx-auto max-w-6xl px-6 py-16">

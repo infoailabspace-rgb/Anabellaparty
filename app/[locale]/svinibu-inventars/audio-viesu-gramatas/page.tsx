@@ -1,16 +1,25 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { getProductsByCategory } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
 import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Audio/video viesu grāmatas | Anabella Party",
-  description:
-    "Retro telefoni viesu balss un video sveicieniem kāzām un svinībām Latvijā. Audio no €50, video no €150. Piegāde Pierīgā bez maksas.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(
+    locale,
+    "audioVideo",
+    "/svinibu-inventars/audio-viesu-gramatas",
+  );
+}
 
 const addOns = [
   { name: "Info statīvs (rāmītis)", price: "10 €" },
@@ -21,13 +30,16 @@ const addOns = [
 export const revalidate = 300;
 
 export default async function AudioViesuGramatasPage() {
-  const items = await getProductsByCategory("audio-video");
+  const [items, t] = await Promise.all([
+    getProductsByCategory("audio-video"),
+    getTranslations("pages"),
+  ]);
 
   return (
     <>
       <SectionHero
-        title="Audio/video viesu grāmatas"
-        tagline="Viesu balss un video sveicieni retro telefona klausulē — sirsnīga piemiņa."
+        title={t("audioVideoTitle")}
+        tagline={t("audioVideoTagline")}
       />
 
       <div className="mx-auto max-w-6xl px-6 py-16">

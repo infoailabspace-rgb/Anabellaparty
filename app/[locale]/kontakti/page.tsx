@@ -1,23 +1,31 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import ContactForm from "@/components/contact-form";
 import Reveal from "@/components/reveal";
 import { getContent } from "@/lib/site-content";
 import { COMPANY, fullAddress } from "@/lib/company";
+import { pageMetadata } from "@/lib/seo";
 
 export const revalidate = 300;
 
 const HOURS_FALLBACK =
   "Pirmdiena–Piektdiena: 9:00–20:00\nSestdiena–Svētdiena: 10:00–18:00\nPasākumi tiek apkalpoti arī ārpus darba laika pēc vienošanās.";
 
-export const metadata: Metadata = {
-  title: "Kontakti | Anabella Party",
-  description:
-    "Sazinies ar Anabella Party — pasākumu inventāra noma Ķekavā un Pierīgā. Tālrunis +371 29222761, info@anabellaparty.lv, WhatsApp. Piegāde Pierīgā bez maksas.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(locale, "kontakti", "/kontakti");
+}
 
 export default async function KontaktiPage() {
-  const hours = await getContent("contact.hours", HOURS_FALLBACK);
+  const [hours, t] = await Promise.all([
+    getContent("contact.hours", HOURS_FALLBACK),
+    getTranslations("pages"),
+  ]);
   const hoursLines = hours.split("\n").filter(Boolean);
 
   const jsonLd = {
@@ -47,10 +55,7 @@ export default async function KontaktiPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <SectionHero
-        title="Kontakti"
-        tagline="Pastāsti par savu pasākumu — atbildēsim ātri un ieteiksim labāko risinājumu."
-      />
+      <SectionHero title={t("kontaktiTitle")} tagline={t("kontaktiTagline")} />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid gap-12 lg:grid-cols-2">

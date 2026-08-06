@@ -1,28 +1,33 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { getProductsByCategory } from "@/lib/catalog";
 import { KUBLI_PHONE } from "@/lib/products";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Kublu un pirts noma | Anabella Party",
-  description:
-    "VIP kubli un mobilā pirts nomai (atrodas Jūrmalā). Hidromasāža, LED, termovāks. No €80/diena. Piegāde pēc vienošanās atkarībā no attāluma.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(locale, "kubli", "/svinibu-inventars/kublsballa");
+}
 
 export const revalidate = 300;
 
 export default async function KublsballaPage() {
-  const items = await getProductsByCategory("kubli");
+  const [items, t] = await Promise.all([
+    getProductsByCategory("kubli"),
+    getTranslations("pages"),
+  ]);
 
   return (
     <>
-      <SectionHero
-        title="Kubli / pirts"
-        tagline="VIP kubli un mobilā pirts Tavai atpūtai — hidromasāža, LED un termovāks."
-      />
+      <SectionHero title={t("kubliTitle")} tagline={t("kubliTagline")} />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         {/* Svarīgā atzīme */}

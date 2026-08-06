@@ -1,23 +1,29 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import CategoryCard from "@/components/category-card";
 import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
 import DepthBg from "@/components/depth-bg";
 import { homeCategories } from "@/lib/categories";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Svinību inventāra noma | Anabella Party",
-  description:
-    "Foto kastes, piepūšamās atrakcijas, audio/video viesu grāmatas, specefekti, dekori un kubli svētkiem Latvijā. Viss Tavam pasākumam vienuviet. Piegāde Pierīgā bez maksas.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(locale, "inventars", "/svinibu-inventars");
+}
 
-export default function SvinibuInventarsPage() {
+export default async function SvinibuInventarsPage() {
+  const t = await getTranslations("pages");
   return (
     <>
       <SectionHero
-        title="Viss inventārs"
-        tagline="No foto kastēm līdz kubliem — izvēlies kategoriju un atrodi īsto Tavam pasākumam."
+        title={t("inventarsTitle")}
+        tagline={t("inventarsTagline")}
       />
       <section className="anabella-navy-texture relative overflow-hidden bg-navy py-16">
         <DepthBg />

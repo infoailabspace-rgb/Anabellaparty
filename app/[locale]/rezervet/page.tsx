@@ -1,16 +1,21 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import BookingForm from "@/components/booking/booking-form";
 import { WhatsAppIcon } from "@/components/social-icons";
 import { getAllProducts } from "@/lib/catalog";
+import { pageMetadata } from "@/lib/seo";
 
 export const revalidate = 300;
 
-export const metadata: Metadata = {
-  title: "Rezervēt | Anabella Party",
-  description:
-    "Aizpildi rezervācijas anketu vai sazinies tieši. Foto kastes, atrakcijas un specefekti Tavam pasākumam. Atbildam 24 stundu laikā. Piegāde Pierīgā bez maksas.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(locale, "rezervet", "/rezervet");
+}
 
 function PhoneIcon() {
   return (
@@ -34,12 +39,15 @@ const CONTACTS = [
 ];
 
 export default async function RezervetPage() {
-  const products = await getAllProducts();
+  const [products, t] = await Promise.all([
+    getAllProducts(),
+    getTranslations("pages"),
+  ]);
   return (
     <>
       <SectionHero
-        title="Rezervēt"
-        tagline="Sazinies uzreiz vai aizpildi anketu — atbildēsim 24 stundu laikā ar precīzu piedāvājumu."
+        title={t("rezervetTitle")}
+        tagline={t("rezervetTagline")}
       />
 
       <div className="mx-auto max-w-5xl px-6 py-16">

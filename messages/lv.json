@@ -78,5 +78,32 @@
   },
   "legal": {
     "bindingNote": "Saistošā ir šī — latviešu valodas versija."
+  },
+  "pages": {
+    "faqTitle": "Biežāk uzdotie jautājumi",
+    "faqTagline": "Atbildes uz to, ko klienti jautā visbiežāk. Neatradi savu jautājumu? Sazinies ar mums.",
+    "kontaktiTitle": "Kontakti",
+    "kontaktiTagline": "Pastāsti par savu pasākumu — atbildēsim ātri un ieteiksim labāko risinājumu.",
+    "fotoKasteTitle": "Foto kastes",
+    "fotoKasteTagline": "Uztver mirkļus, kas paliek — tūlītējas izdrukas, asistents un personalizēts dizains.",
+    "aiFotoTitle": "AI foto kaste",
+    "aiFotoTagline": "Pārvērš viesus par supervaroņiem, zvaigznēm un burvjiem — pielāgojama Tava pasākuma tematikai.",
+    "atrakcijasTitle": "Piepūšamās atrakcijas",
+    "atrakcijasTagline": "Baltās pilis un bumbu vannas — telpās un ārā, rūpīgi tīrītas un drošas.",
+    "inventarsTitle": "Viss inventārs",
+    "inventarsTagline": "No foto kastēm līdz kubliem — izvēlies kategoriju un atrodi īsto Tavam pasākumam.",
+    "audioVideoTitle": "Audio/video viesu grāmatas",
+    "audioVideoTagline": "Viesu balss un video sveicieni retro telefona klausulē — sirsnīga piemiņa.",
+    "specefektiTitle": "Specefekti",
+    "specefektiTagline": "Iespaidīgi mirkļi — dzirksteles, migla un burbuļi. Visām ierīcēm instruktāža, visas bērniem drošas.",
+    "decoTitle": "Deco / mēbeles",
+    "decoTagline": "Detaļas, kas veido noskaņu — no šampanieša sienas līdz LED uzrakstiem.",
+    "kubliTitle": "Kubli / pirts",
+    "kubliTagline": "VIP kubli un mobilā pirts Tavai atpūtai — hidromasāža, LED un termovāks.",
+    "rezervetTitle": "Rezervēt",
+    "rezervetTagline": "Sazinies uzreiz vai aizpildi anketu — atbildēsim 24 stundu laikā ar precīzu piedāvājumu.",
+    "musuDraugiTitle": "Mūsu draugi",
+    "musuDraugiTagline": "Uzticami partneri, ar kuriem kopā radām neaizmirstamus pasākumus.",
+    "visitLink": "Apmeklēt →"
   }
 }

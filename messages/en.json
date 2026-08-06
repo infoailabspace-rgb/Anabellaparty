@@ -78,5 +78,32 @@
   },
   "legal": {
     "bindingNote": "This is a translation provided for convenience. The legally binding version is the Latvian one."
+  },
+  "pages": {
+    "faqTitle": "Frequently asked questions",
+    "faqTagline": "Answers to what customers ask most. Didn't find your question? Get in touch.",
+    "kontaktiTitle": "Contact",
+    "kontaktiTagline": "Tell us about your event — we'll reply quickly and suggest the best solution.",
+    "fotoKasteTitle": "Photo booths",
+    "fotoKasteTagline": "Capture moments that last — instant prints, an assistant and custom design.",
+    "aiFotoTitle": "AI photo booth",
+    "aiFotoTagline": "Turns guests into superheroes, stars and wizards — adaptable to your event's theme.",
+    "atrakcijasTitle": "Inflatable attractions",
+    "atrakcijasTagline": "White castles and ball pits — indoors and outdoors, carefully cleaned and safe.",
+    "inventarsTitle": "All inventory",
+    "inventarsTagline": "From photo booths to hot tubs — choose a category and find the right one for your event.",
+    "audioVideoTitle": "Audio/video guest books",
+    "audioVideoTagline": "Guest voice and video greetings in a retro phone handset — a heartfelt keepsake.",
+    "specefektiTitle": "Special effects",
+    "specefektiTagline": "Impressive moments — sparks, fog and bubbles. All devices come with instruction, all child-safe.",
+    "decoTitle": "Decor / furniture",
+    "decoTagline": "The details that set the mood — from a champagne wall to LED signs.",
+    "kubliTitle": "Hot tubs / sauna",
+    "kubliTagline": "VIP hot tubs and a mobile sauna for your relaxation — hydromassage, LED and thermal cover.",
+    "rezervetTitle": "Book now",
+    "rezervetTagline": "Get in touch right away or fill in the form — we'll reply within 24 hours with an exact quote.",
+    "musuDraugiTitle": "Our friends",
+    "musuDraugiTagline": "Trusted partners with whom we create unforgettable events.",
+    "visitLink": "Visit →"
   }
 }

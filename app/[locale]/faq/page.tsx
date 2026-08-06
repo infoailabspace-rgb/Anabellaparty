@@ -1,25 +1,27 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import FaqAccordion from "@/components/faq-accordion";
 import CtaSection from "@/components/cta-section";
 import { getFaqs } from "@/lib/site-data";
+import { pageMetadata } from "@/lib/seo";
 
 export const revalidate = 300;
 
-export const metadata: Metadata = {
-  title: "Biežāk uzdotie jautājumi (BUJ) | Anabella Party",
-  description:
-    "Atbildes par rezervāciju, piegādi, produktiem un maksājumiem. Foto kastes, atrakcijas un specefekti Latvijā. Piegāde Pierīgā bez maksas.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(locale, "faq", "/faq");
+}
 
 export default async function FaqPage() {
-  const items = await getFaqs();
+  const [items, t] = await Promise.all([getFaqs(), getTranslations("pages")]);
   return (
     <>
-      <SectionHero
-        title="Biežāk uzdotie jautājumi"
-        tagline="Atbildes uz to, ko klienti jautā visbiežāk. Neatradi savu jautājumu? Sazinies ar mums."
-      />
+      <SectionHero title={t("faqTitle")} tagline={t("faqTagline")} />
       <div className="mx-auto max-w-6xl px-6 py-16">
         <FaqAccordion items={items} />
       </div>

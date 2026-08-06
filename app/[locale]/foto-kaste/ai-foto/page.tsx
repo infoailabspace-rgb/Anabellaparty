@@ -1,8 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import ImageGallery from "@/components/image-gallery";
 import Reveal from "@/components/reveal";
+import { pageMetadata } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(locale, "aiFoto", "/foto-kaste/ai-foto");
+}
 
 // AI foto galerija — dažādas tēmas (faili nāk vēlāk, galerija krīt uz placeholder).
 const aiGallery = [
@@ -12,12 +23,6 @@ const aiGallery = [
   "/images/ai-foto/03.jpg",
   "/images/ai-foto/04.jpg",
 ];
-
-export const metadata: Metadata = {
-  title: "AI foto kaste | Anabella Party",
-  description:
-    "AI foto kaste pārvērš viesus par supervaroņiem, kosmosa ceļotājiem, retro gangsteriem un Holivudas zvaigznēm. Pielāgojama pasākuma tematikai.",
-};
 
 const themes = [
   "Gatsby retro",
@@ -29,13 +34,11 @@ const themes = [
   "Klienta paša ideja",
 ];
 
-export default function AiFotoPage() {
+export default async function AiFotoPage() {
+  const t = await getTranslations("pages");
   return (
     <>
-      <SectionHero
-        title="AI foto kaste"
-        tagline="Pārvērš viesus par supervaroņiem, zvaigznēm un burvjiem — pielāgojama Tava pasākuma tematikai."
-      />
+      <SectionHero title={t("aiFotoTitle")} tagline={t("aiFotoTagline")} />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid items-center gap-10 lg:grid-cols-2">

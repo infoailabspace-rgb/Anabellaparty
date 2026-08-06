@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getAllProducts } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
@@ -9,19 +10,26 @@ import ImagePlaceholder from "@/components/image-placeholder";
 import DeliveryNote from "@/components/delivery-note";
 import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Foto kastu noma | Anabella Party",
-  description:
-    "SPOGULIS, OZOLS un INSTAGRAM foto kastes kāzām un pasākumiem Latvijā. Neierobežotas izdrukas, asistents, AI funkcija. No €220. Piegāde Pierīgā bez maksas.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(locale, "fotoKaste", "/foto-kaste");
+}
 
 const mainSlugs = ["spogulis", "ozols", "instagram"];
 
 export const revalidate = 300;
 
 export default async function FotoKastePage() {
-  const products = await getAllProducts();
+  const [products, t] = await Promise.all([
+    getAllProducts(),
+    getTranslations("pages"),
+  ]);
   const boxes = mainSlugs
     .map((s) => products.find((p) => p.slug === s))
     .filter((p) => p !== undefined);
@@ -36,8 +44,8 @@ export default async function FotoKastePage() {
   return (
     <>
       <SectionHero
-        title="Foto kastes"
-        tagline="Uztver mirkļus, kas paliek — tūlītējas izdrukas, asistents un personalizēts dizains."
+        title={t("fotoKasteTitle")}
+        tagline={t("fotoKasteTagline")}
         video="/videos/herovideo1.mp4"
       />
 

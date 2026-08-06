@@ -1,27 +1,35 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { getProductsByCategory } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
 import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Piepūšamo atrakciju noma | Anabella Party",
-  description:
-    "Baltās piepūšamās pilis, torņi un bumbu vannas bērnu svētkiem Latvijā. Telpās un ārā, tīras un drošas. No €100. Piegāde Pierīgā bez maksas.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata(locale, "atrakcijas", "/piepusamas-atrakcijas");
+}
 
 export const revalidate = 300;
 
 export default async function PiepusamasAtrakcijasPage() {
-  const items = await getProductsByCategory("atrakcijas");
+  const [items, t] = await Promise.all([
+    getProductsByCategory("atrakcijas"),
+    getTranslations("pages"),
+  ]);
 
   return (
     <>
       <SectionHero
-        title="Piepūšamās atrakcijas"
-        tagline="Baltās pilis un bumbu vannas — telpās un ārā, rūpīgi tīrītas un drošas."
+        title={t("atrakcijasTitle")}
+        tagline={t("atrakcijasTagline")}
         video="/videos/herovideo2.mp4"
       />
 
