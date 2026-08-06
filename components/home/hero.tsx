@@ -3,23 +3,32 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE, word, wordStagger } from "@/lib/motion";
+import HeroVideo from "@/components/hero-video";
 
 const HEADLINE = ["Neaizmirstamas", "ballītes", "sākas", "šeit"];
 const GOLD_WORD = "ballītes";
 
-export default function Hero() {
+export default function Hero({ videos = [] }: { videos?: string[] }) {
   const reduce = useReducedMotion();
 
   return (
     <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden">
-      {/* Fons — premium gradients + zelta glow (video/attēls nāk vēlāk) */}
+      {/* Fons — video (secīgi), citādi premium gradients + zelta glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-navy via-bg to-black" />
-      <div
-        className="absolute left-1/2 top-[20%] h-[45vh] w-[70vw] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(212,169,96,0.22),transparent_65%)] blur-2xl anabella-glow-pulse"
-        aria-hidden
-      />
-      {/* Tumšs pārklājums lasāmībai */}
-      <div className="absolute inset-0 bg-bg/40" />
+      {videos.length > 0 ? (
+        <>
+          <HeroVideo sources={videos} />
+          <div className="absolute inset-0 bg-bg/60" />
+        </>
+      ) : (
+        <>
+          <div
+            className="absolute left-1/2 top-[20%] h-[45vh] w-[70vw] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(212,169,96,0.22),transparent_65%)] blur-2xl anabella-glow-pulse"
+            aria-hidden
+          />
+          <div className="absolute inset-0 bg-bg/40" />
+        </>
+      )}
 
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
         <motion.h1

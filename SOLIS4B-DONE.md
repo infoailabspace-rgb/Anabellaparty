@@ -7,22 +7,22 @@
 
 ## Logo faili
 
-Roberts iedeva **pilno logo** (navy plāksne ar zelta rāmi, "Anabella" wordmark, "SVĒTKU INVENTĀRS" apakšraksts, disko bumba), 500×500 PNG ar caurspīdīgumu.
+Roberts iedeva **pilno logo** (navy plāksne ar zelta rāmi, "Anabella" wordmark, "SVĒTKU INVENTĀRS" apakšraksts, disko bumba), 500×500 PNG.
 
-No tā ar `sharp` (jau instalēts) izgriezu:
-- `public/logo/logo-full.png` — pilnais logo (footer, 404, e-pasts).
-- `public/logo/logo-mark.png` — **Anabella + disko bumba, bez rāmja un apakšraksta** (navbar). Atrisina `[JĀAPSTIPRINA]` — atsevišķa versija izgriezta no pilnā.
-- `app/icon.png` + `app/apple-icon.png` — **tikai disko bumba** uz navy fona (favicon).
+**SVARĪGI:** logo tiek lietots **100% identisks failam — bez izgriešanas, krāsu vai proporciju izmaiņām**, tikai mērogots.
+
+- `public/logo/logo-full.png` — pilnais logo, lietots VISUR.
+- `app/icon.png` + `app/apple-icon.png` — pilnā logo eksakta kopija (favicon).
 
 ---
 
-## Kur ievietots
+## Kur ievietots (visur pilnais logo)
 
-- **Navbar** — `logo-mark.png` (`next/image`, `h-9` mobil / `h-11` desktop, `w-auto`, `priority`, `rounded-md`, hover `opacity-90`, `aria-label`). Teksts "Anabella Party" aizvietots pilnībā.
+- **Navbar** — `logo-full.png` (`next/image`, `h-12` mobil / `h-14` desktop, `w-auto`, `priority`, hover `opacity-90`, `aria-label`). Teksts "Anabella Party" aizvietots.
 - **Footer** — `logo-full.png` (`h-24`).
 - **404 lapa** — `logo-full.png` (`h-24`, centrēts).
-- **Favicon** — `app/icon.png` (256) + `app/apple-icon.png` (180), navy fons (ne caurspīdīgs). Noklusējuma `favicon.ico` izdzēsts, lai Next lieto disko bumbu.
-- **E-pasta galvene** (SOLIS3 apstiprinājums) — pilnais logo 200px, centrēts, absolūts URL (`NEXT_PUBLIC_SITE_URL` vai vercel.app).
+- **Favicon** — `app/icon.png` + `app/apple-icon.png` (pilnais logo). Noklusējuma `favicon.ico` izdzēsts.
+- **E-pasta galvene** — pilnais logo 200px, absolūts URL (`NEXT_PUBLIC_SITE_URL`).
 
 ---
 

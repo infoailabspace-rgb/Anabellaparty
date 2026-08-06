@@ -11,8 +11,8 @@ import { homeCategories } from "@/lib/categories";
 export default function Home() {
   return (
     <>
-      {/* Hero — video/attēls (pagaidām gradients + glow) */}
-      <Hero />
+      {/* Hero — abi video secīgi viens pēc otra */}
+      <Hero videos={["/videos/herovideo1.mp4", "/videos/herovideo2.mp4"]} />
 
       {/* Kā tas notiek — bg */}
       <Steps />

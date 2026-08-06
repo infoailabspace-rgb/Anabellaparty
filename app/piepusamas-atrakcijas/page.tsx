@@ -20,6 +20,7 @@ export default function PiepusamasAtrakcijasPage() {
       <SectionHero
         title="Piepūšamās atrakcijas"
         tagline="Baltās pilis un bumbu vannas — telpās un ārā, rūpīgi tīrītas un drošas."
+        video="/videos/herovideo2.mp4"
       />
 
       <div className="mx-auto max-w-6xl px-6 py-16">

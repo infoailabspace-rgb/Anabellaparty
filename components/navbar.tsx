@@ -48,12 +48,12 @@ export default function Navbar() {
           className="transition-opacity hover:opacity-90"
         >
           <Image
-            src="/logo/logo-mark.png"
-            alt="Anabella Svētku inventārs"
-            width={398}
-            height={150}
+            src="/logo/logo-full.png"
+            alt="Anabella Party — Svētku inventārs"
+            width={500}
+            height={500}
             priority
-            className="h-9 w-auto rounded-md md:h-11"
+            className="h-12 w-auto md:h-14"
           />
         </Link>
 

@@ -35,6 +35,7 @@ export default function FotoKastePage() {
       <SectionHero
         title="Foto kastes"
         tagline="Uztver mirkļus, kas paliek — tūlītējas izdrukas, asistents un personalizēts dizains."
+        video="/videos/herovideo1.mp4"
       />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
