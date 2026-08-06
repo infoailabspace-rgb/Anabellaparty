@@ -1,16 +1,18 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import type { Product } from "@/lib/products";
+import { Link } from "@/i18n/navigation";
 import ImageGallery from "@/components/image-gallery";
 import PriceBlock from "@/components/price-block";
 import SlideReveal from "@/components/slide-reveal";
 
-export default function ProductDetail({
+export default async function ProductDetail({
   product,
   index = 0,
 }: {
   product: Product;
   index?: number;
 }) {
+  const t = await getTranslations("productDetail");
   return (
     <SlideReveal index={index}>
       <article
@@ -48,7 +50,7 @@ export default function ProductDetail({
             {product.includes && product.includes.length > 0 && (
               <div className="mt-6">
                 <h3 className="font-display text-sm font-semibold text-text">
-                  Nomā iekļauts
+                  {t("included")}
                 </h3>
                 <ul className="mt-3 space-y-2">
                   {product.includes.map((item) => (
@@ -68,14 +70,14 @@ export default function ProductDetail({
                   href={`tel:+371${product.altPhone}`}
                   className="rounded-full bg-gold px-7 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
                 >
-                  Zvanīt {product.altPhone}
+                  {t("call", { phone: product.altPhone })}
                 </a>
               ) : (
                 <Link
                   href="/rezervet"
                   className="rounded-full bg-gold px-7 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
                 >
-                  Rezervēt
+                  {t("book")}
                 </Link>
               )}
             </div>

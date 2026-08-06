@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { type Product } from "@/lib/products";
 import { homeCategories } from "@/lib/categories";
@@ -17,15 +18,21 @@ import {
 import PricePanel from "@/components/booking/price-panel";
 
 const STORAGE_KEY = "anabella-booking";
+// Vērtība (v) glabājas LV (konsekvence admin/e-pastos); attēlo (k) tulkoto.
 const EVENT_TYPES = [
-  "Kāzas",
-  "Jubileja",
-  "Bērnu ballīte",
-  "Korporatīvais",
-  "Kristības",
-  "Cits",
-];
+  { v: "Kāzas", k: "etWedding" },
+  { v: "Jubileja", k: "etAnniversary" },
+  { v: "Bērnu ballīte", k: "etKids" },
+  { v: "Korporatīvais", k: "etCorporate" },
+  { v: "Kristības", k: "etChristening" },
+  { v: "Cits", k: "etOther" },
+] as const;
 const DURATIONS = ["2h", "4h", "6h", "10h", "12h", "Visa diena"];
+const IO_OPTIONS = [
+  { v: "Telpās", k: "ioIndoor" },
+  { v: "Ārā", k: "ioOutdoor" },
+  { v: "Vēl nezinu", k: "ioUnknown" },
+] as const;
 
 const emptyContact: BookingContact = {
   name: "",
@@ -50,6 +57,7 @@ function defaultTierIndex(p: Product) {
 }
 
 export default function BookingForm({ products }: { products: Product[] }) {
+  const t = useTranslations("booking");
   const reduce = useReducedMotion();
   const productsBySlug = useMemo(
     () => new Map(products.map((p) => [p.slug, p])),
@@ -169,12 +177,12 @@ export default function BookingForm({ products }: { products: Product[] }) {
       } else {
         setDelivery(null);
         setDeliveryStatus("error");
-        setDeliveryError(data.error ?? "Neizdevās aprēķināt piegādi.");
+        setDeliveryError(data.error ?? t("errCalc"));
       }
     } catch {
       setDelivery(null);
       setDeliveryStatus("error");
-      setDeliveryError("Neizdevās aprēķināt piegādi. Norādīsim manuāli.");
+      setDeliveryError(t("errCalcManual"));
     }
   }
 
@@ -219,20 +227,20 @@ export default function BookingForm({ products }: { products: Product[] }) {
 
   function validateStep(s: number): string[] {
     const e: string[] = [];
-    if (s === 1 && items.length === 0) e.push("Izvēlies vismaz vienu inventāra vienību.");
+    if (s === 1 && items.length === 0) e.push(t("errPickItem"));
     if (s === 2) {
-      if (!event.date) e.push("Norādi pasākuma datumu.");
+      if (!event.date) e.push(t("errDate"));
       else if (new Date(event.date) < new Date(todayStr))
-        e.push("Datums nedrīkst būt pagātnē.");
-      if (!event.type) e.push("Izvēlies pasākuma veidu.");
-      if (!event.location.trim()) e.push("Norādi norises vietu.");
+        e.push(t("errDatePast"));
+      if (!event.type) e.push(t("errType"));
+      if (!event.location.trim()) e.push(t("errLocation"));
     }
     if (s === 3) {
-      if (!contact.name.trim()) e.push("Norādi vārdu.");
-      if (!isValidPhone(contact.phone)) e.push("Norādi derīgu telefona numuru.");
-      if (!isValidEmail(contact.email)) e.push("Norādi derīgu e-pastu.");
+      if (!contact.name.trim()) e.push(t("errName"));
+      if (!isValidPhone(contact.phone)) e.push(t("errPhone"));
+      if (!isValidEmail(contact.email)) e.push(t("errEmail"));
     }
-    if (s === 4 && !consent) e.push("Jāpiekrīt noteikumiem un privātuma politikai.");
+    if (s === 4 && !consent) e.push(t("errConsent"));
     return e;
   }
 
@@ -274,9 +282,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
       });
       const data = await res.json();
       if (!res.ok) {
-        setErrors(
-          data.errors ?? [data.error ?? "Neizdevās nosūtīt. Mēģini vēlreiz vai zvani mums."],
-        );
+        setErrors(data.errors ?? [data.error ?? t("errSend")]);
         setSubmitting(false);
         return;
       }
@@ -286,7 +292,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
       sessionStorage.removeItem(STORAGE_KEY);
       setSubmitted(true);
     } catch {
-      setErrors(["Neizdevās nosūtīt. Pārbaudi savienojumu vai zvani +371 29222761."]);
+      setErrors([t("errSendConn")]);
       setSubmitting(false);
     }
   }
@@ -314,7 +320,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
                   n === step ? "text-gold" : "text-text/40"
                 }`}
               >
-                {["Inventārs", "Pasākums", "Kontakti", "Apstiprināt"][n - 1]}
+                {[t("s1"), t("s2"), t("s3"), t("s4")][n - 1]}
               </span>
             </div>
           ))}
@@ -385,7 +391,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
             disabled={step === 1}
             className="rounded-full border border-gold/40 px-6 py-2.5 text-sm font-semibold text-text/80 transition-colors enabled:hover:border-gold disabled:opacity-30"
           >
-            Atpakaļ
+            {t("back")}
           </button>
           {step < 4 ? (
             <button
@@ -393,7 +399,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
               onClick={next}
               className="rounded-full bg-gold px-8 py-2.5 font-semibold text-black transition-transform hover:scale-[1.03]"
             >
-              Tālāk
+              {t("next")}
             </button>
           ) : (
             <button
@@ -405,7 +411,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
               {submitting && (
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
               )}
-              {submitting ? "Nosūta…" : "Nosūtīt pieteikumu"}
+              {submitting ? t("submitting") : t("submit")}
             </button>
           )}
         </div>
@@ -447,13 +453,21 @@ function StepInventory({
   setAddOn: (slug: string, name: string, qty: number) => void;
   kubliSelected: boolean;
 }) {
+  const t = useTranslations("booking");
+  const tn = useTranslations("nav");
+  const catLabel: Record<string, string> = {
+    "foto-kaste": tn("fotoKastes"),
+    atrakcijas: tn("atrakcijas"),
+    "audio-video": tn("audioVideo"),
+    specefekti: tn("specefekti"),
+    deco: tn("deco"),
+    kubli: tn("kubli"),
+  };
   const list = byCategory(activeCat);
   return (
     <div>
-      <h2 className="font-display text-2xl font-bold">Izvēlies inventāru</h2>
-      <p className="mt-1 text-sm text-text/60">
-        Vari kombinēt vairākus produktus no dažādām kategorijām.
-      </p>
+      <h2 className="font-display text-2xl font-bold">{t("invTitle")}</h2>
+      <p className="mt-1 text-sm text-text/60">{t("invSubtitle")}</p>
 
       {/* Kategoriju cilnes */}
       <div className="mt-5 flex flex-wrap gap-2">
@@ -468,18 +482,18 @@ function StepInventory({
                 : "border-gold/30 text-text/80 hover:border-gold/60"
             }`}
           >
-            {c.short}
+            {catLabel[c.id] ?? c.short}
           </button>
         ))}
       </div>
 
       {kubliSelected && (
         <p className="mt-5 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm text-text/85">
-          Kubli un pirts atrodas Jūrmalā, un tiem ir atsevišķs kontakttālrunis{" "}
+          {t("kubliNotePre")}
           <a href="tel:+37128286911" className="font-semibold text-gold">
             28286911
           </a>
-          . Piegādes cena pēc vienošanās.
+          {t("kubliNotePost")}
         </p>
       )}
 
@@ -500,8 +514,8 @@ function StepInventory({
                   <h3 className="font-display font-semibold">{p.name}</h3>
                   <p className="mt-1 font-mono text-sm text-gold">
                     {p.contactOnly
-                      ? "Cena vienojoties"
-                      : `${pricedTiers.find((t) => t.price > 0)?.price ?? 0} €`}
+                      ? t("priceAgree")
+                      : `${pricedTiers.find((tr) => tr.price > 0)?.price ?? 0} €`}
                   </p>
                 </div>
                 <button
@@ -514,7 +528,7 @@ function StepInventory({
                       : "border border-gold/40 text-gold hover:bg-gold/10"
                   }`}
                 >
-                  {selected ? "✓ Grozā" : "Pievienot"}
+                  {selected ? t("inCart") : t("add")}
                 </button>
               </div>
 
@@ -524,12 +538,12 @@ function StepInventory({
                   {pricedTiers.length > 1 && (
                     <div>
                       <p className="text-xs uppercase tracking-wide text-text/50">
-                        Tarifs
+                        {t("tariff")}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
-                        {pricedTiers.map((t, ti) => (
+                        {pricedTiers.map((tr, ti) => (
                           <button
-                            key={t.duration + ti}
+                            key={tr.duration + ti}
                             type="button"
                             onClick={() => patch(p.slug, { tierIndex: ti })}
                             className={`rounded-lg border px-3 py-1 text-xs transition-colors ${
@@ -538,7 +552,8 @@ function StepInventory({
                                 : "border-gold/25 text-text/70 hover:border-gold/50"
                             }`}
                           >
-                            {t.duration} · {t.price > 0 ? `${t.price} €` : "vienojoties"}
+                            {tr.duration} ·{" "}
+                            {tr.price > 0 ? `${tr.price} €` : t("agree")}
                           </button>
                         ))}
                       </div>
@@ -548,7 +563,7 @@ function StepInventory({
                   {/* Papildu stundas */}
                   {typeof p.hourlyExtra === "number" && (
                     <Counter
-                      label={`Papildu stundas (+${p.hourlyExtra} €/h)`}
+                      label={t("extraHours", { price: p.hourlyExtra })}
                       value={item.extraHours}
                       onChange={(v) => patch(p.slug, { extraHours: v })}
                     />
@@ -582,6 +597,7 @@ function Counter({
   value: number;
   onChange: (v: number) => void;
 }) {
+  const t = useTranslations("booking");
   return (
     <div className="flex items-center justify-between gap-3">
       <span className="text-sm text-text/75">{label}</span>
@@ -589,7 +605,7 @@ function Counter({
         <button
           type="button"
           onClick={() => onChange(Math.max(0, value - 1))}
-          aria-label="Mazāk"
+          aria-label={t("less")}
           className="flex h-7 w-7 items-center justify-center rounded-full border border-gold/40 text-gold hover:bg-gold/10"
         >
           −
@@ -598,7 +614,7 @@ function Counter({
         <button
           type="button"
           onClick={() => onChange(value + 1)}
-          aria-label="Vairāk"
+          aria-label={t("more")}
           className="flex h-7 w-7 items-center justify-center rounded-full border border-gold/40 text-gold hover:bg-gold/10"
         >
           +
@@ -630,15 +646,16 @@ function StepEvent({
   deliveryStatus: "idle" | "loading" | "ok" | "error";
   deliveryError: string;
 }) {
+  const t = useTranslations("booking");
   const set = (patch: Partial<BookingEvent>) => setEvent({ ...event, ...patch });
   const field =
     "w-full rounded-lg border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold";
   return (
     <div>
-      <h2 className="font-display text-2xl font-bold">Par pasākumu</h2>
+      <h2 className="font-display text-2xl font-bold">{t("evTitle")}</h2>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="text-sm text-text/70">Pasākuma datums *</span>
+          <span className="text-sm text-text/70">{t("evDate")}</span>
           <input
             type="date"
             min={todayStr}
@@ -648,7 +665,7 @@ function StepEvent({
           />
         </label>
         <label className="block">
-          <span className="text-sm text-text/70">Sākuma laiks</span>
+          <span className="text-sm text-text/70">{t("evTime")}</span>
           <input
             type="time"
             value={event.time}
@@ -657,37 +674,37 @@ function StepEvent({
           />
         </label>
         <label className="block">
-          <span className="text-sm text-text/70">Ilgums</span>
+          <span className="text-sm text-text/70">{t("evDuration")}</span>
           <select
             value={event.duration}
             onChange={(e) => set({ duration: e.target.value })}
             className={`mt-1 ${field}`}
           >
-            <option value="">Izvēlies…</option>
+            <option value="">{t("choose")}</option>
             {DURATIONS.map((d) => (
               <option key={d} value={d}>
-                {d}
+                {d === "Visa diena" ? t("durAllDay") : d}
               </option>
             ))}
           </select>
         </label>
         <label className="block">
-          <span className="text-sm text-text/70">Pasākuma veids *</span>
+          <span className="text-sm text-text/70">{t("evType")}</span>
           <select
             value={event.type}
             onChange={(e) => set({ type: e.target.value })}
             className={`mt-1 ${field}`}
           >
-            <option value="">Izvēlies…</option>
-            {EVENT_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t}
+            <option value="">{t("choose")}</option>
+            {EVENT_TYPES.map((et) => (
+              <option key={et.v} value={et.v}>
+                {t(et.k)}
               </option>
             ))}
           </select>
         </label>
         <label className="block">
-          <span className="text-sm text-text/70">Viesu skaits</span>
+          <span className="text-sm text-text/70">{t("evGuests")}</span>
           <input
             type="number"
             inputMode="numeric"
@@ -698,10 +715,10 @@ function StepEvent({
           />
         </label>
         <label className="block">
-          <span className="text-sm text-text/70">Norises vieta *</span>
+          <span className="text-sm text-text/70">{t("evLocation")}</span>
           <input
             type="text"
-            placeholder="Pilsēta / novads / adrese"
+            placeholder={t("evLocationPh")}
             value={event.location}
             onChange={(e) => set({ location: e.target.value })}
             className={`mt-1 ${field}`}
@@ -710,18 +727,18 @@ function StepEvent({
       </div>
 
       <div className="mt-4">
-        <span className="text-sm text-text/70">Telpās vai ārā?</span>
+        <span className="text-sm text-text/70">{t("evInOut")}</span>
         <div className="mt-2 flex gap-4 text-sm">
-          {["Telpās", "Ārā", "Vēl nezinu"].map((o) => (
-            <label key={o} className="flex items-center gap-2">
+          {IO_OPTIONS.map((o) => (
+            <label key={o.v} className="flex items-center gap-2">
               <input
                 type="radio"
                 name="io"
-                checked={event.indoorOutdoor === o}
-                onChange={() => set({ indoorOutdoor: o })}
+                checked={event.indoorOutdoor === o.v}
+                onChange={() => set({ indoorOutdoor: o.v })}
                 className="accent-[#D4A960]"
               />
-              {o}
+              {t(o.k)}
             </label>
           ))}
         </div>
@@ -730,10 +747,10 @@ function StepEvent({
       {/* Piegādes adrese ar auto-aprēķinu */}
       <div className="mt-6">
         <label className="block">
-          <span className="text-sm text-text/70">Piegādes adrese</span>
+          <span className="text-sm text-text/70">{t("evDeliveryAddr")}</span>
           <input
             type="text"
-            placeholder="Iela, māja, pilsēta / novads"
+            placeholder={t("evDeliveryPh")}
             value={deliveryAddress}
             onChange={(e) => setDeliveryAddress(e.target.value)}
             onBlur={(e) => computeDelivery(e.target.value)}
@@ -743,16 +760,16 @@ function StepEvent({
 
         <div className="mt-2 rounded-xl border border-gold/20 bg-navy/25 p-4 text-sm">
           {deliveryStatus === "loading" && (
-            <span className="text-text/60">Aprēķina attālumu…</span>
+            <span className="text-text/60">{t("computing")}</span>
           )}
           {deliveryStatus === "ok" && delivery && (
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="text-text/75">
-                Attālums no Ķekavas: ~{delivery.km} km
+                {t("distanceFrom", { km: delivery.km })}
               </span>
               <span className="font-mono font-semibold text-gold">
-                Piegāde:{" "}
-                {delivery.cost > 0 ? formatEur(delivery.cost) : "bez maksas"}
+                {t("deliveryLabel")}{" "}
+                {delivery.cost > 0 ? formatEur(delivery.cost) : t("free")}
               </span>
             </div>
           )}
@@ -760,11 +777,7 @@ function StepEvent({
             <span className="text-rose-gold">{deliveryError}</span>
           )}
           {deliveryStatus === "idle" && (
-            <span className="text-text/50">
-              Ievadi piegādes adresi — automātiski aprēķināsim attālumu un cenu.
-              Ķekavas novadā piegāde bez maksas, tālāk 25 € / 100 km (aprēķins
-              turp-atpakaļ).
-            </span>
+            <span className="text-text/50">{t("deliveryIdle")}</span>
           )}
         </div>
       </div>
@@ -780,16 +793,17 @@ function StepContact({
   contact: BookingContact;
   setContact: (c: BookingContact) => void;
 }) {
+  const t = useTranslations("booking");
   const set = (patch: Partial<BookingContact>) =>
     setContact({ ...contact, ...patch });
   const field =
     "w-full rounded-lg border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold";
   return (
     <div>
-      <h2 className="font-display text-2xl font-bold">Tavi kontakti</h2>
+      <h2 className="font-display text-2xl font-bold">{t("cTitle")}</h2>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <label className="block sm:col-span-2">
-          <span className="text-sm text-text/70">Vārds, uzvārds *</span>
+          <span className="text-sm text-text/70">{t("cName")}</span>
           <input
             type="text"
             value={contact.name}
@@ -798,7 +812,7 @@ function StepContact({
           />
         </label>
         <label className="block">
-          <span className="text-sm text-text/70">Telefons *</span>
+          <span className="text-sm text-text/70">{t("cPhone")}</span>
           <input
             type="tel"
             inputMode="tel"
@@ -809,7 +823,7 @@ function StepContact({
           />
         </label>
         <label className="block">
-          <span className="text-sm text-text/70">E-pasts *</span>
+          <span className="text-sm text-text/70">{t("cEmail")}</span>
           <input
             type="email"
             inputMode="email"
@@ -819,7 +833,7 @@ function StepContact({
           />
         </label>
         <label className="block">
-          <span className="text-sm text-text/70">Uzņēmums</span>
+          <span className="text-sm text-text/70">{t("cCompany")}</span>
           <input
             type="text"
             value={contact.company}
@@ -829,7 +843,7 @@ function StepContact({
         </label>
         {contact.company?.trim() && (
           <label className="block">
-            <span className="text-sm text-text/70">Reģ. nr. / PVN nr.</span>
+            <span className="text-sm text-text/70">{t("cRegNr")}</span>
             <input
               type="text"
               value={contact.regNr}
@@ -861,25 +875,26 @@ function StepReview({
   consent: boolean;
   setConsent: (v: boolean) => void;
 }) {
+  const t = useTranslations("booking");
   return (
     <div>
-      <h2 className="font-display text-2xl font-bold">Apraksts un apstiprinājums</h2>
+      <h2 className="font-display text-2xl font-bold">{t("rTitle")}</h2>
 
       <label className="mt-6 block">
-        <span className="text-sm text-text/70">Pasākuma apraksts</span>
+        <span className="text-sm text-text/70">{t("rDescLabel")}</span>
         <textarea
           rows={5}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Pastāsti par pasākumu — tematika, īpašas vēlmes, kur tieši uzstādīt inventāru, vai vajadzīgs asistents…"
+          placeholder={t("rDescPh")}
           className="mt-1 w-full rounded-lg border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold"
         />
       </label>
 
       <div className="mt-6 rounded-xl border border-gold/20 bg-navy/25 p-5 text-sm">
-        <h3 className="font-display font-semibold text-gold">Kopsavilkums</h3>
+        <h3 className="font-display font-semibold text-gold">{t("rSummary")}</h3>
         <p className="mt-2 text-text/80">
-          {items.length} inventāra vienība(s) · {event.date || "—"}
+          {t("rUnits", { n: items.length })} · {event.date || "—"}
           {event.time ? " " + event.time : ""} · {event.type || "—"}
         </p>
         <p className="text-text/60">
@@ -896,13 +911,13 @@ function StepReview({
           className="mt-0.5 accent-[#D4A960]"
         />
         <span className="text-text/80">
-          Piekrītu{" "}
+          {t("agreePrefix")}
           <Link href="/noteikumi" className="text-gold underline">
-            nomas noteikumiem
-          </Link>{" "}
-          un{" "}
+            {t("terms")}
+          </Link>
+          {t("and")}
           <Link href="/privatuma-politika" className="text-gold underline">
-            privātuma politikai
+            {t("privacy")}
           </Link>
           .
         </span>
@@ -913,30 +928,28 @@ function StepReview({
 
 /* ─────────────── Veiksmes ekrāns ─────────────── */
 function SuccessScreen({ name }: { name: string }) {
+  const t = useTranslations("booking");
   return (
     <div className="mx-auto max-w-xl rounded-3xl border border-gold/30 bg-navy/30 p-10 text-center">
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold text-3xl text-black">
         ✓
       </div>
       <h2 className="mt-6 font-display text-2xl font-bold">
-        Paldies{name ? `, ${name}` : ""}!
+        {t("sThanks", { name: name ? `, ${name}` : "" })}
       </h2>
-      <p className="mt-3 text-text/80">
-        Tavs pieteikums ir saņemts. Atbildēsim <b>24 stundu laikā</b> ar precīzu
-        piedāvājumu. Ja steidz — sazinies tieši:
-      </p>
+      <p className="mt-3 text-text/80">{t("sReceived")}</p>
       <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
         <a
           href="tel:+37129222761"
           className="rounded-full bg-gold px-7 py-3 font-semibold text-black"
         >
-          Zvanīt +371 29222761
+          {t("sCall")}
         </a>
         <a
           href="https://wa.me/37129222761"
           className="rounded-full border border-gold px-7 py-3 font-semibold text-gold hover:bg-gold/10"
         >
-          WhatsApp
+          {t("sWhatsapp")}
         </a>
       </div>
     </div>

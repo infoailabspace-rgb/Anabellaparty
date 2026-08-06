@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { faqCategories, type FaqCategory, type FaqItem } from "@/lib/faq";
 
 type Filter = "all" | FaqCategory;
 
 export default function FaqAccordion({ items }: { items: FaqItem[] }) {
+  const t = useTranslations("faqCat");
   const [filter, setFilter] = useState<Filter>("all");
   const [open, setOpen] = useState<number | null>(null);
 
@@ -18,7 +20,7 @@ export default function FaqAccordion({ items }: { items: FaqItem[] }) {
       {/* Kategoriju filtrs */}
       <div className="flex flex-wrap justify-center gap-3">
         <FilterButton active={filter === "all"} onClick={() => setFilter("all")}>
-          Visi
+          {t("all")}
         </FilterButton>
         {faqCategories.map((c) => (
           <FilterButton
@@ -29,7 +31,7 @@ export default function FaqAccordion({ items }: { items: FaqItem[] }) {
               setOpen(null);
             }}
           >
-            {c.label}
+            {t(c.id)}
           </FilterButton>
         ))}
       </div>
