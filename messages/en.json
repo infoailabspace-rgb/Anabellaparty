@@ -35,5 +35,45 @@
     "rezervet": "Book now",
     "sazinaties": "Contact us",
     "apskatit": "View"
+  },
+  "home": {
+    "offerTitle": "Our offering",
+    "offerSubtitle": "From photo booths to hot tubs — everything for your event in one place."
+  },
+  "steps": {
+    "heading": "How it works",
+    "s1Title": "Choose",
+    "s1Text": "Browse the inventory and pick what will make your event special.",
+    "s2Title": "Book",
+    "s2Text": "Fill in the booking in a few minutes — we confirm the date.",
+    "s3Title": "We arrive",
+    "s3Text": "We deliver, set up and collect. All you have to do is celebrate."
+  },
+  "about": {
+    "eyebrow": "Let's get acquainted",
+    "heading": "What is Anabella party inventory?",
+    "story1": "That's us — Aiva and Roberts Dimanti.",
+    "story2": "We are husband and wife who one day simply decided to do what we love. We left our stable jobs and started living for real. Now we create celebrations — ones that stay in memory not only in photos, but in the heart.",
+    "story3": "Our photo booths capture real laughter, not poses. Our white attractions delight children and amuse adults. We arrive with joy and leave with the feeling that we've made someone's day special.",
+    "story4": "This is not just a service. This is our passion. It's us — with all our energy, creativity and desire for your event to be the one people talk about for a long time.",
+    "plusesTitle": "Our little big pluses",
+    "plus1": "We do it with heart, not by template",
+    "plus2": "Every client is not a “client” to us — you are like friends",
+    "plus3": "Positive energy you can't miss",
+    "plus4": "A festive feeling guaranteed",
+    "closing": "See you at the events!",
+    "photoPlaceholder": "[NEEDED: a photo of Aiva and Roberts together]",
+    "statEvents": "events",
+    "statUnits": "inventory items",
+    "sincePrefix": "since "
+  },
+  "clients": {
+    "heading": "Among our clients",
+    "intro": "Anabella inventory has been at company parties, municipal celebrations, shopping-centre events and family gatherings all over Latvia. We work with both private individuals and the largest Latvian companies and regional municipalities."
+  },
+  "cta": {
+    "title": "Ready to celebrate?",
+    "text": "Book your equipment today and make your event unforgettable.",
+    "button": "Book now"
   }
 }

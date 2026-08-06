@@ -1,23 +1,9 @@
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 import Reveal from "@/components/reveal";
 import CountUp from "@/components/count-up";
 
-// Reālais Aivas un Roberta teksts no anabellaparty.lv — formulējumus nemaina.
-const STORY = [
-  "Tie esam mēs — Aiva un Roberts Dimanti.",
-  "Mēs esam vīrs un sieva, kuri vienu dienu vienkārši izlēma darīt to, kas patīk. Atstājām stabilos darbus un sākām dzīvot pa īstam. Tagad mēs radām svētkus — tādus, kas paliek atmiņā ne tikai bildēs, bet arī sirdī.",
-  "Mūsu foto kastes ķer īstus smieklus, nevis pozas. Mūsu baltās atrakcijas iepriecina bērnus un uzjautrina pieaugušos. Mēs ierodamies ar prieku un aizbraucam ar sajūtu, ka esam kādam dienu padarījuši īpašu.",
-  "Šis nav vienkārši pakalpojums. Šī ir mūsu sirdslieta. Mēs paši — ar visu savu enerģiju, radošumu un vēlmi, lai jūsu pasākums būtu tas, par ko runā vēl ilgi.",
-];
-
-const PLUSES = [
-  "Mēs darām ar sirdi, ne pēc šablona",
-  "Katrs klients mums nav „klients” — jūs esat kā draugi",
-  "Pozitīva enerģija, ko nevar nepamanīt",
-  "Svētku sajūta garantēta",
-];
-
-export default function About({
+export default async function About({
   statsEvents = "500",
   statsUnits = "40",
   statsSince = "2022",
@@ -26,10 +12,13 @@ export default function About({
   statsUnits?: string;
   statsSince?: string;
 }) {
+  const t = await getTranslations("about");
+  const story = [t("story1"), t("story2"), t("story3"), t("story4")];
+  const pluses = [t("plus1"), t("plus2"), t("plus3"), t("plus4")];
   const stats = [
-    { to: Number(statsEvents) || 0, suffix: "+", label: "pasākumi" },
-    { to: Number(statsUnits) || 0, suffix: "+", label: "inventāra vienības" },
-    { to: Number(statsSince) || 0, prefix: "kopš ", label: "" },
+    { to: Number(statsEvents) || 0, suffix: "+", label: t("statEvents") },
+    { to: Number(statsUnits) || 0, suffix: "+", label: t("statUnits") },
+    { to: Number(statsSince) || 0, prefix: t("sincePrefix"), label: "" },
   ];
   return (
     <section className="bg-bg py-24 md:py-32">
@@ -46,7 +35,7 @@ export default function About({
                 className="object-cover"
               />
               <span className="absolute inset-x-0 bottom-0 bg-navy/70 px-3 py-1.5 text-center text-xs text-text/70 backdrop-blur">
-                [VAJAG: Aivas un Roberta kopīgs foto]
+                {t("photoPlaceholder")}
               </span>
             </div>
           </Reveal>
@@ -55,13 +44,13 @@ export default function About({
           <Reveal>
             <div>
               <p className="font-mono text-sm uppercase tracking-[0.2em] text-gold">
-                Iepazīsimies?
+                {t("eyebrow")}
               </p>
               <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl">
-                Kas ir Svētku inventārs Anabella?
+                {t("heading")}
               </h2>
               <div className="mt-6 space-y-4 leading-relaxed text-text/80">
-                {STORY.map((para, i) => (
+                {story.map((para, i) => (
                   <p key={i}>{para}</p>
                 ))}
               </div>
@@ -69,10 +58,10 @@ export default function About({
               {/* Mūsu mazie lielie plusi */}
               <div className="mt-8 rounded-2xl border border-gold/30 bg-navy/25 p-6">
                 <p className="font-display text-sm font-semibold uppercase tracking-wide text-gold">
-                  Mūsu mazie lielie plusi
+                  {t("plusesTitle")}
                 </p>
                 <ul className="mt-4 space-y-2.5">
-                  {PLUSES.map((p) => (
+                  {pluses.map((p) => (
                     <li key={p} className="flex items-start gap-3 text-text/85">
                       <span
                         aria-hidden
@@ -85,7 +74,7 @@ export default function About({
               </div>
 
               <p className="mt-8 font-display text-2xl font-bold text-gold md:text-3xl">
-                Uz tikšanos pasākumos!
+                {t("closing")}
               </p>
             </div>
           </Reveal>

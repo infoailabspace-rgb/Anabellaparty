@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import Reveal from "@/components/reveal";
 import CountUp from "@/components/count-up";
 import Shimmer from "@/components/shimmer";
@@ -8,34 +9,19 @@ import {
   IconTruck,
 } from "@/components/icons";
 
-const steps = [
-  {
-    n: 1,
-    title: "Izvēlies",
-    text: "Apskati inventāru un izvēlies, kas padarīs Tavu pasākumu īpašu.",
-    Icon: IconBrowse,
-  },
-  {
-    n: 2,
-    title: "Rezervē",
-    text: "Aizpildi rezervāciju dažās minūtēs — mēs apstiprinām datumu.",
-    Icon: IconCalendarCheck,
-  },
-  {
-    n: 3,
-    title: "Mēs atbraucam",
-    text: "Piegādājam, uzstādām un savācam. Tev atliek tikai svinēt.",
-    Icon: IconTruck,
-  },
-];
-
-export default function Steps() {
+export default async function Steps() {
+  const t = await getTranslations("steps");
+  const steps = [
+    { n: 1, title: t("s1Title"), text: t("s1Text"), Icon: IconBrowse },
+    { n: 2, title: t("s2Title"), text: t("s2Text"), Icon: IconCalendarCheck },
+    { n: 3, title: t("s3Title"), text: t("s3Text"), Icon: IconTruck },
+  ];
   return (
     <section className="bg-bg py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
           <h2 className="text-center font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Kā tas notiek
+            {t("heading")}
           </h2>
         </Reveal>
         <div className="mt-16 grid gap-8 md:grid-cols-3">

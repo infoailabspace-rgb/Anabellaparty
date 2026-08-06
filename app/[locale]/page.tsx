@@ -8,15 +8,17 @@ import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
 import DepthBg from "@/components/depth-bg";
 import { homeCategories } from "@/lib/categories";
+import { getTranslations } from "next-intl/server";
 import { getContentMap } from "@/lib/site-content";
 import { getTestimonials } from "@/lib/site-data";
 
 export const revalidate = 300;
 
 export default async function Home() {
-  const [c, testimonials] = await Promise.all([
+  const [c, testimonials, t] = await Promise.all([
     getContentMap(),
     getTestimonials(),
+    getTranslations("home"),
   ]);
   const g = (k: string, f: string) => (c[k]?.trim() ? c[k] : f);
 
@@ -42,10 +44,10 @@ export default async function Home() {
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           <Reveal>
             <h2 className="text-center font-display text-3xl font-bold tracking-tight md:text-4xl">
-              Mūsu piedāvājums
+              {t("offerTitle")}
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-center leading-relaxed text-text/70">
-              No foto kastēm līdz kubliem — viss Tavam pasākumam vienuviet.
+              {t("offerSubtitle")}
             </p>
           </Reveal>
           <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

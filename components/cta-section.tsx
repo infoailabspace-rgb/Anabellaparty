@@ -1,10 +1,11 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import Reveal from "@/components/reveal";
 
-export default function CtaSection({
-  title = "Gatavs svinēt?",
-  text = "Rezervē inventāru jau šodien un padari savu pasākumu neaizmirstamu.",
-  buttonLabel = "Rezervēt tagad",
+export default async function CtaSection({
+  title,
+  text,
+  buttonLabel,
   href = "/rezervet",
 }: {
   title?: string;
@@ -12,6 +13,7 @@ export default function CtaSection({
   buttonLabel?: string;
   href?: string;
 }) {
+  const t = await getTranslations("cta");
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-[#E8C079] via-gold to-[#C79A4E] py-24 md:py-32">
       {/* Lēna zelta gaismas pulsācija */}
@@ -21,14 +23,16 @@ export default function CtaSection({
       />
       <Reveal className="relative z-10 mx-auto max-w-2xl px-6 text-center">
         <h2 className="font-display text-4xl font-bold tracking-tight text-[#0F1419] md:text-5xl">
-          {title}
+          {title ?? t("title")}
         </h2>
-        <p className="mt-4 text-lg leading-relaxed text-[#0F1419]/80">{text}</p>
+        <p className="mt-4 text-lg leading-relaxed text-[#0F1419]/80">
+          {text ?? t("text")}
+        </p>
         <Link
           href={href}
           className="mt-10 inline-block rounded-full bg-bg px-10 py-4 text-lg font-semibold text-gold shadow-[0_20px_60px_-20px_rgba(15,20,25,0.6)] transition-transform hover:scale-[1.03]"
         >
-          {buttonLabel}
+          {buttonLabel ?? t("button")}
         </Link>
       </Reveal>
     </section>

@@ -35,5 +35,45 @@
     "rezervet": "Rezervēt",
     "sazinaties": "Sazināties",
     "apskatit": "Apskatīt"
+  },
+  "home": {
+    "offerTitle": "Mūsu piedāvājums",
+    "offerSubtitle": "No foto kastēm līdz kubliem — viss Tavam pasākumam vienuviet."
+  },
+  "steps": {
+    "heading": "Kā tas notiek",
+    "s1Title": "Izvēlies",
+    "s1Text": "Apskati inventāru un izvēlies, kas padarīs Tavu pasākumu īpašu.",
+    "s2Title": "Rezervē",
+    "s2Text": "Aizpildi rezervāciju dažās minūtēs — mēs apstiprinām datumu.",
+    "s3Title": "Mēs atbraucam",
+    "s3Text": "Piegādājam, uzstādām un savācam. Tev atliek tikai svinēt."
+  },
+  "about": {
+    "eyebrow": "Iepazīsimies?",
+    "heading": "Kas ir Svētku inventārs Anabella?",
+    "story1": "Tie esam mēs — Aiva un Roberts Dimanti.",
+    "story2": "Mēs esam vīrs un sieva, kuri vienu dienu vienkārši izlēma darīt to, kas patīk. Atstājām stabilos darbus un sākām dzīvot pa īstam. Tagad mēs radām svētkus — tādus, kas paliek atmiņā ne tikai bildēs, bet arī sirdī.",
+    "story3": "Mūsu foto kastes ķer īstus smieklus, nevis pozas. Mūsu baltās atrakcijas iepriecina bērnus un uzjautrina pieaugušos. Mēs ierodamies ar prieku un aizbraucam ar sajūtu, ka esam kādam dienu padarījuši īpašu.",
+    "story4": "Šis nav vienkārši pakalpojums. Šī ir mūsu sirdslieta. Mēs paši — ar visu savu enerģiju, radošumu un vēlmi, lai jūsu pasākums būtu tas, par ko runā vēl ilgi.",
+    "plusesTitle": "Mūsu mazie lielie plusi",
+    "plus1": "Mēs darām ar sirdi, ne pēc šablona",
+    "plus2": "Katrs klients mums nav „klients” — jūs esat kā draugi",
+    "plus3": "Pozitīva enerģija, ko nevar nepamanīt",
+    "plus4": "Svētku sajūta garantēta",
+    "closing": "Uz tikšanos pasākumos!",
+    "photoPlaceholder": "[VAJAG: Aivas un Roberta kopīgs foto]",
+    "statEvents": "pasākumi",
+    "statUnits": "inventāra vienības",
+    "sincePrefix": "kopš "
+  },
+  "clients": {
+    "heading": "Mūsu klientu vidū",
+    "intro": "Anabella inventārs ir bijis uzņēmumu ballēs, pašvaldību svētkos, tirdzniecības centru pasākumos un ģimeņu svinībās visā Latvijā. Strādājam gan ar privātpersonām, gan ar lielākajiem Latvijas uzņēmumiem un novadu pašvaldībām."
+  },
+  "cta": {
+    "title": "Gatavs svinēt?",
+    "text": "Rezervē inventāru jau šodien un padari savu pasākumu neaizmirstamu.",
+    "button": "Rezervēt tagad"
   }
 }
