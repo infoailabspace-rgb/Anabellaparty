@@ -1,4 +1,5 @@
 import { publicClient } from "@/lib/sb-public";
+import { currentLocale, pickStr } from "@/lib/i18n-db";
 import { testimonials as staticTestimonials } from "@/lib/testimonials";
 import { clients as staticClients, type Client } from "@/lib/clients";
 import { faqItems as staticFaqs, type FaqItem, type FaqCategory } from "@/lib/faq";
@@ -65,6 +66,7 @@ export async function getFaqs(): Promise<FaqItem[]> {
   const sb = publicClient();
   if (sb) {
     try {
+      const locale = await currentLocale();
       const { data } = await sb
         .from("site_faqs")
         .select("*")
@@ -73,8 +75,8 @@ export async function getFaqs(): Promise<FaqItem[]> {
       if (data && data.length)
         return data.map((r: any) => ({
           category: r.category as FaqCategory,
-          question: r.question?.lv ?? "",
-          answer: r.answer?.lv ?? "",
+          question: pickStr(r.question, locale),
+          answer: pickStr(r.answer, locale),
         }));
     } catch {
       /* fallback */
