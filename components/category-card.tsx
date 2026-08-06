@@ -1,7 +1,8 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import Link from "next/link";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import type { CategoryMeta } from "@/lib/categories";
 import { categoryIcons, IconBadge } from "@/components/icons";
 import Shimmer from "@/components/shimmer";
@@ -16,13 +17,17 @@ function bgExists(bgImage: string): boolean {
   }
 }
 
-export default function CategoryCard({
+export default async function CategoryCard({
   category,
   index = 0,
 }: {
   category: CategoryMeta;
   index?: number;
 }) {
+  const [tc, tcommon] = await Promise.all([
+    getTranslations("categories"),
+    getTranslations("common"),
+  ]);
   const Icon = categoryIcons[category.id];
   const hasBg = bgExists(category.bgImage);
   return (
@@ -54,11 +59,13 @@ export default function CategoryCard({
         <Icon className="h-6 w-6" />
       </IconBadge>
       <h3 className="mt-5 font-display text-xl font-semibold text-text group-hover:text-gold">
-        {category.name}
+        {tc(`${category.id}Name`)}
       </h3>
-      <p className="mt-3 flex-1 text-sm text-text/70">{category.description}</p>
+      <p className="mt-3 flex-1 text-sm text-text/70">
+        {tc(`${category.id}Desc`)}
+      </p>
       <span className="mt-5 inline-block text-sm font-semibold text-gold">
-        Apskatīt →
+        {tcommon("apskatit")} →
       </span>
     </Link>
   );

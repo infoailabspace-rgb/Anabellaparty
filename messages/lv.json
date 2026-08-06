@@ -38,7 +38,22 @@
   },
   "home": {
     "offerTitle": "Mūsu piedāvājums",
-    "offerSubtitle": "No foto kastēm līdz kubliem — viss Tavam pasākumam vienuviet."
+    "offerSubtitle": "No foto kastēm līdz kubliem — viss Tavam pasākumam vienuviet.",
+    "viewInventory": "Apskatīt inventāru"
+  },
+  "categories": {
+    "foto-kasteName": "Foto kastes",
+    "foto-kasteDesc": "SPOGULIS, OZOLS un INSTAGRAM foto kastes ar tūlītēju druku un asistentu.",
+    "atrakcijasName": "Piepūšamās atrakcijas",
+    "atrakcijasDesc": "Baltās piepūšamās pilis un bumbu vannas — telpās un ārā, tīras un drošas.",
+    "audio-videoName": "Audio/video viesu grāmatas",
+    "audio-videoDesc": "Retro telefoni viesu balss un video sveicieniem — sirsnīga piemiņa.",
+    "specefektiName": "Specefekti",
+    "specefektiDesc": "Aukstās dzirksteles, zemā migla un burbuļi — iespaidīgi un droši efekti.",
+    "decoName": "Deco / mēbeles",
+    "decoDesc": "Šampanieša siena, LED uzraksti, dārza krēsli un citi svētku dekori.",
+    "kubliName": "Kubli / pirts",
+    "kubliDesc": "VIP kubli un mobilā pirts (atrodas Jūrmalā, atsevišķs tālrunis)."
   },
   "steps": {
     "heading": "Kā tas notiek",

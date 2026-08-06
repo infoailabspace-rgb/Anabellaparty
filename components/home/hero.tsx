@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { motion, useReducedMotion } from "framer-motion";
+import { Link } from "@/i18n/navigation";
 import { EASE, word, wordStagger } from "@/lib/motion";
 import HeroVideo from "@/components/hero-video";
 
@@ -17,6 +18,8 @@ export default function Hero({
   subtitle?: string;
 }) {
   const reduce = useReducedMotion();
+  const tn = useTranslations("nav");
+  const th = useTranslations("home");
   const HEADLINE = title.split(" ");
   const GOLD_WORD = accent;
 
@@ -80,13 +83,13 @@ export default function Hero({
             href="/rezervet"
             className="rounded-full bg-gold px-8 py-3 font-semibold text-black shadow-[0_20px_60px_-20px_rgba(212,169,96,0.5)] transition-transform hover:scale-[1.03]"
           >
-            Rezervēt
+            {tn("rezervet")}
           </Link>
           <Link
             href="/svinibu-inventars"
             className="rounded-full border border-gold px-8 py-3 font-semibold text-gold transition-colors hover:bg-gold/10"
           >
-            Apskatīt inventāru
+            {th("viewInventory")}
           </Link>
         </motion.div>
       </div>

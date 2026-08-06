@@ -16,7 +16,7 @@ type NavLink = { href: string; label: string };
 type NavItem = { label: string; href?: string; children?: NavLink[] };
 
 const linkBase =
-  "rounded-full border px-4 py-2 text-sm transition-colors duration-200";
+  "whitespace-nowrap rounded-full border px-4 py-2 text-[13px] xl:text-sm transition-colors duration-200";
 
 export default function Navbar() {
   const t = useTranslations("nav");
@@ -86,7 +86,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop */}
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="ml-10 hidden items-center gap-1 lg:flex">
           {nav.map((item) => {
             const active = isActive(item);
             return item.children ? (
@@ -104,13 +104,13 @@ export default function Navbar() {
                     ▾
                   </span>
                 </button>
-                <div className="invisible absolute left-0 top-full z-50 min-w-56 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                  <div className="rounded-xl border border-gold/25 bg-navy/95 p-2 shadow-2xl backdrop-blur">
+                <div className="invisible absolute left-0 top-full z-50 min-w-56 translate-y-1 pt-3 opacity-0 transition-all duration-[180ms] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                  <div className="rounded-xl border border-gold/25 bg-navy p-2 shadow-2xl shadow-black/50">
                     {item.children.map((c) => (
                       <Link
                         key={c.href}
                         href={c.href}
-                        className="block rounded-lg px-4 py-2 text-sm text-text/85 transition-colors hover:bg-gold/10 hover:text-gold"
+                        className="block whitespace-nowrap rounded-lg px-5 py-2.5 text-sm text-text/85 transition-colors hover:bg-gold hover:text-black"
                       >
                         {c.label}
                       </Link>
@@ -135,12 +135,15 @@ export default function Navbar() {
           })}
           <Link
             href="/rezervet"
-            className="ml-1 rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black transition-transform hover:scale-[1.04] hover:shadow-[0_0_20px_rgba(212,169,96,0.5)]"
+            className="ml-6 whitespace-nowrap rounded-full bg-gold px-5 py-2 text-[13px] font-semibold text-black transition-transform hover:scale-[1.04] hover:shadow-[0_0_20px_rgba(212,169,96,0.5)] xl:text-sm"
           >
             {t("rezervet")}
           </Link>
-          <LocaleSwitcher className="border-l border-gold/20 pl-3" />
-          <NavSocials reduce={!!reduce} />
+          <LocaleSwitcher className="ml-6 border-l border-gold/20 pl-6" />
+          <NavSocials
+            reduce={!!reduce}
+            className="ml-4 hidden border-l border-gold/20 pl-4 xl:flex"
+          />
         </div>
 
         {/* Mobile toggle */}
@@ -149,7 +152,7 @@ export default function Navbar() {
           aria-label={t("izvelne")}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex flex-col gap-1.5 md:hidden"
+          className="flex flex-col gap-1.5 lg:hidden"
         >
           <span
             className={`h-0.5 w-6 bg-gold transition-transform ${
@@ -171,7 +174,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-gold/20 bg-bg/95 px-6 py-4 md:hidden">
+        <div className="border-t border-gold/20 bg-bg/95 px-6 py-4 lg:hidden">
           <div className="flex flex-col gap-1">
             {nav.map((item) =>
               item.children ? (
@@ -222,9 +225,15 @@ export default function Navbar() {
 }
 
 // Sociālās ikonas: Instagram/Facebook statiskas; WhatsApp lēkā ik 4 sekundes.
-function NavSocials({ reduce }: { reduce: boolean }) {
+function NavSocials({
+  reduce,
+  className = "flex",
+}: {
+  reduce: boolean;
+  className?: string;
+}) {
   return (
-    <div className="flex items-center gap-4 border-l border-gold/20 pl-4">
+    <div className={`items-center gap-4 ${className}`}>
       <a
         href="https://www.instagram.com/anabella_svetku_inventars/"
         target="_blank"

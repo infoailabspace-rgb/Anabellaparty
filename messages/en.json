@@ -38,7 +38,22 @@
   },
   "home": {
     "offerTitle": "Our offering",
-    "offerSubtitle": "From photo booths to hot tubs — everything for your event in one place."
+    "offerSubtitle": "From photo booths to hot tubs — everything for your event in one place.",
+    "viewInventory": "Browse inventory"
+  },
+  "categories": {
+    "foto-kasteName": "Photo booths",
+    "foto-kasteDesc": "SPOGULIS, OZOLS and INSTAGRAM photo booths with instant printing and an assistant.",
+    "atrakcijasName": "Inflatable attractions",
+    "atrakcijasDesc": "White bouncy castles and ball pits — indoors and outdoors, clean and safe.",
+    "audio-videoName": "Audio/video guest books",
+    "audio-videoDesc": "Retro phones for guest voice and video greetings — a heartfelt keepsake.",
+    "specefektiName": "Special effects",
+    "specefektiDesc": "Cold sparks, low fog and bubbles — impressive and safe effects.",
+    "decoName": "Decor / furniture",
+    "decoDesc": "Champagne wall, LED signs, garden chairs and other party decor.",
+    "kubliName": "Hot tubs / sauna",
+    "kubliDesc": "VIP hot tubs and a mobile sauna (located in Jūrmala, separate phone)."
   },
   "steps": {
     "heading": "How it works",
