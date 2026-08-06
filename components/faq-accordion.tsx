@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { faqCategories, faqItems, type FaqCategory } from "@/lib/faq";
+import { faqCategories, type FaqCategory, type FaqItem } from "@/lib/faq";
 
 type Filter = "all" | FaqCategory;
 
-export default function FaqAccordion() {
+export default function FaqAccordion({ items }: { items: FaqItem[] }) {
   const [filter, setFilter] = useState<Filter>("all");
   const [open, setOpen] = useState<number | null>(null);
 
-  const visible = faqItems.filter(
+  const visible = items.filter(
     (item) => filter === "all" || item.category === filter,
   );
 
@@ -38,7 +38,7 @@ export default function FaqAccordion() {
       <div className="mx-auto mt-10 max-w-3xl space-y-3">
         {visible.map((item) => {
           // Stabils indekss pret pilno sarakstu, lai filtrs nesajauc atvērto.
-          const idx = faqItems.indexOf(item);
+          const idx = items.indexOf(item);
           const isOpen = open === idx;
           return (
             <div

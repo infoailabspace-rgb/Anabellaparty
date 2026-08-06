@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import SectionHero from "@/components/section-hero";
 import FaqAccordion from "@/components/faq-accordion";
 import CtaSection from "@/components/cta-section";
+import { getFaqs } from "@/lib/site-data";
+
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Biežāk uzdotie jautājumi (BUJ) | Anabella Party",
@@ -9,7 +12,8 @@ export const metadata: Metadata = {
     "Atbildes par rezervāciju, piegādi, produktiem un maksājumiem. Foto kastes, atrakcijas un specefekti Latvijā. Piegāde Pierīgā bez maksas.",
 };
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const items = await getFaqs();
   return (
     <>
       <SectionHero
@@ -17,7 +21,7 @@ export default function FaqPage() {
         tagline="Atbildes uz to, ko klienti jautā visbiežāk. Neatradi savu jautājumu? Sazinies ar mums."
       />
       <div className="mx-auto max-w-6xl px-6 py-16">
-        <FaqAccordion />
+        <FaqAccordion items={items} />
       </div>
       <CtaSection
         title="Vēl kāds jautājums?"

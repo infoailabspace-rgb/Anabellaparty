@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import SectionHero from "@/components/section-hero";
 import ContactForm from "@/components/contact-form";
 import Reveal from "@/components/reveal";
+import { getContent } from "@/lib/site-content";
+
+export const revalidate = 300;
+
+const HOURS_FALLBACK =
+  "Pirmdiena–Piektdiena: 9:00–20:00\nSestdiena–Svētdiena: 10:00–18:00\nPasākumi tiek apkalpoti arī ārpus darba laika pēc vienošanās.";
 
 export const metadata: Metadata = {
   title: "Kontakti | Anabella Party",
@@ -9,7 +15,9 @@ export const metadata: Metadata = {
     "Sazinies ar Anabella Party — pasākumu inventāra noma Ķekavā un Pierīgā. Tālrunis +371 29222761, info@anabellaparty.lv, WhatsApp. Piegāde Pierīgā bez maksas.",
 };
 
-export default function KontaktiPage() {
+export default async function KontaktiPage() {
+  const hours = await getContent("contact.hours", HOURS_FALLBACK);
+  const hoursLines = hours.split("\n").filter(Boolean);
   return (
     <>
       <SectionHero
@@ -59,11 +67,11 @@ export default function KontaktiPage() {
                 Darba laiks
               </h3>
               <ul className="mt-3 space-y-1 text-sm text-text/70">
-                <li>Pirmdiena–Piektdiena: 9:00–20:00</li>
-                <li>Sestdiena–Svētdiena: 10:00–18:00</li>
-                <li className="text-text/50">
-                  Pasākumi tiek apkalpoti arī ārpus darba laika pēc vienošanās.
-                </li>
+                {hoursLines.map((line, i) => (
+                  <li key={i} className={i === hoursLines.length - 1 ? "text-text/50" : ""}>
+                    {line}
+                  </li>
+                ))}
               </ul>
             </div>
 

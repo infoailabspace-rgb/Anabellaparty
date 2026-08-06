@@ -2,15 +2,25 @@ import Image from "next/image";
 import Reveal from "@/components/reveal";
 import CountUp from "@/components/count-up";
 
-// [JĀAPSTIPRINA] — Robertam: pasākumu skaits, dibināšanas gads.
-// Inventāra vienību skaits atbilst katalogam (~40).
-const stats = [
-  { to: 500, suffix: "+", label: "pasākumi" },
-  { to: 40, suffix: "+", label: "inventāra vienības" },
-  { to: 2019, prefix: "kopš ", label: "" },
-];
+const DEFAULT_BODY = `Mūsu uzņēmums radīts ar mērķi sniegt klientiem jaunākos izklaižu risinājumus. Piedāvājam plašu svētku inventāra katalogu perfektam svinību noskaņojumam.\n\nMūsu pakalpojumi seko līdzi mūsdienu ballīšu tendencēm. Piedāvājam pakalpojumus gan privātpersonām, gan uzņēmumiem.`;
 
-export default function About() {
+export default function About({
+  body = DEFAULT_BODY,
+  statsEvents = "500",
+  statsUnits = "40",
+  statsSince = "2019",
+}: {
+  body?: string;
+  statsEvents?: string;
+  statsUnits?: string;
+  statsSince?: string;
+}) {
+  const paragraphs = (body || DEFAULT_BODY).split(/\n\n+/);
+  const stats = [
+    { to: Number(statsEvents) || 0, suffix: "+", label: "pasākumi" },
+    { to: Number(statsUnits) || 0, suffix: "+", label: "inventāra vienības" },
+    { to: Number(statsSince) || 0, prefix: "kopš ", label: "" },
+  ];
   return (
     <section className="bg-bg py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
@@ -24,20 +34,9 @@ export default function About() {
                 Jaunākie izklaižu risinājumi Taviem svētkiem
               </h2>
               <div className="mt-6 space-y-4 leading-relaxed text-text/80">
-                <p>
-                  Mūsu uzņēmums radīts ar mērķi sniegt klientiem jaunākos
-                  izklaižu risinājumus. Piedāvājam plašu svētku inventāra
-                  katalogu perfektam svinību noskaņojumam: piepūšamās atrakcijas
-                  izmantošanai iekštelpās vai ārā, dažāda stila foto kastes,
-                  viesugrāmata — audio novēlējumu telefons, un vairāki svētku
-                  specefekti. Piedāvājam arī galdu klāšanu, servēšanu un
-                  dekorēšanu (bez ēdināšanas), ideju druku.
-                </p>
-                <p>
-                  Mūsu pakalpojumi seko līdzi mūsdienu ballīšu tendencēm, lai
-                  sniegtu klientiem visaktuālākos ballīšu risinājumus. Piedāvājam
-                  pakalpojumus gan privātpersonām, gan uzņēmumiem.
-                </p>
+                {paragraphs.map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))}
               </div>
             </div>
           </Reveal>

@@ -1,6 +1,6 @@
 import { type Product } from "@/lib/products";
 import { categoryMeta } from "@/lib/categories";
-import { faqItems } from "@/lib/faq";
+import type { FaqItem } from "@/lib/faq";
 import { DELIVERY_RATE, FREE_RADIUS_KM, ORIGIN } from "@/lib/delivery";
 import { DEPOSIT_RATE } from "@/lib/pricing";
 
@@ -39,8 +39,8 @@ export function buildCatalogText(products: Product[]): string {
     .join("\n\n");
 }
 
-export function buildFaqText(): string {
-  return faqItems.map((f) => `J: ${f.question}\nA: ${f.answer}`).join("\n\n");
+export function buildFaqText(faqs: FaqItem[]): string {
+  return faqs.map((f) => `J: ${f.question}\nA: ${f.answer}`).join("\n\n");
 }
 
 export function buildDeliveryText(): string {
@@ -66,6 +66,6 @@ NOTEIKUMI:
 TONIS: draudzīgs, konkrēts, bez pārdošanas tukšvārdības. Ne vairāk kā viena izsaukuma zīme atbildē.`;
 
 // Katalogu bloks — tiek kešots (Anthropic prompt caching).
-export function buildKnowledgeBlock(products: Product[]): string {
-  return `KATALOGS:\n${buildCatalogText(products)}\n\nBUJ:\n${buildFaqText()}\n\nPIEGĀDE UN APMAKSA:\n${buildDeliveryText()}`;
+export function buildKnowledgeBlock(products: Product[], faqs: FaqItem[]): string {
+  return `KATALOGS:\n${buildCatalogText(products)}\n\nBUJ:\n${buildFaqText(faqs)}\n\nPIEGĀDE UN APMAKSA:\n${buildDeliveryText()}`;
 }

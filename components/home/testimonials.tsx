@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
-import { testimonials } from "@/lib/testimonials";
+import type { PublicTestimonial } from "@/lib/site-data";
 import Reveal from "@/components/reveal";
 
 function Stars({ n }: { n: number }) {
@@ -17,7 +17,11 @@ function Stars({ n }: { n: number }) {
   );
 }
 
-export default function Testimonials() {
+export default function Testimonials({
+  testimonials,
+}: {
+  testimonials: PublicTestimonial[];
+}) {
   const reduce = useReducedMotion();
   const [perView, setPerView] = useState(1);
   const [index, setIndex] = useState(0);

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { saveProduct, deleteProduct, type ProductInput } from "./actions";
+import ImageUploader from "@/components/admin/image-uploader";
 
 const CATEGORIES = [
   { id: "foto-kaste", label: "Foto kastes" },
@@ -219,9 +220,22 @@ export default function ProductForm({
           ))}
           <button onClick={() => set({ specs: [...p.specs, { label: "", value: "" }] })} className="rounded-lg border border-gold/30 px-3 py-1 text-sm text-gold">+ Specifikācija</button>
         </div>
-        <p className="mt-4 text-xs text-text/40">
-          Attēli un EN/RU tulkojumi — nāk Fāzē 2. Pašreiz attēli saglabājas no
-          esošajiem failiem.
+      </section>
+
+      {/* Attēli */}
+      <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
+        <h2 className="font-display text-lg font-semibold text-gold">Attēli</h2>
+        <div className="mt-4">
+          <ImageUploader
+            slug={p.slug}
+            gallery={p.gallery}
+            cover={p.cover_image}
+            onChange={(gallery, cover) => set({ gallery, cover_image: cover })}
+          />
+        </div>
+        <p className="mt-3 text-xs text-text/40">
+          EN/RU tulkojumi — nāk ar multilingua soli. Neaizmirsti nospiest
+          &quot;Saglabāt&quot;.
         </p>
       </section>
     </div>

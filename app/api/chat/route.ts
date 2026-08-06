@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { getSupabaseServer } from "@/lib/supabase";
 import { SYSTEM_RULES, buildKnowledgeBlock } from "@/lib/chat-prompt";
 import { getAllProducts } from "@/lib/catalog";
+import { getFaqs } from "@/lib/site-data";
 
 export const runtime = "nodejs";
 
@@ -69,7 +70,7 @@ export async function POST(req: Request) {
     }
   }
 
-  const catalog = await getAllProducts();
+  const [catalog, faqs] = await Promise.all([getAllProducts(), getFaqs()]);
   const anthropic = new Anthropic({ apiKey });
   const stream = anthropic.messages.stream({
     model: MODEL,
@@ -78,7 +79,7 @@ export async function POST(req: Request) {
       { type: "text", text: SYSTEM_RULES },
       {
         type: "text",
-        text: buildKnowledgeBlock(catalog),
+        text: buildKnowledgeBlock(catalog, faqs),
         cache_control: { type: "ephemeral" },
       },
     ],

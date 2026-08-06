@@ -8,12 +8,31 @@ import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
 import DepthBg from "@/components/depth-bg";
 import { homeCategories } from "@/lib/categories";
+import { getContentMap } from "@/lib/site-content";
+import { getTestimonials, getClients } from "@/lib/site-data";
 
-export default function Home() {
+export const revalidate = 300;
+
+export default async function Home() {
+  const [c, testimonials, clients] = await Promise.all([
+    getContentMap(),
+    getTestimonials(),
+    getClients(),
+  ]);
+  const g = (k: string, f: string) => (c[k]?.trim() ? c[k] : f);
+
   return (
     <>
       {/* Hero — abi video secīgi viens pēc otra */}
-      <Hero videos={["/videos/herovideo1.mp4", "/videos/herovideo2.mp4"]} />
+      <Hero
+        videos={["/videos/herovideo1.mp4", "/videos/herovideo2.mp4"]}
+        title={g("home.hero.title", "Neaizmirstamas ballītes sākas šeit")}
+        accent={g("home.hero.accent", "ballītes")}
+        subtitle={g(
+          "home.hero.subtitle",
+          "Foto kastes, piepūšamās atrakcijas un specefekti Tavam pasākumam. Piegāde Pierīgā bez maksas.",
+        )}
+      />
 
       {/* Kā tas notiek — bg */}
       <Steps />
@@ -41,13 +60,18 @@ export default function Home() {
       </section>
 
       {/* Par mums — bg */}
-      <About />
+      <About
+        body={g("about.body", "")}
+        statsEvents={g("about.stats.events", "500")}
+        statsUnits={g("about.stats.units", "40")}
+        statsSince={g("about.stats.since", "2019")}
+      />
 
       {/* Klienti — navy */}
-      <ClientsMarquee />
+      <ClientsMarquee clients={clients} />
 
       {/* Atsauksmes — bg */}
-      <Testimonials />
+      <Testimonials testimonials={testimonials} />
 
       {/* CTA — zelta gradients */}
       <CtaSection />

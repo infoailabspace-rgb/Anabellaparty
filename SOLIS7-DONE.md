@@ -45,11 +45,16 @@
 
 ---
 
-## Fāze 2 (nākamie piegājieni)
-- Attēlu pārvaldība: Storage augšupielāde + klienta puses saspiešana (canvas, max 2000px) + galerijas drag-reorder + vāka izvēle.
-- `site_content` teksti (home hero, par mums, u.c.), atsauksmes, klientu logo, BUJ admin.
-- EN/RU tulkojumi (manuāli vai "Tulkot ar AI" poga).
-- Nesaglabātu izmaiņu brīdinājums, vienlaicīgas rediģēšanas `updated_at` pārbaude.
+## Fāze 2 — PABEIGTA ✅
+- **Attēlu augšupielāde:** `components/admin/image-uploader.tsx` — klienta puses **canvas saspiešana (max 2000px, JPEG 0.85)** → Supabase Storage (`product-images/<slug>/<uuid>.jpg`). **Drag-to-reorder** + **vāka izvēle** (radio) + dzēšana (Storage + masīvs). Integrēts produkta formā ("Attēli" sekcija). Att. glabājas produkta `cover_image`+`gallery` kolonnās (publiskā galerija nemainās).
+- **`/admin/saturs`** — `site_content` LV lauki (hero, par mums, statistika, piegāde, kontakti). Publiskie komponenti (Hero, About, ClientsMarquee, Testimonials, DeliveryNote, Kontakti) lasa no DB ar **fallback** uz esošo tekstu, ISR + revalidate.
+- **`/admin/atsauksmes`**, **`/admin/klienti`** (ar logo augšupielādi max 400px), **`/admin/faq`** — pilns CRUD (pievienot/rediģēt/dzēst, publicēts/aktīvs, secība, vērtējums). Publiskās lapas + **čatbots** lasa no DB.
+- Seed: 9 satura atslēgas, 4 atsauksmes, 8 klienti (BUJ jau Fāzē 1). RLS: admini raksta, publiski lasa aktīvos.
+- **Verificēts:** publiskās lapas rāda DB saturu; admin raksta (RLS testadmin OK); anon rakstīt NEVAR (0 rindas); Storage upload OK.
+
+## Palicis (nākotnē)
+- EN/RU tulkojumi (ar multilingua soli).
+- Nesaglabātu izmaiņu brīdinājums, `updated_at` vienlaicīgas rediģēšanas pārbaude (nice-to-have).
 
 ## Piezīmes
 - Čatbots/kalkulators/lapas lieto DB — **cenu maiņa admin panelī atspoguļojas visur** (pēc revalidate).

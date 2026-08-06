@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useReducedMotion } from "framer-motion";
-import { clients } from "@/lib/clients";
+import type { Client } from "@/lib/clients";
 import Reveal from "@/components/reveal";
 
 function Logo({ name, logo }: { name: string; logo: string }) {
@@ -26,7 +26,7 @@ function Logo({ name, logo }: { name: string; logo: string }) {
   );
 }
 
-export default function ClientsMarquee() {
+export default function ClientsMarquee({ clients }: { clients: Client[] }) {
   const reduce = useReducedMotion();
   const maskStyle = {
     maskImage:

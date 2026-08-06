@@ -5,11 +5,20 @@ import { motion, useReducedMotion } from "framer-motion";
 import { EASE, word, wordStagger } from "@/lib/motion";
 import HeroVideo from "@/components/hero-video";
 
-const HEADLINE = ["Neaizmirstamas", "ballītes", "sākas", "šeit"];
-const GOLD_WORD = "ballītes";
-
-export default function Hero({ videos = [] }: { videos?: string[] }) {
+export default function Hero({
+  videos = [],
+  title = "Neaizmirstamas ballītes sākas šeit",
+  accent = "ballītes",
+  subtitle = "Foto kastes, piepūšamās atrakcijas un specefekti Tavam pasākumam. Piegāde Pierīgā bez maksas.",
+}: {
+  videos?: string[];
+  title?: string;
+  accent?: string;
+  subtitle?: string;
+}) {
   const reduce = useReducedMotion();
+  const HEADLINE = title.split(" ");
+  const GOLD_WORD = accent;
 
   return (
     <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden">
@@ -58,8 +67,7 @@ export default function Hero({ videos = [] }: { videos?: string[] }) {
           animate={reduce ? undefined : { opacity: 1, y: 0 }}
           transition={reduce ? undefined : { duration: 0.6, delay: 0.4, ease: EASE }}
         >
-          Foto kastes, piepūšamās atrakcijas un specefekti Tavam pasākumam.
-          Piegāde Pierīgā bez maksas.
+          {subtitle}
         </motion.p>
 
         <motion.div

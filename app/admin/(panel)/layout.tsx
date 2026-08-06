@@ -45,6 +45,18 @@ export default async function PanelLayout({
               >
                 Inventārs
               </Link>
+              <Link href="/admin/saturs" className="text-text/80 hover:text-gold">
+                Saturs
+              </Link>
+              <Link href="/admin/atsauksmes" className="text-text/80 hover:text-gold">
+                Atsauksmes
+              </Link>
+              <Link href="/admin/klienti" className="text-text/80 hover:text-gold">
+                Klienti
+              </Link>
+              <Link href="/admin/faq" className="text-text/80 hover:text-gold">
+                BUJ
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-4 text-sm">
