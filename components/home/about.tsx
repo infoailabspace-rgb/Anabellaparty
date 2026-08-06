@@ -1,6 +1,6 @@
+import Image from "next/image";
 import Reveal from "@/components/reveal";
 import CountUp from "@/components/count-up";
-import ImagePlaceholder from "@/components/image-placeholder";
 
 // [JĀAPSTIPRINA] — Robertam: pasākumu skaits, dibināšanas gads.
 // Inventāra vienību skaits atbilst katalogam (~40).
@@ -43,10 +43,15 @@ export default function About() {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <ImagePlaceholder
-              label="Mūsu komanda"
-              className="aspect-[4/3] w-full rounded-xl"
-            />
+            <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-xl border border-gold/25 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.35)]">
+              <Image
+                src="/images/about/komanda.png"
+                alt="Anabella Party komanda"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
           </Reveal>
         </div>
 
