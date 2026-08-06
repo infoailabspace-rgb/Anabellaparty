@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SectionHero from "@/components/section-hero";
 import Prose from "@/components/prose";
+import { COMPANY, fullAddress } from "@/lib/company";
 
 export const metadata: Metadata = {
   title: "Privātuma politika | Anabella Party",
@@ -22,9 +23,10 @@ export default function PrivatumaPolitikaPage() {
 
         <h2>1. Pārzinis un kontaktinformācija</h2>
         <p>
-          Personas datu pārzinis ir Anabella Party. Saziņai par datu apstrādi:
-          e-pasts info@anabellaparty.lv, tālrunis +371 29222761, adrese Ķekava,
-          Vecozolu iela 14. [JĀAPSTIPRINA: juridiskais nosaukums un reģistrācijas numurs].
+          Personas datu pārzinis ir {COMPANY.legalName} (zīmols &bdquo;
+          {COMPANY.brandName}&rdquo;), reģistrācijas nr. {COMPANY.regNr},
+          juridiskā adrese {fullAddress}. Saziņai par datu apstrādi: e-pasts{" "}
+          {COMPANY.contact.email}, tālrunis {COMPANY.contact.phoneDisplay}.
         </p>
 
         <h2>2. Kādus datus vācam</h2>

@@ -3,6 +3,7 @@ import SectionHero from "@/components/section-hero";
 import ContactForm from "@/components/contact-form";
 import Reveal from "@/components/reveal";
 import { getContent } from "@/lib/site-content";
+import { COMPANY, fullAddress } from "@/lib/company";
 
 export const revalidate = 300;
 
@@ -18,8 +19,34 @@ export const metadata: Metadata = {
 export default async function KontaktiPage() {
   const hours = await getContent("contact.hours", HOURS_FALLBACK);
   const hoursLines = hours.split("\n").filter(Boolean);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: COMPANY.brandName,
+    legalName: COMPANY.legalName,
+    vatID: COMPANY.vatNr,
+    taxID: COMPANY.regNr,
+    telephone: COMPANY.contact.phone,
+    email: COMPANY.contact.email,
+    url: "https://www.anabellaparty.lv",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: COMPANY.address.street,
+      addressLocality: COMPANY.address.city,
+      addressRegion: COMPANY.address.region,
+      postalCode: COMPANY.address.postalCode,
+      addressCountry: COMPANY.address.country,
+    },
+    sameAs: [COMPANY.social.instagram, COMPANY.social.facebook],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <SectionHero
         title="Kontakti"
         tagline="Pastāsti par savu pasākumu — atbildēsim ātri un ieteiksim labāko risinājumu."
@@ -36,29 +63,42 @@ export default async function KontaktiPage() {
               <ul className="mt-4 space-y-3 text-text/85">
                 <li>
                   <a
-                    href="tel:+37129222761"
+                    href={`tel:${COMPANY.contact.phone}`}
                     className="transition-colors hover:text-gold"
                   >
-                    📞 +371 29222761
+                    📞 {COMPANY.contact.phoneDisplay}
                   </a>
                 </li>
                 <li>
                   <a
-                    href="https://wa.me/37129222761"
+                    href={COMPANY.contact.whatsapp}
                     className="transition-colors hover:text-gold"
                   >
-                    💬 WhatsApp: +371 29222761
+                    💬 WhatsApp: {COMPANY.contact.phoneDisplay}
                   </a>
                 </li>
                 <li>
                   <a
-                    href="mailto:info@anabellaparty.lv"
+                    href={`mailto:${COMPANY.contact.email}`}
                     className="transition-colors hover:text-gold"
                   >
-                    ✉️ info@anabellaparty.lv
+                    ✉️ {COMPANY.contact.email}
                   </a>
                 </li>
-                <li>📍 Vecozolu iela 14, Ķekava, Latvija</li>
+                <li>📍 {fullAddress}</li>
+              </ul>
+            </div>
+
+            {/* Rekvizīti */}
+            <div>
+              <h3 className="font-display text-sm font-semibold text-text">
+                Rekvizīti
+              </h3>
+              <ul className="mt-3 space-y-1 text-sm text-text/70">
+                <li>{COMPANY.legalName}</li>
+                <li>Reģ. nr. {COMPANY.regNr}</li>
+                <li>PVN reģ. nr. {COMPANY.vatNr}</li>
+                <li>Juridiskā adrese: {fullAddress}</li>
               </ul>
             </div>
 

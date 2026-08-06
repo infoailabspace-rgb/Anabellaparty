@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { SocialLinks } from "@/components/social-icons";
+import { legalLineShort } from "@/lib/company";
 
 export default function Footer() {
   return (
@@ -95,7 +96,10 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-gold/10 py-4 text-center text-xs text-text/50">
-        © {new Date().getFullYear()} Anabella Party. Visas tiesības aizsargātas.
+        <p>{legalLineShort}</p>
+        <p>
+          © {new Date().getFullYear()} Anabella Party. Visas tiesības aizsargātas.
+        </p>
       </div>
     </footer>
   );

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SectionHero from "@/components/section-hero";
 import Prose from "@/components/prose";
+import { COMPANY, fullAddress } from "@/lib/company";
 
 export const metadata: Metadata = {
   title: "Nomas noteikumi | Anabella Party",
@@ -23,10 +24,11 @@ export default function NoteikumiPage() {
 
         <h2>1. Vispārīgie noteikumi</h2>
         <p>
-          Iznomātājs ir Anabella Party (turpmāk — Iznomātājs), kas nodarbojas ar
-          pasākumu inventāra nomu Latvijā. Kontakti: tālrunis +371 29222761,
-          e-pasts info@anabellaparty.lv, adrese Vecozolu iela 14, Ķekava.{" "}
-          [JĀAPSTIPRINA: juridiskā forma, reģistrācijas numurs, juridiskā adrese].
+          Iznomātājs ir {COMPANY.legalName} (zīmols &bdquo;{COMPANY.brandName}
+          &rdquo;; turpmāk — Iznomātājs), reģistrācijas nr. {COMPANY.regNr}, PVN
+          reģ. nr. {COMPANY.vatNr}, juridiskā adrese {fullAddress}. Kontakti:
+          tālrunis {COMPANY.contact.phoneDisplay}, e-pasts{" "}
+          {COMPANY.contact.email}.
         </p>
         <p>
           Šie noteikumi attiecas uz visiem inventāra nomas darījumiem starp
@@ -45,11 +47,11 @@ export default function NoteikumiPage() {
 
         <h2>3. Depozīts un apmaksa</h2>
         <p>
-          Rezervācijas apstiprināšanai tiek piemērots depozīts.{" "}
-          [JĀAPSTIPRINA: depozīta apmērs — SOLIS4 plāns paredz 20%]. Atlikusī
-          summa jāsamaksā [JĀAPSTIPRINA: apmaksas termiņš — piem., pirms pasākuma
-          vai pasākuma dienā]. Pieejami bezskaidras naudas norēķini; uzņēmumiem
-          tiek izsniegts rēķins.
+          Rezervācijas apstiprināšanai tiek piemērots avanss{" "}
+          <b>50% apmērā no kopsummas</b>. Atlikusī summa jāsamaksā{" "}
+          [JĀAPSTIPRINA: apmaksas termiņš — piem., pirms pasākuma vai pasākuma
+          dienā]. Cenas norādītas bez PVN. Pieejami bezskaidras naudas norēķini;
+          uzņēmumiem tiek izsniegts rēķins.
         </p>
 
         <h2>4. Atcelšana un pārcelšana</h2>
