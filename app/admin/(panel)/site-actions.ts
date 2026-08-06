@@ -15,17 +15,19 @@ async function audit(action: string, entity: string, entityId: string | null, ch
   });
 }
 
+// Daudzvalodu vērtība {lv,en,ru}.
+export type ML = { lv: string; en: string; ru: string };
+
 /* ── Saturs ── */
-export async function saveContent(key: string, valueLv: string) {
+export async function saveContent(key: string, value: ML) {
   const supabase = await createClient();
   const { error } = await supabase
     .from("site_content")
-    .update({ value: { lv: valueLv }, updated_at: new Date().toISOString() })
+    .update({ value, updated_at: new Date().toISOString() })
     .eq("key", key);
   if (error) return { error: error.message };
   await audit("update", "content", key, { key });
-  revalidatePath("/");
-  revalidatePath("/kontakti");
+  revalidatePath("/", "layout"); // atjauno visas valodas
   return { ok: true };
 }
 
@@ -48,14 +50,14 @@ export async function upsertTestimonial(
     : await supabase.from("site_testimonials").insert(row);
   if (error) return { error: error.message };
   await audit(id ? "update" : "create", "testimonial", id, row);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 export async function deleteTestimonial(id: string) {
   const supabase = await createClient();
   await supabase.from("site_testimonials").delete().eq("id", id);
   await audit("delete", "testimonial", id, null);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
 }
 
 /* ── Klienti ── */
@@ -76,26 +78,26 @@ export async function upsertClient(
     : await supabase.from("site_clients").insert(row);
   if (error) return { error: error.message };
   await audit(id ? "update" : "create", "client", id, row);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 export async function deleteClient(id: string) {
   const supabase = await createClient();
   await supabase.from("site_clients").delete().eq("id", id);
   await audit("delete", "client", id, null);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
 }
 
 /* ── BUJ ── */
 export async function upsertFaq(
   id: string | null,
-  d: { category: string; question: string; answer: string; sort_order: number; is_published: boolean },
+  d: { category: string; question: ML; answer: ML; sort_order: number; is_published: boolean },
 ) {
   const supabase = await createClient();
   const row = {
     category: d.category,
-    question: { lv: d.question },
-    answer: { lv: d.answer },
+    question: d.question,
+    answer: d.answer,
     sort_order: d.sort_order,
     is_published: d.is_published,
   };
@@ -104,12 +106,12 @@ export async function upsertFaq(
     : await supabase.from("site_faqs").insert(row);
   if (error) return { error: error.message };
   await audit(id ? "update" : "create", "faq", id, row);
-  revalidatePath("/faq");
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 export async function deleteFaq(id: string) {
   const supabase = await createClient();
   await supabase.from("site_faqs").delete().eq("id", id);
   await audit("delete", "faq", id, null);
-  revalidatePath("/faq");
+  revalidatePath("/", "layout");
 }

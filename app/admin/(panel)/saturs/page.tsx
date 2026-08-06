@@ -16,7 +16,12 @@ export default async function SatursPage() {
   const map = new Map((data ?? []).map((r: any) => [r.key, r]));
   const items = ORDER.filter((k) => map.has(k)).map((k) => {
     const r: any = map.get(k);
-    return { key: k, value: r.value?.lv ?? "", content_type: r.content_type ?? "text" };
+    const v = r.value ?? {};
+    return {
+      key: k,
+      value: { lv: v.lv ?? "", en: v.en ?? "", ru: v.ru ?? "" },
+      content_type: r.content_type ?? "text",
+    };
   });
   return <ContentEditor items={items} />;
 }

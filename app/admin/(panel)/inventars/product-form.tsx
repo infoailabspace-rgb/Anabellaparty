@@ -4,6 +4,10 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { saveProduct, deleteProduct, type ProductInput } from "./actions";
 import ImageUploader from "@/components/admin/image-uploader";
+import { LangTabs } from "../saturs/content-editor";
+
+const LANGS = ["lv", "en", "ru"] as const;
+type Lang = (typeof LANGS)[number];
 
 const CATEGORIES = [
   { id: "foto-kaste", label: "Foto kastes" },
@@ -14,13 +18,14 @@ const CATEGORIES = [
   { id: "kubli", label: "Kubli / pirts" },
 ];
 
+const emptyML = { lv: "", en: "", ru: "" };
 const empty: ProductInput = {
   slug: "",
   category: "foto-kaste",
   name: "",
-  tagline: "",
-  description: "",
-  includes: [],
+  tagline: { ...emptyML },
+  description: { ...emptyML },
+  includes: { lv: [], en: [], ru: [] },
   tiers: [{ duration: "", price: 0 }],
   hourly_extra: null,
   add_ons: [],
@@ -57,6 +62,7 @@ export default function ProductForm({
 }) {
   const router = useRouter();
   const [p, setP] = useState<ProductInput>(initial ?? empty);
+  const [lang, setLang] = useState<Lang>("lv");
   const [slugTouched, setSlugTouched] = useState(Boolean(id));
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
@@ -121,9 +127,12 @@ export default function ProductForm({
 
       {/* Pamatinfo */}
       <section className="grid gap-4 rounded-2xl border border-gold/25 bg-navy/30 p-6 sm:grid-cols-2">
-        <h2 className="col-span-full font-display text-lg font-semibold text-gold">
-          Pamatinfo
-        </h2>
+        <div className="col-span-full flex items-center justify-between">
+          <h2 className="font-display text-lg font-semibold text-gold">
+            Pamatinfo
+          </h2>
+          <LangTabs lang={lang} setLang={setLang} />
+        </div>
         <label className="block text-sm text-text/70">
           Nosaukums (LV)
           <input value={p.name} onChange={(e) => onName(e.target.value)} className={`mt-1 ${field}`} />
@@ -147,16 +156,33 @@ export default function ProductForm({
           <input value={p.alt_phone ?? ""} onChange={(e) => set({ alt_phone: e.target.value })} className={`mt-1 ${field}`} />
         </label>
         <label className="col-span-full block text-sm text-text/70">
-          Tagline (LV)
-          <input value={p.tagline} onChange={(e) => set({ tagline: e.target.value })} className={`mt-1 ${field}`} />
+          Tagline ({lang.toUpperCase()})
+          <input
+            value={p.tagline[lang]}
+            onChange={(e) => set({ tagline: { ...p.tagline, [lang]: e.target.value } })}
+            placeholder={lang !== "lv" ? p.tagline.lv : ""}
+            className={`mt-1 ${field}`}
+          />
         </label>
         <label className="col-span-full block text-sm text-text/70">
-          Apraksts (LV)
-          <textarea rows={3} value={p.description} onChange={(e) => set({ description: e.target.value })} className={`mt-1 ${field}`} />
+          Apraksts ({lang.toUpperCase()})
+          <textarea
+            rows={3}
+            value={p.description[lang]}
+            onChange={(e) => set({ description: { ...p.description, [lang]: e.target.value } })}
+            placeholder={lang !== "lv" ? p.description.lv : ""}
+            className={`mt-1 ${field}`}
+          />
         </label>
         <label className="col-span-full block text-sm text-text/70">
-          Nomā iekļauts (viens punkts rindā)
-          <textarea rows={4} value={p.includes.join("\n")} onChange={(e) => set({ includes: e.target.value.split("\n") })} className={`mt-1 ${field}`} />
+          Nomā iekļauts ({lang.toUpperCase()}) — viens punkts rindā
+          <textarea
+            rows={4}
+            value={p.includes[lang].join("\n")}
+            onChange={(e) => set({ includes: { ...p.includes, [lang]: e.target.value.split("\n") } })}
+            placeholder={lang !== "lv" ? p.includes.lv.join("\n") : ""}
+            className={`mt-1 ${field}`}
+          />
         </label>
         <div className="col-span-full flex gap-6">
           <label className="flex items-center gap-2 text-sm">
@@ -234,8 +260,8 @@ export default function ProductForm({
           />
         </div>
         <p className="mt-3 text-xs text-text/40">
-          EN/RU tulkojumi — nāk ar multilingua soli. Neaizmirsti nospiest
-          &quot;Saglabāt&quot;.
+          Tukšs EN/RU lauks → publiskajā lapā rāda latviešu versiju. Nosaukums
+          netiek tulkots. Neaizmirsti nospiest &quot;Saglabāt&quot;.
         </p>
       </section>
     </div>

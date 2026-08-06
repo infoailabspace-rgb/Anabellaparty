@@ -10,11 +10,12 @@ export default async function FaqAdminPage() {
     .from("site_faqs")
     .select("*")
     .order("sort_order", { ascending: true });
+  const ml = (v: any) => ({ lv: v?.lv ?? "", en: v?.en ?? "", ru: v?.ru ?? "" });
   const rows: FRow[] = (data ?? []).map((r: any) => ({
     id: r.id,
     category: r.category,
-    question: r.question?.lv ?? "",
-    answer: r.answer?.lv ?? "",
+    question: ml(r.question),
+    answer: ml(r.answer),
     sort_order: r.sort_order ?? 0,
     is_published: r.is_published,
   }));

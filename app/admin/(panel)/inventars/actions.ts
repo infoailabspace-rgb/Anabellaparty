@@ -12,13 +12,16 @@ const CATEGORY_PATH: Record<string, string> = {
   kubli: "/svinibu-inventars/kublsballa",
 };
 
+export type ML = { lv: string; en: string; ru: string };
+export type MLArr = { lv: string[]; en: string[]; ru: string[] };
+
 export type ProductInput = {
   slug: string;
   category: string;
-  name: string;
-  tagline: string;
-  description: string;
-  includes: string[];
+  name: string; // nosaukums netulko (SPOGULIS/OZOLS u.c.)
+  tagline: ML;
+  description: ML;
+  includes: MLArr;
   tiers: { duration: string; price: number; note?: string }[];
   hourly_extra: number | null;
   add_ons: { name: string; price: number; unit?: string }[];
@@ -55,16 +58,24 @@ async function audit(
   });
 }
 
+function cleanArr(a: string[]) {
+  return (a ?? []).map((s) => s.trim()).filter(Boolean);
+}
+
 function toRow(p: ProductInput) {
+  const inc = {
+    lv: cleanArr(p.includes.lv),
+    en: cleanArr(p.includes.en),
+    ru: cleanArr(p.includes.ru),
+  };
+  const hasInc = inc.lv.length || inc.en.length || inc.ru.length;
   return {
     slug: p.slug.trim(),
     category: p.category,
     name: { lv: p.name },
-    tagline: { lv: p.tagline },
-    description: { lv: p.description },
-    includes: p.includes.filter(Boolean).length
-      ? { lv: p.includes.filter(Boolean) }
-      : null,
+    tagline: { lv: p.tagline.lv, en: p.tagline.en, ru: p.tagline.ru },
+    description: { lv: p.description.lv, en: p.description.en, ru: p.description.ru },
+    includes: hasInc ? inc : null,
     tiers: p.tiers.filter((t) => t.duration),
     hourly_extra: p.hourly_extra,
     add_ons: p.add_ons.filter((a) => a.name).length
