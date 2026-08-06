@@ -88,26 +88,26 @@ export const faqItems: FaqItem[] = [
   },
   {
     category: "produkti",
-    question: "Vai piepūšamās atrakcijas ir apdrošinātas un drošas?",
+    question: "Vai piepūšamās atrakcijas ir drošas?",
     answer:
-      "Mūsu inventārs tiek regulāri pārbaudīts un uzturēts kārtībā. Pirms lietošanas sniedzam drošības instruktāžu. Piepūšamo atrakciju lietošanas laikā obligāta ir pieaugušo uzraudzība; vecuma un noslodzes ierobežojumi ir norādīti nomas noteikumos. [JĀAPSTIPRINA: apdrošināšanas statuss]",
+      "Mūsu inventārs tiek regulāri pārbaudīts un uzturēts kārtībā. Pirms lietošanas sniedzam drošības instruktāžu. Piepūšamo atrakciju lietošanas laikā obligāta ir pieaugušo uzraudzība; jāievēro cilvēku skaita un svara (līdz 200 kg) ierobežojumi. No inventāra nodošanas brīža atbildība pāriet nomniekam — sīkāk sadaļā „Nomas noteikumi”.",
   },
   {
     category: "maksajumi",
     question: "Kā notiek apmaksa?",
     answer:
-      "Rezervāciju apstiprina depozīts, atlikušo summu samaksā pirms vai pasākuma dienā. Pieejami bezskaidras naudas norēķini. Precīzus depozīta un apmaksas nosacījumus skaties sadaļā “Nomas noteikumi”.",
+      "Rezervāciju apstiprina 50% avanss no kopsummas; atlikušo summu samaksā pirms pasākuma vai pasākuma dienā. Norēķini — bankas pārskaitījums vai skaidra nauda. Cenas norādītas bez PVN 21%.",
   },
   {
     category: "maksajumi",
     question: "Vai izsniedzat rēķinu uzņēmumiem?",
     answer:
-      "Jā, uzņēmumiem izsniedzam rēķinu. Rezervācijas laikā norādi uzņēmuma rekvizītus, un sagatavosim visus nepieciešamos grāmatvedības dokumentus. [JĀAPSTIPRINA: PVN maksātāja statuss un rekvizīti]",
+      "Jā, uzņēmumiem izsniedzam rēķinu. Esam PVN maksātājs (PVN reģ. nr. LV40203276261). Rezervācijas laikā norādi uzņēmuma rekvizītus, un sagatavosim visus nepieciešamos grāmatvedības dokumentus.",
   },
   {
     category: "maksajumi",
-    question: "Vai depozīts tiek atgriezts?",
+    question: "Vai avanss tiek atgriezts?",
     answer:
-      "Depozīta atgriešana ir atkarīga no atcelšanas termiņa un inventāra stāvokļa pēc pasākuma. Precīzie nosacījumi ir aprakstīti nomas noteikumos. [JĀAPSTIPRINA: konkrēti atcelšanas termiņi un depozīta apmērs]",
+      "Nē — atceļot rezervāciju, avanss netiek atmaksāts, jo tas nodrošina inventāra pieejamību un daļēji sedz zaudētos ienākumus. Atsevišķām iekārtām var būt drošības nauda (ķīla), ko atgriež pēc inventāra atgriešanas sākotnējā stāvoklī. Sīkāk — sadaļā „Nomas noteikumi”.",
   },
 ];
