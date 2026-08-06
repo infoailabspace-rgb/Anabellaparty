@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SectionHero from "@/components/section-hero";
 import Prose from "@/components/prose";
+import LegalBindingNote from "@/components/legal-binding-note";
 import { COMPANY, fullAddress } from "@/lib/company";
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function NoteikumiPage() {
         <p className="text-sm text-text/50">
           Pēdējoreiz atjaunināts: 2026. gada augusts.
         </p>
+        <LegalBindingNote />
 
         <h2>1. Vispārīgie noteikumi</h2>
         <p>

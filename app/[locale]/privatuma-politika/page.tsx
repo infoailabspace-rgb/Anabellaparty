@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import SectionHero from "@/components/section-hero";
 import Prose from "@/components/prose";
 import { Link } from "@/i18n/navigation";
+import LegalBindingNote from "@/components/legal-binding-note";
 import { COMPANY, fullAddress } from "@/lib/company";
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default function PrivatumaPolitikaPage() {
         <p className="text-sm text-text/50">
           Pēdējoreiz atjaunināts: 2026. gada augusts.
         </p>
+        <LegalBindingNote />
 
         <h2>1. Pārzinis un kontaktinformācija</h2>
         <p>

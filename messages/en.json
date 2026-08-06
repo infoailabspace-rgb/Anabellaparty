@@ -75,5 +75,8 @@
     "title": "Ready to celebrate?",
     "text": "Book your equipment today and make your event unforgettable.",
     "button": "Book now"
+  },
+  "legal": {
+    "bindingNote": "This is a translation provided for convenience. The legally binding version is the Latvian one."
   }
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SectionHero from "@/components/section-hero";
 import Prose from "@/components/prose";
+import LegalBindingNote from "@/components/legal-binding-note";
 
 export const metadata: Metadata = {
   title: "Sīkdatņu politika | Anabella Party",
@@ -19,6 +20,7 @@ export default function SikdatnuPolitikaPage() {
         <p className="text-sm text-text/50">
           Pēdējoreiz atjaunināts: 2026. gada augusts.
         </p>
+        <LegalBindingNote />
 
         <h2>Kas ir sīkdatnes</h2>
         <p>

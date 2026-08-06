@@ -75,5 +75,8 @@
     "title": "Gatavs svinēt?",
     "text": "Rezervē inventāru jau šodien un padari savu pasākumu neaizmirstamu.",
     "button": "Rezervēt tagad"
+  },
+  "legal": {
+    "bindingNote": "Saistošā ir šī — latviešu valodas versija."
   }
 }
