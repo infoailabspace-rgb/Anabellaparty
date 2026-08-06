@@ -1,7 +1,12 @@
+import createIntlMiddleware from "next-intl/middleware";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { routing } from "./i18n/routing";
 
-export async function middleware(request: NextRequest) {
+const intlMiddleware = createIntlMiddleware(routing);
+
+// Admin (/admin/*) — auth aizsardzība, NAV lokalizēts (tikai LV).
+async function adminMiddleware(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -48,6 +53,15 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
+export async function middleware(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    return adminMiddleware(request);
+  }
+  // Publiskās lapas — next-intl (LV saknē, en/ru prefiksi).
+  return intlMiddleware(request);
+}
+
 export const config = {
-  matcher: ["/admin", "/admin/:path*"],
+  // Visi ceļi, izņemot api, _next, _vercel un failus ar punktu (statiskie, sitemap.xml, robots.txt).
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
 };

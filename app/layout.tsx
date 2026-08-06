@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { getLocale } from "next-intl/server";
 import "./globals.css";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
-import CookieConsent from "@/components/cookie-consent";
-import AnalyticsListener from "@/components/analytics-listener";
-import SiteFrame from "@/components/site-frame";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "latin-ext"],
@@ -31,18 +27,21 @@ export const metadata: Metadata = {
     "Foto kastes, piepūšamās atrakcijas, specefekti un audio grāmata Tavai neaizmirstamai ballītei. Piegāde Pierīgā bez maksas.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+// Root layout — <html>/<body>, fonti. Lokalizēto chrome nodrošina [locale]/layout.
+// Admin (/admin/*) renderējas šeit bez publiskā chrome (tam savs izkārtojums).
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const locale = await getLocale();
   return (
     <html
-      lang="lv"
+      lang={locale}
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg text-text font-body">
-        <SiteFrame navbar={<Navbar />} footer={<Footer />}>
-          {children}
-        </SiteFrame>
-        <CookieConsent />
-        <AnalyticsListener />
+        {children}
       </body>
     </html>
   );
