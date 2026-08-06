@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { track } from "@/lib/analytics";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -151,7 +152,10 @@ export default function ChatWidget() {
       <button
         type="button"
         onClick={() => {
-          setOpen((v) => !v);
+          setOpen((v) => {
+            if (!v) track("chat_opened");
+            return !v;
+          });
           setPulse(false);
         }}
         aria-label={open ? "Aizvērt čatu" : "Atvērt čatu"}

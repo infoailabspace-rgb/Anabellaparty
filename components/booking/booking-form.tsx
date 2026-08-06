@@ -9,7 +9,8 @@ import {
   type Product,
 } from "@/lib/products";
 import { homeCategories } from "@/lib/categories";
-import type { CartItem } from "@/lib/pricing";
+import { computeQuote, type CartItem } from "@/lib/pricing";
+import { track, trackLead } from "@/lib/analytics";
 import {
   isValidEmail,
   isValidPhone,
@@ -107,6 +108,7 @@ export default function BookingForm() {
       /* ignore */
     }
     setLoaded(true);
+    track("booking_started");
   }, []);
 
   // Saglabā sessionStorage.
@@ -177,6 +179,7 @@ export default function BookingForm() {
   const itemFor = (slug: string) => items.find((i) => i.slug === slug);
 
   function toggle(p: Product) {
+    const adding = !items.some((i) => i.slug === p.slug);
     setItems((prev) =>
       prev.some((i) => i.slug === p.slug)
         ? prev.filter((i) => i.slug !== p.slug)
@@ -185,6 +188,12 @@ export default function BookingForm() {
             { slug: p.slug, tierIndex: defaultTierIndex(p), extraHours: 0, addOns: {} },
           ],
     );
+    if (adding) {
+      track("booking_item_added", {
+        item_name: p.name,
+        value: p.tiers.find((t) => t.price > 0)?.price ?? 0,
+      });
+    }
   }
   function patch(slug: string, partial: Partial<CartItem>) {
     setItems((prev) =>
@@ -227,7 +236,11 @@ export default function BookingForm() {
   function next() {
     const e = validateStep(step);
     setErrors(e);
-    if (e.length === 0) setStep((s) => Math.min(4, s + 1));
+    if (e.length === 0) {
+      const nextStep = Math.min(4, step + 1);
+      setStep(nextStep);
+      track("booking_step", { step_number: nextStep });
+    }
   }
   function back() {
     setErrors([]);
@@ -264,6 +277,9 @@ export default function BookingForm() {
         setSubmitting(false);
         return;
       }
+      const value = computeQuote(items).subtotal + (delivery?.cost || 0);
+      track("booking_submitted", { value });
+      trackLead(value);
       sessionStorage.removeItem(STORAGE_KEY);
       setSubmitted(true);
     } catch {

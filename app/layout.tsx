@@ -4,7 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import CookieConsent from "@/components/cookie-consent";
-import ChatWidget from "@/components/chat-widget";
+import AnalyticsListener from "@/components/analytics-listener";
+import SiteFrame from "@/components/site-frame";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "latin-ext"],
@@ -37,11 +38,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg text-text font-body">
-        <Navbar />
-        <main className="flex-1 overflow-x-hidden">{children}</main>
-        <Footer />
+        <SiteFrame navbar={<Navbar />} footer={<Footer />}>
+          {children}
+        </SiteFrame>
         <CookieConsent />
-        <ChatWidget />
+        <AnalyticsListener />
       </body>
     </html>
   );
