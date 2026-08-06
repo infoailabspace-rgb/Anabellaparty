@@ -68,12 +68,12 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-gold/30 bg-bg/80 backdrop-blur-md">
-      <nav className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6 md:h-24">
+      <nav className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-6 md:h-24 lg:px-10">
         <Link
           href="/"
           aria-label={t("sakumsAria")}
           onClick={onHomeClick}
-          className="transition-opacity hover:opacity-90"
+          className="shrink-0 transition-opacity hover:opacity-90"
         >
           <Image
             src="/logo/logo-full.png"

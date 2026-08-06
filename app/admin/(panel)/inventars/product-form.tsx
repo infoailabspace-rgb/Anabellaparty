@@ -22,11 +22,11 @@ const emptyML = { lv: "", en: "", ru: "" };
 const empty: ProductInput = {
   slug: "",
   category: "foto-kaste",
-  name: "",
+  name: { ...emptyML },
   tagline: { ...emptyML },
   description: { ...emptyML },
   includes: { lv: [], en: [], ru: [] },
-  tiers: [{ duration: "", price: 0 }],
+  tiers: [{ duration: { ...emptyML }, price: 0 }],
   hourly_extra: null,
   add_ons: [],
   contact_only: false,
@@ -70,7 +70,11 @@ export default function ProductForm({
   const set = (patch: Partial<ProductInput>) => setP((v) => ({ ...v, ...patch }));
 
   function onName(v: string) {
-    set({ name: v, ...(!slugTouched && !id ? { slug: slugify(v) } : {}) });
+    // Slug ģenerējas tikai no LV nosaukuma.
+    set({
+      name: { ...p.name, [lang]: v },
+      ...(lang === "lv" && !slugTouched && !id ? { slug: slugify(v) } : {}),
+    });
   }
 
   function save() {
@@ -134,8 +138,13 @@ export default function ProductForm({
           <LangTabs lang={lang} setLang={setLang} />
         </div>
         <label className="block text-sm text-text/70">
-          Nosaukums (LV)
-          <input value={p.name} onChange={(e) => onName(e.target.value)} className={`mt-1 ${field}`} />
+          Nosaukums ({lang.toUpperCase()})
+          <input
+            value={p.name[lang]}
+            onChange={(e) => onName(e.target.value)}
+            placeholder={lang !== "lv" ? p.name.lv : ""}
+            className={`mt-1 ${field}`}
+          />
         </label>
         <label className="block text-sm text-text/70">
           Slug
@@ -206,13 +215,13 @@ export default function ProductForm({
         <div className="mt-4 space-y-2">
           {p.tiers.map((t, i) => (
             <div key={i} className="flex gap-2">
-              <input placeholder="Ilgums (2h, 10h, 24h…)" value={t.duration} onChange={(e) => { const tiers = [...p.tiers]; tiers[i] = { ...t, duration: e.target.value }; set({ tiers }); }} className={field} />
+              <input placeholder={`Ilgums ${lang.toUpperCase()} (2h, 10h…)`} value={t.duration[lang]} onChange={(e) => { const tiers = [...p.tiers]; tiers[i] = { ...t, duration: { ...t.duration, [lang]: e.target.value } }; set({ tiers }); }} className={field} />
               <input type="number" placeholder="€" value={t.price} onChange={(e) => { const tiers = [...p.tiers]; tiers[i] = { ...t, price: Number(e.target.value) }; set({ tiers }); }} className={`${field} w-28`} />
-              <input placeholder="piezīme" value={t.note ?? ""} onChange={(e) => { const tiers = [...p.tiers]; tiers[i] = { ...t, note: e.target.value }; set({ tiers }); }} className={field} />
+              <input placeholder={`piezīme ${lang.toUpperCase()}`} value={t.note?.[lang] ?? ""} onChange={(e) => { const tiers = [...p.tiers]; tiers[i] = { ...t, note: { ...(t.note ?? { lv: "", en: "", ru: "" }), [lang]: e.target.value } }; set({ tiers }); }} className={field} />
               <button onClick={() => set({ tiers: p.tiers.filter((_, j) => j !== i) })} className="shrink-0 rounded-lg border border-gold/30 px-3 text-gold">−</button>
             </div>
           ))}
-          <button onClick={() => set({ tiers: [...p.tiers, { duration: "", price: 0 }] })} className="rounded-lg border border-gold/30 px-3 py-1 text-sm text-gold">+ Tarifs</button>
+          <button onClick={() => set({ tiers: [...p.tiers, { duration: { lv: "", en: "", ru: "" }, price: 0 }] })} className="rounded-lg border border-gold/30 px-3 py-1 text-sm text-gold">+ Tarifs</button>
         </div>
         <label className="mt-4 block text-sm text-text/70">
           Katras nākamās stundas piemaksa (€)
@@ -223,13 +232,13 @@ export default function ProductForm({
         <div className="mt-2 space-y-2">
           {p.add_ons.map((a, i) => (
             <div key={i} className="flex gap-2">
-              <input placeholder="Nosaukums" value={a.name} onChange={(e) => { const add = [...p.add_ons]; add[i] = { ...a, name: e.target.value }; set({ add_ons: add }); }} className={field} />
+              <input placeholder={`Nosaukums ${lang.toUpperCase()}`} value={a.name[lang]} onChange={(e) => { const add = [...p.add_ons]; add[i] = { ...a, name: { ...a.name, [lang]: e.target.value } }; set({ add_ons: add }); }} className={field} />
               <input type="number" placeholder="€" value={a.price} onChange={(e) => { const add = [...p.add_ons]; add[i] = { ...a, price: Number(e.target.value) }; set({ add_ons: add }); }} className={`${field} w-24`} />
-              <input placeholder="mērv. (gb, 1L)" value={a.unit ?? ""} onChange={(e) => { const add = [...p.add_ons]; add[i] = { ...a, unit: e.target.value }; set({ add_ons: add }); }} className={`${field} w-32`} />
+              <input placeholder={`mērv. ${lang.toUpperCase()}`} value={a.unit?.[lang] ?? ""} onChange={(e) => { const add = [...p.add_ons]; add[i] = { ...a, unit: { ...(a.unit ?? { lv: "", en: "", ru: "" }), [lang]: e.target.value } }; set({ add_ons: add }); }} className={`${field} w-32`} />
               <button onClick={() => set({ add_ons: p.add_ons.filter((_, j) => j !== i) })} className="shrink-0 rounded-lg border border-gold/30 px-3 text-gold">−</button>
             </div>
           ))}
-          <button onClick={() => set({ add_ons: [...p.add_ons, { name: "", price: 0 }] })} className="rounded-lg border border-gold/30 px-3 py-1 text-sm text-gold">+ Papildinājums</button>
+          <button onClick={() => set({ add_ons: [...p.add_ons, { name: { lv: "", en: "", ru: "" }, price: 0 }] })} className="rounded-lg border border-gold/30 px-3 py-1 text-sm text-gold">+ Papildinājums</button>
         </div>
       </section>
 
@@ -239,12 +248,12 @@ export default function ProductForm({
         <div className="mt-4 space-y-2">
           {p.specs.map((s, i) => (
             <div key={i} className="flex gap-2">
-              <input placeholder="Apzīmējums (Izmēri, Vecums…)" value={s.label} onChange={(e) => { const sp = [...p.specs]; sp[i] = { ...s, label: e.target.value }; set({ specs: sp }); }} className={field} />
-              <input placeholder="Vērtība" value={s.value} onChange={(e) => { const sp = [...p.specs]; sp[i] = { ...s, value: e.target.value }; set({ specs: sp }); }} className={field} />
+              <input placeholder={`Apzīmējums ${lang.toUpperCase()}`} value={s.label[lang]} onChange={(e) => { const sp = [...p.specs]; sp[i] = { ...s, label: { ...s.label, [lang]: e.target.value } }; set({ specs: sp }); }} className={field} />
+              <input placeholder={`Vērtība ${lang.toUpperCase()}`} value={s.value[lang]} onChange={(e) => { const sp = [...p.specs]; sp[i] = { ...s, value: { ...s.value, [lang]: e.target.value } }; set({ specs: sp }); }} className={field} />
               <button onClick={() => set({ specs: p.specs.filter((_, j) => j !== i) })} className="shrink-0 rounded-lg border border-gold/30 px-3 text-gold">−</button>
             </div>
           ))}
-          <button onClick={() => set({ specs: [...p.specs, { label: "", value: "" }] })} className="rounded-lg border border-gold/30 px-3 py-1 text-sm text-gold">+ Specifikācija</button>
+          <button onClick={() => set({ specs: [...p.specs, { label: { lv: "", en: "", ru: "" }, value: { lv: "", en: "", ru: "" } }] })} className="rounded-lg border border-gold/30 px-3 py-1 text-sm text-gold">+ Specifikācija</button>
         </div>
       </section>
 

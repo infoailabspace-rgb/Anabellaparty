@@ -18,15 +18,15 @@ export type MLArr = { lv: string[]; en: string[]; ru: string[] };
 export type ProductInput = {
   slug: string;
   category: string;
-  name: string; // nosaukums netulko (SPOGULIS/OZOLS u.c.)
+  name: ML;
   tagline: ML;
   description: ML;
   includes: MLArr;
-  tiers: { duration: string; price: number; note?: string }[];
+  tiers: { duration: ML; price: number; note?: ML }[];
   hourly_extra: number | null;
-  add_ons: { name: string; price: number; unit?: string }[];
+  add_ons: { name: ML; price: number; unit?: ML }[];
   contact_only: boolean;
-  specs: { label: string; value: string }[];
+  specs: { label: ML; value: ML }[];
   alt_phone: string | null;
   is_active: boolean;
   is_featured: boolean;
@@ -61,6 +61,8 @@ async function audit(
 function cleanArr(a: string[]) {
   return (a ?? []).map((s) => s.trim()).filter(Boolean);
 }
+// ML ir "tukšs", ja visas valodas tukšas.
+const mlEmpty = (m: ML) => !m.lv.trim() && !m.en.trim() && !m.ru.trim();
 
 function toRow(p: ProductInput) {
   const inc = {
@@ -69,22 +71,35 @@ function toRow(p: ProductInput) {
     ru: cleanArr(p.includes.ru),
   };
   const hasInc = inc.lv.length || inc.en.length || inc.ru.length;
+  const tiers = p.tiers
+    .filter((t) => !mlEmpty(t.duration))
+    .map((t) => ({
+      duration: t.duration,
+      price: t.price,
+      ...(t.note && !mlEmpty(t.note) ? { note: t.note } : {}),
+    }));
+  const addOns = p.add_ons
+    .filter((a) => !mlEmpty(a.name))
+    .map((a) => ({
+      name: a.name,
+      price: a.price,
+      ...(a.unit && !mlEmpty(a.unit) ? { unit: a.unit } : {}),
+    }));
+  const specs = p.specs
+    .filter((s) => !mlEmpty(s.label))
+    .map((s) => ({ label: s.label, value: s.value }));
   return {
     slug: p.slug.trim(),
     category: p.category,
-    name: { lv: p.name },
+    name: p.name,
     tagline: { lv: p.tagline.lv, en: p.tagline.en, ru: p.tagline.ru },
     description: { lv: p.description.lv, en: p.description.en, ru: p.description.ru },
     includes: hasInc ? inc : null,
-    tiers: p.tiers.filter((t) => t.duration),
+    tiers,
     hourly_extra: p.hourly_extra,
-    add_ons: p.add_ons.filter((a) => a.name).length
-      ? p.add_ons.filter((a) => a.name)
-      : null,
+    add_ons: addOns.length ? addOns : null,
     contact_only: p.contact_only,
-    specs: p.specs.filter((s) => s.label).length
-      ? p.specs.filter((s) => s.label)
-      : null,
+    specs: specs.length ? specs : null,
     alt_phone: p.alt_phone || null,
     is_active: p.is_active,
     is_featured: p.is_featured,
@@ -97,7 +112,7 @@ function toRow(p: ProductInput) {
 export async function saveProduct(id: string | null, data: ProductInput) {
   const supabase = await createClient();
   if (!data.slug.trim()) return { error: "Trūkst slug." };
-  if (!data.name.trim()) return { error: "Trūkst nosaukuma." };
+  if (!data.name.lv.trim()) return { error: "Trūkst nosaukuma (LV)." };
 
   const row = toRow(data);
 
