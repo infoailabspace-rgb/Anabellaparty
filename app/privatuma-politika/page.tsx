@@ -34,6 +34,7 @@ export default function PrivatumaPolitikaPage() {
           <li>Pasākuma norises adrese un datums</li>
           <li>Maksājumu informācija (apstrādā maksājumu pakalpojumu sniedzējs)</li>
           <li>Fotogrāfijas, kas uzņemtas ar foto kastēm (skat. 5. punktu)</li>
+          <li>Čata sarunu saturs, ja izmanto mājaslapas čatu (var saturēt Tavu ievadīto informāciju)</li>
         </ul>
 
         <h2>3. Kādēļ vācam datus</h2>
@@ -77,7 +78,8 @@ export default function PrivatumaPolitikaPage() {
           Datus glabājam tik ilgi, cik nepieciešams pakalpojuma sniegšanai un
           normatīvo prasību izpildei (piem., grāmatvedības dokumentus — atbilstoši
           likumā noteiktajam termiņam). [JĀAPSTIPRINA: konkrēti glabāšanas
-          termiņi].
+          termiņi]. Mājaslapas čata sarunas glabājam līdz 90 dienām un
+          izmantojam pakalpojuma uzlabošanai.
         </p>
 
         <h2>8. Tavas tiesības</h2>

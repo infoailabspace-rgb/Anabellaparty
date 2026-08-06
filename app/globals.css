@@ -126,6 +126,25 @@ body {
   animation: anabella-float 3.5s ease-in-out infinite;
 }
 
+/* Čata pogas uzmanības pulsācija (pirmās 3 sekundes). */
+@keyframes anabella-chat-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 10px 30px -8px rgba(212, 169, 96, 0.6),
+      0 0 0 0 rgba(212, 169, 96, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 10px 30px -8px rgba(212, 169, 96, 0.6),
+      0 0 0 12px rgba(212, 169, 96, 0);
+  }
+}
+
+.anabella-chat-pulse {
+  animation: anabella-chat-pulse 1.4s ease-out infinite;
+}
+
 /* Zelta mirdzums, kas periodiski pārslīd pāri kartītēm ("dzīvs"). */
 .anabella-shimmer {
   background-image: linear-gradient(

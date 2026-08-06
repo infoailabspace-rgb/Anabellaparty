@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import CookieConsent from "@/components/cookie-consent";
+import ChatWidget from "@/components/chat-widget";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "latin-ext"],
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1 overflow-x-hidden">{children}</main>
         <Footer />
         <CookieConsent />
+        <ChatWidget />
       </body>
     </html>
   );
