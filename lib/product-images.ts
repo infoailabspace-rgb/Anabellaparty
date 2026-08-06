@@ -1,8 +1,24 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 // Servera puses (build/ISR) skenēšana — public/images/... mapēs meklē attēlus.
 const EXTS = [".jpg", ".jpeg", ".png", ".webp"];
+
+export function isHttpUrl(s: unknown): s is string {
+  return typeof s === "string" && /^https?:\/\//i.test(s);
+}
+
+/** Vai relatīvs web ceļš (/images/...) fiziski eksistē public/ mapē. */
+export function publicFileExists(webPath: unknown): boolean {
+  if (typeof webPath !== "string") return false;
+  if (!webPath || /^https?:\/\//i.test(webPath)) return false;
+  try {
+    const rel = decodeURIComponent(webPath.replace(/^\/+/, ""));
+    return existsSync(join(process.cwd(), "public", rel));
+  } catch {
+    return false;
+  }
+}
 
 function isImage(file: string): boolean {
   const lower = file.toLowerCase();

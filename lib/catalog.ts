@@ -5,7 +5,11 @@ import {
   type ProductCategory,
 } from "@/lib/products";
 import { currentLocale, pickStr, pickArr } from "@/lib/i18n-db";
-import { scanProductImages } from "@/lib/product-images";
+import {
+  scanProductImages,
+  publicFileExists,
+  isHttpUrl,
+} from "@/lib/product-images";
 
 // ML {lv,en,ru} VAI vienkārša virkne (atpakaļsaderība pirms migrācijas).
 function mlPick(v: unknown, locale: string): string {
@@ -44,10 +48,22 @@ function mapRow(r: any, locale: string): Product {
         value: mlPick(s.value, locale),
       }))
     : undefined;
-  // Prioritāte: DB attēli (Supabase Storage) → public faili → placeholder.
-  let coverImage = r.cover_image ?? "";
-  let gallery = Array.isArray(r.gallery) ? r.gallery : [];
-  if (!coverImage && gallery.length === 0) {
+  // Attēlu prioritāte:
+  //  (a) absolūts http(s) DB URL → lieto tieši (Storage augšupielādes)
+  //  (b) relatīvs DB ceļš, kas fiziski eksistē → lieto
+  //  (c) skenē public/images/products/<slug>/ → lieto atrasto
+  //  (d) placeholder (tukšs)
+  const dbCover = r.cover_image ?? "";
+  const dbGallery: string[] = Array.isArray(r.gallery) ? r.gallery : [];
+  let coverImage = "";
+  let gallery: string[] = [];
+  if (isHttpUrl(dbCover)) {
+    coverImage = dbCover;
+    gallery = dbGallery.filter(isHttpUrl);
+  } else if (dbCover && publicFileExists(dbCover)) {
+    coverImage = dbCover;
+    gallery = dbGallery.filter((g) => isHttpUrl(g) || publicFileExists(g));
+  } else {
     const scanned = scanProductImages(r.slug);
     coverImage = scanned.cover;
     gallery = scanned.gallery;
