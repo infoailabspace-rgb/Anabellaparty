@@ -33,15 +33,16 @@ function MailIcon() {
 }
 
 const CONTACTS = [
-  { label: "Zvanīt", sub: "+371 29222761", href: "tel:+37129222761", Icon: PhoneIcon },
-  { label: "WhatsApp", sub: "Ātrā ziņa", href: "https://wa.me/37129222761", Icon: WhatsAppIcon },
-  { label: "Rakstīt e-pastu", sub: "info@anabellaparty.lv", href: "mailto:info@anabellaparty.lv", Icon: MailIcon },
-];
+  { labelKey: "rCall", sub: "+371 29222761", href: "tel:+37129222761", Icon: PhoneIcon },
+  { label: "WhatsApp", subKey: "rQuickMsg", href: "https://wa.me/37129222761", Icon: WhatsAppIcon },
+  { labelKey: "rEmail", sub: "info@anabellaparty.lv", href: "mailto:info@anabellaparty.lv", Icon: MailIcon },
+] as const;
 
 export default async function RezervetPage() {
-  const [products, t] = await Promise.all([
+  const [products, t, ts] = await Promise.all([
     getAllProducts(),
     getTranslations("pages"),
+    getTranslations("sec"),
   ]);
   return (
     <>
@@ -53,25 +54,29 @@ export default async function RezervetPage() {
       <div className="mx-auto max-w-5xl px-6 py-16">
         {/* Tūlītējie kontakti */}
         <div className="grid gap-4 sm:grid-cols-3">
-          {CONTACTS.map(({ label, sub, href, Icon }) => (
-            <a
-              key={label}
-              href={href}
-              className="flex items-center gap-3 rounded-2xl bg-gold px-5 py-4 font-semibold text-black transition-transform hover:scale-[1.02]"
-            >
-              <Icon />
-              <span className="leading-tight">
-                {label}
-                <span className="block text-sm font-normal text-black/70">
-                  {sub}
+          {CONTACTS.map((c) => {
+            const label = "labelKey" in c ? ts(c.labelKey) : c.label;
+            const sub = "subKey" in c ? ts(c.subKey) : c.sub;
+            return (
+              <a
+                key={label}
+                href={c.href}
+                className="flex items-center gap-3 rounded-2xl bg-gold px-5 py-4 font-semibold text-black transition-transform hover:scale-[1.02]"
+              >
+                <c.Icon />
+                <span className="leading-tight">
+                  {label}
+                  <span className="block text-sm font-normal text-black/70">
+                    {sub}
+                  </span>
                 </span>
-              </span>
-            </a>
-          ))}
+              </a>
+            );
+          })}
         </div>
 
         <div className="my-8 border-t border-gold/20 pt-6 text-center text-sm text-text/60">
-          Vai aizpildi anketu — atbildēsim 24 stundu laikā ar precīzu piedāvājumu.
+          {ts("rOrForm")}
         </div>
 
         {/* Anketa */}

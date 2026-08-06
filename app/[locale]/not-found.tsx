@@ -1,15 +1,21 @@
-import Link from "next/link";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
-const links = [
-  { href: "/", label: "Sākums" },
-  { href: "/foto-kaste", label: "Foto kastes" },
-  { href: "/piepusamas-atrakcijas", label: "Atrakcijas" },
-  { href: "/svinibu-inventars", label: "Inventārs" },
-  { href: "/kontakti", label: "Kontakti" },
-];
+export default async function NotFound() {
+  const [tn, ts, tc] = await Promise.all([
+    getTranslations("nav"),
+    getTranslations("sec"),
+    getTranslations("common"),
+  ]);
+  const links = [
+    { href: "/", label: tn("sakums") },
+    { href: "/foto-kaste", label: tn("fotoKastes") },
+    { href: "/piepusamas-atrakcijas", label: tn("atrakcijas") },
+    { href: "/svinibu-inventars", label: tn("vissInventars") },
+    { href: "/kontakti", label: tn("kontakti") },
+  ] as const;
 
-export default function NotFound() {
   return (
     <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-6 text-center">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(212,169,96,0.12),transparent_60%)]" />
@@ -23,12 +29,9 @@ export default function NotFound() {
         />
         <p className="mt-6 font-mono text-6xl font-bold text-gold">404</p>
         <h1 className="mt-4 font-display text-3xl font-bold tracking-tight">
-          Šī lapa aizsvinējusies prom
+          {ts("nfTitle")}
         </h1>
-        <p className="mt-3 text-text/75">
-          Meklēto lapu neizdevās atrast. Varbūt tā ir pārcelta vai adresē
-          ieviesusies kļūda.
-        </p>
+        <p className="mt-3 text-text/75">{ts("nfText")}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           {links.map((l) => (
             <Link
@@ -44,7 +47,7 @@ export default function NotFound() {
           href="/rezervet"
           className="mt-8 inline-block rounded-full bg-gold px-8 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
         >
-          Rezervēt
+          {tc("rezervet")}
         </Link>
       </div>
     </section>

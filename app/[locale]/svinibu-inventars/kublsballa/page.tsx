@@ -20,9 +20,10 @@ export async function generateMetadata({
 export const revalidate = 300;
 
 export default async function KublsballaPage() {
-  const [items, t] = await Promise.all([
+  const [items, t, ts] = await Promise.all([
     getProductsByCategory("kubli"),
     getTranslations("pages"),
+    getTranslations("sec"),
   ]);
 
   return (
@@ -34,17 +35,14 @@ export default async function KublsballaPage() {
         <Reveal>
           <div className="mb-12 rounded-2xl border-2 border-gold bg-gold/10 p-6">
             <p className="text-text/90">
-              <span className="font-semibold text-gold">Uzmanību:</span> kubliem
-              un pirtij ir atsevišķs tālrunis{" "}
+              {ts("kbNotePre")}
               <a
                 href={`tel:+371${KUBLI_PHONE}`}
                 className="font-mono font-bold text-gold underline"
               >
                 {KUBLI_PHONE}
               </a>
-              . Kubli atrodas <span className="font-semibold">Jūrmalā</span>;
-              piegādes cena — pēc vienošanās atkarībā no attāluma. Svētku dienās
-              cenas pēc vienošanās. Visas cenas norādītas bez PVN 21%.
+              {ts("kbNotePost")}
             </p>
           </div>
         </Reveal>
@@ -57,9 +55,9 @@ export default async function KublsballaPage() {
       </div>
 
       <CtaSection
-        title="Ieinteresē kubls vai pirts?"
-        text="Zvani vai raksti — pastāstīsim par pieejamību un piegādi."
-        buttonLabel={`Zvanīt ${KUBLI_PHONE}`}
+        title={ts("kbCtaTitle")}
+        text={ts("kbCtaText")}
+        buttonLabel={ts("rCall") + " " + KUBLI_PHONE}
         href={`tel:+371${KUBLI_PHONE}`}
       />
     </>

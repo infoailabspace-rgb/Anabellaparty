@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { getAllProducts } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
@@ -26,9 +26,10 @@ const mainSlugs = ["spogulis", "ozols", "instagram"];
 export const revalidate = 300;
 
 export default async function FotoKastePage() {
-  const [products, t] = await Promise.all([
+  const [products, t, ts] = await Promise.all([
     getAllProducts(),
     getTranslations("pages"),
+    getTranslations("sec"),
   ]);
   const boxes = mainSlugs
     .map((s) => products.find((p) => p.slug === s))
@@ -53,16 +54,12 @@ export default async function FotoKastePage() {
         {/* AI funkcija */}
         <Reveal>
           <div className="mb-12 flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-gold/30 bg-navy/30 p-6">
-            <p className="text-text/85">
-              Visām foto kastēm iespējams pievienot{" "}
-              <span className="font-semibold text-gold">AI funkciju</span> —
-              pārvērt viesus par supervaroņiem, zvaigznēm un citiem tēliem.
-            </p>
+            <p className="text-text/85">{ts("fkAiBlurb")}</p>
             <Link
               href="/foto-kaste/ai-foto"
               className="rounded-full border-2 border-gold px-5 py-2 text-sm font-semibold text-gold transition-colors hover:bg-gold/10"
             >
-              Uzzināt par AI foto →
+              {ts("fkLearnAi")}
             </Link>
           </div>
         </Reveal>
@@ -80,7 +77,7 @@ export default async function FotoKastePage() {
             <div className="mt-12 rounded-3xl border-2 border-gold bg-gold/10 p-6 sm:p-10">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-wide text-black">
-                  Īpašais piedāvājums
+                  {ts("fkSpecial")}
                 </span>
                 <h2 className="font-display text-2xl font-bold sm:text-3xl">
                   {visuDienu.name} — 350 €
@@ -128,16 +125,12 @@ export default async function FotoKastePage() {
           <div className="mt-12 grid items-center gap-8 rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10 lg:grid-cols-2">
             <div>
               <h2 className="font-display text-2xl font-bold">
-                Foto rāmīšu dizaini
+                {ts("fkFramesTitle")}
               </h2>
-              <p className="mt-4 text-text/80">
-                Izvēlies izdruku rāmīti un pievieno savu logo vai tekstu.
-                Dizainu izstrādājam individuāli katram pasākumam, lai izdrukas
-                atbilstu Tavai iecerei.
-              </p>
+              <p className="mt-4 text-text/80">{ts("fkFramesText")}</p>
             </div>
             <ImagePlaceholder
-              label="Foto rāmīšu dizaini"
+              label={ts("fkFramesTitle")}
               className="aspect-[4/3] w-full"
             />
           </div>

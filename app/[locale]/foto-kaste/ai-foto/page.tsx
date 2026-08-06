@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import SectionHero from "@/components/section-hero";
 import ImageGallery from "@/components/image-gallery";
 import Reveal from "@/components/reveal";
@@ -24,18 +24,21 @@ const aiGallery = [
   "/images/ai-foto/04.jpg",
 ];
 
-const themes = [
-  "Gatsby retro",
-  "Supervaroņi",
-  "Kosmosa iekarotāji",
-  "Harija Potera burvji",
-  "Elegantas profesijas",
-  "Senie laiki",
-  "Klienta paša ideja",
-];
+const themeKeys = [
+  "afTheme1",
+  "afTheme2",
+  "afTheme3",
+  "afTheme4",
+  "afTheme5",
+  "afTheme6",
+  "afTheme7",
+] as const;
 
 export default async function AiFotoPage() {
-  const t = await getTranslations("pages");
+  const [t, ts] = await Promise.all([
+    getTranslations("pages"),
+    getTranslations("sec"),
+  ]);
   return (
     <>
       <SectionHero title={t("aiFotoTitle")} tagline={t("aiFotoTagline")} />
@@ -43,45 +46,36 @@ export default async function AiFotoPage() {
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <Reveal>
-            <p className="text-text/85">
-              AI foto kaste pārvērš viesus par supervaroņiem, kosmosa
-              ceļotājiem, retro gangsteriem un Holivudas zvaigznēm. Efektu
-              pielāgojam pasākuma tematikai — no elegantām kāzām līdz
-              korporatīvai tēmu ballītei.
-            </p>
+            <p className="text-text/85">{ts("afIntro")}</p>
 
             <h2 className="mt-8 font-display text-lg font-semibold text-gold">
-              Populārākās tēmas
+              {ts("afThemesTitle")}
             </h2>
             <ul className="mt-4 flex flex-wrap gap-2">
-              {themes.map((t) => (
+              {themeKeys.map((k) => (
                 <li
-                  key={t}
+                  key={k}
                   className="rounded-full border border-gold/30 px-4 py-1.5 text-sm text-text/85"
                 >
-                  {t}
+                  {ts(k)}
                 </li>
               ))}
             </ul>
 
-            <p className="mt-8 text-text/85">
-              AI funkciju iespējams pievienot jebkurai foto kastei —{" "}
-              <span className="font-mono font-semibold text-gold">+100 €</span>{" "}
-              papildus izvēlētās foto kastes cenai.
-            </p>
+            <p className="mt-8 text-text/85">{ts("afPrice")}</p>
 
             <div className="mt-6 flex flex-col gap-4 sm:flex-row">
               <a
                 href="tel:+37129222761"
                 className="rounded-full bg-gold px-8 py-3 text-center font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
               >
-                Zvanīt +371 29222761
+                {ts("afCall")}
               </a>
               <Link
                 href="/kontakti"
                 className="rounded-full border-2 border-gold px-8 py-3 text-center font-semibold text-gold transition-colors hover:bg-gold/10"
               >
-                Aizpildīt anketu
+                {ts("afForm")}
               </Link>
             </div>
           </Reveal>

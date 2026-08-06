@@ -22,17 +22,18 @@ export async function generateMetadata({
 }
 
 const addOns = [
-  { name: "Info statīvs (rāmītis)", price: "10 €" },
-  { name: "USB koka kastīte ar personalizētu gravējumu", price: "20 €" },
-  { name: "Video apsveikumu videomontāža (viens fails ar mūziku, tekstu)", price: "no 30 €" },
-];
+  { nameKey: "avAddOn1", price: "10 €" },
+  { nameKey: "avAddOn2", price: "20 €" },
+  { nameKey: "avAddOn3", priceKey: "avAddOn3Price" },
+] as const;
 
 export const revalidate = 300;
 
 export default async function AudioViesuGramatasPage() {
-  const [items, t] = await Promise.all([
+  const [items, t, ts] = await Promise.all([
     getProductsByCategory("audio-video"),
     getTranslations("pages"),
+    getTranslations("sec"),
   ]);
 
   return (
@@ -45,8 +46,7 @@ export default async function AudioViesuGramatasPage() {
       <div className="mx-auto max-w-6xl px-6 py-16">
         <Reveal>
           <p className="mb-10 rounded-2xl border border-gold/25 bg-navy/25 p-5 text-center text-sm text-text/75">
-            Faili no audio/video viesu grāmatām tiek glabāti{" "}
-            <span className="font-semibold text-text">30 dienas</span>.
+            {ts("avRetention")}
           </p>
         </Reveal>
 
@@ -59,16 +59,18 @@ export default async function AudioViesuGramatasPage() {
         {/* Papildinājumi */}
         <Reveal>
           <div className="mt-12 rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10">
-            <h2 className="font-display text-2xl font-bold">Papildinājumi</h2>
+            <h2 className="font-display text-2xl font-bold">
+              {ts("avAddOnsTitle")}
+            </h2>
             <ul className="mt-5 space-y-3">
               {addOns.map((a) => (
                 <li
-                  key={a.name}
+                  key={a.nameKey}
                   className="flex flex-wrap items-center justify-between gap-2 border-b border-gold/10 pb-3 text-sm"
                 >
-                  <span className="text-text/85">{a.name}</span>
+                  <span className="text-text/85">{ts(a.nameKey)}</span>
                   <span className="font-mono font-semibold text-gold">
-                    {a.price}
+                    {"priceKey" in a ? ts(a.priceKey) : a.price}
                   </span>
                 </li>
               ))}
@@ -79,10 +81,12 @@ export default async function AudioViesuGramatasPage() {
         {/* Video pamācība */}
         <Reveal>
           <div className="mt-6 overflow-hidden rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10">
-            <h2 className="font-display text-2xl font-bold">Video pamācība</h2>
+            <h2 className="font-display text-2xl font-bold">
+              {ts("avTutorial")}
+            </h2>
             <div className="mt-5 aspect-video w-full overflow-hidden rounded-xl">
               <iframe
-                title="Video pamācība"
+                title={ts("avTutorial")}
                 src="https://www.youtube.com/embed/hIrsgkIkbnY"
                 className="h-full w-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

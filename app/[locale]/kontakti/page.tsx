@@ -22,9 +22,10 @@ export async function generateMetadata({
 }
 
 export default async function KontaktiPage() {
-  const [hours, t] = await Promise.all([
+  const [hours, t, ts] = await Promise.all([
     getContent("contact.hours", HOURS_FALLBACK),
     getTranslations("pages"),
+    getTranslations("sec"),
   ]);
   const hoursLines = hours.split("\n").filter(Boolean);
 
@@ -63,7 +64,7 @@ export default async function KontaktiPage() {
           <Reveal className="space-y-8">
             <div>
               <h2 className="font-display text-xl font-semibold text-gold">
-                Sazinies ar mums
+                {ts("cReachUs")}
               </h2>
               <ul className="mt-4 space-y-3 text-text/85">
                 <li>
@@ -97,19 +98,19 @@ export default async function KontaktiPage() {
             {/* Rekvizīti */}
             <div>
               <h3 className="font-display text-sm font-semibold text-text">
-                Rekvizīti
+                {ts("cRequisites")}
               </h3>
               <ul className="mt-3 space-y-1 text-sm text-text/70">
                 <li>{COMPANY.legalName}</li>
-                <li>Reģ. nr. {COMPANY.regNr}</li>
-                <li>PVN reģ. nr. {COMPANY.vatNr}</li>
-                <li>Juridiskā adrese: {fullAddress}</li>
+                <li>{ts("cRegNr")} {COMPANY.regNr}</li>
+                <li>{ts("cVatNr")} {COMPANY.vatNr}</li>
+                <li>{ts("cLegalAddr")}: {fullAddress}</li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-display text-sm font-semibold text-text">
-                Darba laiks
+                {ts("cHours")}
               </h3>
               <ul className="mt-3 space-y-1 text-sm text-text/70">
                 {hoursLines.map((line, i) => (
@@ -123,7 +124,7 @@ export default async function KontaktiPage() {
             {/* Karte */}
             <div className="overflow-hidden rounded-2xl border-2 border-gold/25">
               <iframe
-                title="Ķekava kartē"
+                title={ts("cMapTitle")}
                 src="https://www.google.com/maps?q=Vecozolu+iela+14,+%C4%B6ekava,+Latvija&output=embed"
                 className="h-64 w-full"
                 loading="lazy"
@@ -136,11 +137,9 @@ export default async function KontaktiPage() {
           <Reveal delay={0.1}>
             <div className="rounded-2xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-8">
               <h2 className="font-display text-xl font-semibold">
-                Uzraksti mums
+                {ts("cWriteUs")}
               </h2>
-              <p className="mt-2 text-sm text-text/60">
-                Aizpildi formu, un mēs sazināsimies ar Tevi.
-              </p>
+              <p className="mt-2 text-sm text-text/60">{ts("cFormHint")}</p>
               <div className="mt-6">
                 <ContactForm />
               </div>

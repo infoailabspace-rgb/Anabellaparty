@@ -18,7 +18,11 @@ export async function generateMetadata({
 }
 
 export default async function FaqPage() {
-  const [items, t] = await Promise.all([getFaqs(), getTranslations("pages")]);
+  const [items, t, ts] = await Promise.all([
+    getFaqs(),
+    getTranslations("pages"),
+    getTranslations("sec"),
+  ]);
   return (
     <>
       <SectionHero title={t("faqTitle")} tagline={t("faqTagline")} />
@@ -26,9 +30,9 @@ export default async function FaqPage() {
         <FaqAccordion items={items} />
       </div>
       <CtaSection
-        title="Vēl kāds jautājums?"
-        text="Uzraksti vai piezvani — labprāt palīdzēsim izvēlēties Tavam pasākumam piemērotāko."
-        buttonLabel="Sazināties"
+        title={ts("fqCtaTitle")}
+        text={ts("fqCtaText")}
+        buttonLabel={ts("fqCtaBtn")}
         href="/kontakti"
       />
     </>

@@ -20,9 +20,10 @@ export async function generateMetadata({
 export const revalidate = 300;
 
 export default async function SpecefektiPage() {
-  const [items, t] = await Promise.all([
+  const [items, t, ts] = await Promise.all([
     getProductsByCategory("specefekti"),
     getTranslations("pages"),
+    getTranslations("sec"),
   ]);
 
   return (
@@ -41,7 +42,7 @@ export default async function SpecefektiPage() {
 
         <Reveal>
           <p className="mt-10 rounded-2xl border border-gold/25 bg-navy/25 p-5 text-center text-xs text-text/60">
-            * Auksto dzirksteļu salūta laikā veidojas neliela putekļu nogulsne.
+            {ts("specNote")}
           </p>
         </Reveal>
 
