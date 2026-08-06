@@ -3,17 +3,36 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { SocialLinks } from "@/components/social-icons";
+import { motion, useReducedMotion } from "framer-motion";
+import { Link, usePathname } from "@/i18n/navigation";
 import LocaleSwitcher from "@/components/locale-switcher";
+import {
+  InstagramIcon,
+  FacebookIcon,
+  WhatsAppIcon,
+} from "@/components/social-icons";
 
 type NavLink = { href: string; label: string };
 type NavItem = { label: string; href?: string; children?: NavLink[] };
 
+const linkBase =
+  "rounded-full border px-4 py-2 text-sm transition-colors duration-200";
+
 export default function Navbar() {
   const t = useTranslations("nav");
+  const pathname = usePathname();
+  const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
+
+  // Sākumlapā logo/"Sākums" klikšķis ritina uz augšu, nevis pārlādē.
+  const onHomeClick = (e: React.MouseEvent) => {
+    close();
+    if (pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   const nav: NavItem[] = [
     { label: t("sakums"), href: "/" },
@@ -38,16 +57,22 @@ export default function Navbar() {
         { href: "/svinibu-inventars/kublsballa", label: t("kubli") },
       ],
     },
+    { label: t("musuDraugi"), href: "/musu-draugi" },
     { label: t("kontakti"), href: "/kontakti" },
   ];
 
+  const isActive = (item: NavItem) =>
+    item.href
+      ? pathname === item.href
+      : (item.children?.some((c) => pathname === c.href) ?? false);
+
   return (
     <header className="sticky top-0 z-50 border-b border-gold/30 bg-bg/80 backdrop-blur-md">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <nav className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6 md:h-24">
         <Link
           href="/"
           aria-label={t("sakumsAria")}
-          onClick={close}
+          onClick={onHomeClick}
           className="transition-opacity hover:opacity-90"
         >
           <Image
@@ -56,18 +81,23 @@ export default function Navbar() {
             width={500}
             height={500}
             priority
-            className="h-12 w-auto md:h-14"
+            className="h-12 w-auto md:h-16"
           />
         </Link>
 
         {/* Desktop */}
-        <div className="hidden items-center gap-7 md:flex">
-          {nav.map((item) =>
-            item.children ? (
+        <div className="hidden items-center gap-2 md:flex">
+          {nav.map((item) => {
+            const active = isActive(item);
+            return item.children ? (
               <div key={item.label} className="group relative">
                 <button
                   type="button"
-                  className="flex items-center gap-1 text-sm text-text/80 transition-colors hover:text-gold group-focus-within:text-gold"
+                  className={`flex items-center gap-1 ${linkBase} ${
+                    active
+                      ? "border-gold/40 text-gold/90"
+                      : "border-transparent text-text/80 hover:border-gold hover:text-gold group-focus-within:text-gold"
+                  }`}
                 >
                   {item.label}
                   <span aria-hidden className="text-xs">
@@ -92,20 +122,25 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href!}
-                className="text-sm text-text/80 transition-colors hover:text-gold"
+                onClick={item.href === "/" ? onHomeClick : undefined}
+                className={`${linkBase} ${
+                  active
+                    ? "border-gold/40 text-gold/90"
+                    : "border-transparent text-text/80 hover:border-gold hover:text-gold"
+                }`}
               >
                 {item.label}
               </Link>
-            ),
-          )}
+            );
+          })}
           <Link
             href="/rezervet"
-            className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black transition-shadow hover:shadow-[0_0_20px_rgba(212,169,96,0.5)]"
+            className="ml-1 rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black transition-transform hover:scale-[1.04] hover:shadow-[0_0_20px_rgba(212,169,96,0.5)]"
           >
             {t("rezervet")}
           </Link>
           <LocaleSwitcher className="border-l border-gold/20 pl-3" />
-          <SocialLinks className="border-l border-gold/20 pl-4" iconClassName="h-5 w-5" />
+          <NavSocials reduce={!!reduce} />
         </div>
 
         {/* Mobile toggle */}
@@ -161,7 +196,7 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href!}
-                  onClick={close}
+                  onClick={item.href === "/" ? onHomeClick : close}
                   className="py-2 text-text/90 transition-colors hover:text-gold"
                 >
                   {item.label}
@@ -177,11 +212,58 @@ export default function Navbar() {
             </Link>
             <div className="mt-4 flex items-center justify-center gap-4">
               <LocaleSwitcher />
-              <SocialLinks iconClassName="h-6 w-6" />
+              <NavSocials reduce={!!reduce} />
             </div>
           </div>
         </div>
       )}
     </header>
+  );
+}
+
+// Sociālās ikonas: Instagram/Facebook statiskas; WhatsApp lēkā ik 4 sekundes.
+function NavSocials({ reduce }: { reduce: boolean }) {
+  return (
+    <div className="flex items-center gap-4 border-l border-gold/20 pl-4">
+      <a
+        href="https://www.instagram.com/anabella_svetku_inventars/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Instagram"
+        className="text-gold transition-colors hover:text-rose-gold"
+      >
+        <InstagramIcon className="h-5 w-5" />
+      </a>
+      <a
+        href="https://www.facebook.com/anabellaparty.lv"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Facebook"
+        className="text-gold transition-colors hover:text-rose-gold"
+      >
+        <FacebookIcon className="h-5 w-5" />
+      </a>
+      <motion.a
+        href="https://wa.me/37129222761"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="WhatsApp"
+        className="text-gold"
+        animate={reduce ? undefined : { y: [0, -6, 0, -3, 0] }}
+        transition={
+          reduce
+            ? undefined
+            : {
+                duration: 0.6,
+                times: [0, 0.25, 0.5, 0.75, 1],
+                repeat: Infinity,
+                repeatDelay: 3.4,
+              }
+        }
+        whileHover={{ scale: 1.15 }}
+      >
+        <WhatsAppIcon className="h-5 w-5" />
+      </motion.a>
+    </div>
   );
 }

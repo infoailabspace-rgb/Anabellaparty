@@ -10,6 +10,7 @@ import {
 } from "@/lib/consent";
 
 export default function CookieConsent() {
+  const [ready, setReady] = useState(false);
   const [visible, setVisible] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [analytics, setAnalytics] = useState(true);
@@ -17,12 +18,12 @@ export default function CookieConsent() {
 
   useEffect(() => {
     initConsentDefaults();
+    // localStorage atslēga (anabella-cookie-consent) ir kopīga visām valodām —
+    // piekrišana /en/ vai /ru/ derīga arī saknē. Nerenderē, kamēr nezinām.
     const existing = readConsent();
-    if (existing) {
-      applyConsent(existing);
-    } else {
-      setVisible(true);
-    }
+    if (existing) applyConsent(existing);
+    setVisible(!existing);
+    setReady(true);
   }, []);
 
   function commit(a: boolean, m: boolean) {
@@ -32,7 +33,7 @@ export default function CookieConsent() {
     setSettingsOpen(false);
   }
 
-  if (!visible) return null;
+  if (!ready || !visible) return null;
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-[60] p-4">

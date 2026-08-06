@@ -1,7 +1,7 @@
 import Hero from "@/components/home/hero";
 import Steps from "@/components/home/steps";
 import About from "@/components/home/about";
-import ClientsMarquee from "@/components/home/clients-marquee";
+import ClientsSection from "@/components/home/clients-section";
 import Testimonials from "@/components/home/testimonials";
 import CategoryCard from "@/components/category-card";
 import CtaSection from "@/components/cta-section";
@@ -9,15 +9,14 @@ import Reveal from "@/components/reveal";
 import DepthBg from "@/components/depth-bg";
 import { homeCategories } from "@/lib/categories";
 import { getContentMap } from "@/lib/site-content";
-import { getTestimonials, getClients } from "@/lib/site-data";
+import { getTestimonials } from "@/lib/site-data";
 
 export const revalidate = 300;
 
 export default async function Home() {
-  const [c, testimonials, clients] = await Promise.all([
+  const [c, testimonials] = await Promise.all([
     getContentMap(),
     getTestimonials(),
-    getClients(),
   ]);
   const g = (k: string, f: string) => (c[k]?.trim() ? c[k] : f);
 
@@ -61,17 +60,18 @@ export default async function Home() {
 
       {/* Par mums — bg */}
       <About
-        body={g("about.body", "")}
         statsEvents={g("about.stats.events", "500")}
         statsUnits={g("about.stats.units", "40")}
-        statsSince={g("about.stats.since", "2019")}
+        statsSince={g("about.stats.since", "2022")}
       />
 
-      {/* Klienti — navy */}
-      <ClientsMarquee clients={clients} />
+      {/* Mūsu klientu vidū — navy (tekstuāli, pa nozarēm) */}
+      <ClientsSection />
 
-      {/* Atsauksmes — bg */}
-      <Testimonials testimonials={testimonials} />
+      {/* Atsauksmes — tikai ja ir reāli citāti (bez izdomātiem) */}
+      {testimonials.length > 0 && (
+        <Testimonials testimonials={testimonials} />
+      )}
 
       {/* CTA — zelta gradients */}
       <CtaSection />
