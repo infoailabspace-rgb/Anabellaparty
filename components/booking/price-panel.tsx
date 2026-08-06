@@ -98,7 +98,7 @@ export default function PricePanel({
         </div>
       </div>
 
-      <p className="mt-4 text-[11px] leading-relaxed text-text/40">
+      <p className="mt-4 rounded-lg border border-gold/25 bg-navy/40 p-3 text-sm leading-relaxed text-text/80">
         Aprēķins ir orientējošs. Cenas bez PVN. Piegāde Pierīgā (līdz 25 km no
         Ķekavas) bez maksas. Precīzu piedāvājumu nosūtīsim pēc pieteikuma.
       </p>

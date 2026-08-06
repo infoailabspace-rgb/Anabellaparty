@@ -44,12 +44,15 @@ export default function SlideReveal({
   const x = env.desktop ? (index % 2 === 0 ? -1 : 1) * (env.w + 100) : 0;
   const y = env.desktop ? 0 : 28;
 
+  const hidden = { opacity: 0, x, y, scale: env.desktop ? 0.94 : 1 };
+  const visible = { opacity: 1, x: 0, y: 0, scale: 1 };
+
   return (
     <div ref={ref} className={className}>
       <motion.div
         suppressHydrationWarning
-        initial={{ opacity: 0, x, y, scale: env.desktop ? 0.94 : 1 }}
-        animate={inView ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined}
+        initial={hidden}
+        animate={inView ? visible : hidden}
         transition={{ duration: 0.9, ease: EASE }}
       >
         {children}
