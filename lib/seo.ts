@@ -5,10 +5,20 @@ import { routing } from "@/i18n/routing";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://anabellaparty.vercel.app";
 
-// Ceļš ar valodas prefiksu (LV saknē, en/ru ar prefiksu).
+// Ceļš ar valodas prefiksu (LV saknē, en/ru ar prefiksu) + trailingSlash.
 export function localizedPath(locale: string, path = ""): string {
   const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
-  return `${prefix}${path}` || "/";
+  const p = `${prefix}${path}`;
+  if (!p) return "/";
+  return p.endsWith("/") ? p : `${p}/`;
+}
+
+// OG attēla URL: per-lapas virsraksts, ja padots; citādi zīmola tagline fallback.
+// Slīpsvītra pirms ? — atbilst trailingSlash (bez redirect uz attēla URL).
+export function ogImageUrl(locale: string, title?: string): string {
+  const q = new URLSearchParams({ locale });
+  if (title) q.set("title", title);
+  return `/og/?${q.toString()}`;
 }
 
 // alternates bloks generateMetadata vajadzībām (canonical + hreflang).
@@ -20,16 +30,66 @@ export function alternatesFor(locale: string, path = "") {
   return { canonical: localizedPath(locale, path), languages };
 }
 
-// Lapas metadata no `pages` namespace (title+tagline) + hreflang alternates.
+// OpenGraph + Twitter bloks (kopīgs). title → OG attēlā; ja nav → tagline fallback.
+export function ogMetadata(
+  locale: string,
+  path: string,
+  title: string,
+  description: string,
+  ogTitle?: string,
+): Metadata {
+  const images = [{ url: ogImageUrl(locale, ogTitle), width: 1200, height: 630 }];
+  return {
+    openGraph: {
+      title,
+      description,
+      url: localizedPath(locale, path),
+      siteName: "Anabella Party",
+      locale,
+      type: "website",
+      images,
+    },
+    twitter: { card: "summary_large_image", title, description, images },
+  };
+}
+
+const HOME_TITLE: Record<string, string> = {
+  lv: "Pasākumu inventāra noma Latvijā",
+  en: "Event equipment rental in Latvia",
+  ru: "Аренда праздничного инвентаря в Латвии",
+};
+const HOME_DESC: Record<string, string> = {
+  lv: "Foto kastes, piepūšamās atrakcijas, specefekti un audio grāmata Tavai neaizmirstamai ballītei. Piegāde Ķekavas novadā bez maksas.",
+  en: "Photo booths, inflatables, special effects and an audio guest book for your unforgettable party. Free delivery in Ķekava municipality.",
+  ru: "Фотобудки, надувные аттракционы, спецэффекты и аудио гостевая книга для вашей незабываемой вечеринки. Бесплатная доставка в Кекавском крае.",
+};
+
+// Sākumlapas metadata — zīmola virsraksts + OG (tagline fallback, bez per-lapas virsraksta).
+export function homeMetadata(locale: string): Metadata {
+  const title = `Anabella Party — ${HOME_TITLE[locale] ?? HOME_TITLE.lv}`;
+  const description = HOME_DESC[locale] ?? HOME_DESC.lv;
+  return {
+    title,
+    description,
+    alternates: alternatesFor(locale, ""),
+    ...ogMetadata(locale, "", title, description),
+  };
+}
+
+// Lapas metadata no `pages` namespace (title+tagline) + hreflang + OG/Twitter.
 export async function pageMetadata(
   locale: string,
   key: string,
   path: string,
 ): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: "pages" });
+  const pageTitle = t(`${key}Title`);
+  const title = `${pageTitle} | Anabella Party`;
+  const description = t(`${key}Tagline`);
   return {
-    title: `${t(`${key}Title`)} | Anabella Party`,
-    description: t(`${key}Tagline`),
+    title,
+    description,
     alternates: alternatesFor(locale, path),
+    ...ogMetadata(locale, path, title, description, pageTitle),
   };
 }

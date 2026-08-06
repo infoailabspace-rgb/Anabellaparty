@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
+import { localizedPath, SITE_URL } from "@/lib/seo";
 
-const base =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://anabellaparty.vercel.app";
+const base = SITE_URL;
 
 const routes = [
   "",
@@ -23,10 +23,9 @@ const routes = [
   "/sikdatnu-politika",
 ];
 
-// LV saknē (bez prefiksa), en/ru ar prefiksu.
+// LV saknē (bez prefiksa), en/ru ar prefiksu; trailingSlash.
 function url(locale: string, route: string): string {
-  const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
-  return `${base}${prefix}${route}`;
+  return `${base}${localizedPath(locale, route)}`;
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {

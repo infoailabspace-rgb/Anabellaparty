@@ -8,11 +8,22 @@ import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
 import DepthBg from "@/components/depth-bg";
 import { homeCategories } from "@/lib/categories";
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getContentMap } from "@/lib/site-content";
 import { getTestimonials } from "@/lib/site-data";
+import { homeMetadata } from "@/lib/seo";
 
 export const revalidate = 300;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return homeMetadata(locale);
+}
 
 export default async function Home() {
   const [c, testimonials, t] = await Promise.all([
