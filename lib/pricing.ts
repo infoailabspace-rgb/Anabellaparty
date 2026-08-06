@@ -1,10 +1,32 @@
 import { type Product } from "@/lib/products";
+import { VAT_RATE, PRICES_INCLUDE_VAT } from "@/lib/company";
 
 export const DEPOSIT_RATE = 0.5; // avanss 50% no kopsummas
 
-// Avanss 50% no kopsummas (inventārs + piegāde).
+// Naudas formatējums: bez decimāldaļas, ja vesels; citādi 2 zīmes (PVN dod centus).
+export function formatEur(n: number): string {
+  return Number.isInteger(n) ? `${n} €` : `${n.toFixed(2)} €`;
+}
+
+export type Totals = {
+  net: number; // kopā bez PVN (inventārs + piegāde)
+  vat: number; // PVN 21%
+  gross: number; // kopā ar PVN
+  deposit: number; // avanss 50% no summas AR PVN
+};
+
+// Cenas norādītas bez PVN → PVN uzrēķina virsū. Avanss 50% no summas ar PVN.
+export function computeTotals(subtotal: number, deliveryCost = 0): Totals {
+  const net = subtotal + deliveryCost;
+  const vat = PRICES_INCLUDE_VAT ? 0 : Math.round(net * VAT_RATE * 100) / 100;
+  const gross = Math.round((net + vat) * 100) / 100;
+  const deposit = Math.round(gross * DEPOSIT_RATE * 100) / 100;
+  return { net, vat, gross, deposit };
+}
+
+// Avanss 50% no kopsummas ar PVN (inventārs + piegāde).
 export function computeDeposit(subtotal: number, deliveryCost = 0): number {
-  return Math.round((subtotal + deliveryCost) * DEPOSIT_RATE);
+  return computeTotals(subtotal, deliveryCost).deposit;
 }
 
 export type CartItem = {

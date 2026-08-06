@@ -5,7 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { type Product } from "@/lib/products";
 import { homeCategories } from "@/lib/categories";
-import { computeQuote, type CartItem } from "@/lib/pricing";
+import { computeQuote, formatEur, type CartItem } from "@/lib/pricing";
 import { track, trackLead } from "@/lib/analytics";
 import {
   isValidEmail,
@@ -752,7 +752,7 @@ function StepEvent({
               </span>
               <span className="font-mono font-semibold text-gold">
                 Piegāde:{" "}
-                {delivery.cost > 0 ? `${delivery.cost} €` : "bez maksas"}
+                {delivery.cost > 0 ? formatEur(delivery.cost) : "bez maksas"}
               </span>
             </div>
           )}
@@ -762,7 +762,8 @@ function StepEvent({
           {deliveryStatus === "idle" && (
             <span className="text-text/50">
               Ievadi piegādes adresi — automātiski aprēķināsim attālumu un cenu.
-              Pierīgā (līdz 25 km no Ķekavas) piegāde bez maksas, tālāk €0.50/km.
+              Ķekavas novadā piegāde bez maksas, tālāk 25 € / 100 km (aprēķins
+              turp-atpakaļ).
             </span>
           )}
         </div>

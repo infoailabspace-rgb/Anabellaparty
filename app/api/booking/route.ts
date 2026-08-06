@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { computeQuote, computeDeposit } from "@/lib/pricing";
+import { computeQuote, computeDeposit, computeTotals } from "@/lib/pricing";
 import { getAllProducts } from "@/lib/catalog";
 import type { Product } from "@/lib/products";
 import { getSupabaseServer } from "@/lib/supabase";
@@ -18,7 +18,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://anabellaparty.vercel.app";
 
 function eur(n: number) {
-  return `${n} €`;
+  return Number.isInteger(n) ? `${n} €` : `${n.toFixed(2)} €`;
 }
 
 function summaryHtml(
@@ -39,7 +39,7 @@ function summaryHtml(
     .join("");
   const e = payload.event;
   const d = payload.delivery;
-  const grand = subtotal + deliveryCost;
+  const totals = computeTotals(subtotal, deliveryCost);
   return `
   <div style="font-family:Arial,sans-serif;background:${NAVY};color:#F5F5F0;padding:24px;border-radius:12px;max-width:600px;">
     <div style="text-align:center;margin-bottom:12px;"><img src="${SITE_URL}/logo/logo-full.png" width="200" alt="Anabella Party — Svētku inventārs" style="max-width:200px;height:auto;" /></div>
@@ -52,10 +52,12 @@ function summaryHtml(
     <table style="width:100%;border-collapse:collapse;margin-top:12px;border-top:1px solid ${GOLD};">${rows}</table>
     <p style="margin:12px 0 2px;text-align:right;">Inventārs: ${eur(subtotal)}</p>
     <p style="margin:0 0 2px;text-align:right;">Piegāde: ${deliveryCost > 0 ? eur(deliveryCost) : "bez maksas"}</p>
-    <p style="margin:0 0 4px;text-align:right;"><b>Kopā (orientējoši):</b> ${eur(grand)}</p>
+    <p style="margin:0 0 2px;text-align:right;">Kopā bez PVN: ${eur(totals.net)}</p>
+    <p style="margin:0 0 2px;text-align:right;">PVN 21%: ${eur(totals.vat)}</p>
+    <p style="margin:0 0 4px;text-align:right;"><b>Kopā ar PVN (orientējoši):</b> ${eur(totals.gross)}</p>
     <p style="margin:0;text-align:right;color:${GOLD};"><b>Avanss (50%):</b> ${eur(deposit)}</p>
     ${quote.hasContactOnly ? `<p style="font-size:12px;color:#E8A87C;">* Daži produkti — cena vienojoties, nav iekļauti summā.</p>` : ""}
-    <p style="font-size:12px;color:#F5F5F0;opacity:.7;margin-top:12px;">Cenas norādītas bez PVN. Aprēķins orientējošs — precīzu piedāvājumu nosūtīsim atsevišķi.</p>
+    <p style="font-size:12px;color:#F5F5F0;opacity:.7;margin-top:12px;">Cenas norādītas bez PVN 21%. Aprēķins orientējošs — precīzu piedāvājumu nosūtīsim atsevišķi.</p>
   </div>`;
 }
 

@@ -5,12 +5,26 @@ export const ORIGIN = {
   label: "Vecozolu iela 14, Ķekava",
 };
 
-export const DELIVERY_RATE = 0.5; // € par km (viens virziens)
-export const FREE_RADIUS_KM = 25; // bezmaksas zona (Pierīga) [JĀAPSTIPRINA]
+// Bezmaksas zona ir ADMINISTRATĪVA (Ķekavas novads), ne ģeometriska.
+export const FREE_ZONE = "Ķekavas novads";
+// Rezerve, ja ģeokodēšana neatgriež novadu droši: ~15 km rādiuss ≈ Ķekavas novads.
+export const FREE_FALLBACK_RADIUS_KM = 15;
+// Cena: 25 € par 100 km, aprēķins turp-atpakaļ (= 0,25 €/km no viena virziena).
+export const PRICE_PER_100KM_ROUNDTRIP = 25;
 
-// Bezmaksas ≤ 25 km; tālāk pilns attālums × €0.50.
-export function computeDeliveryCost(km: number): number {
-  if (!Number.isFinite(km) || km <= 0) return 0;
-  if (km <= FREE_RADIUS_KM) return 0;
-  return Math.round(km * DELIVERY_RATE);
+/** Vai adrese ir bezmaksas zonā — pēc reģiona nosaukuma; ja tā nav zināma, pēc rezerves rādiusa. */
+export function isInFreeZone(
+  regionName: string | undefined,
+  kmOneWay: number,
+): boolean {
+  if (regionName) return /ķekav/i.test(regionName);
+  return Number.isFinite(kmOneWay) && kmOneWay > 0 && kmOneWay <= FREE_FALLBACK_RADIUS_KM;
+}
+
+/** km = attālums VIENĀ virzienā no noliktavas. Turp-atpakaļ = km × 2. */
+export function deliveryPrice(kmOneWay: number, inFreeZone: boolean): number {
+  if (inFreeZone) return 0;
+  if (!Number.isFinite(kmOneWay) || kmOneWay <= 0) return 0;
+  const roundTripKm = kmOneWay * 2;
+  return Math.round((roundTripKm / 100) * PRICE_PER_100KM_ROUNDTRIP * 100) / 100;
 }

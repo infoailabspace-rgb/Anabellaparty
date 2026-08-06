@@ -39,7 +39,7 @@ export default async function KublsballaPage() {
               </a>
               . Kubli atrodas <span className="font-semibold">Jūrmalā</span>;
               piegādes cena — pēc vienošanās atkarībā no attāluma. Svētku dienās
-              cenas pēc vienošanās. Visas cenas norādītas bez PVN.
+              cenas pēc vienošanās. Visas cenas norādītas bez PVN 21%.
             </p>
           </div>
         </Reveal>

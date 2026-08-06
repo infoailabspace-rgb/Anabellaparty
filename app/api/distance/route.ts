@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { ORIGIN, computeDeliveryCost, FREE_RADIUS_KM } from "@/lib/delivery";
+import {
+  ORIGIN,
+  deliveryPrice,
+  isInFreeZone,
+  FREE_ZONE,
+} from "@/lib/delivery";
 
 export const runtime = "nodejs";
 
@@ -32,7 +37,8 @@ export async function POST(req: Request) {
       { cache: "no-store" },
     );
     const geo = await geoRes.json();
-    const coords = geo?.features?.[0]?.geometry?.coordinates as
+    const feature = geo?.features?.[0];
+    const coords = feature?.geometry?.coordinates as
       | [number, number]
       | undefined;
     if (!coords) {
@@ -42,6 +48,10 @@ export async function POST(req: Request) {
       });
     }
     const [destLng, destLat] = coords;
+    // Reģions/novads no ģeokodēšanas (Pelias): county → macrocounty → region.
+    const props = feature?.properties ?? {};
+    const regionName: string | undefined =
+      props.county || props.macrocounty || props.region || undefined;
 
     // 2. Braukšanas attālums (ORS directions).
     const dirRes = await fetch(
@@ -60,13 +70,16 @@ export async function POST(req: Request) {
     }
 
     const km = Math.round(meters / 1000);
-    const cost = computeDeliveryCost(km);
+    const inFreeZone = isInFreeZone(regionName, km);
+    const cost = deliveryPrice(km, inFreeZone);
     return NextResponse.json({
       ok: true,
       km,
       cost,
       free: cost === 0,
-      freeRadiusKm: FREE_RADIUS_KM,
+      inFreeZone,
+      region: regionName ?? null,
+      freeZone: FREE_ZONE,
       origin: ORIGIN.label,
     });
   } catch {

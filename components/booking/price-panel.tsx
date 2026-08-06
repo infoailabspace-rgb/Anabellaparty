@@ -1,6 +1,6 @@
 "use client";
 
-import { computeQuote, computeDeposit, type CartItem } from "@/lib/pricing";
+import { computeQuote, computeTotals, formatEur, type CartItem } from "@/lib/pricing";
 import type { Product } from "@/lib/products";
 
 export default function PricePanel({
@@ -18,8 +18,7 @@ export default function PricePanel({
 }) {
   const quote = computeQuote(items, products);
   const delivery = deliveryComputed ? deliveryCost ?? 0 : 0;
-  const grand = quote.subtotal + delivery;
-  const deposit = computeDeposit(quote.subtotal, delivery);
+  const totals = computeTotals(quote.subtotal, delivery);
 
   return (
     <div className="rounded-2xl border border-gold/25 bg-navy/40 p-6">
@@ -68,7 +67,7 @@ export default function PricePanel({
       <div className="mt-4 space-y-2 border-t border-gold/15 pt-4 text-sm">
         <div className="flex justify-between">
           <span>Inventārs</span>
-          <span className="font-mono">{quote.subtotal} €</span>
+          <span className="font-mono">{formatEur(quote.subtotal)}</span>
         </div>
         <div className="flex justify-between text-text/70">
           <span>
@@ -78,7 +77,7 @@ export default function PricePanel({
           <span className="font-mono">
             {deliveryComputed
               ? delivery > 0
-                ? `${delivery} €`
+                ? formatEur(delivery)
                 : "bez maksas"
               : "aprēķina 2. solī"}
           </span>
@@ -90,20 +89,33 @@ export default function PricePanel({
         )}
       </div>
 
-      <div className="mt-3 space-y-2 border-t border-gold/15 pt-3">
-        <div className="flex justify-between">
-          <span className="font-semibold">Kopā</span>
-          <span className="font-mono text-lg font-bold text-gold">{grand} €</span>
+      <div className="mt-3 space-y-2 border-t border-gold/15 pt-3 text-sm">
+        <div className="flex justify-between text-text/80">
+          <span>Kopā bez PVN</span>
+          <span className="font-mono">{formatEur(totals.net)}</span>
+        </div>
+        <div className="flex justify-between text-text/60">
+          <span>PVN 21%</span>
+          <span className="font-mono">{formatEur(totals.vat)}</span>
+        </div>
+        <div className="flex justify-between border-t border-gold/15 pt-2">
+          <span className="font-semibold">Kopā ar PVN</span>
+          <span className="font-mono text-lg font-bold text-gold">
+            {formatEur(totals.gross)}
+          </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-sm">Avanss (50%)</span>
-          <span className="font-mono font-bold text-gold">{deposit} €</span>
+          <span>Avanss (50%)</span>
+          <span className="font-mono font-bold text-gold">
+            {formatEur(totals.deposit)}
+          </span>
         </div>
       </div>
 
       <p className="mt-4 rounded-lg border border-gold/25 bg-navy/40 p-3 text-sm leading-relaxed text-text/80">
-        Aprēķins ir orientējošs. Cenas bez PVN. Piegāde Pierīgā (līdz 25 km no
-        Ķekavas) bez maksas. Precīzu piedāvājumu nosūtīsim pēc pieteikuma.
+        Aprēķins ir orientējošs. Cenas norādītas bez PVN 21%. Piegāde Ķekavas
+        novadā bez maksas, tālāk 25 € / 100 km (aprēķins turp-atpakaļ). Precīzu
+        piedāvājumu nosūtīsim pēc pieteikuma.
       </p>
     </div>
   );

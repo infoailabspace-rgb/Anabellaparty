@@ -102,9 +102,10 @@ Multilingua (no SOLIS5): `/en/...`, `/ru/...`. LV bez prefiksa.
 | Piepūšamā pils (balta) | €230 / 10h |
 | Specefekti (dzirksteles) | €35 / 24h |
 | Audio grāmata | €50 / pasākums |
-| Piegāde Pierīgā | bez maksas |
-| Piegāde ārpus | €0.50/km |
-| **Depozīts** | **50% no kopsummas** |
+| Piegāde Ķekavas novadā | bez maksas |
+| Piegāde ārpus | €25 / 100 km (aprēķins turp-atpakaļ) |
+| **Avanss** | **50% no kopsummas ar PVN** |
+| **PVN** | Cenas norādītas **bez PVN 21%** |
 
 Pilnais katalogs (40+ produkti) — `lib/products.ts`. Šī tabula ir tikai orientieris.
 

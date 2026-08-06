@@ -42,7 +42,7 @@ export const faqItems: FaqItem[] = [
     category: "piegade",
     question: "Vai piegādājat ārpus Rīgas? Cik tas maksā?",
     answer:
-      "Piegāde Pierīgā ir bez maksas. Ārpus Pierīgas piemērojam €0.50 par kilometru. Precīzu piegādes cenu Tavai adresei aprēķinām rezervācijas laikā.",
+      "Piegāde Ķekavas novadā ir bez maksas. Tālāk piemērojam 25 € par 100 km (aprēķins turp-atpakaļ). Precīzu piegādes cenu Tavai adresei aprēķinām rezervācijas laikā.",
   },
   {
     category: "piegade",

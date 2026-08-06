@@ -1,7 +1,7 @@
 import { type Product } from "@/lib/products";
 import { categoryMeta } from "@/lib/categories";
 import type { FaqItem } from "@/lib/faq";
-import { DELIVERY_RATE, FREE_RADIUS_KM, ORIGIN } from "@/lib/delivery";
+import { ORIGIN, FREE_ZONE, PRICE_PER_100KM_ROUNDTRIP } from "@/lib/delivery";
 import { DEPOSIT_RATE } from "@/lib/pricing";
 
 // Katalogs kā teksts — viens gabals katram produktam (produkts = dabiska vienība).
@@ -44,9 +44,9 @@ export function buildFaqText(faqs: FaqItem[]): string {
 }
 
 export function buildDeliveryText(): string {
-  return `Piegāde no ${ORIGIN.label}. Bezmaksas līdz ${FREE_RADIUS_KM} km (Pierīga). Tālāk ${DELIVERY_RATE} €/km (viens virziens). Uzstādīšana un demontāža iekļauta. Cenas bez PVN. Avanss ${Math.round(
+  return `Piegāde no ${ORIGIN.label}. Bezmaksas ${FREE_ZONE}. Tālāk ${PRICE_PER_100KM_ROUNDTRIP} € par 100 km (aprēķins turp-atpakaļ). Uzstādīšana un demontāža iekļauta. Cenas norādītas bez PVN 21%. Avanss ${Math.round(
     DEPOSIT_RATE * 100,
-  )}% no kopsummas, samaksā ar pārskaitījumu (tiešsaistes maksājumu nav).`;
+  )}% no kopsummas ar PVN, samaksā ar bankas pārskaitījumu vai skaidrā naudā (tiešsaistes maksājumu nav). Atceļot rezervāciju, avanss netiek atmaksāts.`;
 }
 
 // Sistēmas noteikumi (nemainīgi) — atsevišķi no katalogu bloka.
