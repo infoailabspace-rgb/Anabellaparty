@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { SocialLinks } from "@/components/social-icons";
 
@@ -42,10 +43,18 @@ export default function Navbar() {
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link
           href="/"
-          className="font-display text-xl font-bold tracking-tight text-gold"
+          aria-label="Anabella Party — sākums"
           onClick={close}
+          className="transition-opacity hover:opacity-90"
         >
-          Anabella Party
+          <Image
+            src="/logo/logo-mark.png"
+            alt="Anabella Svētku inventārs"
+            width={398}
+            height={150}
+            priority
+            className="h-9 w-auto rounded-md md:h-11"
+          />
         </Link>
 
         {/* Desktop */}

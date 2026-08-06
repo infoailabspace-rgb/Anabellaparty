@@ -12,6 +12,8 @@ export const runtime = "nodejs";
 
 const NAVY = "#1A3A4A";
 const GOLD = "#D4A960";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://anabellaparty.vercel.app";
 
 function eur(n: number) {
   return `${n} €`;
@@ -37,6 +39,7 @@ function summaryHtml(
   const grand = subtotal + deliveryCost;
   return `
   <div style="font-family:Arial,sans-serif;background:${NAVY};color:#F5F5F0;padding:24px;border-radius:12px;max-width:600px;">
+    <div style="text-align:center;margin-bottom:12px;"><img src="${SITE_URL}/logo/logo-full.png" width="200" alt="Anabella Party — Svētku inventārs" style="max-width:200px;height:auto;" /></div>
     <h2 style="color:${GOLD};margin:0 0 12px;">Anabella Party — pieteikuma kopsavilkums</h2>
     <p style="margin:4px 0;"><b>Datums:</b> ${e.date}${e.time ? " " + e.time : ""}</p>
     <p style="margin:4px 0;"><b>Veids:</b> ${e.type}</p>

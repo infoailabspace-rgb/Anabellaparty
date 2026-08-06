@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const links = [
   { href: "/", label: "Sākums" },
@@ -13,7 +14,14 @@ export default function NotFound() {
     <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-6 text-center">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(212,169,96,0.12),transparent_60%)]" />
       <div className="relative z-10 mx-auto max-w-xl">
-        <p className="font-mono text-6xl font-bold text-gold">404</p>
+        <Image
+          src="/logo/logo-full.png"
+          alt="Anabella Party"
+          width={500}
+          height={500}
+          className="mx-auto h-24 w-auto"
+        />
+        <p className="mt-6 font-mono text-6xl font-bold text-gold">404</p>
         <h1 className="mt-4 font-display text-3xl font-bold tracking-tight">
           Šī lapa aizsvinējusies prom
         </h1>

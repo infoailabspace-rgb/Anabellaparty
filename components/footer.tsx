@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { SocialLinks } from "@/components/social-icons";
 
 export default function Footer() {
@@ -6,9 +7,13 @@ export default function Footer() {
     <footer className="border-t border-gold/30 bg-navy/40">
       <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 sm:grid-cols-3">
         <div>
-          <h3 className="font-display text-lg font-bold text-gold">
-            Anabella Party
-          </h3>
+          <Image
+            src="/logo/logo-full.png"
+            alt="Anabella Party — Svētku inventārs"
+            width={500}
+            height={500}
+            className="h-24 w-auto"
+          />
           <p className="mt-2 text-sm text-text/70">
             Pasākumu inventāra noma Latvijā. Foto kastes, piepūšamās atrakcijas,
             specefekti un audio grāmata.
