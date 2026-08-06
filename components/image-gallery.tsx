@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import ImagePlaceholder from "@/components/image-placeholder";
 
@@ -47,16 +48,17 @@ export default function ImageGallery({
         type="button"
         onClick={() => hasImages && !activeFailed && setLightbox(true)}
         aria-label={`${alt} — palielināt`}
-        className="aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-xl"
+        className="relative aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-xl"
       >
         {activeFailed ? (
           <ImagePlaceholder label={alt} className="h-full w-full" />
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={images[active]}
             alt={alt}
-            className="h-full w-full object-cover"
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover"
             onError={() => markFailed(active)}
           />
         )}
@@ -72,18 +74,19 @@ export default function ImageGallery({
               onClick={() => setActive(i)}
               aria-label={`${alt} — attēls ${i + 1}`}
               aria-current={i === active}
-              className={`aspect-square w-20 overflow-hidden rounded-lg border-2 transition-colors ${
+              className={`relative aspect-square w-20 overflow-hidden rounded-lg border-2 transition-colors ${
                 i === active ? "border-gold" : "border-gold/20 hover:border-gold/50"
               }`}
             >
               {failed[i] ? (
                 <ImagePlaceholder label={`${i + 1}`} className="h-full w-full !p-1" />
               ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={src}
                   alt=""
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="80px"
+                  className="object-cover"
                   onError={() => markFailed(i)}
                 />
               )}

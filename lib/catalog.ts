@@ -5,6 +5,7 @@ import {
   type ProductCategory,
 } from "@/lib/products";
 import { currentLocale, pickStr, pickArr } from "@/lib/i18n-db";
+import { scanProductImages } from "@/lib/product-images";
 
 // ML {lv,en,ru} VAI vienkārša virkne (atpakaļsaderība pirms migrācijas).
 function mlPick(v: unknown, locale: string): string {
@@ -43,6 +44,14 @@ function mapRow(r: any, locale: string): Product {
         value: mlPick(s.value, locale),
       }))
     : undefined;
+  // Prioritāte: DB attēli (Supabase Storage) → public faili → placeholder.
+  let coverImage = r.cover_image ?? "";
+  let gallery = Array.isArray(r.gallery) ? r.gallery : [];
+  if (!coverImage && gallery.length === 0) {
+    const scanned = scanProductImages(r.slug);
+    coverImage = scanned.cover;
+    gallery = scanned.gallery;
+  }
   return {
     slug: r.slug,
     name: mlPick(r.name, locale) || r.slug,
@@ -54,8 +63,8 @@ function mapRow(r: any, locale: string): Product {
     addOns,
     specs,
     includes: pickArr(r.includes, locale),
-    coverImage: r.cover_image ?? "",
-    gallery: Array.isArray(r.gallery) ? r.gallery : [],
+    coverImage,
+    gallery,
     featured: r.is_featured ?? undefined,
     contactOnly: r.contact_only ?? undefined,
     altPhone: r.alt_phone ?? undefined,
