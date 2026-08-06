@@ -1,4 +1,4 @@
-import { getProductBySlug, type Product } from "@/lib/products";
+import { type Product } from "@/lib/products";
 
 export const DEPOSIT_RATE = 0.5; // avanss 50% no kopsummas
 
@@ -48,13 +48,14 @@ function tierFor(product: Product, tierIndex: number) {
   return tier;
 }
 
-export function computeQuote(items: CartItem[]): Quote {
+export function computeQuote(items: CartItem[], products: Product[]): Quote {
+  const bySlug = new Map(products.map((p) => [p.slug, p]));
   const lines: QuoteLine[] = [];
   let subtotal = 0;
   let hasContactOnly = false;
 
   for (const item of items) {
-    const product = getProductBySlug(item.slug);
+    const product = bySlug.get(item.slug);
     if (!product) continue;
 
     // contactOnly produkti vai tarifs ar cenu 0 ("Uz visu pasākumu — vienojoties")

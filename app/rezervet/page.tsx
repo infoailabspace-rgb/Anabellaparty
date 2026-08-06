@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import SectionHero from "@/components/section-hero";
 import BookingForm from "@/components/booking/booking-form";
 import { WhatsAppIcon } from "@/components/social-icons";
+import { getAllProducts } from "@/lib/catalog";
+
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Rezervēt | Anabella Party",
@@ -30,7 +33,8 @@ const CONTACTS = [
   { label: "Rakstīt e-pastu", sub: "info@anabellaparty.lv", href: "mailto:info@anabellaparty.lv", Icon: MailIcon },
 ];
 
-export default function RezervetPage() {
+export default async function RezervetPage() {
+  const products = await getAllProducts();
   return (
     <>
       <SectionHero
@@ -63,7 +67,7 @@ export default function RezervetPage() {
         </div>
 
         {/* Anketa */}
-        <BookingForm />
+        <BookingForm products={products} />
       </div>
     </>
   );

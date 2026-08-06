@@ -1,11 +1,11 @@
-import { products } from "@/lib/products";
+import { type Product } from "@/lib/products";
 import { categoryMeta } from "@/lib/categories";
 import { faqItems } from "@/lib/faq";
 import { DELIVERY_RATE, FREE_RADIUS_KM, ORIGIN } from "@/lib/delivery";
 import { DEPOSIT_RATE } from "@/lib/pricing";
 
 // Katalogs kā teksts — viens gabals katram produktam (produkts = dabiska vienība).
-export function buildCatalogText(): string {
+export function buildCatalogText(products: Product[]): string {
   return products
     .map((p) => {
       const cat = categoryMeta[p.category]?.name ?? p.category;
@@ -66,6 +66,6 @@ NOTEIKUMI:
 TONIS: draudzīgs, konkrēts, bez pārdošanas tukšvārdības. Ne vairāk kā viena izsaukuma zīme atbildē.`;
 
 // Katalogu bloks — tiek kešots (Anthropic prompt caching).
-export function buildKnowledgeBlock(): string {
-  return `KATALOGS:\n${buildCatalogText()}\n\nBUJ:\n${buildFaqText()}\n\nPIEGĀDE UN APMAKSA:\n${buildDeliveryText()}`;
+export function buildKnowledgeBlock(products: Product[]): string {
+  return `KATALOGS:\n${buildCatalogText(products)}\n\nBUJ:\n${buildFaqText()}\n\nPIEGĀDE UN APMAKSA:\n${buildDeliveryText()}`;
 }

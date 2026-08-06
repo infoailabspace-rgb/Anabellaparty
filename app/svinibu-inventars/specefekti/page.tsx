@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getProductsByCategory } from "@/lib/products";
+import { getProductsByCategory } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
@@ -12,8 +12,10 @@ export const metadata: Metadata = {
     "Aukstās dzirksteles, zemā migla un burbuļu ierīces svētkiem Latvijā. Ugunsdroši, bērniem droši efekti. No €35. Piegāde Pierīgā bez maksas.",
 };
 
-export default function SpecefektiPage() {
-  const items = getProductsByCategory("specefekti");
+export const revalidate = 300;
+
+export default async function SpecefektiPage() {
+  const items = await getProductsByCategory("specefekti");
 
   return (
     <>

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { computeQuote, computeDeposit } from "@/lib/pricing";
+import { getAllProducts } from "@/lib/catalog";
+import type { Product } from "@/lib/products";
 import { getSupabaseServer } from "@/lib/supabase";
 import {
   normalizePhone,
@@ -21,11 +23,12 @@ function eur(n: number) {
 
 function summaryHtml(
   payload: BookingPayload,
+  products: Product[],
   subtotal: number,
   deliveryCost: number,
   deposit: number,
 ) {
-  const quote = computeQuote(payload.items);
+  const quote = computeQuote(payload.items, products);
   const rows = quote.lines
     .map(
       (l) =>
@@ -70,8 +73,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, errors }, { status: 400 });
   }
 
-  // 2. Cenu pārrēķina servera pusē
-  const quote = computeQuote(payload.items);
+  // 2. Cenu pārrēķina servera pusē (produkti no DB)
+  const products = await getAllProducts();
+  const quote = computeQuote(payload.items, products);
   const phone = normalizePhone(payload.contact.phone);
   const deliveryCost = Math.max(0, Number(payload.delivery?.cost) || 0);
   const deliveryKm = Number(payload.delivery?.km) || null;
@@ -130,7 +134,7 @@ export async function POST(req: Request) {
   if (resendKey) {
     try {
       const resend = new Resend(resendKey);
-      const html = summaryHtml(payload, quote.subtotal, deliveryCost, deposit);
+      const html = summaryHtml(payload, products, quote.subtotal, deliveryCost, deposit);
 
       // Robertam
       await resend.emails.send({

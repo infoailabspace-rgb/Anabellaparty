@@ -1,19 +1,22 @@
 "use client";
 
 import { computeQuote, computeDeposit, type CartItem } from "@/lib/pricing";
+import type { Product } from "@/lib/products";
 
 export default function PricePanel({
   items,
+  products,
   deliveryCost,
   deliveryKm,
   deliveryComputed = false,
 }: {
   items: CartItem[];
+  products: Product[];
   deliveryCost?: number;
   deliveryKm?: number;
   deliveryComputed?: boolean;
 }) {
-  const quote = computeQuote(items);
+  const quote = computeQuote(items, products);
   const delivery = deliveryComputed ? deliveryCost ?? 0 : 0;
   const grand = quote.subtotal + delivery;
   const deposit = computeDeposit(quote.subtotal, delivery);

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getProductsByCategory } from "@/lib/products";
+import { getProductsByCategory } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
@@ -18,8 +18,10 @@ const addOns = [
   { name: "Video apsveikumu videomontāža (viens fails ar mūziku, tekstu)", price: "no 30 €" },
 ];
 
-export default function AudioViesuGramatasPage() {
-  const items = getProductsByCategory("audio-video");
+export const revalidate = 300;
+
+export default async function AudioViesuGramatasPage() {
+  const items = await getProductsByCategory("audio-video");
 
   return (
     <>

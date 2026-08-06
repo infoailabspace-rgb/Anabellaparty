@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getProductsByCategory } from "@/lib/products";
+import { getProductsByCategory } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
@@ -12,8 +12,10 @@ export const metadata: Metadata = {
     "Baltās piepūšamās pilis, torņi un bumbu vannas bērnu svētkiem Latvijā. Telpās un ārā, tīras un drošas. No €100. Piegāde Pierīgā bez maksas.",
 };
 
-export default function PiepusamasAtrakcijasPage() {
-  const items = getProductsByCategory("atrakcijas");
+export const revalidate = 300;
+
+export default async function PiepusamasAtrakcijasPage() {
+  const items = await getProductsByCategory("atrakcijas");
 
   return (
     <>

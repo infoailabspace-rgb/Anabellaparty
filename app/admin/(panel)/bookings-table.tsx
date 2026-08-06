@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { computeQuote } from "@/lib/pricing";
+import type { Product } from "@/lib/products";
 import { STATUSES, urgency, type Booking } from "@/lib/admin";
 import { setStatus } from "./actions";
 
@@ -12,9 +13,9 @@ const URGENCY_RING: Record<string, string> = {
   none: "border-l-4 border-l-transparent",
 };
 
-function itemsSummary(b: Booking): string {
+function itemsSummary(b: Booking, products: Product[]): string {
   try {
-    const q = computeQuote(b.items || []);
+    const q = computeQuote(b.items || [], products);
     if (!q.lines.length) return "—";
     const names = q.lines.map((l) => l.name);
     return names.slice(0, 2).join(", ") + (names.length > 2 ? ` +${names.length - 2}` : "");
@@ -23,7 +24,13 @@ function itemsSummary(b: Booking): string {
   }
 }
 
-export default function BookingsTable({ bookings }: { bookings: Booking[] }) {
+export default function BookingsTable({
+  bookings,
+  products,
+}: {
+  bookings: Booking[];
+  products: Product[];
+}) {
   const [rows, setRows] = useState(bookings);
   const [statusFilter, setStatusFilter] = useState("all");
   const [q, setQ] = useState("");
@@ -131,7 +138,7 @@ export default function BookingsTable({ bookings }: { bookings: Booking[] }) {
                       {b.phone}
                     </a>
                   </td>
-                  <td className="p-3 text-text/70">{itemsSummary(b)}</td>
+                  <td className="p-3 text-text/70">{itemsSummary(b, products)}</td>
                   <td className="p-3 text-right font-mono text-gold">
                     {total} €{b.final_total != null ? " ✓" : ""}
                   </td>

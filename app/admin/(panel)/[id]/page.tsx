@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { computeQuote, computeDeposit } from "@/lib/pricing";
+import { getAllProducts } from "@/lib/catalog";
 import type { Booking } from "@/lib/admin";
 import BookingDetail from "./booking-detail";
 
@@ -31,7 +32,7 @@ export default async function BookingPage({
       .eq("id", id);
   }
 
-  const quote = computeQuote(b.items || []);
+  const quote = computeQuote(b.items || [], await getAllProducts());
   const delivery = Number(b.delivery_cost) || 0;
   const deposit = computeDeposit(quote.subtotal, delivery);
   const mailSubject = encodeURIComponent(`Anabella Party — pieteikums ${b.event_date}`);

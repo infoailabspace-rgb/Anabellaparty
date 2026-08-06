@@ -39,6 +39,12 @@ export default async function PanelLayout({
               >
                 Kalendārs
               </Link>
+              <Link
+                href="/admin/inventars"
+                className="text-text/80 hover:text-gold"
+              >
+                Inventārs
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-4 text-sm">

@@ -3,11 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import {
-  getProductsByCategory,
-  getProductBySlug,
-  type Product,
-} from "@/lib/products";
+import { type Product } from "@/lib/products";
 import { homeCategories } from "@/lib/categories";
 import { computeQuote, type CartItem } from "@/lib/pricing";
 import { track, trackLead } from "@/lib/analytics";
@@ -53,8 +49,15 @@ function defaultTierIndex(p: Product) {
   return idx >= 0 ? idx : 0;
 }
 
-export default function BookingForm() {
+export default function BookingForm({ products }: { products: Product[] }) {
   const reduce = useReducedMotion();
+  const productsBySlug = useMemo(
+    () => new Map(products.map((p) => [p.slug, p])),
+    [products],
+  );
+  const bySlug = (slug: string) => productsBySlug.get(slug);
+  const byCategory = (cat: string) =>
+    products.filter((p) => p.category === cat);
   const [step, setStep] = useState(1);
   const [items, setItems] = useState<CartItem[]>([]);
   const [contact, setContact] = useState<BookingContact>(emptyContact);
@@ -96,7 +99,7 @@ export default function BookingForm() {
         }
       } else {
         const param = new URLSearchParams(window.location.search).get("item");
-        const p = param ? getProductBySlug(param) : undefined;
+        const p = param ? bySlug(param) : undefined;
         if (p) {
           setItems([
             { slug: p.slug, tierIndex: defaultTierIndex(p), extraHours: 0, addOns: {} },
@@ -211,7 +214,7 @@ export default function BookingForm() {
   }
 
   const kubliSelected = items.some(
-    (i) => getProductBySlug(i.slug)?.category === "kubli",
+    (i) => bySlug(i.slug)?.category === "kubli",
   );
 
   function validateStep(s: number): string[] {
@@ -277,7 +280,7 @@ export default function BookingForm() {
         setSubmitting(false);
         return;
       }
-      const value = computeQuote(items).subtotal + (delivery?.cost || 0);
+      const value = computeQuote(items, products).subtotal + (delivery?.cost || 0);
       track("booking_submitted", { value });
       trackLead(value);
       sessionStorage.removeItem(STORAGE_KEY);
@@ -327,6 +330,7 @@ export default function BookingForm() {
           >
             {step === 1 && (
               <StepInventory
+                byCategory={byCategory}
                 activeCat={activeCat}
                 setActiveCat={setActiveCat}
                 has={has}
@@ -411,6 +415,7 @@ export default function BookingForm() {
       <aside className="lg:sticky lg:top-24 lg:self-start">
         <PricePanel
           items={items}
+          products={products}
           deliveryCost={delivery?.cost}
           deliveryKm={delivery?.km}
           deliveryComputed={deliveryStatus === "ok"}
@@ -422,6 +427,7 @@ export default function BookingForm() {
 
 /* ─────────────── Solis 1 — Inventārs ─────────────── */
 function StepInventory({
+  byCategory,
   activeCat,
   setActiveCat,
   has,
@@ -431,6 +437,7 @@ function StepInventory({
   setAddOn,
   kubliSelected,
 }: {
+  byCategory: (cat: string) => Product[];
   activeCat: string;
   setActiveCat: (c: Product["category"]) => void;
   has: (slug: string) => boolean;
@@ -440,7 +447,7 @@ function StepInventory({
   setAddOn: (slug: string, name: string, qty: number) => void;
   kubliSelected: boolean;
 }) {
-  const list = getProductsByCategory(activeCat as Product["category"]);
+  const list = byCategory(activeCat);
   return (
     <div>
       <h2 className="font-display text-2xl font-bold">Izvēlies inventāru</h2>

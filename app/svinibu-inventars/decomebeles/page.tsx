@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getProductsByCategory, getProductBySlug } from "@/lib/products";
+import { getProductsByCategory, getProductBySlug } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
@@ -11,9 +11,11 @@ export const metadata: Metadata = {
     "Šampanieša siena, LED uzraksti, dārza krēsli un dekori pasākumiem Latvijā. No €8. Piegāde Pierīgā bez maksas.",
 };
 
-export default function DecoMebelesPage() {
-  const usb = getProductBySlug("koka-usb");
-  const items = [...getProductsByCategory("deco"), ...(usb ? [usb] : [])];
+export const revalidate = 300;
+
+export default async function DecoMebelesPage() {
+  const usb = await getProductBySlug("koka-usb");
+  const items = [...(await getProductsByCategory("deco")), ...(usb ? [usb] : [])];
 
   return (
     <>

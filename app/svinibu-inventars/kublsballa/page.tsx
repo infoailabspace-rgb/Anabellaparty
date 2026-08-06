@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { getProductsByCategory, KUBLI_PHONE } from "@/lib/products";
+import { getProductsByCategory } from "@/lib/catalog";
+import { KUBLI_PHONE } from "@/lib/products";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import CtaSection from "@/components/cta-section";
@@ -11,8 +12,10 @@ export const metadata: Metadata = {
     "VIP kubli un mobilā pirts nomai (atrodas Jūrmalā). Hidromasāža, LED, termovāks. No €80/diena. Piegāde pēc vienošanās atkarībā no attāluma.",
 };
 
-export default function KublsballaPage() {
-  const items = getProductsByCategory("kubli");
+export const revalidate = 300;
+
+export default async function KublsballaPage() {
+  const items = await getProductsByCategory("kubli");
 
   return (
     <>

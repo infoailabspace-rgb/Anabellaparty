@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { products } from "@/lib/products";
+import { getAllProducts } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import SlideReveal from "@/components/slide-reveal";
@@ -18,7 +18,10 @@ export const metadata: Metadata = {
 
 const mainSlugs = ["spogulis", "ozols", "instagram"];
 
-export default function FotoKastePage() {
+export const revalidate = 300;
+
+export default async function FotoKastePage() {
+  const products = await getAllProducts();
   const boxes = mainSlugs
     .map((s) => products.find((p) => p.slug === s))
     .filter((p) => p !== undefined);
