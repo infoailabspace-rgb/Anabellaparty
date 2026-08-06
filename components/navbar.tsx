@@ -1,49 +1,52 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { SocialLinks } from "@/components/social-icons";
+import LocaleSwitcher from "@/components/locale-switcher";
 
 type NavLink = { href: string; label: string };
 type NavItem = { label: string; href?: string; children?: NavLink[] };
 
-const nav: NavItem[] = [
-  { label: "Sākums", href: "/" },
-  {
-    label: "Foto kastes",
-    children: [
-      { href: "/foto-kaste", label: "Foto kastes" },
-      { href: "/foto-kaste/ai-foto", label: "AI foto" },
-    ],
-  },
-  { label: "Atrakcijas", href: "/piepusamas-atrakcijas" },
-  {
-    label: "Svinību inventārs",
-    children: [
-      { href: "/svinibu-inventars", label: "Viss inventārs" },
-      {
-        href: "/svinibu-inventars/audio-viesu-gramatas",
-        label: "Audio/video viesu grāmatas",
-      },
-      { href: "/svinibu-inventars/specefekti", label: "Specefekti" },
-      { href: "/svinibu-inventars/decomebeles", label: "Deco / mēbeles" },
-      { href: "/svinibu-inventars/kublsballa", label: "Kubli / pirts" },
-    ],
-  },
-  { label: "Kontakti", href: "/kontakti" },
-];
-
 export default function Navbar() {
+  const t = useTranslations("nav");
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
+
+  const nav: NavItem[] = [
+    { label: t("sakums"), href: "/" },
+    {
+      label: t("fotoKastes"),
+      children: [
+        { href: "/foto-kaste", label: t("fotoKastes") },
+        { href: "/foto-kaste/ai-foto", label: t("aiFoto") },
+      ],
+    },
+    { label: t("atrakcijas"), href: "/piepusamas-atrakcijas" },
+    {
+      label: t("sviniburInventars"),
+      children: [
+        { href: "/svinibu-inventars", label: t("vissInventars") },
+        {
+          href: "/svinibu-inventars/audio-viesu-gramatas",
+          label: t("audioVideo"),
+        },
+        { href: "/svinibu-inventars/specefekti", label: t("specefekti") },
+        { href: "/svinibu-inventars/decomebeles", label: t("deco") },
+        { href: "/svinibu-inventars/kublsballa", label: t("kubli") },
+      ],
+    },
+    { label: t("kontakti"), href: "/kontakti" },
+  ];
 
   return (
     <header className="sticky top-0 z-50 border-b border-gold/30 bg-bg/80 backdrop-blur-md">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link
           href="/"
-          aria-label="Anabella Party — sākums"
+          aria-label={t("sakumsAria")}
           onClick={close}
           className="transition-opacity hover:opacity-90"
         >
@@ -99,15 +102,16 @@ export default function Navbar() {
             href="/rezervet"
             className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black transition-shadow hover:shadow-[0_0_20px_rgba(212,169,96,0.5)]"
           >
-            Rezervēt
+            {t("rezervet")}
           </Link>
+          <LocaleSwitcher className="border-l border-gold/20 pl-3" />
           <SocialLinks className="border-l border-gold/20 pl-4" iconClassName="h-5 w-5" />
         </div>
 
         {/* Mobile toggle */}
         <button
           type="button"
-          aria-label="Izvēlne"
+          aria-label={t("izvelne")}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
           className="flex flex-col gap-1.5 md:hidden"
@@ -169,9 +173,12 @@ export default function Navbar() {
               onClick={close}
               className="mt-3 rounded-full bg-gold px-5 py-2 text-center font-semibold text-black"
             >
-              Rezervēt
+              {t("rezervet")}
             </Link>
-            <SocialLinks className="mt-4 justify-center" iconClassName="h-6 w-6" />
+            <div className="mt-4 flex items-center justify-center gap-4">
+              <LocaleSwitcher />
+              <SocialLinks iconClassName="h-6 w-6" />
+            </div>
           </div>
         </div>
       )}

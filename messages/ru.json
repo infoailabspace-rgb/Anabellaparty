@@ -1,1 +1,36 @@
-{}
+{
+  "nav": {
+    "sakums": "Главная",
+    "fotoKastes": "Фотобудки",
+    "aiFoto": "AI-фото",
+    "atrakcijas": "Аттракционы",
+    "sviniburInventars": "Праздничный инвентарь",
+    "vissInventars": "Весь инвентарь",
+    "audioVideo": "Аудио/видео гостевые книги",
+    "specefekti": "Спецэффекты",
+    "deco": "Декор / мебель",
+    "kubli": "Чаны / баня",
+    "kontakti": "Контакты",
+    "rezervet": "Забронировать",
+    "izvelne": "Меню",
+    "sakumsAria": "Anabella Party — главная"
+  },
+  "footer": {
+    "tagline": "Незабываемые праздники начинаются здесь.",
+    "navigacija": "Навигация",
+    "inventars": "Инвентарь",
+    "kontakti": "Контакты",
+    "juridiski": "Юридически",
+    "noteikumi": "Условия аренды",
+    "privatums": "Политика конфиденциальности",
+    "sikdatnes": "Политика cookie",
+    "musuDraugi": "Наши друзья",
+    "faq": "Вопросы и ответы",
+    "visasTiesibas": "Все права защищены."
+  },
+  "common": {
+    "rezervet": "Забронировать",
+    "sazinaties": "Связаться",
+    "apskatit": "Смотреть"
+  }
+}

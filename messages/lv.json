@@ -1,1 +1,36 @@
-{}
+{
+  "nav": {
+    "sakums": "Sākums",
+    "fotoKastes": "Foto kastes",
+    "aiFoto": "AI foto",
+    "atrakcijas": "Atrakcijas",
+    "sviniburInventars": "Svinību inventārs",
+    "vissInventars": "Viss inventārs",
+    "audioVideo": "Audio/video viesu grāmatas",
+    "specefekti": "Specefekti",
+    "deco": "Deco / mēbeles",
+    "kubli": "Kubli / pirts",
+    "kontakti": "Kontakti",
+    "rezervet": "Rezervēt",
+    "izvelne": "Izvēlne",
+    "sakumsAria": "Anabella Party — sākums"
+  },
+  "footer": {
+    "tagline": "Neaizmirstamas ballītes sākas šeit.",
+    "navigacija": "Navigācija",
+    "inventars": "Inventārs",
+    "kontakti": "Kontakti",
+    "juridiski": "Juridiski",
+    "noteikumi": "Nomas noteikumi",
+    "privatums": "Privātuma politika",
+    "sikdatnes": "Sīkdatņu politika",
+    "musuDraugi": "Mūsu draugi",
+    "faq": "BUJ",
+    "visasTiesibas": "Visas tiesības aizsargātas."
+  },
+  "common": {
+    "rezervet": "Rezervēt",
+    "sazinaties": "Sazināties",
+    "apskatit": "Apskatīt"
+  }
+}

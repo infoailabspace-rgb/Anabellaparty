@@ -1,1 +1,36 @@
-{}
+{
+  "nav": {
+    "sakums": "Home",
+    "fotoKastes": "Photo booths",
+    "aiFoto": "AI photo",
+    "atrakcijas": "Attractions",
+    "sviniburInventars": "Party inventory",
+    "vissInventars": "All inventory",
+    "audioVideo": "Audio/video guest books",
+    "specefekti": "Special effects",
+    "deco": "Decor / furniture",
+    "kubli": "Hot tubs / sauna",
+    "kontakti": "Contact",
+    "rezervet": "Book now",
+    "izvelne": "Menu",
+    "sakumsAria": "Anabella Party — home"
+  },
+  "footer": {
+    "tagline": "Unforgettable parties start here.",
+    "navigacija": "Navigation",
+    "inventars": "Inventory",
+    "kontakti": "Contact",
+    "juridiski": "Legal",
+    "noteikumi": "Rental terms",
+    "privatums": "Privacy policy",
+    "sikdatnes": "Cookie policy",
+    "musuDraugi": "Our friends",
+    "faq": "FAQ",
+    "visasTiesibas": "All rights reserved."
+  },
+  "common": {
+    "rezervet": "Book now",
+    "sazinaties": "Contact us",
+    "apskatit": "View"
+  }
+}
