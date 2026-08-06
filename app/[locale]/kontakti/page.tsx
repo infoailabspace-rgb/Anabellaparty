@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import ContactForm from "@/components/contact-form";
 import Reveal from "@/components/reveal";
 import { getContent } from "@/lib/site-content";
 import { COMPANY, fullAddress } from "@/lib/company";
 import { pageMetadata } from "@/lib/seo";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, localBusinessNode, breadcrumbNode } from "@/lib/schema";
 
 export const revalidate = 300;
 
@@ -22,39 +24,23 @@ export async function generateMetadata({
 }
 
 export default async function KontaktiPage() {
-  const [hours, t, ts] = await Promise.all([
+  const [hours, t, ts, locale] = await Promise.all([
     getContent("contact.hours", HOURS_FALLBACK),
     getTranslations("pages"),
     getTranslations("sec"),
+    getLocale(),
   ]);
   const hoursLines = hours.split("\n").filter(Boolean);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: COMPANY.brandName,
-    legalName: COMPANY.legalName,
-    vatID: COMPANY.vatNr,
-    taxID: COMPANY.regNr,
-    telephone: COMPANY.contact.phone,
-    email: COMPANY.contact.email,
-    url: "https://www.anabellaparty.lv",
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: COMPANY.address.street,
-      addressLocality: COMPANY.address.city,
-      addressRegion: COMPANY.address.region,
-      postalCode: COMPANY.address.postalCode,
-      addressCountry: COMPANY.address.country,
-    },
-    sameAs: [COMPANY.social.instagram, COMPANY.social.facebook],
-  };
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <JsonLd
+        data={graph(
+          localBusinessNode(),
+          breadcrumbNode(locale, [
+            { name: t("kontaktiTitle"), path: "/kontakti" },
+          ]),
+        )}
       />
       <SectionHero title={t("kontaktiTitle")} tagline={t("kontaktiTagline")} />
 

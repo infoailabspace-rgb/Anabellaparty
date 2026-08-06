@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { getProductsByCategory } from "@/lib/catalog";
 import { KUBLI_PHONE } from "@/lib/products";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, productNode, breadcrumbNode } from "@/lib/schema";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import CtaSection from "@/components/cta-section";
@@ -20,14 +22,25 @@ export async function generateMetadata({
 export const revalidate = 300;
 
 export default async function KublsballaPage() {
-  const [items, t, ts] = await Promise.all([
+  const [items, t, ts, locale] = await Promise.all([
     getProductsByCategory("kubli"),
     getTranslations("pages"),
     getTranslations("sec"),
+    getLocale(),
   ]);
+  const path = "/svinibu-inventars/kublsballa";
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          ...items.map((p) => productNode(p, locale, path)),
+          breadcrumbNode(locale, [
+            { name: t("inventarsTitle"), path: "/svinibu-inventars" },
+            { name: t("kubliTitle"), path },
+          ]),
+        )}
+      />
       <SectionHero title={t("kubliTitle")} tagline={t("kubliTagline")} />
 
       <div className="mx-auto max-w-6xl px-6 py-16">

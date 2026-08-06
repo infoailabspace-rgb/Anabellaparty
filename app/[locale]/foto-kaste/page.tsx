@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, productNode, breadcrumbNode } from "@/lib/schema";
 import { getAllProducts } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
@@ -26,11 +28,13 @@ const mainSlugs = ["spogulis", "ozols", "instagram"];
 export const revalidate = 300;
 
 export default async function FotoKastePage() {
-  const [products, t, ts] = await Promise.all([
+  const [products, t, ts, locale] = await Promise.all([
     getAllProducts(),
     getTranslations("pages"),
     getTranslations("sec"),
+    getLocale(),
   ]);
+  const fkProducts = products.filter((p) => p.category === "foto-kaste");
   const boxes = mainSlugs
     .map((s) => products.find((p) => p.slug === s))
     .filter((p) => p !== undefined);
@@ -44,6 +48,14 @@ export default async function FotoKastePage() {
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          ...fkProducts.map((p) => productNode(p, locale, "/foto-kaste")),
+          breadcrumbNode(locale, [
+            { name: t("fotoKasteTitle"), path: "/foto-kaste" },
+          ]),
+        )}
+      />
       <SectionHero
         title={t("fotoKasteTitle")}
         tagline={t("fotoKasteTagline")}

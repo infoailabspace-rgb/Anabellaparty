@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { getProductsByCategory } from "@/lib/catalog";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, productNode, breadcrumbNode } from "@/lib/schema";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
@@ -20,14 +22,25 @@ export async function generateMetadata({
 export const revalidate = 300;
 
 export default async function SpecefektiPage() {
-  const [items, t, ts] = await Promise.all([
+  const [items, t, ts, locale] = await Promise.all([
     getProductsByCategory("specefekti"),
     getTranslations("pages"),
     getTranslations("sec"),
+    getLocale(),
   ]);
+  const path = "/svinibu-inventars/specefekti";
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          ...items.map((p) => productNode(p, locale, path)),
+          breadcrumbNode(locale, [
+            { name: t("inventarsTitle"), path: "/svinibu-inventars" },
+            { name: t("specefektiTitle"), path },
+          ]),
+        )}
+      />
       <SectionHero
         title={t("specefektiTitle")}
         tagline={t("specefektiTagline")}

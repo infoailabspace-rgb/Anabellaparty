@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { getTranslations, getLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import Prose from "@/components/prose";
 import LegalBindingNote from "@/components/legal-binding-note";
 import { COMPANY, fullAddress } from "@/lib/company";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, breadcrumbNode } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Nomas noteikumi | Anabella Party",
@@ -10,9 +13,20 @@ export const metadata: Metadata = {
     "Anabella Party inventāra nomas noteikumi: rezervācija, avanss, atcelšana, piegāde, uzstādīšana, drošība un atbildība. Pasākumu inventāra noma Latvijā.",
 };
 
-export default function NoteikumiPage() {
+export default async function NoteikumiPage() {
+  const [tf, locale] = await Promise.all([
+    getTranslations("footer"),
+    getLocale(),
+  ]);
   return (
     <>
+      <JsonLd
+        data={graph(
+          breadcrumbNode(locale, [
+            { name: tf("noteikumi"), path: "/noteikumi" },
+          ]),
+        )}
+      />
       <SectionHero
         title="Nomas noteikumi"
         tagline="Skaidri noteikumi, lai sadarbība būtu vienkārša un droša abām pusēm."

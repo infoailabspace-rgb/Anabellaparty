@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, breadcrumbNode } from "@/lib/schema";
 import SectionHero from "@/components/section-hero";
 import CategoryCard from "@/components/category-card";
 import CtaSection from "@/components/cta-section";
@@ -18,9 +20,19 @@ export async function generateMetadata({
 }
 
 export default async function SvinibuInventarsPage() {
-  const t = await getTranslations("pages");
+  const [t, locale] = await Promise.all([
+    getTranslations("pages"),
+    getLocale(),
+  ]);
   return (
     <>
+      <JsonLd
+        data={graph(
+          breadcrumbNode(locale, [
+            { name: t("inventarsTitle"), path: "/svinibu-inventars" },
+          ]),
+        )}
+      />
       <SectionHero
         title={t("inventarsTitle")}
         tagline={t("inventarsTagline")}

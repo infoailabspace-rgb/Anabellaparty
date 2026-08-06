@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { getTranslations, getLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import Prose from "@/components/prose";
 import LegalBindingNote from "@/components/legal-binding-note";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, breadcrumbNode } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Sīkdatņu politika | Anabella Party",
@@ -9,9 +12,20 @@ export const metadata: Metadata = {
     "Kādas sīkdatnes izmanto Anabella Party mājaslapa, to mērķi un glabāšanas termiņi. Kā pārvaldīt un atteikt sīkdatņu izmantošanu.",
 };
 
-export default function SikdatnuPolitikaPage() {
+export default async function SikdatnuPolitikaPage() {
+  const [tf, locale] = await Promise.all([
+    getTranslations("footer"),
+    getLocale(),
+  ]);
   return (
     <>
+      <JsonLd
+        data={graph(
+          breadcrumbNode(locale, [
+            { name: tf("sikdatnes"), path: "/sikdatnu-politika" },
+          ]),
+        )}
+      />
       <SectionHero
         title="Sīkdatņu politika"
         tagline="Kādas sīkdatnes izmantojam, kādēļ un kā Tu vari tās pārvaldīt."

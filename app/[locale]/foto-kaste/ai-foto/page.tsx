@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import SectionHero from "@/components/section-hero";
 import ImageGallery from "@/components/image-gallery";
 import Reveal from "@/components/reveal";
 import { pageMetadata } from "@/lib/seo";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, breadcrumbNode } from "@/lib/schema";
 
 export async function generateMetadata({
   params,
@@ -35,12 +37,21 @@ const themeKeys = [
 ] as const;
 
 export default async function AiFotoPage() {
-  const [t, ts] = await Promise.all([
+  const [t, ts, locale] = await Promise.all([
     getTranslations("pages"),
     getTranslations("sec"),
+    getLocale(),
   ]);
   return (
     <>
+      <JsonLd
+        data={graph(
+          breadcrumbNode(locale, [
+            { name: t("fotoKasteTitle"), path: "/foto-kaste" },
+            { name: t("aiFotoTitle"), path: "/foto-kaste/ai-foto" },
+          ]),
+        )}
+      />
       <SectionHero title={t("aiFotoTitle")} tagline={t("aiFotoTagline")} />
 
       <div className="mx-auto max-w-6xl px-6 py-16">

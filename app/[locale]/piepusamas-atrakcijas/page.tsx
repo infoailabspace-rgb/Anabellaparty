@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { getProductsByCategory } from "@/lib/catalog";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, productNode, breadcrumbNode } from "@/lib/schema";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
@@ -20,13 +22,22 @@ export async function generateMetadata({
 export const revalidate = 300;
 
 export default async function PiepusamasAtrakcijasPage() {
-  const [items, t] = await Promise.all([
+  const [items, t, locale] = await Promise.all([
     getProductsByCategory("atrakcijas"),
     getTranslations("pages"),
+    getLocale(),
   ]);
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          ...items.map((p) => productNode(p, locale, "/piepusamas-atrakcijas")),
+          breadcrumbNode(locale, [
+            { name: t("atrakcijasTitle"), path: "/piepusamas-atrakcijas" },
+          ]),
+        )}
+      />
       <SectionHero
         title={t("atrakcijasTitle")}
         tagline={t("atrakcijasTagline")}

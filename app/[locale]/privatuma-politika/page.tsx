@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { getTranslations, getLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import Prose from "@/components/prose";
 import { Link } from "@/i18n/navigation";
 import LegalBindingNote from "@/components/legal-binding-note";
 import { COMPANY, fullAddress } from "@/lib/company";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, breadcrumbNode } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Privātuma politika | Anabella Party",
@@ -11,9 +14,20 @@ export const metadata: Metadata = {
     "Kā Anabella Party apstrādā personas datus saskaņā ar GDPR: kādus datus vācam, kādēļ, cik ilgi glabājam, kam nododam un kādas ir Tavas tiesības.",
 };
 
-export default function PrivatumaPolitikaPage() {
+export default async function PrivatumaPolitikaPage() {
+  const [tf, locale] = await Promise.all([
+    getTranslations("footer"),
+    getLocale(),
+  ]);
   return (
     <>
+      <JsonLd
+        data={graph(
+          breadcrumbNode(locale, [
+            { name: tf("privatums"), path: "/privatuma-politika" },
+          ]),
+        )}
+      />
       <SectionHero
         title="Privātuma politika"
         tagline="Tavu datu privātums mums ir svarīgs. Šeit skaidrojam, kā tos apstrādājam."

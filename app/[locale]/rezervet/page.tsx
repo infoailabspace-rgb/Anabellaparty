@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, breadcrumbNode } from "@/lib/schema";
 import SectionHero from "@/components/section-hero";
 import BookingForm from "@/components/booking/booking-form";
 import { WhatsAppIcon } from "@/components/social-icons";
@@ -39,13 +41,21 @@ const CONTACTS = [
 ] as const;
 
 export default async function RezervetPage() {
-  const [products, t, ts] = await Promise.all([
+  const [products, t, ts, locale] = await Promise.all([
     getAllProducts(),
     getTranslations("pages"),
     getTranslations("sec"),
+    getLocale(),
   ]);
   return (
     <>
+      <JsonLd
+        data={graph(
+          breadcrumbNode(locale, [
+            { name: t("rezervetTitle"), path: "/rezervet" },
+          ]),
+        )}
+      />
       <SectionHero
         title={t("rezervetTitle")}
         tagline={t("rezervetTagline")}

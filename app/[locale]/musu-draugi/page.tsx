@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import Reveal from "@/components/reveal";
 import { partners } from "@/lib/partners";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, breadcrumbNode } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
@@ -15,9 +17,19 @@ export async function generateMetadata({
 }
 
 export default async function MusuDraugiPage() {
-  const t = await getTranslations("pages");
+  const [t, locale] = await Promise.all([
+    getTranslations("pages"),
+    getLocale(),
+  ]);
   return (
     <>
+      <JsonLd
+        data={graph(
+          breadcrumbNode(locale, [
+            { name: t("musuDraugiTitle"), path: "/musu-draugi" },
+          ]),
+        )}
+      />
       <SectionHero
         title={t("musuDraugiTitle")}
         tagline={t("musuDraugiTagline")}

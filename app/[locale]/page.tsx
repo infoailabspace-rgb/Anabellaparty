@@ -13,6 +13,8 @@ import { getTranslations } from "next-intl/server";
 import { getContentMap } from "@/lib/site-content";
 import { getTestimonials } from "@/lib/site-data";
 import { homeMetadata } from "@/lib/seo";
+import JsonLd from "@/components/seo/json-ld";
+import { graph, localBusinessNode } from "@/lib/schema";
 
 export const revalidate = 300;
 
@@ -35,6 +37,7 @@ export default async function Home() {
 
   return (
     <>
+      <JsonLd data={graph(localBusinessNode())} />
       {/* Hero — abi video secīgi viens pēc otra */}
       <Hero
         videos={["/videos/herovideo1.mp4", "/videos/herovideo2.mp4"]}
