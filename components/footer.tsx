@@ -1,9 +1,11 @@
-import Link from "next/link";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { SocialLinks } from "@/components/social-icons";
-import { legalLineShort } from "@/lib/company";
+import { COMPANY, legalLineShort, fullAddress } from "@/lib/company";
 
-export default function Footer() {
+export default async function Footer() {
+  const t = await getTranslations("footer");
   return (
     <footer className="border-t border-gold/30 bg-navy/40">
       <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 sm:grid-cols-3">
@@ -15,45 +17,42 @@ export default function Footer() {
             height={500}
             className="h-24 w-auto"
           />
-          <p className="mt-2 text-sm text-text/70">
-            Pasākumu inventāra noma Latvijā. Foto kastes, piepūšamās atrakcijas,
-            specefekti un audio grāmata.
-          </p>
+          <p className="mt-2 text-sm text-text/70">{t("description")}</p>
         </div>
 
         <div>
           <h4 className="font-display text-sm font-semibold text-text">
-            Kontakti
+            {t("kontakti")}
           </h4>
           <ul className="mt-3 space-y-2 text-sm text-text/70">
             <li>
               <a
-                href="https://wa.me/37129222761"
+                href={COMPANY.contact.whatsapp}
                 className="transition-colors hover:text-gold"
               >
-                +371 29222761 (WhatsApp)
+                {COMPANY.contact.phoneDisplay} (WhatsApp)
               </a>
             </li>
             <li>
               <a
-                href="mailto:info@anabellaparty.lv"
+                href={`mailto:${COMPANY.contact.email}`}
                 className="transition-colors hover:text-gold"
               >
-                info@anabellaparty.lv
+                {COMPANY.contact.email}
               </a>
             </li>
-            <li>Vecozolu iela 14, Ķekava</li>
+            <li>{fullAddress}</li>
           </ul>
         </div>
 
         <div>
           <h4 className="font-display text-sm font-semibold text-text">
-            Informācija
+            {t("informacija")}
           </h4>
           <ul className="mt-3 space-y-2 text-sm text-text/70">
             <li>
               <Link href="/faq" className="transition-colors hover:text-gold">
-                BUJ
+                {t("faq")}
               </Link>
             </li>
             <li>
@@ -61,7 +60,7 @@ export default function Footer() {
                 href="/musu-draugi"
                 className="transition-colors hover:text-gold"
               >
-                Mūsu draugi
+                {t("musuDraugi")}
               </Link>
             </li>
             <li>
@@ -69,7 +68,7 @@ export default function Footer() {
                 href="/noteikumi"
                 className="transition-colors hover:text-gold"
               >
-                Nomas noteikumi
+                {t("noteikumi")}
               </Link>
             </li>
             <li>
@@ -77,7 +76,7 @@ export default function Footer() {
                 href="/privatuma-politika"
                 className="transition-colors hover:text-gold"
               >
-                Privātuma politika
+                {t("privatums")}
               </Link>
             </li>
             <li>
@@ -85,7 +84,7 @@ export default function Footer() {
                 href="/sikdatnu-politika"
                 className="transition-colors hover:text-gold"
               >
-                Sīkdatņu politika
+                {t("sikdatnes")}
               </Link>
             </li>
             <li className="pt-2">
@@ -98,7 +97,7 @@ export default function Footer() {
       <div className="border-t border-gold/10 py-4 text-center text-xs text-text/50">
         <p>{legalLineShort}</p>
         <p>
-          © {new Date().getFullYear()} Anabella Party. Visas tiesības aizsargātas.
+          © {new Date().getFullYear()} Anabella Party. {t("visasTiesibas")}
         </p>
       </div>
     </footer>
