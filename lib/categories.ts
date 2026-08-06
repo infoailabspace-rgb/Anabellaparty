@@ -6,6 +6,8 @@ export type CategoryMeta = {
   short: string;
   description: string;
   href: string;
+  /** Fona attēls (SOLIS1D). Rādīts tikai, ja fails reāli eksistē public/. */
+  bgImage: string;
 };
 
 export const categoryMeta: Record<ProductCategory, CategoryMeta> = {
@@ -16,6 +18,7 @@ export const categoryMeta: Record<ProductCategory, CategoryMeta> = {
     description:
       "SPOGULIS, OZOLS un INSTAGRAM foto kastes ar tūlītēju druku un asistentu.",
     href: "/foto-kaste",
+    bgImage: "/images/categories/foto-kastes.jpg",
   },
   atrakcijas: {
     id: "atrakcijas",
@@ -24,6 +27,7 @@ export const categoryMeta: Record<ProductCategory, CategoryMeta> = {
     description:
       "Baltās piepūšamās pilis un bumbu vannas — telpās un ārā, tīras un drošas.",
     href: "/piepusamas-atrakcijas",
+    bgImage: "/images/categories/atrakcijas.jpg",
   },
   "audio-video": {
     id: "audio-video",
@@ -32,6 +36,7 @@ export const categoryMeta: Record<ProductCategory, CategoryMeta> = {
     description:
       "Retro telefoni viesu balss un video sveicieniem — sirsnīga piemiņa.",
     href: "/svinibu-inventars/audio-viesu-gramatas",
+    bgImage: "/images/categories/audio-video.jpg",
   },
   specefekti: {
     id: "specefekti",
@@ -40,6 +45,7 @@ export const categoryMeta: Record<ProductCategory, CategoryMeta> = {
     description:
       "Aukstās dzirksteles, zemā migla un burbuļi — iespaidīgi un droši efekti.",
     href: "/svinibu-inventars/specefekti",
+    bgImage: "/images/categories/specefekti.jpg",
   },
   deco: {
     id: "deco",
@@ -48,6 +54,7 @@ export const categoryMeta: Record<ProductCategory, CategoryMeta> = {
     description:
       "Šampanieša siena, LED uzraksti, dārza krēsli un citi svētku dekori.",
     href: "/svinibu-inventars/decomebeles",
+    bgImage: "/images/categories/deco.jpg",
   },
   kubli: {
     id: "kubli",
@@ -56,6 +63,7 @@ export const categoryMeta: Record<ProductCategory, CategoryMeta> = {
     description:
       "VIP kubli un mobilā pirts (atrodas Jūrmalā, atsevišķs tālrunis).",
     href: "/svinibu-inventars/kublsballa",
+    bgImage: "/images/categories/kubli.jpg",
   },
 };
 
