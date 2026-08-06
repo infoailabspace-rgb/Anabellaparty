@@ -3,6 +3,7 @@ import SectionHero from "@/components/section-hero";
 import CategoryCard from "@/components/category-card";
 import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
+import DepthBg from "@/components/depth-bg";
 import { homeCategories } from "@/lib/categories";
 
 export const metadata: Metadata = {
@@ -18,15 +19,18 @@ export default function SvinibuInventarsPage() {
         title="Viss inventārs"
         tagline="No foto kastēm līdz kubliem — izvēlies kategoriju un atrodi īsto Tavam pasākumam."
       />
-      <div className="mx-auto max-w-6xl px-6 py-16">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {homeCategories.map((category, i) => (
-            <Reveal key={category.id} delay={i * 0.06}>
-              <CategoryCard category={category} index={i} />
-            </Reveal>
-          ))}
+      <section className="anabella-navy-texture relative overflow-hidden bg-navy py-16">
+        <DepthBg />
+        <div className="relative z-10 mx-auto max-w-6xl px-6">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {homeCategories.map((category, i) => (
+              <Reveal key={category.id} delay={i * 0.06}>
+                <CategoryCard category={category} index={i} />
+              </Reveal>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
       <CtaSection />
     </>
   );

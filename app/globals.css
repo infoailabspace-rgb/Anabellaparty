@@ -126,6 +126,31 @@ body {
   animation: anabella-float 3.5s ease-in-out infinite;
 }
 
+/* Zelta mirdzums, kas periodiski pārslīd pāri kartītēm ("dzīvs"). */
+.anabella-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(229, 184, 122, 0.14) 45%,
+    rgba(245, 222, 184, 0.28) 50%,
+    rgba(229, 184, 122, 0.14) 55%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: anabella-shine 5s ease-in-out infinite;
+}
+
+@keyframes anabella-shine {
+  0% {
+    background-position: 200% 0;
+  }
+  60%,
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 /* Smalka zelta punktu tekstūra navy sekcijām. */
 .anabella-navy-texture {
   background-image: radial-gradient(

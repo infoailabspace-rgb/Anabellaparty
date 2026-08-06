@@ -1,5 +1,6 @@
 import Reveal from "@/components/reveal";
 import CountUp from "@/components/count-up";
+import Shimmer from "@/components/shimmer";
 import {
   IconBadge,
   IconBrowse,
@@ -40,7 +41,8 @@ export default function Steps() {
         <div className="mt-16 grid gap-8 md:grid-cols-3">
           {steps.map((s, i) => (
             <Reveal key={s.n} delay={i * 0.08}>
-              <div className="group h-full rounded-2xl border border-gold/25 bg-navy/30 p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.25)] transition-all duration-300 hover:-translate-y-1.5 hover:border-gold/60 hover:shadow-[0_28px_70px_-24px_rgba(212,169,96,0.35)]">
+              <div className="group relative isolate h-full overflow-hidden rounded-2xl border border-gold/25 bg-navy/30 p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.25)] transition-all duration-300 hover:-translate-y-1.5 hover:border-gold/60 hover:shadow-[0_28px_70px_-24px_rgba(212,169,96,0.35)]">
+                <Shimmer delay={i * 0.6} />
                 <div className="flex items-center justify-between">
                   <IconBadge delay={i * 0.4}>
                     <s.Icon className="h-6 w-6" />

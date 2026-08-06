@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CategoryMeta } from "@/lib/categories";
 import { categoryIcons, IconBadge } from "@/components/icons";
+import Shimmer from "@/components/shimmer";
 
 export default function CategoryCard({
   category,
@@ -13,8 +14,9 @@ export default function CategoryCard({
   return (
     <Link
       href={category.href}
-      className="group flex h-full flex-col rounded-2xl border border-gold/25 bg-navy/30 p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.25)] transition-all duration-300 hover:-translate-y-1.5 hover:border-gold/60 hover:shadow-[0_28px_70px_-24px_rgba(212,169,96,0.4)]"
+      className="group relative isolate flex h-full flex-col overflow-hidden rounded-2xl border border-gold/25 bg-navy/30 p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.25)] transition-all duration-300 hover:-translate-y-1.5 hover:border-gold/60 hover:shadow-[0_28px_70px_-24px_rgba(212,169,96,0.4)]"
     >
+      <Shimmer delay={index * 0.6} />
       <IconBadge delay={index * 0.3}>
         <Icon className="h-6 w-6" />
       </IconBadge>

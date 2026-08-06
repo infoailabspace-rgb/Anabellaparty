@@ -6,6 +6,7 @@ import Testimonials from "@/components/home/testimonials";
 import CategoryCard from "@/components/category-card";
 import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
+import DepthBg from "@/components/depth-bg";
 import { homeCategories } from "@/lib/categories";
 
 export default function Home() {
@@ -17,9 +18,10 @@ export default function Home() {
       {/* Kā tas notiek — bg */}
       <Steps />
 
-      {/* Piedāvājums / kategorijas — navy ar smalku tekstūru */}
-      <section className="anabella-navy-texture bg-navy py-24 md:py-32">
-        <div className="mx-auto max-w-6xl px-6">
+      {/* Piedāvājums / kategorijas — navy ar tekstūru + dziļuma fons */}
+      <section className="anabella-navy-texture relative overflow-hidden bg-navy py-24 md:py-32">
+        <DepthBg />
+        <div className="relative z-10 mx-auto max-w-6xl px-6">
           <Reveal>
             <h2 className="text-center font-display text-3xl font-bold tracking-tight md:text-4xl">
               Mūsu piedāvājums
