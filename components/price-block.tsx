@@ -1,24 +1,26 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import type { Product } from "@/lib/products";
 
 function formatPrice(n: number) {
   return `${n} €`;
 }
 
-export default function PriceBlock({ product }: { product: Product }) {
+export default async function PriceBlock({ product }: { product: Product }) {
+  const t = await getTranslations("productDetail");
   const { tiers, hourlyExtra, addOns, contactOnly } = product;
 
   if (contactOnly) {
     return (
       <div className="flex flex-wrap items-center gap-4">
         <span className="font-mono text-xl font-bold text-gold">
-          Cena vienojoties
+          {t("priceByArrangement")}
         </span>
         <Link
           href="/kontakti"
           className="rounded-full border-2 border-gold px-5 py-2 text-sm font-semibold text-gold transition-colors hover:bg-gold/10"
         >
-          Sazināties
+          {t("contactUs")}
         </Link>
       </div>
     );
@@ -61,14 +63,14 @@ export default function PriceBlock({ product }: { product: Product }) {
 
       {typeof hourlyExtra === "number" && (
         <p className="text-sm text-text/70">
-          Katra nākamā stunda{" "}
+          {t("eachAdditionalHour")}{" "}
           <span className="font-mono text-gold">+{formatPrice(hourlyExtra)}</span>
         </p>
       )}
 
-      {contactTiers.map((t) => (
-        <p key={t.duration} className="text-sm text-text/70">
-          {t.duration} — {t.note ?? "cena vienojoties"}
+      {contactTiers.map((ct) => (
+        <p key={ct.duration} className="text-sm text-text/70">
+          {ct.duration} — {ct.note ?? t("priceByArrangement")}
         </p>
       ))}
 

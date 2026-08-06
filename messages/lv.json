@@ -242,7 +242,10 @@
   "productDetail": {
     "included": "Nomā iekļauts",
     "call": "Zvanīt {phone}",
-    "book": "Rezervēt"
+    "book": "Rezervēt",
+    "eachAdditionalHour": "Katra nākamā stunda",
+    "priceByArrangement": "Cena vienojoties",
+    "contactUs": "Sazināties"
   },
   "sec": {
     "cReachUs": "Sazinies ar mums",
@@ -291,6 +294,11 @@
     "fqCtaBtn": "Sazināties",
     "specNote": "* Auksto dzirksteļu salūta laikā veidojas neliela putekļu nogulsne.",
     "nfTitle": "Šī lapa aizsvinējusies prom",
-    "nfText": "Meklēto lapu neizdevās atrast. Varbūt tā ir pārcelta vai adresē ieviesusies kļūda."
+    "nfText": "Meklēto lapu neizdevās atrast. Varbūt tā ir pārcelta vai adresē ieviesusies kļūda.",
+    "atrBalls": "Baltas bumbas (2500–3500 gb): XL atrakcijām 30 €, L atrakcijām 20 €.",
+    "atrCleanTitle": "Bumbu tīrīšanas ierīce",
+    "atrCleanText": "Ierīce iesūc bumbu, apmazgā to ar ekoloģisku, bērniem nekaitīgu līdzekli un izmet tīru un dezinficētu. Tā mēs nodrošinām, ka katra atrakcija ir higiēniski droša ikvienam mazajam viesim.",
+    "mdEmptyIntro": "Sadarbojamies ar uzticamiem partneriem pasākumu jomā. Drīzumā šeit būs mūsu draugu saraksts.",
+    "mdEmptyInvite": "Vai vēlies kļūt par mūsu partneri? Raksti —"
   }
 }

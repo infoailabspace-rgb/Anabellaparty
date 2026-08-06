@@ -242,7 +242,10 @@
   "productDetail": {
     "included": "Included in the rental",
     "call": "Call {phone}",
-    "book": "Book now"
+    "book": "Book now",
+    "eachAdditionalHour": "Each additional hour",
+    "priceByArrangement": "Price by arrangement",
+    "contactUs": "Contact us"
   },
   "sec": {
     "cReachUs": "Get in touch",
@@ -291,6 +294,11 @@
     "fqCtaBtn": "Contact us",
     "specNote": "* During cold-spark fireworks a small dust residue forms.",
     "nfTitle": "This page has partied off somewhere",
-    "nfText": "We couldn't find the page you were looking for. It may have moved or the address may contain a typo."
+    "nfText": "We couldn't find the page you were looking for. It may have moved or the address may contain a typo.",
+    "atrBalls": "White balls (2,500–3,500 pcs): 30 € for XL attractions, 20 € for L attractions.",
+    "atrCleanTitle": "Ball cleaning device",
+    "atrCleanText": "The device draws in a ball, washes it with an eco-friendly, child-safe solution and releases it clean and disinfected. This is how we ensure every attraction is hygienically safe for each little guest.",
+    "mdEmptyIntro": "We work with trusted partners in the events industry. The list of our friends will be here soon.",
+    "mdEmptyInvite": "Would you like to become our partner? Write to —"
   }
 }

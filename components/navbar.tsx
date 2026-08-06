@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion, useReducedMotion } from "framer-motion";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -24,6 +24,44 @@ export default function Navbar() {
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
+
+  // Dropdown: JS kontrole ar aizvēršanas aizturi (150ms), lai neaizvērtos,
+  // ejot no pogas uz izvēlni. Tikai viena izvēlne atvērta vienlaikus.
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navRef = useRef<HTMLElement | null>(null);
+  const openDrop = (label: string) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpenMenu(label);
+  };
+  const scheduleClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpenMenu(null), 150);
+  };
+
+  // Ceļa maiņa → aizver izvēlnes.
+  useEffect(() => {
+    setOpenMenu(null);
+    setOpen(false);
+  }, [pathname]);
+
+  // Esc + klikšķis ārpusē + cleanup.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpenMenu(null);
+    };
+    const onDown = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node))
+        setOpenMenu(null);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onDown);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onDown);
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    };
+  }, []);
 
   // Sākumlapā logo/"Sākums" klikšķis ritina uz augšu, nevis pārlādē.
   const onHomeClick = (e: React.MouseEvent) => {
@@ -67,7 +105,10 @@ export default function Navbar() {
       : (item.children?.some((c) => pathname === c.href) ?? false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-gold/30 bg-bg/80 backdrop-blur-md">
+    <header
+      ref={navRef}
+      className="sticky top-0 z-50 border-b border-gold/30 bg-bg/80 backdrop-blur-md"
+    >
       <nav className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-6 md:h-24 lg:px-10">
         <Link
           href="/"
@@ -90,13 +131,22 @@ export default function Navbar() {
           {nav.map((item) => {
             const active = isActive(item);
             return item.children ? (
-              <div key={item.label} className="group relative">
+              <div
+                key={item.label}
+                className="relative"
+                onMouseEnter={() => openDrop(item.label)}
+                onMouseLeave={scheduleClose}
+              >
                 <button
                   type="button"
+                  aria-expanded={openMenu === item.label}
+                  onClick={() =>
+                    setOpenMenu((m) => (m === item.label ? null : item.label))
+                  }
                   className={`flex items-center gap-1 ${linkBase} ${
-                    active
+                    active || openMenu === item.label
                       ? "border-gold/40 text-gold/90"
-                      : "border-transparent text-text/80 hover:border-gold hover:text-gold group-focus-within:text-gold"
+                      : "border-transparent text-text/80 hover:border-gold hover:text-gold"
                   }`}
                 >
                   {item.label}
@@ -104,19 +154,21 @@ export default function Navbar() {
                     ▾
                   </span>
                 </button>
-                <div className="invisible absolute left-0 top-full z-50 min-w-56 translate-y-1 pt-3 opacity-0 transition-all duration-[180ms] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                  <div className="rounded-xl border border-gold/25 bg-navy p-2 shadow-2xl shadow-black/50">
-                    {item.children.map((c) => (
-                      <Link
-                        key={c.href}
-                        href={c.href}
-                        className="block whitespace-nowrap rounded-lg px-5 py-2.5 text-sm text-text/85 transition-colors hover:bg-gold hover:text-black"
-                      >
-                        {c.label}
-                      </Link>
-                    ))}
+                {openMenu === item.label && (
+                  <div className="absolute left-0 top-full z-50 min-w-56 pt-3">
+                    <div className="anabella-drop rounded-xl border border-gold/25 bg-navy p-2 shadow-2xl shadow-black/50">
+                      {item.children.map((c) => (
+                        <Link
+                          key={c.href}
+                          href={c.href}
+                          className="block whitespace-nowrap rounded-lg px-5 py-2.5 text-sm text-text/85 transition-colors hover:bg-gold hover:text-black"
+                        >
+                          {c.label}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             ) : (
               <Link

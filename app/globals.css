@@ -179,6 +179,21 @@ body {
   background-size: 22px 22px;
 }
 
+/* Navbar dropdown — fade + slide 4px lejup, 180ms. */
+@keyframes anabella-drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.anabella-drop {
+  animation: anabella-drop-in 180ms ease-out;
+}
+
 /* prefers-reduced-motion — visas animācijas izslēdzas, saturs paliek redzams. */
 @media (prefers-reduced-motion: reduce) {
   *,

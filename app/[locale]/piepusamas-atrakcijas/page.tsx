@@ -22,9 +22,10 @@ export async function generateMetadata({
 export const revalidate = 300;
 
 export default async function PiepusamasAtrakcijasPage() {
-  const [items, t, locale] = await Promise.all([
+  const [items, t, ts, locale] = await Promise.all([
     getProductsByCategory("atrakcijas"),
     getTranslations("pages"),
+    getTranslations("sec"),
     getLocale(),
   ]);
 
@@ -54,9 +55,7 @@ export default async function PiepusamasAtrakcijasPage() {
         {/* Baltas bumbas */}
         <Reveal>
           <div className="mt-12 rounded-2xl border border-gold/25 bg-navy/25 p-6 text-center text-sm text-text/75">
-            <span className="font-semibold text-text">Baltas bumbas</span> (2500–3500 gb):
-            XL atrakcijām <span className="font-mono text-gold">30 €</span>, L atrakcijām{" "}
-            <span className="font-mono text-gold">20 €</span>.
+            {ts("atrBalls")}
           </div>
         </Reveal>
 
@@ -64,13 +63,9 @@ export default async function PiepusamasAtrakcijasPage() {
         <Reveal>
           <div className="mt-6 rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10">
             <h2 className="font-display text-2xl font-bold">
-              Bumbu tīrīšanas ierīce
+              {ts("atrCleanTitle")}
             </h2>
-            <p className="mt-4 max-w-2xl text-text/80">
-              Ierīce iesūc bumbu, apmazgā to ar ekoloģisku, bērniem nekaitīgu
-              līdzekli un izmet tīru un dezinficētu. Tā mēs nodrošinām, ka katra
-              atrakcija ir higiēniski droša ikvienam mazajam viesim.
-            </p>
+            <p className="mt-4 max-w-2xl text-text/80">{ts("atrCleanText")}</p>
           </div>
         </Reveal>
 

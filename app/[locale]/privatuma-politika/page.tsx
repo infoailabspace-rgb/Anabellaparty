@@ -88,9 +88,8 @@ export default async function PrivatumaPolitikaPage() {
           Foto kastu pakalpojumā tiek uzņemtas viesu fotogrāfijas. Tās tiek
           izdrukātas uz vietas un nodotas pasākuma organizatoram digitālā formātā.
           Fotogrāfijas glabājam tikai tik ilgi, cik nepieciešams to nodošanai
-          klientam. [JĀAPSTIPRINA: precīzs foto kastu fotogrāfiju glabāšanas
-          termiņš un vai tās tiek izmantotas mārketingā — tikai ar atsevišķu
-          piekrišanu]. Lai lūgtu dzēst savu attēlu, raksti uz{" "}
+          klientam, un pēc tam dzēšam. Tās netiek izmantotas mārketingā bez Tavas
+          atsevišķas piekrišanas. Lai lūgtu dzēst savu attēlu, raksti uz{" "}
           {COMPANY.contact.email}.
         </p>
 
