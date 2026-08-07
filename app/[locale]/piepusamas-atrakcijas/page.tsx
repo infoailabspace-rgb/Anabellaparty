@@ -42,6 +42,7 @@ export default async function PiepusamasAtrakcijasPage() {
       <SectionHero
         title={t("atrakcijasTitle")}
         tagline={t("atrakcijasTagline")}
+        heroKey="atrakcijas"
         video="/videos/herovideo2.mp4"
       />
 

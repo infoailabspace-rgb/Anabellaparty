@@ -4,15 +4,16 @@ import { useTranslations } from "next-intl";
 import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { EASE, word, wordStagger } from "@/lib/motion";
-import HeroVideo from "@/components/hero-video";
+import HeroMedia from "@/components/hero-media";
+import type { HeroMedia as HeroMediaT } from "@/lib/hero-media";
 
 export default function Hero({
-  videos = [],
+  media,
   title = "Neaizmirstamas ballītes sākas šeit",
   accent = "ballītes",
   subtitle = "Foto kastes, piepūšamās atrakcijas un specefekti Tavam pasākumam. Piegāde Pierīgā bez maksas.",
 }: {
-  videos?: string[];
+  media?: HeroMediaT | null;
   title?: string;
   accent?: string;
   subtitle?: string;
@@ -25,11 +26,17 @@ export default function Hero({
 
   return (
     <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden">
-      {/* Fons — video (secīgi), citādi premium gradients + zelta glow */}
+      {/* Fons — hero medijs (video/attēls), citādi premium gradients + zelta glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-navy via-bg to-black" />
-      {videos.length > 0 ? (
+      {media && (media.mp4 || media.image) ? (
         <>
-          <HeroVideo sources={videos} />
+          <HeroMedia
+            mp4={media.mp4}
+            webm={media.webm}
+            poster={media.poster}
+            image={media.image}
+            preloadMeta
+          />
           <div className="absolute inset-0 bg-bg/60" />
         </>
       ) : (

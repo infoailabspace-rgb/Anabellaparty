@@ -59,6 +59,7 @@ export default async function FotoKastePage() {
       <SectionHero
         title={t("fotoKasteTitle")}
         tagline={t("fotoKasteTagline")}
+        heroKey="foto-kaste"
         video="/videos/herovideo1.mp4"
       />
 

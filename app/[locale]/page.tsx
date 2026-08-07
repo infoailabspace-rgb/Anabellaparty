@@ -12,6 +12,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getContentMap } from "@/lib/site-content";
 import { getTestimonials } from "@/lib/site-data";
+import { getHeroMedia } from "@/lib/hero-media";
 import { homeMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, localBusinessNode } from "@/lib/schema";
@@ -28,19 +29,24 @@ export async function generateMetadata({
 }
 
 export default async function Home() {
-  const [c, testimonials, t] = await Promise.all([
+  const [c, testimonials, t, heroMedia] = await Promise.all([
     getContentMap(),
     getTestimonials(),
     getTranslations("home"),
+    getHeroMedia("home"),
   ]);
   const g = (k: string, f: string) => (c[k]?.trim() ? c[k] : f);
+  // Fallback: ja admin nav iestatījis hero mediju → publiskais video + poster.
+  const hero =
+    heroMedia ??
+    { mp4: "/videos/herovideo1.mp4", poster: "/videos/herovideo1.jpg" };
 
   return (
     <>
       <JsonLd data={graph(localBusinessNode())} />
-      {/* Hero — abi video secīgi viens pēc otra */}
+      {/* Hero medijs (video/attēls no site_content vai fallback) */}
       <Hero
-        videos={["/videos/herovideo1.mp4", "/videos/herovideo2.mp4"]}
+        media={hero}
         title={g("home.hero.title", "Neaizmirstamas ballītes sākas šeit")}
         accent={g("home.hero.accent", "ballītes")}
         subtitle={g(

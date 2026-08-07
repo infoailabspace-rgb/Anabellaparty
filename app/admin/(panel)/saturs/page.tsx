@@ -1,5 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import ContentEditor from "./content-editor";
+import HeroMediaAdmin, { type HeroPage } from "./hero-media-admin";
+import {
+  HERO_VIDEO_PAGES,
+  HERO_IMAGE_PAGES,
+  isVideoPage,
+} from "@/lib/hero-media";
 
 export const dynamic = "force-dynamic";
 
@@ -9,11 +15,31 @@ const ORDER = [
   "delivery.note", "contact.hours",
 ];
 
+// pageKey → publiskais ceļš (admin attēlojumam).
+const HERO_PATHS: Record<string, string> = {
+  home: "/ (sākumlapa)",
+  "foto-kaste": "/foto-kaste",
+  atrakcijas: "/piepusamas-atrakcijas",
+  specefekti: "/svinibu-inventars/specefekti",
+  inventars: "/svinibu-inventars",
+  "audio-video": "/svinibu-inventars/audio-viesu-gramatas",
+  deco: "/svinibu-inventars/decomebeles",
+  kubli: "/svinibu-inventars/kublsballa",
+  "ai-foto": "/foto-kaste/ai-foto",
+  rezervet: "/rezervet",
+  kontakti: "/kontakti",
+  faq: "/faq",
+  "musu-draugi": "/musu-draugi",
+};
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export default async function SatursPage() {
   const supabase = await createClient();
-  const { data } = await supabase.from("site_content").select("key,value,content_type");
+  const { data } = await supabase
+    .from("site_content")
+    .select("key,value,content_type");
   const map = new Map((data ?? []).map((r: any) => [r.key, r]));
+
   const items = ORDER.filter((k) => map.has(k)).map((k) => {
     const r: any = map.get(k);
     const v = r.value ?? {};
@@ -23,5 +49,27 @@ export default async function SatursPage() {
       content_type: r.content_type ?? "text",
     };
   });
-  return <ContentEditor items={items} />;
+
+  const heroKeys = [...HERO_VIDEO_PAGES, ...HERO_IMAGE_PAGES];
+  const heroPages: HeroPage[] = heroKeys.map((key) => {
+    const v: any = map.get(`hero.${key}`)?.value ?? {};
+    return {
+      key,
+      path: HERO_PATHS[key] ?? key,
+      video: isVideoPage(key),
+      media: {
+        mp4: v.mp4 ?? null,
+        webm: v.webm ?? null,
+        poster: v.poster ?? null,
+        image: v.image ?? null,
+      },
+    };
+  });
+
+  return (
+    <>
+      <ContentEditor items={items} />
+      <HeroMediaAdmin pages={heroPages} />
+    </>
+  );
 }

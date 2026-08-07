@@ -1,23 +1,38 @@
 import Reveal from "@/components/reveal";
-import HeroVideo from "@/components/hero-video";
+import HeroMedia from "@/components/hero-media";
+import { getHeroMedia } from "@/lib/hero-media";
 
-export default function SectionHero({
+export default async function SectionHero({
   title,
   tagline,
+  heroKey,
   video,
 }: {
   title: string;
   tagline: string;
-  video?: string | string[];
+  heroKey?: string;
+  // Fallback publiskais video (relatīvs mp4 ceļš), ja site_content tukšs.
+  video?: string;
 }) {
-  const sources = video ? (Array.isArray(video) ? video : [video]) : [];
+  const media = heroKey ? await getHeroMedia(heroKey) : null;
+  // Fallback: admin mediji → citādi publiskais video → citādi tīrs gradients.
+  const mp4 = media?.mp4 ?? video ?? null;
+  const poster =
+    media?.poster ?? (video ? video.replace(/\.mp4$/i, ".jpg") : null);
+  const image = media?.image ?? null;
+  const hasMedia = Boolean(mp4 || image);
 
   return (
     <section className="relative overflow-hidden border-b border-gold/20">
       <div className="absolute inset-0 bg-gradient-to-br from-navy via-bg to-black" />
-      {sources.length > 0 ? (
+      {hasMedia ? (
         <>
-          <HeroVideo sources={sources} />
+          <HeroMedia
+            mp4={mp4}
+            webm={media?.webm ?? null}
+            poster={poster}
+            image={image}
+          />
           <div className="absolute inset-0 bg-bg/70" />
         </>
       ) : (

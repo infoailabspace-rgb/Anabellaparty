@@ -35,6 +35,7 @@ export default async function MusuDraugiPage() {
       <SectionHero
         title={t("musuDraugiTitle")}
         tagline={t("musuDraugiTagline")}
+        heroKey="musu-draugi"
       />
       <div className="mx-auto max-w-6xl px-6 py-16">
         {partners.length === 0 ? (

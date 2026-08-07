@@ -115,3 +115,43 @@ export async function deleteFaq(id: string) {
   await audit("delete", "faq", id, null);
   revalidatePath("/", "layout");
 }
+
+/* ── Hero mediji ── */
+export type HeroMediaInput = {
+  mp4?: string | null;
+  webm?: string | null;
+  poster?: string | null;
+  image?: string | null;
+};
+
+export async function saveHeroMedia(pageKey: string, media: HeroMediaInput) {
+  // Validācija: poster bez video nav atļauts.
+  if (media.poster && !media.mp4) {
+    return { error: "Poster bez video nav atļauts — pievieno MP4 vai noņem poster." };
+  }
+  const supabase = await createClient();
+  const key = `hero.${pageKey}`;
+  const value = {
+    mp4: media.mp4 || null,
+    webm: media.webm || null,
+    poster: media.poster || null,
+    image: media.image || null,
+  };
+  const { data: existing } = await supabase
+    .from("site_content")
+    .select("key")
+    .eq("key", key)
+    .maybeSingle();
+  const { error } = existing
+    ? await supabase
+        .from("site_content")
+        .update({ value, updated_at: new Date().toISOString() })
+        .eq("key", key)
+    : await supabase
+        .from("site_content")
+        .insert({ key, value, content_type: "media" });
+  if (error) return { error: error.message };
+  await audit("update", "hero", key, { key });
+  revalidatePath("/", "layout");
+  return { ok: true };
+}

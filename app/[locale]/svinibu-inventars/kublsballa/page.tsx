@@ -41,7 +41,7 @@ export default async function KublsballaPage() {
           ]),
         )}
       />
-      <SectionHero title={t("kubliTitle")} tagline={t("kubliTagline")} />
+      <SectionHero title={t("kubliTitle")} tagline={t("kubliTagline")} heroKey="kubli" />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         {/* Svarīgā atzīme */}

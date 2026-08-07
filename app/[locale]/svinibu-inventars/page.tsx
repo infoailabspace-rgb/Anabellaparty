@@ -36,6 +36,7 @@ export default async function SvinibuInventarsPage() {
       <SectionHero
         title={t("inventarsTitle")}
         tagline={t("inventarsTagline")}
+        heroKey="inventars"
       />
       <section className="anabella-navy-texture relative overflow-hidden bg-navy py-16">
         <DepthBg />

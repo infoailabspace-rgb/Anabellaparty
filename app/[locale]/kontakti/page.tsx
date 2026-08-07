@@ -42,7 +42,7 @@ export default async function KontaktiPage() {
           ]),
         )}
       />
-      <SectionHero title={t("kontaktiTitle")} tagline={t("kontaktiTagline")} />
+      <SectionHero title={t("kontaktiTitle")} tagline={t("kontaktiTagline")} heroKey="kontakti" />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid gap-12 lg:grid-cols-2">

@@ -59,6 +59,7 @@ export default async function RezervetPage() {
       <SectionHero
         title={t("rezervetTitle")}
         tagline={t("rezervetTagline")}
+        heroKey="rezervet"
       />
 
       <div className="mx-auto max-w-5xl px-6 py-16">

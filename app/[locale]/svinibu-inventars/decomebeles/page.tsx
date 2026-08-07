@@ -41,7 +41,7 @@ export default async function DecoMebelesPage() {
           ]),
         )}
       />
-      <SectionHero title={t("decoTitle")} tagline={t("decoTagline")} />
+      <SectionHero title={t("decoTitle")} tagline={t("decoTagline")} heroKey="deco" />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="space-y-12">

@@ -44,6 +44,7 @@ export default async function SpecefektiPage() {
       <SectionHero
         title={t("specefektiTitle")}
         tagline={t("specefektiTagline")}
+        heroKey="specefekti"
       />
 
       <div className="mx-auto max-w-6xl px-6 py-16">

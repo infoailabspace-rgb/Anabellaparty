@@ -34,7 +34,7 @@ export default async function FaqPage() {
           breadcrumbNode(locale, [{ name: t("faqTitle"), path: "/faq" }]),
         )}
       />
-      <SectionHero title={t("faqTitle")} tagline={t("faqTagline")} />
+      <SectionHero title={t("faqTitle")} tagline={t("faqTagline")} heroKey="faq" />
       <div className="mx-auto max-w-6xl px-6 py-16">
         <FaqAccordion items={items} />
       </div>

@@ -54,6 +54,7 @@ export default async function AudioViesuGramatasPage() {
       <SectionHero
         title={t("audioVideoTitle")}
         tagline={t("audioVideoTagline")}
+        heroKey="audio-video"
       />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
