@@ -13,6 +13,11 @@ export default async function ProductDetail({
   index?: number;
 }) {
   const t = await getTranslations("productDetail");
+  // Vāks pirmais; galerijā to nedublē; tukšie izmesti (vienīgā dedup vieta).
+  const images = [
+    product.coverImage,
+    ...product.gallery.filter((g) => g && g !== product.coverImage),
+  ].filter(Boolean);
   return (
     <SlideReveal index={index}>
       <article
@@ -21,10 +26,7 @@ export default async function ProductDetail({
       >
         <div className="grid gap-10 lg:grid-cols-2">
           {/* Galerija */}
-          <ImageGallery
-            images={[product.coverImage, ...product.gallery]}
-            alt={product.name}
-          />
+          <ImageGallery images={images} alt={product.name} />
 
           {/* Info */}
           <div className="flex flex-col">
