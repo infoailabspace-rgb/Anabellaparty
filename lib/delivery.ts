@@ -17,7 +17,11 @@ export function isInFreeZone(
   regionName: string | undefined,
   kmOneWay: number,
 ): boolean {
-  if (regionName) return /ķekav/i.test(regionName);
+  if (regionName) {
+    // ORS/Pelias reģionu atgriež BEZ diakritikas ("Kekavas"), tāpēc normalizē ķ→k.
+    const norm = regionName.toLowerCase().replace(/ķ/g, "k");
+    return norm.includes("kekav");
+  }
   return Number.isFinite(kmOneWay) && kmOneWay > 0 && kmOneWay <= FREE_FALLBACK_RADIUS_KM;
 }
 
