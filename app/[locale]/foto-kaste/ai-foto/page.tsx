@@ -7,6 +7,7 @@ import Reveal from "@/components/reveal";
 import { pageMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
+import { getAifoto } from "@/lib/ai-foto";
 
 export async function generateMetadata({
   params,
@@ -17,8 +18,8 @@ export async function generateMetadata({
   return pageMetadata(locale, "aiFoto", "/foto-kaste/ai-foto");
 }
 
-// AI foto galerija — dažādas tēmas (faili nāk vēlāk, galerija krīt uz placeholder).
-const aiGallery = [
+// Statiskais fallback, ja DB galerija tukša (faili var nebūt → placeholder).
+const aiGalleryFallback = [
   "/images/ai-foto/cover.jpg",
   "/images/ai-foto/01.jpg",
   "/images/ai-foto/02.jpg",
@@ -37,11 +38,17 @@ const themeKeys = [
 ] as const;
 
 export default async function AiFotoPage() {
-  const [t, ts, locale] = await Promise.all([
+  const [t, ts, locale, af] = await Promise.all([
     getTranslations("pages"),
     getTranslations("sec"),
     getLocale(),
+    getAifoto(),
   ]);
+  // DB saturs ar fallback uz messages / statisko galeriju.
+  const intro = af.intro || ts("afIntro");
+  const price = af.price || ts("afPrice");
+  const themes = af.themes.length ? af.themes : themeKeys.map((k) => ts(k));
+  const gallery = af.gallery.length ? af.gallery : aiGalleryFallback;
   return (
     <>
       <JsonLd
@@ -57,23 +64,23 @@ export default async function AiFotoPage() {
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <Reveal>
-            <p className="text-text/85">{ts("afIntro")}</p>
+            <p className="text-text/85">{intro}</p>
 
             <h2 className="mt-8 font-display text-lg font-semibold text-gold">
               {ts("afThemesTitle")}
             </h2>
             <ul className="mt-4 flex flex-wrap gap-2">
-              {themeKeys.map((k) => (
+              {themes.map((theme, i) => (
                 <li
-                  key={k}
+                  key={i}
                   className="rounded-full border border-gold/30 px-4 py-1.5 text-sm text-text/85"
                 >
-                  {ts(k)}
+                  {theme}
                 </li>
               ))}
             </ul>
 
-            <p className="mt-8 text-text/85">{ts("afPrice")}</p>
+            <p className="mt-8 text-text/85">{price}</p>
 
             <div className="mt-6 flex flex-col gap-4 sm:flex-row">
               <a
@@ -92,7 +99,7 @@ export default async function AiFotoPage() {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <ImageGallery images={aiGallery} alt="AI foto kaste" />
+            <ImageGallery images={gallery} alt="AI foto kaste" />
           </Reveal>
         </div>
       </div>

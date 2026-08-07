@@ -57,6 +57,46 @@ export async function saveSiteImage(key: string, url: string | null) {
   return { ok: true };
 }
 
+/* ── AI-foto lapa (site_content aifoto.*) ── */
+async function upsertContent(
+  key: string,
+  value: unknown,
+  contentType: string,
+) {
+  const supabase = await createClient();
+  const { data: existing } = await supabase
+    .from("site_content")
+    .select("key")
+    .eq("key", key)
+    .maybeSingle();
+  const { error } = existing
+    ? await supabase
+        .from("site_content")
+        .update({ value, updated_at: new Date().toISOString() })
+        .eq("key", key)
+    : await supabase
+        .from("site_content")
+        .insert({ key, value, content_type: contentType });
+  if (error) return { error: error.message };
+  await audit("update", "content", key, { key });
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function saveAifotoText(key: string, value: ML) {
+  if (key !== "aifoto.intro" && key !== "aifoto.price")
+    return { error: "Nezināma atslēga." };
+  return upsertContent(key, value, "text");
+}
+
+export async function saveAifotoThemes(items: ML[]) {
+  return upsertContent("aifoto.themes", { items }, "json");
+}
+
+export async function saveAifotoGallery(images: string[]) {
+  return upsertContent("aifoto.gallery", { images }, "json");
+}
+
 /* ── Atsauksmes ── */
 export async function upsertTestimonial(
   id: string | null,
