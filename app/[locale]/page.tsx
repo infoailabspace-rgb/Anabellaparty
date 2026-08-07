@@ -10,7 +10,7 @@ import DepthBg from "@/components/depth-bg";
 import { homeCategories } from "@/lib/categories";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { getContentMap } from "@/lib/site-content";
+import { getContentMap, getSiteImage } from "@/lib/site-content";
 import { getTestimonials, getClients } from "@/lib/site-data";
 import { getHeroMedia } from "@/lib/hero-media";
 import { homeMetadata } from "@/lib/seo";
@@ -29,12 +29,13 @@ export async function generateMetadata({
 }
 
 export default async function Home() {
-  const [c, testimonials, clients, t, heroMedia] = await Promise.all([
+  const [c, testimonials, clients, t, heroMedia, aboutImage] = await Promise.all([
     getContentMap(),
     getTestimonials(),
     getClients(),
     getTranslations("home"),
     getHeroMedia("home"),
+    getSiteImage("about.photo"),
   ]);
   const g = (k: string, f: string) => (c[k]?.trim() ? c[k] : f);
   // Fallback: ja admin nav iestatījis hero mediju → publiskais video + poster.
@@ -86,6 +87,7 @@ export default async function Home() {
         statsEvents={g("about.stats.events", "500")}
         statsUnits={g("about.stats.units", "40")}
         statsSince={g("about.stats.since", "2022")}
+        image={aboutImage}
       />
 
       {/* Mums uzticas — klientu logo lente (tukša → nerādās) */}

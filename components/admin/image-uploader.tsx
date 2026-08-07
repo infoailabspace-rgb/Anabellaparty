@@ -102,6 +102,28 @@ export async function uploadLogo(file: File, name: string): Promise<string> {
   return supabase.storage.from("client-logos").getPublicUrl(path).data.publicUrl;
 }
 
+// Kā uploadImage, bet atgriež arī apstrādāto izmēru (baitos) — brīdinājumiem.
+export async function uploadImageSized(
+  file: File,
+  bucket: string,
+  pathPrefix: string,
+  maxW = 1600,
+): Promise<{ url: string; size: number }> {
+  if (!OK_TYPES.includes(file.type)) throw new Error("Tikai JPG/PNG/WEBP.");
+  if (file.size > MAX_BYTES) throw new Error("Fails pārāk liels (max 10 MB).");
+  const blob = await compressImage(file, maxW, 0.85);
+  const supabase = createClient();
+  const path = `${pathPrefix}/${crypto.randomUUID()}.jpg`;
+  const { error } = await supabase.storage
+    .from(bucket)
+    .upload(path, blob, { contentType: "image/jpeg", upsert: false });
+  if (error) throw new Error(error.message);
+  return {
+    url: supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl,
+    size: blob.size,
+  };
+}
+
 async function removeFromStorage(url: string) {
   const marker = "/storage/v1/object/public/product-images/";
   const i = url.indexOf(marker);

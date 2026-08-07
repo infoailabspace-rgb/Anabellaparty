@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import ContentEditor from "./content-editor";
 import HeroMediaAdmin, { type HeroPage } from "./hero-media-admin";
+import PageImagesAdmin from "./page-images-admin";
 import {
   HERO_VIDEO_PAGES,
   HERO_IMAGE_PAGES,
@@ -66,9 +67,17 @@ export default async function SatursPage() {
     };
   });
 
+  const imgUrl = (k: string) =>
+    (map.get(k)?.value as { url?: string } | undefined)?.url ?? null;
+  const pageImages: Record<string, string | null> = {
+    "about.photo": imgUrl("about.photo"),
+    "og.fallback": imgUrl("og.fallback"),
+  };
+
   return (
     <>
       <ContentEditor items={items} />
+      <PageImagesAdmin values={pageImages} />
       <HeroMediaAdmin pages={heroPages} />
     </>
   );

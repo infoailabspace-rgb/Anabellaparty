@@ -23,6 +23,24 @@ export const getContentMap = cache(async (): Promise<Record<string, string>> => 
   return {};
 });
 
+// Lapas attēls (valodneitrāls) — glabāts kā {url} zem norādītās atslēgas
+// (piem. 'about.photo', 'og.fallback'). Tukšs → null (komponents lieto fallback).
+export const getSiteImage = cache(async (key: string): Promise<string | null> => {
+  const sb = publicClient();
+  if (!sb) return null;
+  try {
+    const { data } = await sb
+      .from("site_content")
+      .select("value")
+      .eq("key", key)
+      .maybeSingle();
+    const url = (data?.value as { url?: string } | null)?.url;
+    return url && url.trim() ? url : null;
+  } catch {
+    return null;
+  }
+});
+
 export async function getContent(key: string, fallback: string): Promise<string> {
   const map = await getContentMap();
   const v = map[key];

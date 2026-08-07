@@ -31,6 +31,32 @@ export async function saveContent(key: string, value: ML) {
   return { ok: true };
 }
 
+/* ── Lapas attēli (valodneitrāli {url}, glabāti site_content) ── */
+const PAGE_IMAGE_KEYS = ["about.photo", "og.fallback"];
+
+export async function saveSiteImage(key: string, url: string | null) {
+  if (!PAGE_IMAGE_KEYS.includes(key)) return { error: "Nezināma attēla atslēga." };
+  const supabase = await createClient();
+  const value = { url: url || null };
+  const { data: existing } = await supabase
+    .from("site_content")
+    .select("key")
+    .eq("key", key)
+    .maybeSingle();
+  const { error } = existing
+    ? await supabase
+        .from("site_content")
+        .update({ value, updated_at: new Date().toISOString() })
+        .eq("key", key)
+    : await supabase
+        .from("site_content")
+        .insert({ key, value, content_type: "image" });
+  if (error) return { error: error.message };
+  await audit("update", "content", key, { key });
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
 /* ── Atsauksmes ── */
 export async function upsertTestimonial(
   id: string | null,

@@ -7,12 +7,15 @@ export default async function About({
   statsEvents = "500",
   statsUnits = "40",
   statsSince = "2022",
+  image,
 }: {
   statsEvents?: string;
   statsUnits?: string;
   statsSince?: string;
+  image?: string | null;
 }) {
   const t = await getTranslations("about");
+  const photo = image?.trim() ? image : "/images/about/komanda.png";
   const story = [t("story1"), t("story2"), t("story3"), t("story4")];
   const pluses = [t("plus1"), t("plus2"), t("plus3"), t("plus4")];
   const stats = [
@@ -28,7 +31,7 @@ export default async function About({
           <Reveal className="order-first lg:order-last" delay={0.1}>
             <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-xl border border-gold/25 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.35)]">
               <Image
-                src="/images/about/komanda.png"
+                src={photo}
                 alt="Aiva un Roberts Dimanti — Anabella Party"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
