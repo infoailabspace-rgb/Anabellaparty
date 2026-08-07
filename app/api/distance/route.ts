@@ -62,21 +62,24 @@ export async function POST(req: Request) {
     const meters = dir?.features?.[0]?.properties?.summary?.distance as
       | number
       | undefined;
-    if (!meters) {
+    const km = typeof meters === "number" ? Math.round(meters / 1000) : null;
+    const inFreeZone = isInFreeZone(regionName, km ?? 0);
+
+    // Bezmaksas zona (Ķekavas novads) → vienmēr 0 €, arī ja maršruts neizdevās.
+    // Tikai ja NAV bezmaksas UN nav attāluma → norādām manuāli.
+    if (km === null && !inFreeZone) {
       return NextResponse.json({
         ok: false,
         error: "Neizdevās aprēķināt attālumu. Piegādes cenu norādīsim manuāli.",
       });
     }
 
-    const km = Math.round(meters / 1000);
-    const inFreeZone = isInFreeZone(regionName, km);
-    const cost = deliveryPrice(km, inFreeZone);
+    const cost = deliveryPrice(km ?? 0, inFreeZone);
     return NextResponse.json({
       ok: true,
-      km,
+      km: km ?? 0,
       cost,
-      free: cost === 0,
+      free: inFreeZone,
       inFreeZone,
       region: regionName ?? null,
       freeZone: FREE_ZONE,
