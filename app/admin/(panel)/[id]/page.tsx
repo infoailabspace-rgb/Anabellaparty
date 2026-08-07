@@ -35,6 +35,32 @@ export default async function BookingPage({
   const quote = computeQuote(b.items || [], await getAllProducts());
   const delivery = Number(b.delivery_cost) || 0;
   const deposit = computeDeposit(quote.subtotal, delivery);
+
+  // Vai klienta ievadītā adrese un ģeokodētā būtiski atšķiras (mismatch).
+  // Heiristika: normalizē (bez diakritikas), izmet pieturas/īsos/skaitļus, salīdzina
+  // vārdu 4-zīmju saknes; ja nav kopīgas → iezīmē.
+  const STOP = new Set(["iela", "latvia", "latvija", "novads", "novada", "ciems"]);
+  const tokens = (s?: string | null) =>
+    new Set(
+      (s ?? "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .split(/\s+/)
+        .filter((w) => w.length > 3 && !/^\d+$/.test(w) && !STOP.has(w)),
+    );
+  const custTok = tokens(b.delivery_address);
+  const geoStems = new Set(
+    [...tokens(b.delivery_geocoded)].map((w) => w.slice(0, 4)),
+  );
+  const deliveryMismatch = Boolean(
+    b.delivery_address &&
+      b.delivery_geocoded &&
+      custTok.size > 0 &&
+      geoStems.size > 0 &&
+      ![...custTok].some((w) => geoStems.has(w.slice(0, 4))),
+  );
   const mailSubject = encodeURIComponent(`Anabella Party — pieteikums ${b.event_date}`);
 
   return (
@@ -77,10 +103,49 @@ export default async function BookingPage({
               <Row label="Viesi" value={b.guest_count != null ? String(b.guest_count) : "—"} />
               <Row label="Vieta" value={b.location} />
               <Row label="Telpās/ārā" value={b.indoor_outdoor ?? "—"} />
-              {b.delivery_address && (
-                <Row label="Piegādes adrese" value={`${b.delivery_address}${b.delivery_distance_km ? ` (~${b.delivery_distance_km} km)` : ""}`} />
-              )}
             </dl>
+
+            {b.delivery_address && (
+              <div className="mt-4 border-t border-gold/15 pt-4">
+                <p className="text-sm font-semibold text-gold">Piegādes adrese</p>
+                <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-text/50">
+                      Klienta ievadītā
+                    </p>
+                    <p className="mt-1 text-sm text-text/90">
+                      {b.delivery_address}
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      deliveryMismatch
+                        ? "rounded-lg border border-amber-500/60 bg-amber-500/10 p-2"
+                        : ""
+                    }
+                  >
+                    <p className="text-xs uppercase tracking-wide text-text/50">
+                      Ģeokodētā (ORS){deliveryMismatch ? " — ⚠ neatbilst" : ""}
+                    </p>
+                    <p className="mt-1 text-sm text-text/90">
+                      {b.delivery_geocoded ?? "—"}
+                    </p>
+                    <p className="mt-1 font-mono text-sm text-gold">
+                      {b.delivery_distance_km != null
+                        ? `~${b.delivery_distance_km} km`
+                        : "—"}{" "}
+                      · {delivery > 0 ? `${delivery} €` : "bez maksas"}
+                    </p>
+                  </div>
+                </div>
+                {deliveryMismatch && (
+                  <p className="mt-2 text-xs text-amber-300">
+                    Klienta teksts un ģeokodētā adrese būtiski atšķiras —
+                    pārbaudi km un cenu manuāli pirms piedāvājuma.
+                  </p>
+                )}
+              </div>
+            )}
             {b.description && (
               <p className="mt-4 whitespace-pre-wrap border-t border-gold/15 pt-4 text-sm text-text/80">
                 {b.description}

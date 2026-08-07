@@ -52,6 +52,8 @@ export async function POST(req: Request) {
     const props = feature?.properties ?? {};
     const regionName: string | undefined =
       props.county || props.macrocounty || props.region || undefined;
+    // Ģeokodētais (ORS atrastais) adreses teksts — admin salīdzina ar klienta ievadīto.
+    const geocoded: string | null = props.label ?? null;
 
     // 2. Braukšanas attālums (ORS directions).
     const dirRes = await fetch(
@@ -82,6 +84,7 @@ export async function POST(req: Request) {
       free: inFreeZone,
       inFreeZone,
       region: regionName ?? null,
+      geocoded,
       freeZone: FREE_ZONE,
       origin: ORIGIN.label,
     });

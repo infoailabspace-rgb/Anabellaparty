@@ -22,6 +22,7 @@ export type BookingDelivery = {
   address?: string;
   km?: number;
   cost?: number;
+  geocoded?: string | null; // ORS atrastais adreses teksts (mismatch pārbaudei)
 };
 
 export type BookingPayload = {

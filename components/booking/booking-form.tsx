@@ -73,9 +73,11 @@ export default function BookingForm({ products }: { products: Product[] }) {
   const [description, setDescription] = useState("");
   const [consent, setConsent] = useState(false);
   const [deliveryAddress, setDeliveryAddress] = useState("");
-  const [delivery, setDelivery] = useState<{ km: number; cost: number } | null>(
-    null,
-  );
+  const [delivery, setDelivery] = useState<{
+    km: number;
+    cost: number;
+    geocoded?: string | null;
+  } | null>(null);
   const [deliveryStatus, setDeliveryStatus] = useState<
     "idle" | "loading" | "ok" | "error"
   >("idle");
@@ -172,7 +174,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
       });
       const data = await res.json();
       if (data.ok) {
-        setDelivery({ km: data.km, cost: data.cost });
+        setDelivery({ km: data.km, cost: data.cost, geocoded: data.geocoded });
         setDeliveryStatus("ok");
       } else {
         setDelivery(null);
@@ -277,6 +279,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
             address: deliveryAddress,
             km: delivery?.km,
             cost: delivery?.cost,
+            geocoded: delivery?.geocoded ?? null,
           },
         }),
       });

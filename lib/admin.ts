@@ -22,6 +22,7 @@ export type Booking = {
   delivery_address: string | null;
   delivery_distance_km: number | null;
   delivery_cost: number | null;
+  delivery_geocoded: string | null;
   status: string;
   admin_notes: string | null;
   viewed_at: string | null;

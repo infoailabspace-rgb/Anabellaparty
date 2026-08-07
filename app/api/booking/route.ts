@@ -118,6 +118,7 @@ export async function POST(req: Request) {
     delivery_address: payload.delivery?.address?.trim() || null,
     delivery_distance_km: deliveryKm,
     delivery_cost: deliveryCost || null,
+    delivery_geocoded: payload.delivery?.geocoded?.trim() || null,
     status: "new",
   });
 
