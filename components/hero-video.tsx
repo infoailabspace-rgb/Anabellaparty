@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Fona hero video. Ja padots vairāk par vienu avotu — tie spēlē secīgi,
- * viens pēc otra, un cilpo. Viens avots — parasts loop. muted+playsInline
- * nodrošina autoplay arī mobilajā.
+ * viens pēc otra, un cilpo. Viens avots — parasts loop.
+ * autoPlay + muted + playsInline nodrošina autoplay arī mobilajā.
+ * poster (kadrs) novērš melnu LCP, kamēr video ielādējas.
+ * WebM tiek piedāvāts pirms MP4 (mazāks fails); ja WebM nav — atkāpjas uz MP4.
  */
 export default function HeroVideo({
   sources,
@@ -32,18 +34,29 @@ export default function HeroVideo({
     if (multiple) setIdx((i) => (i + 1) % sources.length);
   };
 
+  const mp4 = sources[idx];
+  const base = mp4.replace(/\.mp4$/i, "");
+  const webm = `${base}.webm`;
+  const poster = `${base}.jpg`;
+
   return (
     <video
+      // key liek pārmontēt <source>, kad mainās avots (secīgie video).
+      key={mp4}
       ref={ref}
       className={`absolute inset-0 h-full w-full object-cover ${className}`}
-      src={sources[idx]}
+      poster={poster}
       autoPlay
       muted
-      playsInline
       loop={!multiple}
+      playsInline
+      preload="metadata"
       onEnded={advance}
       onError={advance}
       aria-hidden
-    />
+    >
+      <source src={webm} type="video/webm" />
+      <source src={mp4} type="video/mp4" />
+    </video>
   );
 }
