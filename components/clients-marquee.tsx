@@ -14,7 +14,7 @@ function Logo({ c }: { c: Client }) {
       src={c.logo}
       alt={c.name}
       loading="lazy"
-      className="h-12 w-auto object-contain opacity-65 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0"
+      className="h-14 w-auto object-contain transition-transform duration-300 hover:scale-105"
     />
   );
   if (c.url) {
@@ -38,49 +38,59 @@ export default function ClientsMarquee({ clients }: { clients: Client[] }) {
   const t = useTranslations("clients");
   const logos = clients.filter((c) => c.logo);
 
-  // Bez logo → sadaļa netiek renderēta. Nekādu placeholderu.
+  // Bez logo → sadaļa netiek renderēta.
   if (logos.length === 0) return null;
 
-  // Reduced-motion vai < 6 logo → statiska centrēta rinda (ritinājums tukšs).
-  const isStatic = reduce || logos.length < 6;
-  const duration = Math.max(30, logos.length * 3);
-
-  return (
-    <section className="border-t border-gold/10 bg-navy/20 py-16">
-      <div className="mx-auto max-w-6xl px-6">
+  // prefers-reduced-motion → statisks centrēts režģis (ritinājums izslēgts).
+  if (reduce) {
+    return (
+      <section className="border-t border-gold/10 bg-navy/20 py-16">
         <h2 className="mb-10 text-center font-display text-2xl font-bold tracking-tight sm:text-3xl">
           {t("heading")}
         </h2>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-16 gap-y-8 px-6">
+          {logos.map((c, i) => (
+            <Logo key={i} c={c} />
+          ))}
+        </div>
+      </section>
+    );
+  }
 
-        {isStatic ? (
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
-            {logos.map((c, i) => (
-              <Logo key={i} c={c} />
+  // Dublē masīvu, līdz vismaz 12 elementi vienā pusē → ekrāns pilns arī ar
+  // dažiem logo, cilpa nemanāma. Katra puse tiek renderēta divreiz (2×) → -50%.
+  const reps = Math.max(1, Math.ceil(12 / logos.length));
+  const half = Array.from({ length: reps }).flatMap(() => logos);
+  const duration = Math.max(30, half.length * 3);
+
+  return (
+    <section className="border-t border-gold/10 bg-navy/20 py-16">
+      <h2 className="mb-10 text-center font-display text-2xl font-bold tracking-tight sm:text-3xl">
+        {t("heading")}
+      </h2>
+      {/* Pilns ekrāna platums (ne konteiners) + malu fade maska */}
+      <div
+        className="relative w-full overflow-hidden"
+        style={{ maskImage: FADE, WebkitMaskImage: FADE }}
+      >
+        <div
+          className="anabella-clients-marquee flex w-max"
+          style={{ animationDuration: `${duration}s` }}
+        >
+          <div className="flex shrink-0 items-center gap-16 pr-16">
+            {half.map((c, i) => (
+              <Logo key={`a-${i}`} c={c} />
             ))}
           </div>
-        ) : (
           <div
-            className="group relative overflow-hidden"
-            style={{ maskImage: FADE, WebkitMaskImage: FADE }}
+            className="flex shrink-0 items-center gap-16 pr-16"
+            aria-hidden="true"
           >
-            <div
-              className="anabella-clients-marquee flex w-max group-hover:[animation-play-state:paused]"
-              style={{ animationDuration: `${duration}s` }}
-            >
-              {/* Logo masīvs divreiz → cilpa nemanāma. 2. kopija aria-hidden. */}
-              <div className="flex shrink-0 items-center gap-12 pr-12">
-                {logos.map((c, i) => (
-                  <Logo key={`a-${i}`} c={c} />
-                ))}
-              </div>
-              <div className="flex shrink-0 items-center gap-12 pr-12" aria-hidden="true">
-                {logos.map((c, i) => (
-                  <Logo key={`b-${i}`} c={c} />
-                ))}
-              </div>
-            </div>
+            {half.map((c, i) => (
+              <Logo key={`b-${i}`} c={c} />
+            ))}
           </div>
-        )}
+        </div>
       </div>
     </section>
   );
