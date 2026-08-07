@@ -46,6 +46,62 @@ export async function uploadImage(
   return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
 }
 
+const LOGO_MAX = 200 * 1024; // 200 KB pēc apstrādes
+
+// Logo augšupielāde, kas SAGLABĀ caurspīdīgumu (atšķirībā no uploadImage → JPEG).
+// SVG → augšupielādē neapstrādātu. Raster (PNG/WEBP/JPG) → pārmēro uz augstumu
+// 96px (2× retina no rādīšanas 48px), izvada PNG (caurspīdīgums paliek).
+export async function uploadLogo(file: File, name: string): Promise<string> {
+  const supabase = createClient();
+  const isSvg =
+    file.type === "image/svg+xml" || file.name.toLowerCase().endsWith(".svg");
+
+  let blob: Blob;
+  let ext: string;
+  let contentType: string;
+
+  if (isSvg) {
+    if (file.size > LOGO_MAX)
+      throw new Error(`SVG pārāk liels (${Math.round(file.size / 1024)} KB > 200 KB).`);
+    blob = file;
+    ext = "svg";
+    contentType = "image/svg+xml";
+  } else {
+    if (!OK_TYPES.includes(file.type))
+      throw new Error("Tikai SVG / PNG / WEBP / JPG.");
+    const img = await createImageBitmap(file);
+    const targetH = 96;
+    const width = Math.max(1, Math.round((img.width * targetH) / img.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = targetH;
+    const ctx = canvas.getContext("2d")!;
+    // Bez fona zīmēšanas → PNG saglabā caurspīdīgumu (nav balta fona uz navy).
+    ctx.drawImage(img, 0, 0, width, targetH);
+    blob = await new Promise<Blob>((resolve) =>
+      canvas.toBlob((b) => resolve(b!), "image/png"),
+    );
+    if (blob.size > LOGO_MAX)
+      throw new Error(
+        `Logo pārāk liels pēc apstrādes (${Math.round(blob.size / 1024)} KB > 200 KB). Izmanto vienkāršāku logo vai SVG.`,
+      );
+    ext = "png";
+    contentType = "image/png";
+  }
+
+  const slug =
+    (name || "logo")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "logo";
+  const path = `${slug}/${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage
+    .from("client-logos")
+    .upload(path, blob, { contentType, upsert: false });
+  if (error) throw new Error(error.message);
+  return supabase.storage.from("client-logos").getPublicUrl(path).data.publicUrl;
+}
+
 async function removeFromStorage(url: string) {
   const marker = "/storage/v1/object/public/product-images/";
   const i = url.indexOf(marker);

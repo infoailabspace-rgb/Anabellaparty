@@ -42,8 +42,9 @@ body {
   border-radius: 4px;
 }
 
-/* Klientu logo bezgalīgā lente (marquee) — tīrs CSS. */
-@keyframes anabella-marquee {
+/* Klientu logo bezgalīgā lente (marquee) — tīrs CSS. Ilgumu iestata inline
+   (animation-duration) atkarībā no logo skaita; hover-pauzi Tailwind grupa. */
+@keyframes anabella-clients-marquee {
   from {
     transform: translateX(0);
   }
@@ -52,14 +53,16 @@ body {
   }
 }
 
-.anabella-marquee-track {
-  display: flex;
-  width: max-content;
-  animation: anabella-marquee 40s linear infinite;
+.anabella-clients-marquee {
+  animation-name: anabella-clients-marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
-.anabella-marquee:hover .anabella-marquee-track {
-  animation-play-state: paused;
+@media (prefers-reduced-motion: reduce) {
+  .anabella-clients-marquee {
+    animation: none;
+  }
 }
 
 /* Lēna zelta gradienta pulsācija CTA fonam. */

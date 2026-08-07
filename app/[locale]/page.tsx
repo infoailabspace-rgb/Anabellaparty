@@ -1,7 +1,7 @@
 import Hero from "@/components/home/hero";
 import Steps from "@/components/home/steps";
 import About from "@/components/home/about";
-import ClientsSection from "@/components/home/clients-section";
+import ClientsMarquee from "@/components/clients-marquee";
 import Testimonials from "@/components/home/testimonials";
 import CategoryCard from "@/components/category-card";
 import CtaSection from "@/components/cta-section";
@@ -11,7 +11,7 @@ import { homeCategories } from "@/lib/categories";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getContentMap } from "@/lib/site-content";
-import { getTestimonials } from "@/lib/site-data";
+import { getTestimonials, getClients } from "@/lib/site-data";
 import { getHeroMedia } from "@/lib/hero-media";
 import { homeMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/json-ld";
@@ -29,9 +29,10 @@ export async function generateMetadata({
 }
 
 export default async function Home() {
-  const [c, testimonials, t, heroMedia] = await Promise.all([
+  const [c, testimonials, clients, t, heroMedia] = await Promise.all([
     getContentMap(),
     getTestimonials(),
+    getClients(),
     getTranslations("home"),
     getHeroMedia("home"),
   ]);
@@ -87,8 +88,8 @@ export default async function Home() {
         statsSince={g("about.stats.since", "2022")}
       />
 
-      {/* Mūsu klientu vidū — navy (tekstuāli, pa nozarēm) */}
-      <ClientsSection />
+      {/* Mums uzticas — klientu logo lente (tukša → nerādās) */}
+      <ClientsMarquee clients={clients} />
 
       {/* Atsauksmes — tikai ja ir reāli citāti (bez izdomātiem) */}
       {testimonials.length > 0 && (
