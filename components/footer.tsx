@@ -64,6 +64,11 @@ export default async function Footer() {
               </Link>
             </li>
             <li>
+              <Link href="/blogs" className="transition-colors hover:text-gold">
+                {t("blogs")}
+              </Link>
+            </li>
+            <li>
               <Link
                 href="/noteikumi"
                 className="transition-colors hover:text-gold"

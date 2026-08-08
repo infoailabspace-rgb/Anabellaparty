@@ -96,6 +96,7 @@ export default function Navbar() {
       ],
     },
     { label: t("musuDraugi"), href: "/musu-draugi" },
+    { label: t("blogs"), href: "/blogs" },
     { label: t("kontakti"), href: "/kontakti" },
   ];
 
