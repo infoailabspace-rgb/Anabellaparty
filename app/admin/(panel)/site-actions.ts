@@ -311,6 +311,76 @@ export async function reorderGallery(ids: string[]) {
   return { ok: true };
 }
 
+/* ── Blogs ── */
+export type BlogInput = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  meta_description: string;
+  cover_url: string | null;
+  cover_alt: string;
+  gallery: string[];
+  category: string | null;
+  tags: string[];
+  related_products: string[];
+  social: { facebook: string; instagram: string; whatsapp: string } | null;
+  status: string;
+  ai_generated: boolean;
+  edited_after_ai: boolean;
+};
+
+export async function upsertBlogPost(id: string | null, d: BlogInput) {
+  const supabase = await createClient();
+  const ml = (s: string) => ({ lv: s ?? "" });
+  if (!d.slug?.trim()) return { error: "Slug ir obligāts." };
+  const row: Record<string, unknown> = {
+    slug: d.slug.trim(),
+    title: ml(d.title),
+    excerpt: ml(d.excerpt),
+    content: ml(d.content),
+    meta_description: ml(d.meta_description),
+    cover_url: d.cover_url || null,
+    cover_alt: ml(d.cover_alt),
+    gallery: d.gallery ?? [],
+    category: d.category || null,
+    tags: d.tags ?? [],
+    related_products: d.related_products ?? [],
+    social: d.social ?? null,
+    status: d.status,
+    ai_generated: d.ai_generated,
+    edited_after_ai: d.edited_after_ai,
+    updated_at: new Date().toISOString(),
+  };
+  if (d.status === "published") {
+    if (id) {
+      const { data: cur } = await supabase
+        .from("blog_posts")
+        .select("published_at")
+        .eq("id", id)
+        .maybeSingle();
+      row.published_at = cur?.published_at ?? new Date().toISOString();
+    } else {
+      row.published_at = new Date().toISOString();
+    }
+  }
+  const { data, error } = id
+    ? await supabase.from("blog_posts").update(row).eq("id", id).select("id,slug").maybeSingle()
+    : await supabase.from("blog_posts").insert(row).select("id,slug").maybeSingle();
+  if (error) return { error: error.message };
+  await audit(id ? "update" : "create", "blog", id, { slug: d.slug });
+  revalidatePath("/", "layout");
+  return { ok: true, id: data?.id as string, slug: data?.slug as string };
+}
+
+export async function deleteBlogPost(id: string) {
+  const supabase = await createClient();
+  await supabase.from("blog_posts").delete().eq("id", id);
+  await audit("delete", "blog", id, null);
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
 /* ── BUJ ── */
 export async function upsertFaq(
   id: string | null,

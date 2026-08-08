@@ -86,6 +86,36 @@ export function breadcrumbNode(
   };
 }
 
+// Article — bloga raksts. Autors = uzņēmums (bez izdomātiem vārdiem).
+export function articleNode(
+  post: {
+    title: string;
+    excerpt: string;
+    cover: string | null;
+    publishedAt: string | null;
+    slug: string;
+  },
+  locale: string,
+) {
+  const url = `${SITE_URL}${localizedPath(locale, `/blogs/${post.slug}`)}`;
+  const node: Record<string, unknown> = {
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    author: { "@type": "Organization", name: COMPANY.brandName },
+    publisher: { "@id": `${SITE_URL}/#business` },
+    mainEntityOfPage: url,
+    url,
+  };
+  if (post.publishedAt) {
+    node.datePublished = post.publishedAt;
+    node.dateModified = post.publishedAt;
+  }
+  if (post.cover)
+    node.image = post.cover.startsWith("http") ? post.cover : abs(post.cover);
+  return node;
+}
+
 // Sapludina vairākus mezglus vienā @graph.
 export function graph(...nodes: unknown[]) {
   return { "@context": "https://schema.org", "@graph": nodes.filter(Boolean) };

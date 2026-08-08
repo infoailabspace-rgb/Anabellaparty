@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { localizedPath, SITE_URL } from "@/lib/seo";
+import { getPublishedSlugs } from "@/lib/blog";
 
 const base = SITE_URL;
 
@@ -18,6 +19,7 @@ const routes = [
   "/kontakti",
   "/faq",
   "/musu-draugi",
+  "/blogs",
   "/noteikumi",
   "/privatuma-politika",
   "/sikdatnu-politika",
@@ -28,7 +30,7 @@ function url(locale: string, route: string): string {
   return `${base}${localizedPath(locale, route)}`;
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const entries: MetadataRoute.Sitemap = [];
 
@@ -43,6 +45,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
         lastModified: now,
         changeFrequency: "weekly",
         priority: route === "" ? 1 : 0.7,
+        alternates: { languages },
+      });
+    }
+  }
+
+  // Publicētie bloga raksti
+  const posts = await getPublishedSlugs();
+  for (const post of posts) {
+    const route = `/blogs/${post.slug}`;
+    const languages: Record<string, string> = {};
+    for (const l of routing.locales) languages[l] = url(l, route);
+    languages["x-default"] = url(routing.defaultLocale, route);
+    for (const locale of routing.locales) {
+      entries.push({
+        url: url(locale, route),
+        lastModified: new Date(post.updated),
+        changeFrequency: "monthly",
+        priority: 0.6,
         alternates: { languages },
       });
     }
