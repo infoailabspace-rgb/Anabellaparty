@@ -4,7 +4,6 @@ export type Partner = {
   url?: string;
 };
 
-// Reālie partneri no Roberta — pagaidām tukšs. Kamēr tukšs, /musu-draugi rāda
-// godīgu tukšā stāvokļa paziņojumu (nevis placeholderus).
-// [VAJAG NO ROBERTA: partneru saraksts — nosaukums, apraksts, saite]
+// Statiskais fallback — reālie partneri nāk no site_partners (getPartners).
+// Kamēr tukšs, /musu-draugi rāda godīgu tukšā stāvokļa paziņojumu.
 export const partners: Partner[] = [];

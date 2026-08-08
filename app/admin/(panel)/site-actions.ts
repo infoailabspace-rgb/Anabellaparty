@@ -154,6 +154,34 @@ export async function deleteClient(id: string) {
   revalidatePath("/", "layout");
 }
 
+/* ── Partneri (Mūsu draugi) ── */
+export async function upsertPartner(
+  id: string | null,
+  d: { name: string; description: ML; url: string; sort_order: number; is_active: boolean },
+) {
+  const supabase = await createClient();
+  const row = {
+    name: d.name,
+    description: d.description,
+    url: d.url || null,
+    sort_order: d.sort_order,
+    is_active: d.is_active,
+  };
+  const { error } = id
+    ? await supabase.from("site_partners").update(row).eq("id", id)
+    : await supabase.from("site_partners").insert(row);
+  if (error) return { error: error.message };
+  await audit(id ? "update" : "create", "partner", id, row);
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+export async function deletePartner(id: string) {
+  const supabase = await createClient();
+  await supabase.from("site_partners").delete().eq("id", id);
+  await audit("delete", "partner", id, null);
+  revalidatePath("/", "layout");
+}
+
 /* ── BUJ ── */
 export async function upsertFaq(
   id: string | null,

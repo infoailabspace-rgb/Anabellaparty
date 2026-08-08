@@ -3,6 +3,7 @@ import { currentLocale, pickStr } from "@/lib/i18n-db";
 import { testimonials as staticTestimonials } from "@/lib/testimonials";
 import { clients as staticClients, type Client } from "@/lib/clients";
 import { faqItems as staticFaqs, type FaqItem, type FaqCategory } from "@/lib/faq";
+import { partners as staticPartners, type Partner } from "@/lib/partners";
 
 export type PublicTestimonial = {
   author: string;
@@ -83,5 +84,27 @@ export async function getFaqs(): Promise<FaqItem[]> {
     }
   }
   return staticFaqs;
+}
+export async function getPartners(): Promise<Partner[]> {
+  const sb = publicClient();
+  if (sb) {
+    try {
+      const locale = await currentLocale();
+      const { data } = await sb
+        .from("site_partners")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      if (data && data.length)
+        return data.map((r: any) => ({
+          name: r.name,
+          description: pickStr(r.description, locale),
+          url: r.url ?? undefined,
+        }));
+    } catch {
+      /* fallback */
+    }
+  }
+  return staticPartners;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */

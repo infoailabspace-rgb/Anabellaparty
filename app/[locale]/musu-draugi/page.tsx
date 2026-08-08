@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import Reveal from "@/components/reveal";
-import { partners } from "@/lib/partners";
+import { getPartners } from "@/lib/site-data";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
@@ -18,10 +18,11 @@ export async function generateMetadata({
 }
 
 export default async function MusuDraugiPage() {
-  const [t, ts, locale] = await Promise.all([
+  const [t, ts, locale, partners] = await Promise.all([
     getTranslations("pages"),
     getTranslations("sec"),
     getLocale(),
+    getPartners(),
   ]);
   return (
     <>
