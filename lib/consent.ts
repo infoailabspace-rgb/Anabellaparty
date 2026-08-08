@@ -28,11 +28,46 @@ declare global {
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 gads
+
+// Sīkfails ir PRIMĀRĀ glabātuve — noturīgs pat tur, kur localStorage ir bloķēts
+// (Safari privātais režīms, atspējota krātuve) vai partitioned (preview iframe).
+function writeCookie(value: string) {
+  if (typeof document === "undefined") return;
+  try {
+    const secure =
+      typeof location !== "undefined" && location.protocol === "https:"
+        ? "; Secure"
+        : "";
+    document.cookie = `${CONSENT_KEY}=${encodeURIComponent(
+      value,
+    )}; Max-Age=${COOKIE_MAX_AGE}; Path=/; SameSite=Lax${secure}`;
+  } catch {
+    /* ignore */
+  }
+}
+
+function readCookie(): string | null {
+  if (typeof document === "undefined") return null;
+  const m = document.cookie.match(
+    new RegExp("(?:^|; )" + CONSENT_KEY + "=([^;]*)"),
+  );
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
 export function readConsent(): Consent | null {
   if (typeof window === "undefined") return null;
+  // Sīkfails vispirms; ja nav — localStorage rezerve.
+  let raw = readCookie();
+  if (!raw) {
+    try {
+      raw = window.localStorage.getItem(CONSENT_KEY);
+    } catch {
+      raw = null;
+    }
+  }
+  if (!raw) return null;
   try {
-    const raw = window.localStorage.getItem(CONSENT_KEY);
-    if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<Consent>;
     return {
       necessary: true,
@@ -52,10 +87,13 @@ export function saveConsent(analytics: boolean, marketing: boolean): Consent {
     marketing,
     timestamp: new Date().toISOString(),
   };
+  const raw = JSON.stringify(consent);
+  // Sīkfails primārais (noturīgs), localStorage rezerve — abi neatkarīgi.
+  writeCookie(raw);
   try {
-    window.localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
+    window.localStorage.setItem(CONSENT_KEY, raw);
   } catch {
-    /* ignore */
+    /* sīkfails jau saglabāts */
   }
   return consent;
 }
