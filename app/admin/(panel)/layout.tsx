@@ -87,6 +87,9 @@ export default async function PanelLayout({
               <Link href="/admin/partneri" className="text-text/80 hover:text-gold">
                 Partneri
               </Link>
+              <Link href="/admin/galerija" className="text-text/80 hover:text-gold">
+                Galerija
+              </Link>
               <Link href="/admin/faq" className="text-text/80 hover:text-gold">
                 BUJ
               </Link>

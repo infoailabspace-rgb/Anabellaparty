@@ -84,6 +84,12 @@
   "clients": {
     "heading": "Trusted by"
   },
+  "gallery": {
+    "heading": "From our events",
+    "subtitle": "Get inspired by real events where our equipment has been.",
+    "showMore": "Show more",
+    "viewAll": "See all equipment"
+  },
   "cta": {
     "title": "Ready to celebrate?",
     "text": "Book your equipment today and make your event unforgettable.",

@@ -7,6 +7,8 @@ import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import DeliveryNote from "@/components/delivery-note";
 import CtaSection from "@/components/cta-section";
+import EventGallery from "@/components/event-gallery";
+import { getGallery } from "@/lib/site-data";
 import Reveal from "@/components/reveal";
 import { pageMetadata } from "@/lib/seo";
 
@@ -32,11 +34,12 @@ const addOns = [
 export const revalidate = 300;
 
 export default async function AudioViesuGramatasPage() {
-  const [items, t, ts, locale] = await Promise.all([
+  const [items, t, ts, locale, gallery] = await Promise.all([
     getProductsByCategory("audio-video"),
     getTranslations("pages"),
     getTranslations("sec"),
     getLocale(),
+    getGallery("audio-video"),
   ]);
   const path = "/svinibu-inventars/audio-viesu-gramatas";
 
@@ -116,6 +119,7 @@ export default async function AudioViesuGramatasPage() {
         </div>
       </div>
 
+      <EventGallery images={gallery} />
       <CtaSection />
     </>
   );

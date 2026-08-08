@@ -108,10 +108,11 @@ export async function uploadImageSized(
   bucket: string,
   pathPrefix: string,
   maxW = 1600,
-): Promise<{ url: string; size: number }> {
+  quality = 0.85,
+): Promise<{ url: string; size: number; path: string }> {
   if (!OK_TYPES.includes(file.type)) throw new Error("Tikai JPG/PNG/WEBP.");
   if (file.size > MAX_BYTES) throw new Error("Fails pārāk liels (max 10 MB).");
-  const blob = await compressImage(file, maxW, 0.85);
+  const blob = await compressImage(file, maxW, quality);
   const supabase = createClient();
   const path = `${pathPrefix}/${crypto.randomUUID()}.jpg`;
   const { error } = await supabase.storage
@@ -121,6 +122,7 @@ export async function uploadImageSized(
   return {
     url: supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl,
     size: blob.size,
+    path,
   };
 }
 

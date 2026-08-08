@@ -4,6 +4,7 @@ import { testimonials as staticTestimonials } from "@/lib/testimonials";
 import { clients as staticClients, type Client } from "@/lib/clients";
 import { faqItems as staticFaqs, type FaqItem, type FaqCategory } from "@/lib/faq";
 import { partners as staticPartners, type Partner } from "@/lib/partners";
+import { autoAlt, type GalleryImage } from "@/lib/gallery";
 
 export type PublicTestimonial = {
   author: string;
@@ -106,5 +107,52 @@ export async function getPartners(): Promise<Partner[]> {
     }
   }
   return staticPartners;
+}
+function mapGallery(rows: any[], locale: string): GalleryImage[] {
+  return rows.map((r) => ({
+    id: r.id,
+    url: r.image_url,
+    caption: pickStr(r.caption, locale),
+    alt: pickStr(r.alt, locale) || autoAlt(r.category ?? null, locale),
+  }));
+}
+
+// Kategorijas lapas galerija — aktīvās bildes ar doto kategoriju.
+export async function getGallery(category: string): Promise<GalleryImage[]> {
+  const sb = publicClient();
+  if (!sb) return [];
+  try {
+    const locale = await currentLocale();
+    const { data } = await sb
+      .from("site_gallery")
+      .select("*")
+      .eq("is_active", true)
+      .eq("category", category)
+      .order("sort_order", { ascending: true });
+    if (data) return mapGallery(data, locale);
+  } catch {
+    /* tukša galerija */
+  }
+  return [];
+}
+
+// Sākumlapas galerija — tikai is_featured, jaukta no visām kategorijām, max 12.
+export async function getFeaturedGallery(): Promise<GalleryImage[]> {
+  const sb = publicClient();
+  if (!sb) return [];
+  try {
+    const locale = await currentLocale();
+    const { data } = await sb
+      .from("site_gallery")
+      .select("*")
+      .eq("is_active", true)
+      .eq("is_featured", true)
+      .order("sort_order", { ascending: true })
+      .limit(12);
+    if (data) return mapGallery(data, locale);
+  } catch {
+    /* tukša galerija */
+  }
+  return [];
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */

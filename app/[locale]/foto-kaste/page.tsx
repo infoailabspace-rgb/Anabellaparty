@@ -11,6 +11,8 @@ import PriceBlock from "@/components/price-block";
 import ImagePlaceholder from "@/components/image-placeholder";
 import DeliveryNote from "@/components/delivery-note";
 import CtaSection from "@/components/cta-section";
+import EventGallery from "@/components/event-gallery";
+import { getGallery } from "@/lib/site-data";
 import Reveal from "@/components/reveal";
 import { pageMetadata } from "@/lib/seo";
 
@@ -28,11 +30,12 @@ const mainSlugs = ["spogulis", "ozols", "instagram"];
 export const revalidate = 300;
 
 export default async function FotoKastePage() {
-  const [products, t, ts, locale] = await Promise.all([
+  const [products, t, ts, locale, gallery] = await Promise.all([
     getAllProducts(),
     getTranslations("pages"),
     getTranslations("sec"),
     getLocale(),
+    getGallery("foto-kaste"),
   ]);
   const fkProducts = products.filter((p) => p.category === "foto-kaste");
   const boxes = mainSlugs
@@ -154,6 +157,7 @@ export default async function FotoKastePage() {
         </div>
       </div>
 
+      <EventGallery images={gallery} />
       <CtaSection />
     </>
   );

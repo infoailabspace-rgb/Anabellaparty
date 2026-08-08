@@ -200,6 +200,117 @@ export async function deletePartner(id: string) {
   revalidatePath("/", "layout");
 }
 
+/* ── Galerija (pasākumu bildes) ── */
+export async function insertGalleryImages(
+  items: { image_url: string; storage_path: string; category: string | null }[],
+) {
+  const supabase = await createClient();
+  const { data: maxRow } = await supabase
+    .from("site_gallery")
+    .select("sort_order")
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  let n = (maxRow?.sort_order ?? -1) + 1;
+  const rows = items.map((it) => ({
+    image_url: it.image_url,
+    storage_path: it.storage_path,
+    category: it.category,
+    sort_order: n++,
+    is_active: true,
+    is_featured: false,
+  }));
+  const { data, error } = await supabase.from("site_gallery").insert(rows).select("*");
+  if (error) return { error: error.message };
+  await audit("create", "gallery", null, { count: rows.length });
+  revalidatePath("/", "layout");
+  return { ok: true, rows: data };
+}
+
+export async function updateGalleryImage(
+  id: string,
+  d: { category: string | null; caption: ML; alt: ML; is_active: boolean; is_featured: boolean },
+) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("site_gallery")
+    .update({
+      category: d.category,
+      caption: d.caption,
+      alt: d.alt,
+      is_active: d.is_active,
+      is_featured: d.is_featured,
+    })
+    .eq("id", id);
+  if (error) return { error: error.message };
+  await audit("update", "gallery", id, { id });
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function deleteGalleryImage(id: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("site_gallery")
+    .select("storage_path")
+    .eq("id", id)
+    .maybeSingle();
+  if (data?.storage_path)
+    await supabase.storage.from("site-images").remove([data.storage_path]);
+  await supabase.from("site_gallery").delete().eq("id", id);
+  await audit("delete", "gallery", id, null);
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function bulkGalleryCategory(ids: string[], category: string | null) {
+  if (!ids.length) return { ok: true };
+  const supabase = await createClient();
+  const { error } = await supabase.from("site_gallery").update({ category }).in("id", ids);
+  if (error) return { error: error.message };
+  await audit("update", "gallery", null, { bulk: "category", count: ids.length });
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function bulkGalleryActive(ids: string[], active: boolean) {
+  if (!ids.length) return { ok: true };
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("site_gallery")
+    .update({ is_active: active })
+    .in("id", ids);
+  if (error) return { error: error.message };
+  await audit("update", "gallery", null, { bulk: "active", count: ids.length });
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function bulkGalleryDelete(ids: string[]) {
+  if (!ids.length) return { ok: true };
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("site_gallery")
+    .select("storage_path")
+    .in("id", ids);
+  const paths = (data ?? [])
+    .map((r: { storage_path: string }) => r.storage_path)
+    .filter(Boolean);
+  if (paths.length) await supabase.storage.from("site-images").remove(paths);
+  await supabase.from("site_gallery").delete().in("id", ids);
+  await audit("delete", "gallery", null, { bulk: "delete", count: ids.length });
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function reorderGallery(ids: string[]) {
+  const supabase = await createClient();
+  for (let i = 0; i < ids.length; i++)
+    await supabase.from("site_gallery").update({ sort_order: i }).eq("id", ids[i]);
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
 /* ── BUJ ── */
 export async function upsertFaq(
   id: string | null,

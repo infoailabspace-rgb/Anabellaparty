@@ -8,6 +8,8 @@ import { pageMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
 import { getAifoto } from "@/lib/ai-foto";
+import EventGallery from "@/components/event-gallery";
+import { getGallery } from "@/lib/site-data";
 
 export async function generateMetadata({
   params,
@@ -38,11 +40,12 @@ const themeKeys = [
 ] as const;
 
 export default async function AiFotoPage() {
-  const [t, ts, locale, af] = await Promise.all([
+  const [t, ts, locale, af, eventGallery] = await Promise.all([
     getTranslations("pages"),
     getTranslations("sec"),
     getLocale(),
     getAifoto(),
+    getGallery("ai-foto"),
   ]);
   // DB saturs ar fallback uz messages / statisko galeriju.
   const intro = af.intro || ts("afIntro");
@@ -103,6 +106,8 @@ export default async function AiFotoPage() {
           </Reveal>
         </div>
       </div>
+
+      <EventGallery images={eventGallery} />
     </>
   );
 }

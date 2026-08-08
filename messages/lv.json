@@ -84,6 +84,12 @@
   "clients": {
     "heading": "Mums uzticas"
   },
+  "gallery": {
+    "heading": "No mūsu pasākumiem",
+    "subtitle": "Iedvesmojies no reāliem pasākumiem, kur bijis mūsu inventārs.",
+    "showMore": "Rādīt vairāk",
+    "viewAll": "Skatīt visu inventāru"
+  },
   "cta": {
     "title": "Gatavs svinēt?",
     "text": "Rezervē inventāru jau šodien un padari savu pasākumu neaizmirstamu.",

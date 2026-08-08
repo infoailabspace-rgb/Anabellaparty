@@ -92,6 +92,13 @@ export default async function PrivatumaPolitikaPage() {
           atsevišķas piekrišanas. Lai lūgtu dzēst savu attēlu, raksti uz{" "}
           {COMPANY.contact.email}.
         </p>
+        <p>
+          Papildus mēs publicējam pasākumu fotogrāfijas (vispārīgi kadri no
+          pasākuma norises, mūsu inventārs darbībā) mājaslapā un sociālajos tīklos
+          mūsu pakalpojumu atspoguļošanai. Ja nevēlies, lai attēls, kurā esi
+          atpazīstams, tiek rādīts, raksti uz {COMPANY.contact.email}, un attēls
+          tiks noņemts.
+        </p>
 
         <h2>6. Datu saņēmēji (apstrādātāji)</h2>
         <p>Datu apstrādei izmantojam uzticamus pakalpojumu sniedzējus:</p>

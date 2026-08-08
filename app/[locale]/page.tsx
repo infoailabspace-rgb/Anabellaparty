@@ -11,7 +11,8 @@ import { homeCategories } from "@/lib/categories";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getContentMap, getSiteImage } from "@/lib/site-content";
-import { getTestimonials, getClients } from "@/lib/site-data";
+import { getTestimonials, getClients, getFeaturedGallery } from "@/lib/site-data";
+import EventGallery from "@/components/event-gallery";
 import { getHeroMedia } from "@/lib/hero-media";
 import { homeMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/json-ld";
@@ -29,14 +30,16 @@ export async function generateMetadata({
 }
 
 export default async function Home() {
-  const [c, testimonials, clients, t, heroMedia, aboutImage] = await Promise.all([
-    getContentMap(),
-    getTestimonials(),
-    getClients(),
-    getTranslations("home"),
-    getHeroMedia("home"),
-    getSiteImage("about.photo"),
-  ]);
+  const [c, testimonials, clients, t, heroMedia, aboutImage, featuredGallery] =
+    await Promise.all([
+      getContentMap(),
+      getTestimonials(),
+      getClients(),
+      getTranslations("home"),
+      getHeroMedia("home"),
+      getSiteImage("about.photo"),
+      getFeaturedGallery(),
+    ]);
   const g = (k: string, f: string) => (c[k]?.trim() ? c[k] : f);
   // Fallback: ja admin nav iestatījis hero mediju → publiskais video + poster.
   const hero =
@@ -97,6 +100,9 @@ export default async function Home() {
       {testimonials.length > 0 && (
         <Testimonials testimonials={testimonials} />
       )}
+
+      {/* No mūsu pasākumiem — featured galerija (tukša → nerādās) */}
+      <EventGallery images={featuredGallery} mode="home" />
 
       {/* CTA — zelta gradients */}
       <CtaSection />
