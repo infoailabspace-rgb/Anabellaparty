@@ -72,6 +72,9 @@ export default async function PanelLayout({
               <Link href="/admin/saturs" className="text-text/80 hover:text-gold">
                 Saturs
               </Link>
+              <Link href="/admin/lapas" className="text-text/80 hover:text-gold">
+                Lapas
+              </Link>
               <Link href="/admin/ai-foto" className="text-text/80 hover:text-gold">
                 AI foto
               </Link>

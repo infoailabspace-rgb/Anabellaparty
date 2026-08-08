@@ -154,6 +154,24 @@ export async function deleteClient(id: string) {
   revalidatePath("/", "layout");
 }
 
+/* ── Lapu teksti (DB pārraksti; site_content categories./pages./sec.) ── */
+export async function saveOverride(key: string, value: ML) {
+  const { ALLOWED_KEYS } = await import("@/lib/editable-catalog");
+  if (!ALLOWED_KEYS.has(key)) return { error: "Nezināma atslēga." };
+  return upsertContent(key, value, "text");
+}
+
+export async function deleteOverride(key: string) {
+  const { ALLOWED_KEYS } = await import("@/lib/editable-catalog");
+  if (!ALLOWED_KEYS.has(key)) return { error: "Nezināma atslēga." };
+  const supabase = await createClient();
+  const { error } = await supabase.from("site_content").delete().eq("key", key);
+  if (error) return { error: error.message };
+  await audit("delete", "content", key, { key });
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
 /* ── Partneri (Mūsu draugi) ── */
 export async function upsertPartner(
   id: string | null,
