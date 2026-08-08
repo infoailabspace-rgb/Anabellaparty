@@ -33,6 +33,13 @@ function json(obj: unknown, status: number) {
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+function textOf(msg: any): string {
+  return msg.content
+    .filter((b: any) => b.type === "text")
+    .map((b: any) => b.text)
+    .join("");
+}
+
 function parseJson(text: string): any | null {
   let t = text.trim();
   const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/i);
@@ -68,6 +75,50 @@ export async function POST(req: Request) {
     return json({ error: "Nederīgs pieprasījums." }, 400);
   }
 
+  // Rate limit (abiem režīmiem)
+  const since = new Date(Date.now() - 3600_000).toISOString();
+  const { count } = await supabase
+    .from("blog_gen_log")
+    .select("id", { count: "exact", head: true })
+    .eq("admin_email", user.email ?? "?")
+    .gte("created_at", since);
+  if ((count ?? 0) >= RATE_LIMIT)
+    return json({ error: "Sasniegts ģenerēšanas limits (10/h). Pamēģini vēlāk." }, 429);
+
+  const anthropic = new Anthropic({ apiKey });
+  const logGen = () => supabase.from("blog_gen_log").insert({ admin_email: user.email ?? "?" });
+
+  /* ── Režīms: pārģenerēt fragmentu ── */
+  if (body.mode === "section") {
+    const sectionText = String(body.sectionText ?? "").trim();
+    const instruction = String(body.instruction ?? "").trim();
+    if (sectionText.length < 3) return json({ error: "Nav teksta fragmenta." }, 400);
+    let out = "";
+    try {
+      const msg = await anthropic.messages.create({
+        model: MODEL,
+        max_tokens: 1500,
+        temperature: 0.8,
+        system: SYSTEM,
+        messages: [
+          {
+            role: "user",
+            content: `Pārraksti šo raksta fragmentu latviski. Norāde: ${
+              instruction || "uzlabo skaidrību un konkrētību"
+            }. Saglabā toni un faktus, neizdomā jaunus. Atgriez TIKAI pārrakstīto tekstu markdown formātā, bez komentāriem un bez pēdiņām apkārt.\n\nFragments:\n${sectionText}`,
+          },
+        ],
+      });
+      out = textOf(msg).trim();
+    } catch {
+      return json({ error: "Pārģenerēšana neizdevās." }, 502);
+    }
+    if (!out) return json({ error: "Tukša atbilde." }, 502);
+    await logGen();
+    return json({ text: out }, 200);
+  }
+
+  /* ── Režīms: pilnā ģenerēšana ── */
   const notes = String(body.notes ?? "").trim();
   const products: string[] = Array.isArray(body.products)
     ? body.products.filter((s: any) => typeof s === "string")
@@ -84,17 +135,6 @@ export async function POST(req: Request) {
   if (!eventType || !articleType)
     return json({ error: "Trūkst pasākuma veida vai raksta tipa." }, 400);
 
-  // Rate limit
-  const since = new Date(Date.now() - 3600_000).toISOString();
-  const { count } = await supabase
-    .from("blog_gen_log")
-    .select("id", { count: "exact", head: true })
-    .eq("admin_email", user.email ?? "?")
-    .gte("created_at", since);
-  if ((count ?? 0) >= RATE_LIMIT)
-    return json({ error: "Sasniegts ģenerēšanas limits (10/h). Pamēģini vēlāk." }, 429);
-
-  // Produktu konteksts (reāli apraksti + cenas no DB)
   const resolved = await Promise.all(products.map((s) => getProductBySlug(s)));
   const productBlock = resolved
     .filter(Boolean)
@@ -126,7 +166,6 @@ Atgriez STINGRI derīgu JSON (bez koda blokiem, bez teksta apkārt) ar laukiem:
   "social": { "facebook": "2-3 teikumi + aicinājums", "instagram": "īsāks, ar 5-8 tagiem", "whatsapp": "viens teikums" }
 }`;
 
-  const anthropic = new Anthropic({ apiKey });
   let text = "";
   try {
     const msg = await anthropic.messages.create({
@@ -136,10 +175,7 @@ Atgriez STINGRI derīgu JSON (bez koda blokiem, bez teksta apkārt) ar laukiem:
       system: SYSTEM,
       messages: [{ role: "user", content: userPrompt }],
     });
-    text = msg.content
-      .filter((b: any) => b.type === "text")
-      .map((b: any) => b.text)
-      .join("");
+    text = textOf(msg);
   } catch {
     return json({ error: "AI ģenerēšana neizdevās. Pamēģini vēlreiz." }, 502);
   }
@@ -148,7 +184,6 @@ Atgriez STINGRI derīgu JSON (bez koda blokiem, bez teksta apkārt) ar laukiem:
   if (!parsed || !parsed.content)
     return json({ error: "AI atbilde nebija derīga. Pamēģini vēlreiz." }, 502);
 
-  await supabase.from("blog_gen_log").insert({ admin_email: user.email ?? "?" });
-
+  await logGen();
   return json(parsed, 200);
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { marked } from "marked";
 import { uploadImageSized } from "@/components/admin/image-uploader";
@@ -44,6 +44,7 @@ export type EditPost = {
   related_products: string[];
   social: { facebook: string; instagram: string; whatsapp: string } | null;
   status: string;
+  published_at?: string | null;
   ai_generated: boolean;
   edited_after_ai: boolean;
 };
@@ -86,12 +87,49 @@ export default function BlogEditor({
     post?.social ?? { facebook: "", instagram: "", whatsapp: "" },
   );
   const [status, setStatus] = useState(post?.status ?? "draft");
+  const [publishedAt, setPublishedAt] = useState(
+    post?.published_at ? post.published_at.slice(0, 16) : "",
+  );
   const [aiGenerated, setAiGenerated] = useState(post?.ai_generated ?? false);
   const [edited, setEdited] = useState(post?.edited_after_ai ?? false);
 
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
+  const [regenInstr, setRegenInstr] = useState("");
+  const [regenBusy, setRegenBusy] = useState(false);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
   const [, start] = useTransition();
+
+  async function regenSection() {
+    const ta = contentRef.current;
+    if (!ta) return;
+    const s = ta.selectionStart;
+    const e = ta.selectionEnd;
+    const sel = content.slice(s, e);
+    if (sel.trim().length < 3) {
+      setMsg("Atlasi saturā tekstu, ko pārģenerēt.");
+      return;
+    }
+    setRegenBusy(true);
+    setMsg("");
+    try {
+      const res = await fetch("/api/blog/generate", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ mode: "section", sectionText: sel, instruction: regenInstr }),
+      });
+      const data = await res.json();
+      if (!res.ok) setMsg(data.error ?? "Pārģenerēšana neizdevās.");
+      else if (data.text) {
+        setContent((c) => c.slice(0, s) + data.text + c.slice(e));
+        touch();
+        setMsg("Fragments pārģenerēts ✓");
+      }
+    } catch {
+      setMsg("Tīkla kļūda.");
+    }
+    setRegenBusy(false);
+  }
 
   // Jebkura AI lauka izmaiņa → edited_after_ai = true
   const touch = () => {
@@ -213,6 +251,7 @@ export default function BlogEditor({
       related_products: [...related],
       social,
       status,
+      published_at: publishedAt ? new Date(publishedAt).toISOString() : null,
       ai_generated: aiGenerated,
       edited_after_ai: edited,
     };
@@ -343,8 +382,17 @@ export default function BlogEditor({
             <textarea rows={2} value={excerpt} onChange={(e) => { setExcerpt(e.target.value); touch(); }} className={`${field} mt-1`} />
           </label>
           <label className="block text-sm">Saturs (markdown)
-            <textarea rows={16} value={content} onChange={(e) => { setContent(e.target.value); touch(); }} className={`${field} mt-1 font-mono text-xs`} />
+            <textarea ref={contentRef} rows={16} value={content} onChange={(e) => { setContent(e.target.value); touch(); }} className={`${field} mt-1 font-mono text-xs`} />
           </label>
+          <div className="rounded-lg border border-gold/15 bg-navy/20 p-2">
+            <p className="mb-1 text-[11px] text-text/50">Pārģenerēt sadaļu: atlasi saturā tekstu, ievadi norādi, pārraksta tikai to.</p>
+            <div className="flex gap-2">
+              <input value={regenInstr} onChange={(e) => setRegenInstr(e.target.value)} placeholder="konkrētāk / īsāk / siltāk" className={`${field} text-xs`} />
+              <button onClick={regenSection} disabled={regenBusy} className="shrink-0 rounded-full border border-gold/40 px-3 py-1 text-xs text-gold disabled:opacity-60">
+                {regenBusy ? "…" : "Pārģenerēt atlasīto"}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Labā: priekšskatījums + meta */}
@@ -372,6 +420,11 @@ export default function BlogEditor({
               </select>
             </label>
           </div>
+          {status === "published" && (
+            <label className="block text-sm">Publicēšanas datums (tukšs = tagad; nākotne = plānots)
+              <input type="datetime-local" value={publishedAt} onChange={(e) => setPublishedAt(e.target.value)} className={`${field} mt-1`} />
+            </label>
+          )}
           <label className="block text-sm">Tagi (ar komatu)
             <input value={tags} onChange={(e) => setTags(e.target.value)} className={`${field} mt-1`} />
           </label>

@@ -123,6 +123,22 @@ export async function getPostBySlug(slug: string): Promise<BlogPostFull | null> 
   }
 }
 
+// 3 saistītie raksti — tā pati kategorija, citādi jaunākie.
+export async function getRelatedPosts(
+  slug: string,
+  category: string | null,
+  limit = 3,
+): Promise<BlogListItem[]> {
+  const inCat = await getPublishedPosts(category ? { category } : undefined);
+  const picked = inCat.filter((p) => p.slug !== slug).slice(0, limit);
+  if (picked.length >= limit || !category) return picked;
+  const recent = await getPublishedPosts();
+  const extra = recent.filter(
+    (p) => p.slug !== slug && !picked.some((f) => f.slug === p.slug),
+  );
+  return [...picked, ...extra].slice(0, limit);
+}
+
 // Publicēto rakstu slug saraksts (sitemap).
 export async function getPublishedSlugs(): Promise<{ slug: string; updated: string }[]> {
   const sb = publicClient();

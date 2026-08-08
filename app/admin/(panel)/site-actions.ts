@@ -326,6 +326,7 @@ export type BlogInput = {
   related_products: string[];
   social: { facebook: string; instagram: string; whatsapp: string } | null;
   status: string;
+  published_at?: string | null;
   ai_generated: boolean;
   edited_after_ai: boolean;
 };
@@ -353,7 +354,10 @@ export async function upsertBlogPost(id: string | null, d: BlogInput) {
     updated_at: new Date().toISOString(),
   };
   if (d.status === "published") {
-    if (id) {
+    if (d.published_at) {
+      // Nākotnes datums = plānots (RLS rāda tikai, kad published_at <= now).
+      row.published_at = d.published_at;
+    } else if (id) {
       const { data: cur } = await supabase
         .from("blog_posts")
         .select("published_at")

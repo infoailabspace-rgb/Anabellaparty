@@ -5,10 +5,11 @@ import { getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode, articleNode } from "@/lib/schema";
-import { getPostBySlug, CATEGORY_LABEL } from "@/lib/blog";
+import { getPostBySlug, getRelatedPosts, CATEGORY_LABEL } from "@/lib/blog";
 import { getProductBySlug } from "@/lib/catalog";
 import { alternatesFor, ogMetadata } from "@/lib/seo";
 import ShareButtons from "./share-buttons";
+import ArticleContent from "./article-content";
 
 export async function generateMetadata({
   params,
@@ -46,9 +47,12 @@ export default async function ArticlePage({
   const post = await getPostBySlug(slug);
   if (!post) notFound();
 
-  const related = (
-    await Promise.all(post.relatedProducts.map((s) => getProductBySlug(s)))
-  ).filter((p): p is NonNullable<typeof p> => Boolean(p));
+  const [related, relatedPosts] = await Promise.all([
+    Promise.all(post.relatedProducts.map((s) => getProductBySlug(s))).then((r) =>
+      r.filter((p): p is NonNullable<typeof p> => Boolean(p)),
+    ),
+    getRelatedPosts(slug, post.category, 3),
+  ]);
 
   return (
     <>
@@ -92,10 +96,7 @@ export default async function ArticlePage({
           </div>
         )}
 
-        <div
-          className="prose-blog mx-auto mt-10 max-w-[68ch] text-lg leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: post.contentHtml }}
-        />
+        <ArticleContent html={post.contentHtml} />
 
         {/* Saistītie produkti */}
         {related.length > 0 && (
@@ -133,6 +134,33 @@ export default async function ArticlePage({
         <div className="mt-12 border-t border-gold/15 pt-6">
           <ShareButtons />
         </div>
+
+        {/* Saistītie raksti */}
+        {relatedPosts.length > 0 && (
+          <div className="mt-14">
+            <h2 className="font-display text-xl font-bold">Lasi arī</h2>
+            <div className="mt-5 grid gap-5 sm:grid-cols-3">
+              {relatedPosts.map((rp) => (
+                <Link
+                  key={rp.slug}
+                  href={`/blogs/${rp.slug}`}
+                  className="group flex flex-col overflow-hidden rounded-xl border border-gold/20 bg-navy/25 transition-colors hover:border-gold/50"
+                >
+                  {rp.cover && (
+                    <div className="aspect-[16/10] overflow-hidden bg-navy">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={rp.cover} alt={rp.coverAlt} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <p className="font-display text-sm font-semibold text-text group-hover:text-gold">{rp.title}</p>
+                    <p className="mt-1 text-xs text-text/40">{rp.readingMin} min</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </article>
     </>
   );

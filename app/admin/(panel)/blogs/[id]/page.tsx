@@ -35,6 +35,7 @@ export default async function EditBlogPage({
     related_products: Array.isArray(r.related_products) ? r.related_products : [],
     social: r.social ?? null,
     status: r.status,
+    published_at: r.published_at ?? null,
     ai_generated: r.ai_generated,
     edited_after_ai: r.edited_after_ai,
   };
