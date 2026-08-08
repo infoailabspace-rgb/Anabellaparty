@@ -37,9 +37,6 @@ export default async function About({
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
-              <span className="absolute inset-x-0 bottom-0 bg-navy/70 px-3 py-1.5 text-center text-xs text-text/70 backdrop-blur">
-                {t("photoPlaceholder")}
-              </span>
             </div>
           </Reveal>
 
