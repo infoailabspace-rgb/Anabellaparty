@@ -69,6 +69,16 @@ export default async function Footer() {
               </Link>
             </li>
             <li>
+              <a
+                href="https://aiparty-infoailabspace-7279s-projects.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-gold"
+              >
+                AI Party
+              </a>
+            </li>
+            <li>
               <Link
                 href="/noteikumi"
                 className="transition-colors hover:text-gold"

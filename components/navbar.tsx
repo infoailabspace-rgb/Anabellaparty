@@ -18,6 +18,8 @@ type NavItem = { label: string; href?: string; children?: NavLink[] };
 const linkBase =
   "whitespace-nowrap rounded-full border px-4 py-2 text-[13px] xl:text-sm transition-colors duration-200";
 
+const AIPARTY_URL = "https://aiparty-infoailabspace-7279s-projects.vercel.app";
+
 export default function Navbar() {
   const t = useTranslations("nav");
   const pathname = usePathname();
@@ -186,6 +188,14 @@ export default function Navbar() {
               </Link>
             );
           })}
+          <a
+            href={AIPARTY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${linkBase} border-transparent text-text/80 hover:border-gold hover:text-gold`}
+          >
+            AI Party
+          </a>
           <Link
             href="/rezervet"
             className="ml-6 whitespace-nowrap rounded-full bg-gold px-5 py-2 text-[13px] font-semibold text-black transition-transform hover:scale-[1.04] hover:shadow-[0_0_20px_rgba(212,169,96,0.5)] xl:text-sm"
@@ -259,6 +269,15 @@ export default function Navbar() {
                 </Link>
               ),
             )}
+            <a
+              href={AIPARTY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={close}
+              className="py-2 text-text/90 transition-colors hover:text-gold"
+            >
+              AI Party
+            </a>
             <Link
               href="/rezervet"
               onClick={close}
