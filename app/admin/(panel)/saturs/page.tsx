@@ -72,6 +72,12 @@ export default async function SatursPage() {
   const pageImages: Record<string, string | null> = {
     "about.photo": imgUrl("about.photo"),
     "og.fallback": imgUrl("og.fallback"),
+    "category.foto-kaste": imgUrl("category.foto-kaste"),
+    "category.atrakcijas": imgUrl("category.atrakcijas"),
+    "category.audio-video": imgUrl("category.audio-video"),
+    "category.specefekti": imgUrl("category.specefekti"),
+    "category.deco": imgUrl("category.deco"),
+    "category.kubli": imgUrl("category.kubli"),
   };
 
   return (

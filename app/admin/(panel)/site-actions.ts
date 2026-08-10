@@ -32,7 +32,16 @@ export async function saveContent(key: string, value: ML) {
 }
 
 /* ── Lapas attēli (valodneitrāli {url}, glabāti site_content) ── */
-const PAGE_IMAGE_KEYS = ["about.photo", "og.fallback"];
+const PAGE_IMAGE_KEYS = [
+  "about.photo",
+  "og.fallback",
+  "category.foto-kaste",
+  "category.atrakcijas",
+  "category.audio-video",
+  "category.specefekti",
+  "category.deco",
+  "category.kubli",
+];
 
 export async function saveSiteImage(key: string, url: string | null) {
   if (!PAGE_IMAGE_KEYS.includes(key)) return { error: "Nezināma attēla atslēga." };

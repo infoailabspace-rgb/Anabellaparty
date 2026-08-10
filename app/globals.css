@@ -253,6 +253,31 @@ body {
   background-size: 22px 22px;
 }
 
+/* Globālā luxury tekstūra — lēns zelta glow drift (GPU transform). */
+@keyframes anabella-texture-drift {
+  0% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-42%, 4%) scale(1.15);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 0.5;
+  }
+}
+.anabella-texture-glow {
+  animation: anabella-texture-drift 18s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .anabella-texture-glow {
+    animation: none;
+  }
+}
+
 /* Navbar dropdown — fade + slide 4px lejup, 180ms. */
 @keyframes anabella-drop-in {
   from {

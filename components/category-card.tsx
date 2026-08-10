@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import type { CategoryMeta } from "@/lib/categories";
 import { categoryIcons, IconBadge } from "@/components/icons";
 import Shimmer from "@/components/shimmer";
+import { getSiteImage } from "@/lib/site-content";
 
 // SOLIS1D: fona attēlu rāda TIKAI, ja fails reāli eksistē public/.
 // Ja nav — kartīte paliek ar tīru navy (kā tagad). Pārbauda būvēšanas laikā.
@@ -24,12 +25,15 @@ export default async function CategoryCard({
   category: CategoryMeta;
   index?: number;
 }) {
-  const [tc, tcommon] = await Promise.all([
+  const [tc, tcommon, dbImage] = await Promise.all([
     getTranslations("categories"),
     getTranslations("common"),
+    getSiteImage(`category.${category.id}`),
   ]);
   const Icon = categoryIcons[category.id];
-  const hasBg = bgExists(category.bgImage);
+  // DB attēls (admin "Lapas attēli") → statiskais fails (ja eksistē) → tīrs navy.
+  const bgSrc = dbImage ?? (bgExists(category.bgImage) ? category.bgImage : null);
+  const hasBg = !!bgSrc;
   return (
     <Link
       href={category.href}
@@ -39,7 +43,7 @@ export default async function CategoryCard({
         <>
           {/* Fona attēls — mazs, izstiepts (bez CSS blur), zema kvalitāte OK */}
           <Image
-            src={category.bgImage}
+            src={bgSrc!}
             alt=""
             fill
             sizes="(max-width: 768px) 100vw, 33vw"

@@ -9,6 +9,7 @@ import AnalyticsListener from "@/components/analytics-listener";
 import ScrollToTopOnNav from "@/components/scroll-to-top-on-nav";
 import BackToTop from "@/components/back-to-top";
 import SiteFrame from "@/components/site-frame";
+import SiteTexture from "@/components/site-texture";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -29,6 +30,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider>
+      <SiteTexture />
       <ScrollToTopOnNav />
       <SiteFrame navbar={<Navbar />} footer={<Footer />}>
         {children}

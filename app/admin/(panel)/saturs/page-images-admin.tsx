@@ -127,6 +127,12 @@ export default function PageImagesAdmin({
       help: "Rezerves sociālo tīklu priekšskatījums (neobligāts). Ieteicams 1200×630. Tukšs → dinamiskais OG attēls.",
       fallback: null,
     },
+    { key: "category.foto-kaste", label: "Kategorija — Foto kastes", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
+    { key: "category.atrakcijas", label: "Kategorija — Atrakcijas", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
+    { key: "category.audio-video", label: "Kategorija — Audio/video", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
+    { key: "category.specefekti", label: "Kategorija — Specefekti", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
+    { key: "category.deco", label: "Kategorija — Deco", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
+    { key: "category.kubli", label: "Kategorija — Kubli", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
   ];
   return (
     <div className="mt-10">
