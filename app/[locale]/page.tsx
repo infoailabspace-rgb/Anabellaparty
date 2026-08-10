@@ -64,7 +64,7 @@ export default async function Home() {
       <Steps />
 
       {/* Piedāvājums / kategorijas — navy ar tekstūru + dziļuma fons */}
-      <section className="anabella-navy-texture relative overflow-hidden bg-navy py-24 md:py-32">
+      <section className="anabella-navy-texture relative overflow-hidden bg-navy/40 py-24 md:py-32">
         <DepthBg />
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           <Reveal>

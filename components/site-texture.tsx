@@ -219,18 +219,21 @@ export default function SiteTexture() {
     };
   }, []);
 
-  // OVERLAY virs satura (z-[1], zem navbar/modāļiem), pointer-events-none.
-  // BEZ necaurspīdīga fona — tikai mirdzošie slāņi, lai saturs paliek redzams,
-  // bet glamour parādās pār VISĀM sekcijām (arī necaurspīdīgo bg-navy).
+  // FONS aiz satura (-z-10), pointer-events-none. Konteineris nes bāzes krāsu
+  // (bg-bg) → aizvieto plakano navy. Publiskās sekcijas ir caurspīdīgas, tāpēc
+  // šis glamour slānis spīd tām cauri. Saturs (z-auto) ir virs -z-10 → teksts
+  // lasāms bez pārklājuma, klikšķi netiek bloķēti (pointer-events-none + aiz satura).
   return (
-    <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden" aria-hidden>
-      {/* Plūstoši zelta/rožu gradienti (CSS drift, GPU) — koncentrēti stūros */}
-      <div className="anabella-tex-a absolute left-[-15%] top-[-18%] h-[80vh] w-[80vw] rounded-full bg-[radial-gradient(circle,rgba(212,169,96,0.16),transparent_62%)] blur-[100px]" />
-      <div className="anabella-tex-b absolute bottom-[-18%] right-[-15%] h-[72vh] w-[72vw] rounded-full bg-[radial-gradient(circle,rgba(232,168,124,0.12),transparent_64%)] blur-[120px]" />
-      {/* Canvas: bokeh + zvaigznes + disco silueti (caurspīdīgs starp tiem) */}
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-bg" aria-hidden>
+      {/* Plūstoši zelta/rožu gradienti (CSS drift, GPU) */}
+      <div className="anabella-tex-a absolute left-[-15%] top-[-18%] h-[80vh] w-[80vw] rounded-full bg-[radial-gradient(circle,rgba(212,169,96,0.20),transparent_60%)] blur-[100px]" />
+      <div className="anabella-tex-b absolute bottom-[-18%] right-[-15%] h-[72vh] w-[72vw] rounded-full bg-[radial-gradient(circle,rgba(232,168,124,0.15),transparent_62%)] blur-[120px]" />
+      {/* Canvas: bokeh + zvaigznes + disco silueti */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-      {/* Grain — smalka tekstūra */}
-      <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: GRAIN }} />
+      {/* Grain */}
+      <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{ backgroundImage: GRAIN }} />
+      {/* Vinjete — dziļums malās (aiz satura, tāpēc nekaitē lasāmībai) */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(15,20,25,0.5))]" />
     </div>
   );
 }

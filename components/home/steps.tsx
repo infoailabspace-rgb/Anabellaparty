@@ -17,7 +17,7 @@ export default async function Steps() {
     { n: 3, title: t("s3Title"), text: t("s3Text"), Icon: IconTruck },
   ];
   return (
-    <section className="bg-bg py-24 md:py-32">
+    <section className="py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
           <h2 className="text-center font-display text-3xl font-bold tracking-tight md:text-4xl">

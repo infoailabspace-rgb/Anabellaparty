@@ -24,7 +24,7 @@ export default async function About({
     { to: Number(statsSince) || 0, prefix: t("sincePrefix"), label: "" },
   ];
   return (
-    <section className="bg-bg py-24 md:py-32">
+    <section className="py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Foto — mobilajā virs teksta, desktopā pa labi */}

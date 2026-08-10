@@ -57,7 +57,7 @@ export default function Testimonials({
   }, [reduce, paused, next]);
 
   return (
-    <section className="bg-bg py-24 md:py-32">
+    <section className="py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
           <h2 className="text-center font-display text-3xl font-bold tracking-tight md:text-4xl">
