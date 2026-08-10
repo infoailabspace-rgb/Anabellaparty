@@ -253,27 +253,46 @@ body {
   background-size: 22px 22px;
 }
 
-/* Globālā luxury tekstūra — lēns zelta glow drift (GPU transform). */
-@keyframes anabella-texture-drift {
+/* Globālā luxury tekstūra — divi zelta glow, lēns drift (GPU transform/opacity). */
+@keyframes anabella-drift-a {
   0% {
-    transform: translate(-50%, 0) scale(1);
-    opacity: 0.5;
+    transform: translate(0, 0) scale(1);
+    opacity: 0.55;
   }
   50% {
-    transform: translate(-42%, 4%) scale(1.15);
-    opacity: 0.85;
+    transform: translate(8%, 6%) scale(1.18);
+    opacity: 0.95;
   }
   100% {
-    transform: translate(-50%, 0) scale(1);
-    opacity: 0.5;
+    transform: translate(0, 0) scale(1);
+    opacity: 0.55;
   }
 }
-.anabella-texture-glow {
-  animation: anabella-texture-drift 18s ease-in-out infinite;
+@keyframes anabella-drift-b {
+  0% {
+    transform: translate(0, 0) scale(1.05);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate(-9%, -7%) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(0, 0) scale(1.05);
+    opacity: 0.45;
+  }
+}
+.anabella-tex-a {
+  animation: anabella-drift-a 16s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.anabella-tex-b {
+  animation: anabella-drift-b 20s ease-in-out infinite;
   will-change: transform, opacity;
 }
 @media (prefers-reduced-motion: reduce) {
-  .anabella-texture-glow {
+  .anabella-tex-a,
+  .anabella-tex-b {
     animation: none;
   }
 }
