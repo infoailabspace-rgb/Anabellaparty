@@ -62,7 +62,7 @@ export default async function AiFotoPage() {
           ]),
         )}
       />
-      <SectionHero title={t("aiFotoTitle")} tagline={t("aiFotoTagline")} heroKey="ai-foto" />
+      <SectionHero title={t("aiFotoTitle")} tagline={t("aiFotoTagline")} heroKey="ai-foto" position="top" />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid items-center gap-10 lg:grid-cols-2">

@@ -16,6 +16,7 @@ export default function HeroMedia({
   image,
   preloadMeta = false,
   className = "",
+  position = "center",
 }: {
   mp4?: string | null;
   webm?: string | null;
@@ -23,8 +24,11 @@ export default function HeroMedia({
   image?: string | null;
   preloadMeta?: boolean;
   className?: string;
+  // object-position kadram (crop). "top" — rāda augšdaļu (piem. sejas), ne centru.
+  position?: "center" | "top";
 }) {
   const still = image || poster || "";
+  const posClass = position === "top" ? "object-top" : "";
   const [showVideo, setShowVideo] = useState(false);
   const ref = useRef<HTMLVideoElement>(null);
 
@@ -51,14 +55,14 @@ export default function HeroMedia({
           fill
           priority
           sizes="100vw"
-          className={`object-cover ${className}`}
+          className={`object-cover ${posClass} ${className}`}
           aria-hidden
         />
       )}
       {mp4 && showVideo && (
         <video
           ref={ref}
-          className={`absolute inset-0 h-full w-full object-cover ${className}`}
+          className={`absolute inset-0 h-full w-full object-cover ${posClass} ${className}`}
           poster={poster || undefined}
           autoPlay
           muted
