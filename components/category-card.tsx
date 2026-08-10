@@ -52,10 +52,10 @@ export default async function CategoryCard({
             aria-hidden="true"
             className="-z-10 object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          {/* 1. Vienmērīgs tumšinājums — hover nedaudz atkāpjas */}
-          <div className="absolute inset-0 -z-10 bg-bg/75 transition-colors duration-500 group-hover:bg-bg/65" />
-          {/* 2. Gradients no apakšas — tur, kur teksts */}
-          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-bg via-bg/85 to-bg/50" />
+          {/* 1. Viegls vienmērīgs tumšinājums — attēls paliek gaišs; hover vēl gaišāks */}
+          <div className="absolute inset-0 -z-10 bg-bg/45 transition-colors duration-500 group-hover:bg-bg/25" />
+          {/* 2. Gradients: kontrasts TIKAI apakšā, kur teksts; augšā caurspīdīgs → attēls redzams */}
+          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-bg/90 via-bg/35 to-transparent" />
         </>
       )}
       <Shimmer delay={index * 0.6} />
