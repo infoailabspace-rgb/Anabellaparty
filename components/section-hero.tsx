@@ -7,15 +7,15 @@ export default async function SectionHero({
   tagline,
   heroKey,
   video,
-  position,
+  posClass,
 }: {
   title: string;
   tagline: string;
   heroKey?: string;
   // Fallback publiskais video (relatīvs mp4 ceļš), ja site_content tukšs.
   video?: string;
-  // Kadra centrējums (crop): "top" — rāda augšdaļu.
-  position?: "center" | "top";
+  // Kadra crop fokuss (Tailwind object-position klase).
+  posClass?: string;
 }) {
   const media = heroKey ? await getHeroMedia(heroKey) : null;
   // Fallback: admin mediji → citādi publiskais video → citādi tīrs gradients.
@@ -35,7 +35,7 @@ export default async function SectionHero({
             webm={media?.webm ?? null}
             poster={poster}
             image={image}
-            position={position}
+            posClass={posClass}
           />
           <div className="absolute inset-0 bg-bg/70" />
         </>

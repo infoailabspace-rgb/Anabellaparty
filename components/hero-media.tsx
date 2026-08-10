@@ -16,7 +16,7 @@ export default function HeroMedia({
   image,
   preloadMeta = false,
   className = "",
-  position = "center",
+  posClass = "",
 }: {
   mp4?: string | null;
   webm?: string | null;
@@ -24,11 +24,10 @@ export default function HeroMedia({
   image?: string | null;
   preloadMeta?: boolean;
   className?: string;
-  // object-position kadram (crop). "top" — rāda augšdaļu (piem. sejas), ne centru.
-  position?: "center" | "top";
+  // object-position Tailwind klase (crop fokuss), piem. "object-top" vai "object-[center_40%]".
+  posClass?: string;
 }) {
   const still = image || poster || "";
-  const posClass = position === "top" ? "object-top" : "";
   const [showVideo, setShowVideo] = useState(false);
   const ref = useRef<HTMLVideoElement>(null);
 
