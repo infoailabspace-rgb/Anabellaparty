@@ -13,7 +13,7 @@ import {
 } from "@/components/social-icons";
 
 type NavLink = { href: string; label: string; external?: boolean; badge?: string; hint?: string };
-type NavItem = { label: string; href?: string; children?: NavLink[] };
+type NavItem = { label: string; href?: string; children?: NavLink[]; external?: boolean; badge?: string };
 
 const linkBase =
   "whitespace-nowrap rounded-full border px-4 py-2 text-[13px] xl:text-sm transition-colors duration-200";
@@ -98,6 +98,7 @@ export default function Navbar() {
         { href: "/svinibu-inventars/kublsballa", label: t("kubli") },
       ],
     },
+    { label: t("pasakumuStacija"), href: AIPARTY_URL, external: true, badge: t("jauns") },
     { label: t("musuDraugi"), href: "/musu-draugi" },
     { label: t("blogs"), href: "/blogs" },
     { label: t("kontakti"), href: "/kontakti" },
@@ -195,6 +196,20 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
+            ) : item.external ? (
+              <a
+                key={item.href}
+                href={item.href!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${linkBase} flex items-center gap-1.5 border-gold/40 text-gold/90 hover:border-gold hover:bg-gold/10`}
+              >
+                <span aria-hidden>⚡</span>
+                {item.label}
+                {item.badge && (
+                  <span className="rounded-full bg-gold/20 px-1.5 py-0.5 text-[9px] font-bold text-gold">{item.badge}</span>
+                )}
+              </a>
             ) : (
               <Link
                 key={item.href}
@@ -291,6 +306,21 @@ export default function Navbar() {
                     )}
                   </div>
                 </div>
+              ) : item.external ? (
+                <a
+                  key={item.href}
+                  href={item.href!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={close}
+                  className="flex items-center gap-2 py-2 font-semibold text-gold transition-colors hover:text-gold"
+                >
+                  <span aria-hidden>⚡</span>
+                  {item.label}
+                  {item.badge && (
+                    <span className="rounded-full bg-gold/20 px-1.5 py-0.5 text-[9px] font-bold text-gold">{item.badge}</span>
+                  )}
+                </a>
               ) : (
                 <Link
                   key={item.href}
