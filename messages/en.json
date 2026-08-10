@@ -15,7 +15,10 @@
     "kontakti": "Contact",
     "rezervet": "Book now",
     "izvelne": "Menu",
-    "sakumsAria": "Anabella Party — home"
+    "sakumsAria": "Anabella Party — home",
+    "pasakumuStacija": "Event Station",
+    "pasakumuStacijaHint": "TV games & AI photo",
+    "jauns": "NEW"
   },
   "footer": {
     "tagline": "Unforgettable parties start here.",

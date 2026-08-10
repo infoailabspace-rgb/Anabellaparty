@@ -75,7 +75,7 @@ export default async function Footer() {
                 rel="noopener noreferrer"
                 className="transition-colors hover:text-gold"
               >
-                AI Party
+                Pasākumu Stacija
               </a>
             </li>
             <li>

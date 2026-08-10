@@ -12,7 +12,7 @@ import {
   WhatsAppIcon,
 } from "@/components/social-icons";
 
-type NavLink = { href: string; label: string };
+type NavLink = { href: string; label: string; external?: boolean; badge?: string; hint?: string };
 type NavItem = { label: string; href?: string; children?: NavLink[] };
 
 const linkBase =
@@ -81,6 +81,7 @@ export default function Navbar() {
       children: [
         { href: "/foto-kaste", label: t("fotoKastes") },
         { href: "/foto-kaste/ai-foto", label: t("aiFoto") },
+        { href: AIPARTY_URL, label: t("pasakumuStacija"), external: true, badge: t("jauns"), hint: t("pasakumuStacijaHint") },
       ],
     },
     { label: t("atrakcijas"), href: "/piepusamas-atrakcijas" },
@@ -160,15 +161,36 @@ export default function Navbar() {
                 {openMenu === item.label && (
                   <div className="absolute left-0 top-full z-50 min-w-56 pt-3">
                     <div className="anabella-drop rounded-xl border border-gold/25 bg-navy p-2 shadow-2xl shadow-black/50">
-                      {item.children.map((c) => (
-                        <Link
-                          key={c.href}
-                          href={c.href}
-                          className="block whitespace-nowrap rounded-lg px-5 py-2.5 text-sm text-text/85 transition-colors hover:bg-gold hover:text-black"
-                        >
-                          {c.label}
-                        </Link>
-                      ))}
+                      {item.children.map((c) =>
+                        c.external ? (
+                          <a
+                            key={c.href}
+                            href={c.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-1 block whitespace-nowrap rounded-lg border-t border-gold/15 px-5 pb-2.5 pt-3 text-sm text-text/85 transition-colors hover:bg-gold hover:text-black"
+                          >
+                            <span className="flex items-center gap-2 font-semibold">
+                              <span aria-hidden>⚡</span>
+                              {c.label}
+                              {c.badge && (
+                                <span className="rounded-full bg-gold/20 px-1.5 py-0.5 text-[10px] font-bold text-gold">
+                                  {c.badge}
+                                </span>
+                              )}
+                            </span>
+                            {c.hint && <span className="mt-0.5 block text-xs text-text/45">{c.hint}</span>}
+                          </a>
+                        ) : (
+                          <Link
+                            key={c.href}
+                            href={c.href}
+                            className="block whitespace-nowrap rounded-lg px-5 py-2.5 text-sm text-text/85 transition-colors hover:bg-gold hover:text-black"
+                          >
+                            {c.label}
+                          </Link>
+                        ),
+                      )}
                     </div>
                   </div>
                 )}
@@ -188,14 +210,6 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <a
-            href={AIPARTY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${linkBase} border-transparent text-text/80 hover:border-gold hover:text-gold`}
-          >
-            AI Party
-          </a>
           <Link
             href="/rezervet"
             className="ml-6 whitespace-nowrap rounded-full bg-gold px-5 py-2 text-[13px] font-semibold text-black transition-transform hover:scale-[1.04] hover:shadow-[0_0_20px_rgba(212,169,96,0.5)] xl:text-sm"
@@ -246,16 +260,35 @@ export default function Navbar() {
                     {item.label}
                   </p>
                   <div className="mt-2 flex flex-col gap-2 pl-3">
-                    {item.children.map((c) => (
-                      <Link
-                        key={c.href}
-                        href={c.href}
-                        onClick={close}
-                        className="text-text/90 transition-colors hover:text-gold"
-                      >
-                        {c.label}
-                      </Link>
-                    ))}
+                    {item.children.map((c) =>
+                      c.external ? (
+                        <a
+                          key={c.href}
+                          href={c.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={close}
+                          className="flex items-center gap-2 font-semibold text-text/90 transition-colors hover:text-gold"
+                        >
+                          <span aria-hidden>⚡</span>
+                          {c.label}
+                          {c.badge && (
+                            <span className="rounded-full bg-gold/20 px-1.5 py-0.5 text-[10px] font-bold text-gold">
+                              {c.badge}
+                            </span>
+                          )}
+                        </a>
+                      ) : (
+                        <Link
+                          key={c.href}
+                          href={c.href}
+                          onClick={close}
+                          className="text-text/90 transition-colors hover:text-gold"
+                        >
+                          {c.label}
+                        </Link>
+                      ),
+                    )}
                   </div>
                 </div>
               ) : (
@@ -269,15 +302,6 @@ export default function Navbar() {
                 </Link>
               ),
             )}
-            <a
-              href={AIPARTY_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={close}
-              className="py-2 text-text/90 transition-colors hover:text-gold"
-            >
-              AI Party
-            </a>
             <Link
               href="/rezervet"
               onClick={close}

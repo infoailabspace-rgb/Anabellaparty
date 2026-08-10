@@ -15,7 +15,10 @@
     "kontakti": "Контакты",
     "rezervet": "Забронировать",
     "izvelne": "Меню",
-    "sakumsAria": "Anabella Party — главная"
+    "sakumsAria": "Anabella Party — главная",
+    "pasakumuStacija": "Станция мероприятий",
+    "pasakumuStacijaHint": "ТВ-игры и AI фото",
+    "jauns": "НОВОЕ"
   },
   "footer": {
     "tagline": "Незабываемые праздники начинаются здесь.",
