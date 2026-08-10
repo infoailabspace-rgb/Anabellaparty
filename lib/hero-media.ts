@@ -13,6 +13,7 @@ export type HeroMedia = {
 export const HERO_VIDEO_PAGES = [
   "home",
   "foto-kaste",
+  "ai-foto",
   "atrakcijas",
   "specefekti",
 ] as const;
@@ -21,7 +22,6 @@ export const HERO_IMAGE_PAGES = [
   "audio-video",
   "deco",
   "kubli",
-  "ai-foto",
   "rezervet",
   "kontakti",
   "faq",
