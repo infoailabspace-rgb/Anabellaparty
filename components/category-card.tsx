@@ -40,10 +40,13 @@ export default async function CategoryCard({
   // uzlīme stūrī, bez "apskatīt →".
   if (category.comingSoon) {
     return (
-      <div className="group relative isolate flex h-full cursor-default flex-col overflow-hidden rounded-2xl border border-gold/25 bg-navy/30 p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.25)]">
-        {/* Luxury tekstūra — tāpat kā SectionHero fonā */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-navy via-bg to-black" />
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_0%,rgba(212,169,96,0.16),transparent_60%)]" />
+      <div className="group relative isolate flex h-full cursor-default flex-col overflow-hidden rounded-2xl border border-gold/30 bg-navy p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.35)]">
+        {/* Luxury tekstūra — NECAURSPĪDĪGA, lai sekcijas fons nespīd cauri.
+            Dziļš navy diagonāls + zelta spotlight augšā (aiz ikonas) + maigs
+            zelta mirdzums apakšā → apzināts "drīzumā" panelis, ne tukšums. */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#1e4257] via-navy to-[#0a1a22]" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_-10%,rgba(212,169,96,0.30),transparent_55%)]" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_85%_110%,rgba(212,169,96,0.12),transparent_50%)]" />
         {/* DRĪZUMĀ uzlīme stūrī */}
         <span className="absolute right-4 top-4 z-10 rounded-full border border-gold/40 bg-gold/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-gold">
           {tc("comingSoonBadge")}

@@ -132,7 +132,6 @@ export default function PageImagesAdmin({
     { key: "category.audio-video", label: "Kategorija — Audio/video", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
     { key: "category.specefekti", label: "Kategorija — Specefekti", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
     { key: "category.deco", label: "Kategorija — Deco", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
-    { key: "category.kubli", label: "Kategorija — Kubli", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
   ];
   return (
     <div className="mt-10">

@@ -40,7 +40,6 @@ const PAGE_IMAGE_KEYS = [
   "category.audio-video",
   "category.specefekti",
   "category.deco",
-  "category.kubli",
 ];
 
 export async function saveSiteImage(key: string, url: string | null) {
