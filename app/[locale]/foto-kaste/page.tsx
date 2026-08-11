@@ -6,6 +6,8 @@ import { graph, productNode, breadcrumbNode } from "@/lib/schema";
 import { getAllProducts } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
+import ImageGallery from "@/components/image-gallery";
+import Image from "next/image";
 import SlideReveal from "@/components/slide-reveal";
 import PriceBlock from "@/components/price-block";
 import ImagePlaceholder from "@/components/image-placeholder";
@@ -91,27 +93,46 @@ export default async function FotoKastePage() {
         {visuDienu && (
           <SlideReveal index={3}>
             <div className="mt-12 rounded-3xl border-2 border-gold bg-gold/10 p-6 sm:p-10">
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-wide text-black">
-                  {ts("fkSpecial")}
-                </span>
-                <h2 className="font-display text-2xl font-bold sm:text-3xl">
-                  {visuDienu.name} — 350 €
-                </h2>
-              </div>
-              <p className="mt-4 max-w-2xl text-text/80">
-                {visuDienu.description}
-              </p>
-              <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-                {visuDienu.includes?.map((item) => (
-                  <li key={item} className="flex gap-2 text-sm text-text/85">
-                    <span className="text-gold">✓</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-6 border-t border-gold/25 pt-6">
-                <PriceBlock product={visuDienu} />
+              <div
+                className={`grid gap-8 ${
+                  visuDienu.coverImage ? "lg:grid-cols-2 lg:items-center" : ""
+                }`}
+              >
+                {visuDienu.coverImage && (
+                  <ImageGallery
+                    images={[
+                      visuDienu.coverImage,
+                      ...visuDienu.gallery.filter(
+                        (g) => g && g !== visuDienu.coverImage,
+                      ),
+                    ]}
+                    alt={visuDienu.name}
+                  />
+                )}
+                <div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-wide text-black">
+                      {ts("fkSpecial")}
+                    </span>
+                    <h2 className="font-display text-2xl font-bold sm:text-3xl">
+                      {visuDienu.name} — 350 €
+                    </h2>
+                  </div>
+                  <p className="mt-4 max-w-2xl text-text/80">
+                    {visuDienu.description}
+                  </p>
+                  <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                    {visuDienu.includes?.map((item) => (
+                      <li key={item} className="flex gap-2 text-sm text-text/85">
+                        <span className="text-gold">✓</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6 border-t border-gold/25 pt-6">
+                    <PriceBlock product={visuDienu} />
+                  </div>
+                </div>
               </div>
             </div>
           </SlideReveal>
@@ -121,15 +142,28 @@ export default async function FotoKastePage() {
         <div className="mt-12 grid gap-6 md:grid-cols-2">
           {contactBlocks.map((product, i) => (
             <SlideReveal key={product.slug} index={4 + i}>
-              <div className="flex h-full flex-col rounded-2xl border-2 border-gold/25 bg-navy/25 p-8">
-                <h3 className="font-display text-xl font-semibold">
-                  {product.name}
-                </h3>
-                <p className="mt-3 flex-1 text-sm text-text/75">
-                  {product.description}
-                </p>
-                <div className="mt-6">
-                  <PriceBlock product={product} />
+              <div className="flex h-full flex-col overflow-hidden rounded-2xl border-2 border-gold/25 bg-navy/25">
+                {product.coverImage && (
+                  <div className="relative aspect-[16/10] w-full">
+                    <Image
+                      src={product.coverImage}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <div className="flex flex-1 flex-col p-8">
+                  <h3 className="font-display text-xl font-semibold">
+                    {product.name}
+                  </h3>
+                  <p className="mt-3 flex-1 text-sm text-text/75">
+                    {product.description}
+                  </p>
+                  <div className="mt-6">
+                    <PriceBlock product={product} />
+                  </div>
                 </div>
               </div>
             </SlideReveal>
