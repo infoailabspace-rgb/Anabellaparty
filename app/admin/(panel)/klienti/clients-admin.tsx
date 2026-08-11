@@ -112,7 +112,7 @@ export default function ClientsAdmin({ rows }: { rows: CRow[] }) {
     <div>
       <div className="mb-2 flex items-center justify-between">
         <h1 className="font-display text-2xl font-bold">Klienti</h1>
-        <button onClick={() => setList((l) => [...l, { id: null, name: "", logo_url: "", website: "", sort_order: l.length, is_active: true }])} className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black">+ Jauns</button>
+        <button onClick={() => setList((l) => [{ id: null, name: "", logo_url: "", website: "", sort_order: 0, is_active: true }, ...l])} className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black">+ Jauns</button>
       </div>
       <p className="mb-6 text-xs text-text/50">
         Logo: PNG (caurspīdīgs) vai SVG, ne JPEG. Velc ⠿, lai mainītu secību. Priekšskatījums uz navy fona rāda, vai logo tur lasās.
