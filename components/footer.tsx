@@ -9,35 +9,8 @@ export default async function Footer() {
   const linkCls = "transition-colors hover:text-gold";
   return (
     <footer className="border-t border-gold/30 bg-navy/40">
-      <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Zīmols + kontakti */}
-        <div>
-          <Image
-            src="/logo/logo-full.png"
-            alt="Anabella Party — Svētku inventārs"
-            width={500}
-            height={500}
-            className="h-24 w-auto"
-          />
-          <p className="mt-2 text-sm text-text/70">{t("description")}</p>
-          <ul className="mt-4 space-y-2 text-sm text-text/70">
-            <li>
-              <a href={COMPANY.contact.whatsapp} className={linkCls}>
-                {COMPANY.contact.phoneDisplay} (WhatsApp)
-              </a>
-            </li>
-            <li>
-              <a href={`mailto:${COMPANY.contact.email}`} className={linkCls}>
-                {COMPANY.contact.email}
-              </a>
-            </li>
-            <li>{fullAddress}</li>
-          </ul>
-          <div className="mt-4">
-            <SocialLinks />
-          </div>
-        </div>
-
+      {/* 3 satura kolonnas — vienādi izplatītas, virsraksti vienā Y-līnijā */}
+      <div className="mx-auto grid max-w-4xl gap-10 px-6 pb-10 pt-12 text-center sm:grid-cols-3 sm:text-left">
         {/* Pakalpojumi */}
         <div>
           <h4 className="font-display text-sm font-semibold text-text">
@@ -118,6 +91,40 @@ export default async function Footer() {
             </li>
           </ul>
         </div>
+      </div>
+
+      {/* Kontakti + sociālie — centrēti */}
+      <div className="mx-auto max-w-3xl border-t border-gold/10 px-6 py-8 text-center text-sm text-text/70">
+        <ul className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-8">
+          <li>
+            <a href={COMPANY.contact.whatsapp} className={linkCls}>
+              {COMPANY.contact.phoneDisplay} (WhatsApp)
+            </a>
+          </li>
+          <li>
+            <a href={`mailto:${COMPANY.contact.email}`} className={linkCls}>
+              {COMPANY.contact.email}
+            </a>
+          </li>
+          <li>{fullAddress}</li>
+        </ul>
+        <div className="mt-5 flex justify-center">
+          <SocialLinks />
+        </div>
+      </div>
+
+      {/* Logo — pašā apakšā, virs copyright rindas */}
+      <div className="flex flex-col items-center gap-3 px-6 pb-8">
+        <Image
+          src="/logo/logo-full.png"
+          alt="Anabella Party — Svētku inventārs"
+          width={500}
+          height={500}
+          className="h-20 w-auto"
+        />
+        <p className="max-w-md text-center text-xs text-text/50">
+          {t("description")}
+        </p>
       </div>
 
       <div className="border-t border-gold/10 py-4 text-center text-xs text-text/50">
