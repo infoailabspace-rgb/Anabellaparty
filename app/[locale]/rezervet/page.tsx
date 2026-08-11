@@ -90,8 +90,8 @@ export default async function RezervetPage() {
           {ts("rOrForm")}
         </div>
 
-        {/* Anketa */}
-        <BookingForm products={products} />
+        {/* Anketa. Kubli/pirts iet caur partneri (zvans) — ne kalkulatorā. */}
+        <BookingForm products={products.filter((p) => p.category !== "kubli")} />
       </div>
     </>
   );

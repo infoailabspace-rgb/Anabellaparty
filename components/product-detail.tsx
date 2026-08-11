@@ -72,7 +72,7 @@ export default async function ProductDetail({
                   href={`tel:+371${product.altPhone}`}
                   className="rounded-full bg-gold px-7 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
                 >
-                  {t("call", { phone: product.altPhone })}
+                  {t("call", { phone: `+371 ${product.altPhone}` })}
                 </a>
               ) : (
                 <Link

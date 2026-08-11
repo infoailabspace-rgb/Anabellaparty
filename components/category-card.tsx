@@ -34,6 +34,34 @@ export default async function CategoryCard({
   // DB attēls (admin "Lapas attēli") → statiskais fails (ja eksistē) → tīrs navy.
   const bgSrc = dbImage ?? (bgExists(category.bgImage) ? category.bgImage : null);
   const hasBg = !!bgSrc;
+
+  // "Drīzumā" kartīte (Izklaides punkts): nav klikšķināma, savs luxury gradienta
+  // fons (tā pati navy→bg→black + zelta radial tekstūra kā hero fonos), DRĪZUMĀ
+  // uzlīme stūrī, bez "apskatīt →".
+  if (category.comingSoon) {
+    return (
+      <div className="group relative isolate flex h-full cursor-default flex-col overflow-hidden rounded-2xl border border-gold/25 bg-navy/30 p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.25)]">
+        {/* Luxury tekstūra — tāpat kā SectionHero fonā */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-navy via-bg to-black" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_0%,rgba(212,169,96,0.16),transparent_60%)]" />
+        {/* DRĪZUMĀ uzlīme stūrī */}
+        <span className="absolute right-4 top-4 z-10 rounded-full border border-gold/40 bg-gold/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-gold">
+          {tc("comingSoonBadge")}
+        </span>
+        <Shimmer delay={index * 0.6} />
+        <IconBadge delay={index * 0.3}>
+          <Icon className="h-6 w-6" />
+        </IconBadge>
+        <h3 className="mt-5 font-display text-xl font-semibold text-text">
+          {tc(`${category.id}Name`)}
+        </h3>
+        <p className="mt-3 flex-1 text-sm text-text/70">
+          {tc(`${category.id}Desc`)}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <Link
       href={category.href}

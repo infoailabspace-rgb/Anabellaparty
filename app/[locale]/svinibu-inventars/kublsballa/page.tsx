@@ -56,7 +56,7 @@ export default async function KublsballaPage() {
                 href={`tel:+371${KUBLI_PHONE}`}
                 className="font-mono font-bold text-gold underline"
               >
-                {KUBLI_PHONE}
+                +371 {KUBLI_PHONE}
               </a>
               {ts("kbNotePost")}
             </p>
@@ -74,7 +74,7 @@ export default async function KublsballaPage() {
       <CtaSection
         title={ts("kbCtaTitle")}
         text={ts("kbCtaText")}
-        buttonLabel={ts("rCall") + " " + KUBLI_PHONE}
+        buttonLabel={ts("rCall") + " +371 " + KUBLI_PHONE}
         href={`tel:+371${KUBLI_PHONE}`}
       />
     </>

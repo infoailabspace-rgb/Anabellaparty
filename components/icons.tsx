@@ -92,8 +92,18 @@ export function IconDroplet(p: IconProps) {
   );
 }
 
+// Izklaides punkts (AI foto + spēles) — spēļu kontroliera ikona.
+export function IconGamepad(p: IconProps) {
+  return (
+    <svg {...base} {...p}>
+      <path d="M6 8h12a4 4 0 0 1 4 4v0a4 4 0 0 1-4 4h-1l-2-2H9l-2 2H6a4 4 0 0 1-4-4v0a4 4 0 0 1 4-4Z" />
+      <path d="M7 11v3M5.5 12.5h3M15.5 12h.01M18 13.5h.01" />
+    </svg>
+  );
+}
+
 export const categoryIcons: Record<
-  ProductCategory,
+  ProductCategory | "izklaides-punkts",
   (p: IconProps) => ReactNode
 > = {
   "foto-kaste": IconCamera,
@@ -102,6 +112,7 @@ export const categoryIcons: Record<
   specefekti: IconSparkles,
   deco: IconGlass,
   kubli: IconDroplet,
+  "izklaides-punkts": IconGamepad,
 };
 
 /* ── Animēts badge ── */

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { type Product } from "@/lib/products";
-import { homeCategories } from "@/lib/categories";
+import { bookingCategories } from "@/lib/categories";
 import { computeQuote, formatEur, type CartItem } from "@/lib/pricing";
 import { track, trackLead } from "@/lib/analytics";
 import {
@@ -82,7 +82,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
     "idle" | "loading" | "ok" | "error"
   >("idle");
   const [deliveryError, setDeliveryError] = useState("");
-  const [activeCat, setActiveCat] = useState(homeCategories[0].id);
+  const [activeCat, setActiveCat] = useState(bookingCategories[0].id);
   const [errors, setErrors] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -223,10 +223,6 @@ export default function BookingForm({ products }: { products: Product[] }) {
     );
   }
 
-  const kubliSelected = items.some(
-    (i) => bySlug(i.slug)?.category === "kubli",
-  );
-
   function validateStep(s: number): string[] {
     const e: string[] = [];
     if (s === 1 && items.length === 0) e.push(t("errPickItem"));
@@ -347,7 +343,6 @@ export default function BookingForm({ products }: { products: Product[] }) {
                 toggle={toggle}
                 patch={patch}
                 setAddOn={setAddOn}
-                kubliSelected={kubliSelected}
               />
             )}
             {step === 2 && (
@@ -444,7 +439,6 @@ function StepInventory({
   toggle,
   patch,
   setAddOn,
-  kubliSelected,
 }: {
   byCategory: (cat: string) => Product[];
   activeCat: string;
@@ -454,7 +448,6 @@ function StepInventory({
   toggle: (p: Product) => void;
   patch: (slug: string, partial: Partial<CartItem>) => void;
   setAddOn: (slug: string, name: string, qty: number) => void;
-  kubliSelected: boolean;
 }) {
   const t = useTranslations("booking");
   const tn = useTranslations("nav");
@@ -474,11 +467,11 @@ function StepInventory({
 
       {/* Kategoriju cilnes */}
       <div className="mt-5 flex flex-wrap gap-2">
-        {homeCategories.map((c) => (
+        {bookingCategories.map((c) => (
           <button
             key={c.id}
             type="button"
-            onClick={() => setActiveCat(c.id)}
+            onClick={() => setActiveCat(c.id as Product["category"])}
             className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors ${
               activeCat === c.id
                 ? "border-gold bg-gold text-black"
@@ -490,15 +483,6 @@ function StepInventory({
         ))}
       </div>
 
-      {kubliSelected && (
-        <p className="mt-5 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm text-text/85">
-          {t("kubliNotePre")}
-          <a href="tel:+37128286911" className="font-semibold text-gold">
-            28286911
-          </a>
-          {t("kubliNotePost")}
-        </p>
-      )}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {list.map((p) => {

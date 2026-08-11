@@ -58,7 +58,10 @@
     "decoName": "Deco / mēbeles",
     "decoDesc": "Šampanieša siena, LED uzraksti, dārza krēsli un citi svētku dekori.",
     "kubliName": "Kubli / pirts",
-    "kubliDesc": "VIP kubli un mobilā pirts (atrodas Jūrmalā, atsevišķs tālrunis)."
+    "kubliDesc": "VIP kubli un mobilā pirts (atrodas Jūrmalā, atsevišķs tālrunis).",
+    "izklaides-punktsName": "Izklaides punkts",
+    "izklaides-punktsDesc": "AI foto pārsteigumi un interaktīvas spēles jūsu pasākumam — drīzumā pieejams.",
+    "comingSoonBadge": "Drīzumā"
   },
   "steps": {
     "heading": "Kā tas notiek",

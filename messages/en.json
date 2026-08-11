@@ -58,7 +58,10 @@
     "decoName": "Decor / furniture",
     "decoDesc": "Champagne wall, LED signs, garden chairs and other party decor.",
     "kubliName": "Hot tubs / sauna",
-    "kubliDesc": "VIP hot tubs and a mobile sauna (located in Jūrmala, separate phone)."
+    "kubliDesc": "VIP hot tubs and a mobile sauna (located in Jūrmala, separate phone).",
+    "izklaides-punktsName": "Entertainment point",
+    "izklaides-punktsDesc": "AI photo surprises and interactive games for your event — coming soon.",
+    "comingSoonBadge": "Coming soon"
   },
   "steps": {
     "heading": "How it works",

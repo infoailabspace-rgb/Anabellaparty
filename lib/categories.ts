@@ -1,13 +1,15 @@
 import type { ProductCategory } from "@/lib/products";
 
 export type CategoryMeta = {
-  id: ProductCategory;
+  id: ProductCategory | "izklaides-punkts";
   name: string;
   short: string;
   description: string;
   href: string;
   /** Fona attēls (SOLIS1D). Rādīts tikai, ja fails reāli eksistē public/. */
   bgImage: string;
+  /** "Drīzumā" kartīte — nav klikšķināma, luxury gradienta fons, DRĪZUMĀ uzlīme. */
+  comingSoon?: boolean;
 };
 
 export const categoryMeta: Record<ProductCategory, CategoryMeta> = {
@@ -67,20 +69,38 @@ export const categoryMeta: Record<ProductCategory, CategoryMeta> = {
   },
 };
 
-// Home page — 6 kategorijas.
-export const homeCategories: CategoryMeta[] = [
+// "Izklaides punkts" — drīzumā (AI foto + spēles). Nav produktu kategorija,
+// nav klikšķināma; luxury gradienta fons + DRĪZUMĀ uzlīme.
+export const izklaidesPunkts: CategoryMeta = {
+  id: "izklaides-punkts",
+  name: "Izklaides punkts",
+  short: "Izklaides punkts",
+  description:
+    "AI foto pārsteigumi un interaktīvas spēles jūsu pasākumam — drīzumā pieejams.",
+  href: "#",
+  bgImage: "",
+  comingSoon: true,
+};
+
+// Kalkulators (/rezervet) — TIKAI pašapkalpošanās kategorijas (kubli izņemts:
+// tos apkalpo partneris atsevišķi, jāzvana).
+export const bookingCategories: CategoryMeta[] = [
   categoryMeta["foto-kaste"],
   categoryMeta.atrakcijas,
   categoryMeta["audio-video"],
   categoryMeta.specefekti,
   categoryMeta.deco,
-  categoryMeta.kubli,
 ];
 
-// /svinibu-inventars hub — 4 apakškategorijas.
+// Home page — 5 aktīvās kategorijas + Izklaides punkts (kubli aizvietots).
+export const homeCategories: CategoryMeta[] = [
+  ...bookingCategories,
+  izklaidesPunkts,
+];
+
+// /svinibu-inventars hub — 3 apakškategorijas (kubli izņemts no galerijas).
 export const inventarsSubcategories: CategoryMeta[] = [
   categoryMeta["audio-video"],
   categoryMeta.specefekti,
   categoryMeta.deco,
-  categoryMeta.kubli,
 ];
