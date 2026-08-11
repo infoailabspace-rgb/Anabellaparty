@@ -22,15 +22,16 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  /* clip (nevis hidden) — ierobežo horizontālo pārplūdi, BET neizveido ritināšanas
+     konteineru, tāpēc navbar position: sticky turpina strādāt. */
+  overflow-x: clip;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body), sans-serif;
-  /* Drošības tīkls pret horizontālo pārplūdi (pamatcēlonis labots navbar). */
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 ::selection {

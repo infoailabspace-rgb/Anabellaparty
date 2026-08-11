@@ -29,7 +29,7 @@ export default function SiteFrame({
   return (
     <>
       {navbar}
-      <main className="flex-1 overflow-x-hidden">{children}</main>
+      <main className="flex-1 overflow-x-clip">{children}</main>
       {footer}
       <ChatWidget />
     </>
