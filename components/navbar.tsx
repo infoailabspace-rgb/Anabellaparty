@@ -12,13 +12,11 @@ import {
   WhatsAppIcon,
 } from "@/components/social-icons";
 
-type NavLink = { href: string; label: string; external?: boolean; badge?: string; hint?: string };
-type NavItem = { label: string; href?: string; children?: NavLink[]; external?: boolean; badge?: string };
+type NavLink = { href?: string; label: string; external?: boolean; comingSoon?: boolean; badge?: string; hint?: string };
+type NavItem = { label: string; href?: string; children?: NavLink[]; external?: boolean; comingSoon?: boolean; badge?: string };
 
 const linkBase =
   "whitespace-nowrap rounded-full border px-4 py-2 text-[13px] xl:text-sm transition-colors duration-200";
-
-const AIPARTY_URL = "https://aiparty-infoailabspace-7279s-projects.vercel.app";
 
 export default function Navbar() {
   const t = useTranslations("nav");
@@ -81,7 +79,7 @@ export default function Navbar() {
       children: [
         { href: "/foto-kaste", label: t("fotoKastes") },
         { href: "/foto-kaste/ai-foto", label: t("aiFoto") },
-        { href: AIPARTY_URL, label: t("pasakumuStacija"), external: true, badge: t("jauns"), hint: t("pasakumuStacijaHint") },
+        { label: t("pasakumuStacija"), comingSoon: true, badge: t("drizuma"), hint: t("pasakumuStacijaHint") },
       ],
     },
     { label: t("atrakcijas"), href: "/piepusamas-atrakcijas" },
@@ -98,7 +96,7 @@ export default function Navbar() {
         { href: "/svinibu-inventars/kublsballa", label: t("kubli") },
       ],
     },
-    { label: t("pasakumuStacija"), href: AIPARTY_URL, external: true, badge: t("jauns") },
+    { label: t("pasakumuStacija"), comingSoon: true, badge: t("drizuma") },
     { label: t("musuDraugi"), href: "/musu-draugi" },
     { label: t("blogs"), href: "/blogs" },
     { label: t("kontakti"), href: "/kontakti" },
@@ -163,10 +161,25 @@ export default function Navbar() {
                   <div className="absolute left-0 top-full z-50 min-w-56 pt-3">
                     <div className="anabella-drop rounded-xl border border-gold/25 bg-navy p-2 shadow-2xl shadow-black/50">
                       {item.children.map((c) =>
-                        c.external ? (
+                        c.comingSoon ? (
+                          <div
+                            key={c.label}
+                            className="mt-1 block cursor-default whitespace-nowrap rounded-lg border-t border-gold/15 px-5 pb-2.5 pt-3 text-sm text-text/50"
+                          >
+                            <span className="flex items-center gap-2 font-semibold">
+                              {c.label}
+                              {c.badge && (
+                                <span className="rounded-full border border-gold/30 bg-gold/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-gold/80">
+                                  {c.badge}
+                                </span>
+                              )}
+                            </span>
+                            {c.hint && <span className="mt-0.5 block text-xs text-text/35">{c.hint}</span>}
+                          </div>
+                        ) : c.external ? (
                           <a
                             key={c.href}
-                            href={c.href}
+                            href={c.href!}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="mt-1 block whitespace-nowrap rounded-lg border-t border-gold/15 px-5 pb-2.5 pt-3 text-sm text-text/85 transition-colors hover:bg-gold hover:text-black"
@@ -185,7 +198,7 @@ export default function Navbar() {
                         ) : (
                           <Link
                             key={c.href}
-                            href={c.href}
+                            href={c.href!}
                             className="block whitespace-nowrap rounded-lg px-5 py-2.5 text-sm text-text/85 transition-colors hover:bg-gold hover:text-black"
                           >
                             {c.label}
@@ -196,6 +209,16 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
+            ) : item.comingSoon ? (
+              <span
+                key={item.label}
+                className={`${linkBase} flex cursor-default items-center gap-1.5 border-transparent text-text/45`}
+              >
+                {item.label}
+                {item.badge && (
+                  <span className="rounded-full border border-gold/30 bg-gold/10 px-1.5 py-0.5 text-[9px] font-bold uppercase text-gold/80">{item.badge}</span>
+                )}
+              </span>
             ) : item.external ? (
               <a
                 key={item.href}
@@ -276,10 +299,22 @@ export default function Navbar() {
                   </p>
                   <div className="mt-2 flex flex-col gap-2 pl-3">
                     {item.children.map((c) =>
-                      c.external ? (
+                      c.comingSoon ? (
+                        <div
+                          key={c.label}
+                          className="flex cursor-default items-center gap-2 font-semibold text-text/45"
+                        >
+                          {c.label}
+                          {c.badge && (
+                            <span className="rounded-full border border-gold/30 bg-gold/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-gold/80">
+                              {c.badge}
+                            </span>
+                          )}
+                        </div>
+                      ) : c.external ? (
                         <a
                           key={c.href}
-                          href={c.href}
+                          href={c.href!}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={close}
@@ -296,7 +331,7 @@ export default function Navbar() {
                       ) : (
                         <Link
                           key={c.href}
-                          href={c.href}
+                          href={c.href!}
                           onClick={close}
                           className="text-text/90 transition-colors hover:text-gold"
                         >
@@ -305,6 +340,16 @@ export default function Navbar() {
                       ),
                     )}
                   </div>
+                </div>
+              ) : item.comingSoon ? (
+                <div
+                  key={item.label}
+                  className="flex cursor-default items-center gap-2 py-2 font-semibold text-text/45"
+                >
+                  {item.label}
+                  {item.badge && (
+                    <span className="rounded-full border border-gold/30 bg-gold/10 px-1.5 py-0.5 text-[9px] font-bold uppercase text-gold/80">{item.badge}</span>
+                  )}
                 </div>
               ) : item.external ? (
                 <a

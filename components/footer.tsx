@@ -4,9 +4,6 @@ import { Link } from "@/i18n/navigation";
 import { SocialLinks } from "@/components/social-icons";
 import { COMPANY, legalLineShort, fullAddress } from "@/lib/company";
 
-const PASAKUMU_STACIJA_URL =
-  "https://aiparty-infoailabspace-7279s-projects.vercel.app";
-
 export default async function Footer() {
   const t = await getTranslations("footer");
   const linkCls = "transition-colors hover:text-gold";
@@ -62,16 +59,9 @@ export default async function Footer() {
                 {t("svinibuInventars")}
               </Link>
             </li>
-            <li>
-              <a
-                href={PASAKUMU_STACIJA_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={linkCls}
-              >
-                {t("pasakumuStacija")}{" "}
-                <span className="text-text/40">({t("drizuma")})</span>
-              </a>
+            <li className="cursor-default text-text/50">
+              {t("pasakumuStacija")}{" "}
+              <span className="text-text/40">({t("drizuma")})</span>
             </li>
           </ul>
         </div>
