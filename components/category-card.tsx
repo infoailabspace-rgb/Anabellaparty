@@ -35,18 +35,36 @@ export default async function CategoryCard({
   const bgSrc = dbImage ?? (bgExists(category.bgImage) ? category.bgImage : null);
   const hasBg = !!bgSrc;
 
-  // "Drīzumā" kartīte (Izklaides punkts): nav klikšķināma, savs luxury gradienta
-  // fons (tā pati navy→bg→black + zelta radial tekstūra kā hero fonos), DRĪZUMĀ
-  // uzlīme stūrī, bez "apskatīt →".
+  // "Drīzumā" kartīte (Izklaides punkts): pēc struktūras identiska parastajai
+  // (DB attēls + tumšinājums, ja ir; citādi luxury gradients). Atšķirība: nav
+  // klikšķināma un rāda DRĪZUMĀ uzlīmi, nevis "apskatīt →".
   if (category.comingSoon) {
     return (
       <div className="group relative isolate flex h-full cursor-default flex-col overflow-hidden rounded-2xl border border-gold/30 bg-navy p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.35)]">
-        {/* Luxury tekstūra — NECAURSPĪDĪGA, lai sekcijas fons nespīd cauri.
-            Dziļš navy diagonāls + zelta spotlight augšā (aiz ikonas) + maigs
-            zelta mirdzums apakšā → apzināts "drīzumā" panelis, ne tukšums. */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#1e4257] via-navy to-[#0a1a22]" />
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_-10%,rgba(212,169,96,0.30),transparent_55%)]" />
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_85%_110%,rgba(212,169,96,0.12),transparent_50%)]" />
+        {hasBg ? (
+          <>
+            {/* Augšupielādētais DB attēls kā fons + tumšinājums (kā aktīvām kartītēm) */}
+            <Image
+              src={bgSrc!}
+              alt=""
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              quality={55}
+              loading="lazy"
+              aria-hidden="true"
+              className="-z-10 object-cover"
+            />
+            <div className="absolute inset-0 -z-10 bg-bg/45" />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-t from-bg/90 via-bg/35 to-transparent" />
+          </>
+        ) : (
+          <>
+            {/* Fallback: luxury gradients, ja DB attēla nav */}
+            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#1e4257] via-navy to-[#0a1a22]" />
+            <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_-10%,rgba(212,169,96,0.30),transparent_55%)]" />
+            <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_85%_110%,rgba(212,169,96,0.12),transparent_50%)]" />
+          </>
+        )}
         {/* DRĪZUMĀ uzlīme stūrī */}
         <span className="absolute right-4 top-4 z-10 rounded-full border border-gold/40 bg-gold/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-gold">
           {tc("comingSoonBadge")}
