@@ -20,6 +20,7 @@ const linkBase =
 
 export default function Navbar() {
   const t = useTranslations("nav");
+  const tc = useTranslations("categories");
   const pathname = usePathname();
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
@@ -79,7 +80,7 @@ export default function Navbar() {
       children: [
         { href: "/foto-kaste", label: t("fotoKastes") },
         { href: "/foto-kaste/ai-foto", label: t("aiFoto") },
-        { label: t("pasakumuStacija"), comingSoon: true, badge: t("drizuma"), hint: t("pasakumuStacijaHint") },
+        { label: tc("izklaides-punktsName"), comingSoon: true, badge: t("drizuma"), hint: t("izklaidesPunktsHint") },
       ],
     },
     { label: t("atrakcijas"), href: "/piepusamas-atrakcijas" },
@@ -96,7 +97,7 @@ export default function Navbar() {
         { href: "/svinibu-inventars/kublsballa", label: t("kubli") },
       ],
     },
-    { label: t("pasakumuStacija"), comingSoon: true, badge: t("drizuma") },
+    { label: tc("izklaides-punktsName"), comingSoon: true, badge: t("drizuma") },
     { label: t("musuDraugi"), href: "/musu-draugi" },
     { label: t("blogs"), href: "/blogs" },
     { label: t("kontakti"), href: "/kontakti" },
