@@ -125,12 +125,12 @@ export default function Navbar() {
             width={500}
             height={500}
             priority
-            className="h-12 w-auto md:h-16"
+            className="h-14 w-auto md:h-20"
           />
         </Link>
 
-        {/* Desktop */}
-        <div className="ml-10 hidden items-center gap-1 lg:flex">
+        {/* Desktop (xl+; zem tā — hamburgeris, lai nerastos horizontālā pārplūde) */}
+        <div className="ml-6 hidden items-center gap-1 xl:flex">
           {nav.map((item) => {
             const active = isActive(item);
             return item.children ? (
@@ -257,7 +257,7 @@ export default function Navbar() {
           <LocaleSwitcher className="ml-6 border-l border-gold/20 pl-6" />
           <NavSocials
             reduce={!!reduce}
-            className="ml-4 hidden border-l border-gold/20 pl-4 xl:flex"
+            className="ml-4 hidden border-l border-gold/20 pl-4 2xl:flex"
           />
         </div>
 
@@ -267,7 +267,7 @@ export default function Navbar() {
           aria-label={t("izvelne")}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex flex-col gap-1.5 lg:hidden"
+          className="flex flex-col gap-1.5 xl:hidden"
         >
           <span
             className={`h-0.5 w-6 bg-gold transition-transform ${
@@ -289,7 +289,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-gold/20 bg-bg/95 px-6 py-4 lg:hidden">
+        <div className="border-t border-gold/20 bg-bg/95 px-6 py-4 xl:hidden">
           <div className="flex flex-col gap-1">
             {nav.map((item) =>
               item.children ? (

@@ -22,12 +22,15 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body), sans-serif;
+  /* Drošības tīkls pret horizontālo pārplūdi (pamatcēlonis labots navbar). */
+  overflow-x: hidden;
 }
 
 ::selection {
