@@ -15,6 +15,7 @@ import DeliveryNote from "@/components/delivery-note";
 import CtaSection from "@/components/cta-section";
 import EventGallery from "@/components/event-gallery";
 import { getGallery } from "@/lib/site-data";
+import { getSiteImage } from "@/lib/site-content";
 import Reveal from "@/components/reveal";
 import { pageMetadata } from "@/lib/seo";
 
@@ -32,12 +33,13 @@ const mainSlugs = ["spogulis", "ozols", "instagram"];
 export const revalidate = 300;
 
 export default async function FotoKastePage() {
-  const [products, t, ts, locale, gallery] = await Promise.all([
+  const [products, t, ts, locale, gallery, framesImage] = await Promise.all([
     getAllProducts(),
     getTranslations("pages"),
     getTranslations("sec"),
     getLocale(),
     getGallery("foto-kaste"),
+    getSiteImage("foto-kaste.frames"),
   ]);
   const fkProducts = products.filter((p) => p.category === "foto-kaste");
   const boxes = mainSlugs
@@ -179,10 +181,22 @@ export default async function FotoKastePage() {
               </h2>
               <p className="mt-4 text-text/80">{ts("fkFramesText")}</p>
             </div>
-            <ImagePlaceholder
-              label={ts("fkFramesTitle")}
-              className="aspect-[4/3] w-full"
-            />
+            {framesImage ? (
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-gold/15">
+                <Image
+                  src={framesImage}
+                  alt={ts("fkFramesTitle")}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              </div>
+            ) : (
+              <ImagePlaceholder
+                label={ts("fkFramesTitle")}
+                className="aspect-[4/3] w-full"
+              />
+            )}
           </div>
         </SlideReveal>
 

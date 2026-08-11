@@ -41,6 +41,7 @@ const PAGE_IMAGE_KEYS = [
   "category.specefekti",
   "category.deco",
   "category.izklaides-punkts",
+  "foto-kaste.frames",
 ];
 
 export async function saveSiteImage(key: string, url: string | null) {

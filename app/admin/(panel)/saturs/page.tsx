@@ -78,6 +78,7 @@ export default async function SatursPage() {
     "category.specefekti": imgUrl("category.specefekti"),
     "category.deco": imgUrl("category.deco"),
     "category.izklaides-punkts": imgUrl("category.izklaides-punkts"),
+    "foto-kaste.frames": imgUrl("foto-kaste.frames"),
   };
 
   return (

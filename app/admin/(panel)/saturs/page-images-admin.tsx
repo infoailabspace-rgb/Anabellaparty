@@ -133,6 +133,7 @@ export default function PageImagesAdmin({
     { key: "category.specefekti", label: "Kategorija — Specefekti", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
     { key: "category.deco", label: "Kategorija — Deco", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
     { key: "category.izklaides-punkts", label: "Kategorija — Izklaides punkts", help: "Fona attēls kartītei, kad 'Izklaides punkts' būs aktīvs. Pašlaik (drīzumā režīmā) kartīte rāda luxury gradientu, tāpēc attēls netiek izmantots, kamēr produkts nav ieslēgts.", fallback: null },
+    { key: "foto-kaste.frames", label: "Foto kastes — Rāmīšu dizaini", help: "Attēls /foto-kaste lapas 'Foto rāmīšu dizaini' blokā. Tukšs → placeholder kā tagad.", fallback: null },
   ];
   return (
     <div className="mt-10">
