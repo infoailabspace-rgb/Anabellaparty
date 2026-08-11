@@ -185,13 +185,14 @@ export async function deleteOverride(key: string) {
 /* ── Partneri (Mūsu draugi) ── */
 export async function upsertPartner(
   id: string | null,
-  d: { name: string; description: ML; url: string; sort_order: number; is_active: boolean },
+  d: { name: string; description: ML; url: string; logo_url: string; sort_order: number; is_active: boolean },
 ) {
   const supabase = await createClient();
   const row = {
     name: d.name,
     description: d.description,
     url: d.url || null,
+    logo_url: d.logo_url || null,
     sort_order: d.sort_order,
     is_active: d.is_active,
   };

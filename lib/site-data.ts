@@ -101,6 +101,7 @@ export async function getPartners(): Promise<Partner[]> {
           name: r.name,
           description: pickStr(r.description, locale),
           url: r.url ?? undefined,
+          logoUrl: r.logo_url ?? undefined,
         }));
     } catch {
       /* fallback */

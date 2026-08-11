@@ -59,6 +59,16 @@ export default async function MusuDraugiPage() {
             {partners.map((p, i) => (
               <Reveal key={p.name} delay={i * 0.08}>
                 <div className="flex h-full flex-col rounded-2xl border-2 border-gold/25 bg-navy/25 p-6">
+                  {p.logoUrl && (
+                    <div className="mb-4 flex h-20 items-center justify-start">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={p.logoUrl}
+                        alt={p.name}
+                        className="max-h-20 max-w-[70%] object-contain"
+                      />
+                    </div>
+                  )}
                   <h2 className="font-display text-lg font-semibold text-gold">
                     {p.name}
                   </h2>

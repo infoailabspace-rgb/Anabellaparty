@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { upsertPartner, deletePartner } from "../site-actions";
+import { uploadLogo } from "@/components/admin/image-uploader";
 
 type ML = { lv: string; en: string; ru: string };
 export type PRow = {
@@ -9,11 +10,13 @@ export type PRow = {
   name: string;
   description: ML;
   url: string;
+  logo_url: string;
   sort_order: number;
   is_active: boolean;
 };
 
 const LANGS: (keyof ML)[] = ["lv", "en", "ru"];
+const ACCEPT = "image/svg+xml,image/png,image/webp,image/jpeg";
 const field =
   "w-full rounded-lg border border-gold/25 bg-bg/60 px-3 py-2 text-sm text-text outline-none focus:border-gold";
 
@@ -34,9 +37,23 @@ function Card({
 }) {
   const [pending, start] = useTransition();
   const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const set = (p: Partial<PRow>) => onChange({ ...row, ...p });
   const setDesc = (l: keyof ML, s: string) =>
     onChange({ ...row, description: { ...row.description, [l]: s } });
+
+  async function upload(file: File) {
+    setBusy(true);
+    setMsg("");
+    try {
+      const url = await uploadLogo(file, row.name.trim() || "partner");
+      set({ logo_url: url });
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : "Kļūda");
+    }
+    setBusy(false);
+  }
 
   return (
     <div className="rounded-2xl border border-gold/25 bg-navy/30 p-4">
@@ -48,6 +65,21 @@ function Card({
         <input placeholder="Nosaukums (īpašvārds)" value={row.name} onChange={(e) => set({ name: e.target.value })} className={`${field} flex-1`} />
         <input placeholder="Saite (URL, neobligāta)" value={row.url} onChange={(e) => set({ url: e.target.value })} className={`${field} w-64`} />
         <label className="flex shrink-0 items-center gap-1 text-xs"><input type="checkbox" checked={row.is_active} onChange={(e) => set({ is_active: e.target.checked })} className="accent-[#D4A960]" /> Aktīvs</label>
+      </div>
+      <div className="mt-3 flex items-center gap-3">
+        <div className="flex h-14 w-28 shrink-0 items-center justify-center rounded border border-gold/20 bg-navy">
+          {row.logo_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={row.logo_url} alt="" className="max-h-12 max-w-full object-contain" />
+          ) : (
+            <span className="text-[10px] text-text/40">nav attēla</span>
+          )}
+        </div>
+        <button type="button" onClick={() => inputRef.current?.click()} disabled={busy} className="rounded-lg border border-gold/40 px-3 py-2 text-xs text-gold disabled:opacity-60">
+          {busy ? "…" : "Pievienot attēlu"}
+        </button>
+        <input ref={inputRef} type="file" accept={ACCEPT} hidden onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
+        <span className="text-xs text-text/40">Logo/attēls — PNG (caurspīdīgs), SVG vai JPG</span>
       </div>
       <div className="mt-3 space-y-2">
         {LANGS.map((l) => (
@@ -92,7 +124,7 @@ export default function PartnersAdmin({ rows }: { rows: PRow[] }) {
     <div>
       <div className="mb-2 flex items-center justify-between">
         <h1 className="font-display text-2xl font-bold">Partneri (Mūsu draugi)</h1>
-        <button onClick={() => setList((l) => [...l, { id: null, name: "", description: { lv: "", en: "", ru: "" }, url: "", sort_order: l.length, is_active: true }])} className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black">+ Jauns</button>
+        <button onClick={() => setList((l) => [...l, { id: null, name: "", description: { lv: "", en: "", ru: "" }, url: "", logo_url: "", sort_order: l.length, is_active: true }])} className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black">+ Jauns</button>
       </div>
       <p className="mb-6 text-xs text-text/50">
         Nosaukums netiek tulkots (īpašvārds). Apraksts trīs valodās — tukšs EN/RU rāda LV. Bultiņas maina secību. Kamēr saraksts tukšs, lapa rāda godīgu tukšā stāvokļa paziņojumu.

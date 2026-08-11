@@ -19,6 +19,7 @@ export default async function PartneriPage() {
       ru: r.description?.ru ?? "",
     },
     url: r.url ?? "",
+    logo_url: r.logo_url ?? "",
     sort_order: r.sort_order ?? 0,
     is_active: r.is_active,
   }));
