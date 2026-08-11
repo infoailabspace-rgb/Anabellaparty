@@ -4,11 +4,16 @@ import { Link } from "@/i18n/navigation";
 import { SocialLinks } from "@/components/social-icons";
 import { COMPANY, legalLineShort, fullAddress } from "@/lib/company";
 
+const PASAKUMU_STACIJA_URL =
+  "https://aiparty-infoailabspace-7279s-projects.vercel.app";
+
 export default async function Footer() {
   const t = await getTranslations("footer");
+  const linkCls = "transition-colors hover:text-gold";
   return (
     <footer className="border-t border-gold/30 bg-navy/40">
-      <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 sm:grid-cols-3">
+      <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Zīmols + kontakti */}
         <div>
           <Image
             src="/logo/logo-full.png"
@@ -18,92 +23,108 @@ export default async function Footer() {
             className="h-24 w-auto"
           />
           <p className="mt-2 text-sm text-text/70">{t("description")}</p>
-        </div>
-
-        <div>
-          <h4 className="font-display text-sm font-semibold text-text">
-            {t("kontakti")}
-          </h4>
-          <ul className="mt-3 space-y-2 text-sm text-text/70">
+          <ul className="mt-4 space-y-2 text-sm text-text/70">
             <li>
-              <a
-                href={COMPANY.contact.whatsapp}
-                className="transition-colors hover:text-gold"
-              >
+              <a href={COMPANY.contact.whatsapp} className={linkCls}>
                 {COMPANY.contact.phoneDisplay} (WhatsApp)
               </a>
             </li>
             <li>
-              <a
-                href={`mailto:${COMPANY.contact.email}`}
-                className="transition-colors hover:text-gold"
-              >
+              <a href={`mailto:${COMPANY.contact.email}`} className={linkCls}>
                 {COMPANY.contact.email}
               </a>
             </li>
             <li>{fullAddress}</li>
           </ul>
+          <div className="mt-4">
+            <SocialLinks />
+          </div>
         </div>
 
+        {/* Pakalpojumi */}
         <div>
           <h4 className="font-display text-sm font-semibold text-text">
-            {t("informacija")}
+            {t("pakalpojumi")}
           </h4>
           <ul className="mt-3 space-y-2 text-sm text-text/70">
             <li>
-              <Link href="/faq" className="transition-colors hover:text-gold">
-                {t("faq")}
+              <Link href="/foto-kaste" className={linkCls}>
+                {t("fotoKastes")}
               </Link>
             </li>
             <li>
-              <Link
-                href="/musu-draugi"
-                className="transition-colors hover:text-gold"
-              >
-                {t("musuDraugi")}
+              <Link href="/piepusamas-atrakcijas" className={linkCls}>
+                {t("atrakcijas")}
               </Link>
             </li>
             <li>
-              <Link href="/blogs" className="transition-colors hover:text-gold">
-                {t("blogs")}
+              <Link href="/svinibu-inventars" className={linkCls}>
+                {t("svinibuInventars")}
               </Link>
             </li>
             <li>
               <a
-                href="https://aiparty-infoailabspace-7279s-projects.vercel.app"
+                href={PASAKUMU_STACIJA_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-gold"
+                className={linkCls}
               >
-                Pasākumu Stacija
+                {t("pasakumuStacija")}{" "}
+                <span className="text-text/40">({t("drizuma")})</span>
               </a>
             </li>
+          </ul>
+        </div>
+
+        {/* Uzņēmums */}
+        <div>
+          <h4 className="font-display text-sm font-semibold text-text">
+            {t("uznemums")}
+          </h4>
+          <ul className="mt-3 space-y-2 text-sm text-text/70">
             <li>
-              <Link
-                href="/noteikumi"
-                className="transition-colors hover:text-gold"
-              >
+              <Link href="/musu-draugi" className={linkCls}>
+                {t("musuDraugi")}
+              </Link>
+            </li>
+            <li>
+              <Link href="/blogs" className={linkCls}>
+                {t("blogs")}
+              </Link>
+            </li>
+            <li>
+              <Link href="/faq" className={linkCls}>
+                {t("faq")}
+              </Link>
+            </li>
+            <li>
+              <Link href="/kontakti" className={linkCls}>
+                {t("kontakti")}
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Juridiski */}
+        <div>
+          <h4 className="font-display text-sm font-semibold text-text">
+            {t("juridiski")}
+          </h4>
+          <ul className="mt-3 space-y-2 text-sm text-text/70">
+            <li>
+              <Link href="/noteikumi" className={linkCls}>
                 {t("noteikumi")}
               </Link>
             </li>
             <li>
-              <Link
-                href="/privatuma-politika"
-                className="transition-colors hover:text-gold"
-              >
+              <Link href="/privatuma-politika" className={linkCls}>
                 {t("privatums")}
               </Link>
             </li>
             <li>
-              <Link
-                href="/sikdatnu-politika"
-                className="transition-colors hover:text-gold"
-              >
+              <Link href="/sikdatnu-politika" className={linkCls}>
                 {t("sikdatnes")}
               </Link>
-            </li>
-            <li className="pt-2">
-              <SocialLinks />
             </li>
           </ul>
         </div>
