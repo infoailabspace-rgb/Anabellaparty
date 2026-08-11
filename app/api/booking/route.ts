@@ -21,6 +21,22 @@ function eur(n: number) {
   return Number.isInteger(n) ? `${n} €` : `${n.toFixed(2)} €`;
 }
 
+function clientIp(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  return req.headers.get("x-real-ip") || "unknown";
+}
+
+// HTML escaping — lietotāja ievade nedrīkst injicēt HTML e-pasta šablonā.
+function esc(s: unknown): string {
+  return String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function summaryHtml(
   payload: BookingPayload,
   products: Product[],
@@ -32,7 +48,7 @@ function summaryHtml(
   const rows = quote.lines
     .map(
       (l) =>
-        `<tr><td style="padding:4px 8px;">${l.name} (${l.tierLabel})</td><td style="padding:4px 8px;text-align:right;">${
+        `<tr><td style="padding:4px 8px;">${esc(l.name)} (${esc(l.tierLabel)})</td><td style="padding:4px 8px;text-align:right;">${
           l.contactOnly ? "vienojoties" : eur(l.lineTotal)
         }</td></tr>`,
     )
@@ -44,11 +60,11 @@ function summaryHtml(
   <div style="font-family:Arial,sans-serif;background:${NAVY};color:#F5F5F0;padding:24px;border-radius:12px;max-width:600px;">
     <div style="text-align:center;margin-bottom:12px;"><img src="${SITE_URL}/logo/logo-full.png" width="200" alt="Anabella Party — Svētku inventārs" style="max-width:200px;height:auto;" /></div>
     <h2 style="color:${GOLD};margin:0 0 12px;">Anabella Party — pieteikuma kopsavilkums</h2>
-    <p style="margin:4px 0;"><b>Datums:</b> ${e.date}${e.time ? " " + e.time : ""}</p>
-    <p style="margin:4px 0;"><b>Veids:</b> ${e.type}</p>
-    <p style="margin:4px 0;"><b>Vieta:</b> ${e.location}</p>
-    ${d?.address ? `<p style="margin:4px 0;"><b>Piegādes adrese:</b> ${d.address}${d.km ? ` (~${d.km} km)` : ""}</p>` : ""}
-    ${e.guestCount ? `<p style="margin:4px 0;"><b>Viesi:</b> ${e.guestCount}</p>` : ""}
+    <p style="margin:4px 0;"><b>Datums:</b> ${esc(e.date)}${e.time ? " " + esc(e.time) : ""}</p>
+    <p style="margin:4px 0;"><b>Veids:</b> ${esc(e.type)}</p>
+    <p style="margin:4px 0;"><b>Vieta:</b> ${esc(e.location)}</p>
+    ${d?.address ? `<p style="margin:4px 0;"><b>Piegādes adrese:</b> ${esc(d.address)}${d.km ? ` (~${esc(d.km)} km)` : ""}</p>` : ""}
+    ${e.guestCount ? `<p style="margin:4px 0;"><b>Viesi:</b> ${esc(e.guestCount)}</p>` : ""}
     <table style="width:100%;border-collapse:collapse;margin-top:12px;border-top:1px solid ${GOLD};">${rows}</table>
     <p style="margin:12px 0 2px;text-align:right;">Inventārs: ${eur(subtotal)}</p>
     <p style="margin:0 0 2px;text-align:right;">Piegāde: ${deliveryCost > 0 ? eur(deliveryCost) : "bez maksas"}</p>
@@ -75,15 +91,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, errors }, { status: 400 });
   }
 
-  // 2. Cenu pārrēķina servera pusē (produkti no DB)
-  const products = await getAllProducts();
-  const quote = computeQuote(payload.items, products);
-  const phone = normalizePhone(payload.contact.phone);
-  const deliveryCost = Math.max(0, Number(payload.delivery?.cost) || 0);
-  const deliveryKm = Number(payload.delivery?.km) || null;
-  const deposit = computeDeposit(quote.subtotal, deliveryCost);
-
-  // 3. Ieraksta Supabase
+  // 2. Datubāze + rate-limit (pirms smaga darba). 5 pieteikumi / IP / 10 min.
+  //    Aptur gan spam, gan biežu tiešo REST insert apiešanu (RLS insert=true).
   const supabase = getSupabaseServer();
   if (!supabase) {
     return NextResponse.json(
@@ -91,6 +100,29 @@ export async function POST(req: Request) {
       { status: 503 },
     );
   }
+  const ip = clientIp(req);
+  const { data: rateOk, error: rateErr } = await supabase.rpc(
+    "check_booking_rate",
+    { p_ip: ip, p_limit: 5, p_window: "10 minutes" },
+  );
+  if (!rateErr && rateOk === false) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "Pārāk daudz pieteikumu īsā laikā. Pamēģini pēc brīža vai zvani +371 29222761.",
+      },
+      { status: 429 },
+    );
+  }
+
+  // 3. Cenu pārrēķina servera pusē (produkti no DB)
+  const products = await getAllProducts();
+  const quote = computeQuote(payload.items, products);
+  const phone = normalizePhone(payload.contact.phone);
+  const deliveryCost = Math.max(0, Number(payload.delivery?.cost) || 0);
+  const deliveryKm = Number(payload.delivery?.km) || null;
+  const deposit = computeDeposit(quote.subtotal, deliveryCost);
 
   const guestCount =
     payload.event.guestCount != null && payload.event.guestCount !== ""
@@ -145,7 +177,7 @@ export async function POST(req: Request) {
         to: notify,
         replyTo: payload.contact.email.trim(),
         subject: `Jauns pieteikums — ${payload.event.date} — ${payload.contact.name}`,
-        html: `<p style="font-family:Arial,sans-serif;">Jauns rezervācijas pieteikums no <b>${payload.contact.name}</b> (${phone}, ${payload.contact.email}).</p>${html}`,
+        html: `<p style="font-family:Arial,sans-serif;">Jauns rezervācijas pieteikums no <b>${esc(payload.contact.name)}</b> (${esc(phone)}, ${esc(payload.contact.email)}).</p>${html}`,
       });
 
       // Klientam
@@ -153,7 +185,7 @@ export async function POST(req: Request) {
         from,
         to: payload.contact.email.trim(),
         subject: "Tavs pieteikums saņemts — Anabella Party",
-        html: `<p style="font-family:Arial,sans-serif;">Paldies, ${payload.contact.name}! Tavs pieteikums saņemts. Atbildēsim 24 stundu laikā ar precīzu piedāvājumu. Ja steidz — zvani +371 29222761.</p>${html}`,
+        html: `<p style="font-family:Arial,sans-serif;">Paldies, ${esc(payload.contact.name)}! Tavs pieteikums saņemts. Atbildēsim 24 stundu laikā ar precīzu piedāvājumu. Ja steidz — zvani +371 29222761.</p>${html}`,
       });
     } catch {
       // E-pasta kļūme nedrīkst apturēt pieteikumu — tas jau saglabāts.
