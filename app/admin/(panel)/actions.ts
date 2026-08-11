@@ -18,6 +18,26 @@ export async function setStatus(id: string, status: string) {
   revalidatePath("/admin/kalendars");
 }
 
+export async function deleteBooking(id: string) {
+  const supabase = await createClient();
+  // Papildu aizsardzība (RLS jau prasa is_admin, bet dzēšana ir neatgriezeniska).
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Nav autorizēts." };
+  const { data: isAdmin } = await supabase.rpc("is_admin");
+  if (!isAdmin) return { error: "Nav piekļuves." };
+
+  const { error } = await supabase
+    .from("booking_requests")
+    .delete()
+    .eq("id", id);
+  if (error) return { error: error.message };
+  revalidatePath("/admin");
+  revalidatePath("/admin/kalendars");
+  return { ok: true };
+}
+
 export async function saveNotes(id: string, notes: string) {
   const supabase = await createClient();
   await supabase

@@ -5,7 +5,15 @@ import { useMemo, useState, useTransition } from "react";
 import { computeQuote } from "@/lib/pricing";
 import type { Product } from "@/lib/products";
 import { STATUSES, urgency, type Booking } from "@/lib/admin";
-import { setStatus } from "./actions";
+import { setStatus, deleteBooking } from "./actions";
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden>
+      <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13M10 11v6M14 11v6" />
+    </svg>
+  );
+}
 
 const URGENCY_RING: Record<string, string> = {
   red: "border-l-4 border-l-red-500",
@@ -56,6 +64,19 @@ export default function BookingsTable({
     setRows((r) => r.map((b) => (b.id === id ? { ...b, status } : b)));
     startTransition(() => {
       setStatus(id, status);
+    });
+  }
+
+  function remove(b: Booking) {
+    if (
+      !confirm(
+        `Vai tiešām dzēst pieteikumu no ${b.name}? Šo darbību nevar atsaukt.`,
+      )
+    )
+      return;
+    setRows((r) => r.filter((x) => x.id !== b.id)); // optimistiski — pazūd uzreiz
+    startTransition(() => {
+      deleteBooking(b.id);
     });
   }
 
@@ -143,17 +164,28 @@ export default function BookingsTable({
                     {total} €{b.final_total != null ? " ✓" : ""}
                   </td>
                   <td className="p-3">
-                    <select
-                      value={b.status}
-                      onChange={(e) => changeStatus(b.id, e.target.value)}
-                      className="rounded-lg border border-gold/25 bg-navy/40 px-2 py-1 text-xs text-text outline-none focus:border-gold"
-                    >
-                      {STATUSES.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={b.status}
+                        onChange={(e) => changeStatus(b.id, e.target.value)}
+                        className="rounded-lg border border-gold/25 bg-navy/40 px-2 py-1 text-xs text-text outline-none focus:border-gold"
+                      >
+                        {STATUSES.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.label}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => remove(b)}
+                        title="Dzēst pieteikumu"
+                        aria-label={`Dzēst pieteikumu no ${b.name}`}
+                        className="shrink-0 rounded-lg border border-red-500/40 p-1.5 text-red-300 transition-colors hover:bg-red-500/10 hover:text-red-200"
+                      >
+                        <TrashIcon />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );
