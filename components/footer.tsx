@@ -114,6 +114,17 @@ export default async function Footer() {
         <p>
           © {new Date().getFullYear()} Anabella Party. {t("visasTiesibas")}
         </p>
+        <p className="mt-1 text-[10px] text-text/40">
+          {t("izstradaja")}:{" "}
+          <a
+            href="https://ai-labspace.eu"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline-offset-2 transition-colors hover:text-gold hover:underline"
+          >
+            AI-Lab Space
+          </a>
+        </p>
       </div>
     </footer>
   );
