@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { upsertPartner, deletePartner } from "../site-actions";
-import { uploadLogo } from "@/components/admin/image-uploader";
+import { uploadImage } from "@/components/admin/image-uploader";
 
 type ML = { lv: string; en: string; ru: string };
 export type PRow = {
@@ -16,7 +16,7 @@ export type PRow = {
 };
 
 const LANGS: (keyof ML)[] = ["lv", "en", "ru"];
-const ACCEPT = "image/svg+xml,image/png,image/webp,image/jpeg";
+const ACCEPT = "image/png,image/webp,image/jpeg";
 const field =
   "w-full rounded-lg border border-gold/25 bg-bg/60 px-3 py-2 text-sm text-text outline-none focus:border-gold";
 
@@ -47,7 +47,14 @@ function Card({
     setBusy(true);
     setMsg("");
     try {
-      const url = await uploadLogo(file, row.name.trim() || "partner");
+      // FOTO (ne logo): pilna izmēra augšupielāde (līdz 1600px), lai neizplūst
+      // lielajā kartītes attēlā. uploadImage saspiež uz JPEG, saglabā kvalitāti.
+      const slug =
+        (row.name.trim() || "partner")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "") || "partner";
+      const url = await uploadImage(file, "product-images", `partners/${slug}`, 1600);
       set({ logo_url: url });
     } catch (e) {
       setMsg(e instanceof Error ? e.message : "Kļūda");
@@ -67,19 +74,19 @@ function Card({
         <label className="flex shrink-0 items-center gap-1 text-xs"><input type="checkbox" checked={row.is_active} onChange={(e) => set({ is_active: e.target.checked })} className="accent-[#D4A960]" /> Aktīvs</label>
       </div>
       <div className="mt-3 flex items-center gap-3">
-        <div className="flex h-14 w-28 shrink-0 items-center justify-center rounded border border-gold/20 bg-navy">
+        <div className="relative flex h-20 w-32 shrink-0 items-center justify-center overflow-hidden rounded border border-gold/20 bg-navy">
           {row.logo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={row.logo_url} alt="" className="max-h-12 max-w-full object-contain" />
+            <img src={row.logo_url} alt="" className="h-full w-full object-cover" />
           ) : (
             <span className="text-[10px] text-text/40">nav attēla</span>
           )}
         </div>
         <button type="button" onClick={() => inputRef.current?.click()} disabled={busy} className="rounded-lg border border-gold/40 px-3 py-2 text-xs text-gold disabled:opacity-60">
-          {busy ? "…" : "Pievienot attēlu"}
+          {busy ? "…" : "Pievienot foto"}
         </button>
         <input ref={inputRef} type="file" accept={ACCEPT} hidden onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
-        <span className="text-xs text-text/40">Logo/attēls — PNG (caurspīdīgs), SVG vai JPG</span>
+        <span className="text-xs text-text/40">Foto — JPG/PNG/WEBP, augsta kvalitāte (līdz 10 MB)</span>
       </div>
       <div className="mt-3 space-y-2">
         {LANGS.map((l) => (
