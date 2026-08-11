@@ -56,7 +56,7 @@ export default async function Home() {
         accent={g("home.hero.accent", "ballītes")}
         subtitle={g(
           "home.hero.subtitle",
-          "Foto kastes, piepūšamās atrakcijas un specefekti Tavam pasākumam. Piegāde Pierīgā bez maksas.",
+          "Foto kastes, piepūšamās atrakcijas un specefekti Tavam pasākumam. Piegāde visā Latvijā.",
         )}
       />
 

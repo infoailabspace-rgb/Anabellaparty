@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(SITE_URL),
     title: "Anabella Party — Pasākumu inventāra noma Latvijā",
     description:
-      "Foto kastes, piepūšamās atrakcijas, specefekti un audio grāmata Tavai neaizmirstamai ballītei. Piegāde Ķekavas novadā bez maksas.",
+      "Foto kastes, piepūšamās atrakcijas, specefekti un audio grāmata Tavai neaizmirstamai ballītei. Piegāde visā Latvijā.",
     ...(ogFallback
       ? { openGraph: { images: [{ url: ogFallback, width: 1200, height: 630 }] } }
       : {}),

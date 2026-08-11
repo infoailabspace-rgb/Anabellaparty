@@ -59,9 +59,9 @@ const HOME_TITLE: Record<string, string> = {
   ru: "Аренда праздничного инвентаря в Латвии",
 };
 const HOME_DESC: Record<string, string> = {
-  lv: "Foto kastes, piepūšamās atrakcijas, specefekti un audio grāmata Tavai neaizmirstamai ballītei. Piegāde Ķekavas novadā bez maksas.",
-  en: "Photo booths, inflatables, special effects and an audio guest book for your unforgettable party. Free delivery in Ķekava municipality.",
-  ru: "Фотобудки, надувные аттракционы, спецэффекты и аудио гостевая книга для вашей незабываемой вечеринки. Бесплатная доставка в Кекавском крае.",
+  lv: "Foto kastes, piepūšamās atrakcijas, specefekti un audio grāmata Tavai neaizmirstamai ballītei. Piegāde visā Latvijā.",
+  en: "Photo booths, inflatables, special effects and an audio guest book for your unforgettable party. Delivery across Latvia.",
+  ru: "Фотобудки, надувные аттракционы, спецэффекты и аудио гостевая книга для вашей незабываемой вечеринки. Доставка по всей Латвии.",
 };
 
 // Sākumlapas metadata — zīmola virsraksts + OG (tagline fallback, bez per-lapas virsraksta).

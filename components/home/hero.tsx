@@ -11,7 +11,7 @@ export default function Hero({
   media,
   title = "Neaizmirstamas ballītes sākas šeit",
   accent = "ballītes",
-  subtitle = "Foto kastes, piepūšamās atrakcijas un specefekti Tavam pasākumam. Piegāde Pierīgā bez maksas.",
+  subtitle = "Foto kastes, piepūšamās atrakcijas un specefekti Tavam pasākumam. Piegāde visā Latvijā.",
 }: {
   media?: HeroMediaT | null;
   title?: string;
