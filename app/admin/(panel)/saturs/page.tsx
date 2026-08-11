@@ -77,6 +77,7 @@ export default async function SatursPage() {
     "category.audio-video": imgUrl("category.audio-video"),
     "category.specefekti": imgUrl("category.specefekti"),
     "category.deco": imgUrl("category.deco"),
+    "category.izklaides-punkts": imgUrl("category.izklaides-punkts"),
   };
 
   return (
