@@ -132,7 +132,7 @@ export default function PageImagesAdmin({
     { key: "category.audio-video", label: "Kategorija — Audio/video", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
     { key: "category.specefekti", label: "Kategorija — Specefekti", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
     { key: "category.deco", label: "Kategorija — Deco", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
-    { key: "category.izklaides-punkts", label: "Kategorija — Izklaides punkts", help: "Fona attēls kartītei, kad 'Izklaides punkts' būs aktīvs. Pašlaik (drīzumā režīmā) kartīte rāda luxury gradientu, tāpēc attēls netiek izmantots, kamēr produkts nav ieslēgts.", fallback: null },
+    { key: "category.izklaides-punkts", label: "Kategorija — Izklaides punkts", help: "⚠️ Šis attēls tiks izmantots, kad produkts būs aktīvs — pašlaik kartīte VIENMĒR rāda gradientu neatkarīgi no augšupielādes.", fallback: null },
     { key: "foto-kaste.frames", label: "Foto kastes — Rāmīšu dizaini", help: "Attēls /foto-kaste lapas 'Foto rāmīšu dizaini' blokā. Tukšs → placeholder kā tagad.", fallback: null },
   ];
   return (
