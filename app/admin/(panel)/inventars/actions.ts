@@ -3,6 +3,20 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
+// Slug VIENMĒR ASCII-only (arī manuālai ievadei) — novērš diakritiku URL-os un
+// nesakritības. Server-puse ir vienīgais patiesības avots.
+function slugify(s: string) {
+  const map: Record<string, string> = {
+    ā: "a", č: "c", ē: "e", ģ: "g", ī: "i", ķ: "k", ļ: "l", ņ: "n",
+    š: "s", ū: "u", ž: "z",
+  };
+  return (s ?? "")
+    .toLowerCase()
+    .replace(/[āčēģīķļņšūž]/g, (c) => map[c] ?? c)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 const CATEGORY_PATH: Record<string, string> = {
   "foto-kaste": "/foto-kaste",
   atrakcijas: "/piepusamas-atrakcijas",
@@ -30,6 +44,7 @@ export type ProductInput = {
   alt_phone: string | null;
   is_active: boolean;
   is_featured: boolean;
+  is_special: boolean;
   cover_image: string;
   gallery: string[];
 };
@@ -89,7 +104,7 @@ function toRow(p: ProductInput) {
     .filter((s) => !mlEmpty(s.label))
     .map((s) => ({ label: s.label, value: s.value }));
   return {
-    slug: p.slug.trim(),
+    slug: slugify(p.slug),
     category: p.category,
     name: p.name,
     tagline: { lv: p.tagline.lv, en: p.tagline.en, ru: p.tagline.ru },
@@ -103,6 +118,7 @@ function toRow(p: ProductInput) {
     alt_phone: p.alt_phone || null,
     is_active: p.is_active,
     is_featured: p.is_featured,
+    is_special: p.is_special,
     cover_image: p.cover_image || null,
     gallery: p.gallery,
     updated_at: new Date().toISOString(),

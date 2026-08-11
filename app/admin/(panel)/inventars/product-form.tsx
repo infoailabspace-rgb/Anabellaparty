@@ -34,6 +34,7 @@ const empty: ProductInput = {
   alt_phone: null,
   is_active: true,
   is_featured: false,
+  is_special: false,
   cover_image: "",
   gallery: [],
 };
@@ -201,6 +202,10 @@ export default function ProductForm({
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={p.is_featured} onChange={(e) => set({ is_featured: e.target.checked })} className="accent-[#D4A960]" />
             Izcelts
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={p.is_special} onChange={(e) => set({ is_special: e.target.checked })} className="accent-[#D4A960]" />
+            Rādīt kā īpašo piedāvājumu
           </label>
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={p.contact_only} onChange={(e) => set({ contact_only: e.target.checked })} className="accent-[#D4A960]" />

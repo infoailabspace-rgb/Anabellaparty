@@ -82,6 +82,7 @@ function mapRow(r: any, locale: string): Product {
     coverImage,
     gallery,
     featured: r.is_featured ?? undefined,
+    special: r.is_special ?? undefined,
     contactOnly: r.contact_only ?? undefined,
     altPhone: r.alt_phone ?? undefined,
   };

@@ -61,25 +61,25 @@ export default function ProductsAdmin({ rows }: { rows: AdminProductRow[] }) {
         <table className="w-full text-sm">
           <thead className="bg-navy/50 text-left text-xs uppercase text-text/50">
             <tr>
-              <th className="p-3">Nosaukums</th>
-              <th className="p-3">Kategorija</th>
-              <th className="p-3 text-right">Cena</th>
-              <th className="p-3">Aktīvs</th>
-              <th className="p-3"></th>
+              <th className="p-3 align-middle">Nosaukums</th>
+              <th className="p-3 align-middle">Kategorija</th>
+              <th className="p-3 align-middle text-right">Cena</th>
+              <th className="p-3 align-middle">Aktīvs</th>
+              <th className="p-3 align-middle"></th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((p) => (
               <tr key={p.id} className={`border-t border-gold/10 ${p.is_active ? "" : "opacity-50"}`}>
-                <td className="p-3">
+                <td className="p-3 align-middle">
                   <Link href={`/admin/inventars/${p.id}`} className="font-semibold hover:text-gold">
                     {p.name}
                   </Link>
                   <div className="text-xs text-text/40">{p.slug}</div>
                 </td>
-                <td className="p-3 text-text/70">{p.category}</td>
-                <td className="p-3 text-right font-mono text-gold">{p.price ? `${p.price} €` : "—"}</td>
-                <td className="p-3">
+                <td className="p-3 align-middle text-text/70">{p.category}</td>
+                <td className="p-3 align-middle text-right font-mono text-gold">{p.price ? `${p.price} €` : "—"}</td>
+                <td className="p-3 align-middle">
                   <button
                     onClick={() => toggle(p)}
                     className={`relative h-6 w-11 rounded-full transition-colors ${p.is_active ? "bg-gold" : "bg-text/20"}`}
@@ -89,7 +89,7 @@ export default function ProductsAdmin({ rows }: { rows: AdminProductRow[] }) {
                     <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-black transition-transform ${p.is_active ? "translate-x-5" : "translate-x-0.5"}`} />
                   </button>
                 </td>
-                <td className="p-3">
+                <td className="p-3 align-middle">
                   <Link href={`/admin/inventars/${p.id}`} className="text-sm text-gold hover:underline">
                     Rediģēt
                   </Link>

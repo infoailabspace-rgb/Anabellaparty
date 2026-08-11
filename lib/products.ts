@@ -32,6 +32,7 @@ export type Product = {
   coverImage: string; // galvenais attēls kartītei
   gallery: string[]; // katram produktam sava galerija
   featured?: boolean;
+  special?: boolean; // "īpašā piedāvājuma" bloks (foto-kaste lapā)
   contactOnly?: boolean; // cena tikai vienojoties
   altPhone?: string; // kubliem cits numurs
 };

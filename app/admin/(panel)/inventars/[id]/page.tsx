@@ -52,6 +52,7 @@ export default async function EditProductPage({
     alt_phone: d.alt_phone ?? null,
     is_active: d.is_active,
     is_featured: Boolean(d.is_featured),
+    is_special: Boolean(d.is_special),
     cover_image: d.cover_image ?? "",
     gallery: Array.isArray(d.gallery) ? d.gallery : [],
   };

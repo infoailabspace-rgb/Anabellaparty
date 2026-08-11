@@ -28,8 +28,6 @@ export async function generateMetadata({
   return pageMetadata(locale, "fotoKaste", "/foto-kaste");
 }
 
-const mainSlugs = ["spogulis", "ozols", "instagram"];
-
 export const revalidate = 300;
 
 export default async function FotoKastePage() {
@@ -42,16 +40,13 @@ export default async function FotoKastePage() {
     getSiteImage("foto-kaste.frames"),
   ]);
   const fkProducts = products.filter((p) => p.category === "foto-kaste");
-  const boxes = mainSlugs
-    .map((s) => products.find((p) => p.slug === s))
-    .filter((p) => p !== undefined);
-  const visuDienu = products.find((p) => p.slug === "foto-kaste-uz-visu-dienu");
-  const contactBlocks = products.filter(
-    (p) =>
-      p.category === "foto-kaste" &&
-      p.contactOnly &&
-      ["foto-kaste-uz-periodu", "foto-kaste-masu-pasakumiem"].includes(p.slug),
-  );
+  // Datu-vadīti (bez hardkodētiem slug — nosaukuma/slug maiņa nekad nesalauž):
+  //  - galvenās kastes = nav "īpašais" un nav "cena vienojoties"
+  //  - īpašais piedāvājums = special (is_special karogs)
+  //  - contact bloki = contactOnly
+  const boxes = fkProducts.filter((p) => !p.special && !p.contactOnly);
+  const visuDienu = fkProducts.find((p) => p.special);
+  const contactBlocks = fkProducts.filter((p) => p.contactOnly);
 
   return (
     <>
@@ -117,7 +112,10 @@ export default async function FotoKastePage() {
                       {ts("fkSpecial")}
                     </span>
                     <h2 className="font-display text-2xl font-bold sm:text-3xl">
-                      {visuDienu.name} — 350 €
+                      {visuDienu.name}
+                      {visuDienu.tiers[0]?.price
+                        ? ` — ${visuDienu.tiers[0].price} €`
+                        : ""}
                     </h2>
                   </div>
                   <p className="mt-4 max-w-2xl text-text/80">
