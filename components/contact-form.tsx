@@ -5,15 +5,27 @@ import { useTranslations } from "next-intl";
 
 export default function ContactForm() {
   const t = useTranslations("contactForm");
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle",
+  );
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget).entries());
-    // SOLIS4: reālā sūtīšana caur Resend. Pagaidām tikai UI.
-    console.log("Kontaktforma (vēl nesūta):", data);
-    setSent(true);
-    e.currentTarget.reset();
+    const form = e.currentTarget; // saglabā pirms await
+    const data = Object.fromEntries(new FormData(form).entries());
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("send failed");
+      setStatus("sent");
+      form.reset();
+    } catch {
+      setStatus("error");
+    }
   }
 
   const field =
@@ -41,14 +53,20 @@ export default function ContactForm() {
       />
       <button
         type="submit"
-        className="self-start rounded-full bg-gold px-8 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
+        disabled={status === "sending"}
+        className="self-start rounded-full bg-gold px-8 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)] disabled:opacity-60"
       >
-        {t("send")}
+        {status === "sending" ? t("sending") : t("send")}
       </button>
 
-      {sent && (
+      {status === "sent" && (
         <p className="text-sm text-gold" role="status">
           {t("sent")}
+        </p>
+      )}
+      {status === "error" && (
+        <p className="text-sm text-red-300" role="alert">
+          {t("errSend")}
         </p>
       )}
     </form>
