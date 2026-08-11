@@ -81,6 +81,12 @@ export default async function SikdatnuPolitikaPage() {
               <td>Līdz 24 mēnešiem</td>
             </tr>
             <tr>
+              <td>Microsoft Clarity</td>
+              <td>Sesiju ieraksti un siltuma kartes (lapas lietojamība)</td>
+              <td>Analītiskā</td>
+              <td>Līdz 12 mēnešiem</td>
+            </tr>
+            <tr>
               <td>Facebook Pixel</td>
               <td>Reklāmu mērīšana un mērķauditorija</td>
               <td>Mārketinga</td>

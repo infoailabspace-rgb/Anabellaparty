@@ -4,8 +4,11 @@
 // tie neparādās Network tabā.
 
 export const CONSENT_KEY = "anabella-cookie-consent";
-export const GTM_ID = "GTM-WDQZZ5PG";
-export const FB_PIXEL_ID = "896953122077848";
+// Divi GTM konteineri strādā vienlaikus (analītiskā piekrišana).
+export const GTM_IDS = ["GTM-WDQZZ5PG", "GTM-KVGCFPCT"] as const;
+export const GA4_ID = "G-717L3W9PNX"; // GA4 patstāvīgi caur gtag.js (analītiskā)
+export const CLARITY_ID = "u9ppb0vish"; // Microsoft Clarity (analītiskā, ne reklāmas)
+export const FB_PIXEL_ID = "896953122077848"; // Meta Pixel (mārketinga)
 
 export type Consent = {
   necessary: true;
@@ -21,7 +24,10 @@ declare global {
     gtag?: (...args: any[]) => void;
     fbq?: any;
     _fbq?: any;
+    clarity?: (...args: any[]) => void;
     __anabellaGtmLoaded?: boolean;
+    __anabellaGa4Loaded?: boolean;
+    __anabellaClarityLoaded?: boolean;
     __anabellaPixelLoaded?: boolean;
     __anabellaConsentInit?: boolean;
   }
@@ -122,10 +128,53 @@ function loadGtm() {
   window.__anabellaGtmLoaded = true;
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+  for (const id of GTM_IDS) {
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtm.js?id=${id}`;
+    document.head.appendChild(s);
+  }
+}
+
+// GA4 patstāvīgi caur gtag.js. Consent Mode noklusējumi (denied) jau iestatīti
+// initConsentDefaults() — config ievēro tos, līdz "update" tos atļauj.
+function loadGa4() {
+  if (window.__anabellaGa4Loaded) return;
+  window.__anabellaGa4Loaded = true;
   const s = document.createElement("script");
   s.async = true;
-  s.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+  s.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`;
   document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  window.gtag =
+    window.gtag ||
+    function gtag() {
+      // eslint-disable-next-line prefer-rest-params
+      window.dataLayer!.push(arguments);
+    };
+  window.gtag("js", new Date());
+  window.gtag("config", GA4_ID);
+}
+
+// Microsoft Clarity — sesiju ieraksti/siltuma kartes (dinamiska injekcija).
+function loadClarity() {
+  if (window.__anabellaClarityLoaded) return;
+  window.__anabellaClarityLoaded = true;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  (function (c: any, l: Document, a: string, r: string, i: string) {
+    c[a] =
+      c[a] ||
+      function () {
+        // eslint-disable-next-line prefer-rest-params
+        (c[a].q = c[a].q || []).push(arguments);
+      };
+    const t = l.createElement(r) as HTMLScriptElement;
+    t.async = true;
+    t.src = "https://www.clarity.ms/tag/" + i;
+    const y = l.getElementsByTagName(r)[0];
+    y.parentNode!.insertBefore(t, y);
+  })(window, document, "clarity", "script", CLARITY_ID);
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
 function loadPixel() {
@@ -165,6 +214,10 @@ export function applyConsent(consent: Consent) {
     ad_personalization: consent.marketing ? "granted" : "denied",
   });
 
-  if (consent.analytics) loadGtm();
+  if (consent.analytics) {
+    loadGtm();
+    loadGa4();
+    loadClarity();
+  }
   if (consent.marketing) loadPixel();
 }

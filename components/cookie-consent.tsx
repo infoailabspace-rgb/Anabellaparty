@@ -55,7 +55,7 @@ export default function CookieConsent() {
             <Toggle checked disabled label="Nepieciešamās (vienmēr aktīvas)" onChange={() => {}} />
             <Toggle
               checked={analytics}
-              label="Analītiskās (Google Tag Manager, GA4)"
+              label="Analītiskās (Google Tag Manager, GA4, Microsoft Clarity)"
               onChange={setAnalytics}
             />
             <Toggle
