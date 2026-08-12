@@ -385,8 +385,8 @@ export default function Navbar() {
             >
               {t("rezervet")}
             </Link>
-            <div className="mt-4 flex items-center justify-center gap-4">
-              <LocaleSwitcher />
+            <div className="mt-4 flex flex-col items-center gap-3 border-t border-gold/20 pt-4">
+              <LocaleSwitcher variant="inline" />
               <NavSocials reduce={!!reduce} />
             </div>
           </div>

@@ -5,12 +5,16 @@ import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 
-// Valodu pārslēdzējs — viena poga ar pašreizējo valodu + dropdown ar pārējām.
-// Patur to pašu ceļu, maina tikai valodu. Aizņem mazāk vietas navbar.
+// Valodu pārslēdzējs. Divi režīmi:
+//  - "dropdown" (noklusējums) — kompakta poga + izvēlne, desktop navbar.
+//  - "inline" — visas valodas kā segmentētas pogas, skaidri redzamas telefonā.
+// Patur to pašu ceļu, maina tikai valodu.
 export default function LocaleSwitcher({
   className = "",
+  variant = "dropdown",
 }: {
   className?: string;
+  variant?: "dropdown" | "inline";
 }) {
   const locale = useLocale();
   const pathname = usePathname();
@@ -30,6 +34,37 @@ export default function LocaleSwitcher({
       document.removeEventListener("keydown", onKey);
     };
   }, []);
+
+  const switchTo = (l: string) => {
+    setOpen(false);
+    router.replace(pathname, { locale: l });
+  };
+
+  // Telefonam: visas trīs valodas redzamas uzreiz, bez ligzdotas izvēlnes.
+  if (variant === "inline") {
+    return (
+      <div className={`flex items-center gap-1.5 ${className}`}>
+        {routing.locales.map((l) => {
+          const active = l === locale;
+          return (
+            <button
+              key={l}
+              type="button"
+              aria-current={active ? "true" : undefined}
+              onClick={() => switchTo(l)}
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase transition-colors ${
+                active
+                  ? "border-gold bg-gold text-black"
+                  : "border-gold/30 text-text/70 hover:border-gold hover:text-gold"
+              }`}
+            >
+              {l}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
 
   const others = routing.locales.filter((l) => l !== locale);
 
@@ -54,10 +89,7 @@ export default function LocaleSwitcher({
             <button
               key={l}
               type="button"
-              onClick={() => {
-                setOpen(false);
-                router.replace(pathname, { locale: l });
-              }}
+              onClick={() => switchTo(l)}
               className="block w-full rounded px-3 py-1.5 text-center text-xs font-semibold uppercase text-text/70 transition-colors hover:bg-gold hover:text-black"
             >
               {l}
