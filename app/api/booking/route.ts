@@ -12,6 +12,10 @@ import {
 
 export const runtime = "nodejs";
 
+// Logo e-pastiem no kanoniskā domēna (sakrīt ar sūtītāja domēnu — labāk piegādei).
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.anabellaparty.lv";
+
 function eur(n: number) {
   return Number.isInteger(n) ? `${n} €` : `${n.toFixed(2)} €`;
 }
@@ -54,7 +58,8 @@ function summaryHtml(
   const d = payload.delivery;
   const totals = computeTotals(subtotal, deliveryCost);
   return `
-  <div style="font-family:Arial,sans-serif;color:#1A3A4A;">
+  <div style="font-family:Arial,sans-serif;color:#1A3A4A;max-width:600px;">
+    <div style="text-align:center;margin-bottom:16px;"><img src="${SITE_URL}/logo/logo-full.png" width="180" alt="Anabella Party" style="max-width:180px;height:auto;" /></div>
     <p><b>Datums:</b> ${esc(e.date)}${e.time ? " " + esc(e.time) : ""}<br>
        <b>Veids:</b> ${esc(e.type)}<br>
        <b>Vieta:</b> ${esc(e.location)}${d?.address ? `<br><b>Piegādes adrese:</b> ${esc(d.address)}${d.km ? ` (~${esc(d.km)} km)` : ""}` : ""}${e.guestCount ? `<br><b>Viesi:</b> ${esc(e.guestCount)}` : ""}</p>
