@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Hero medijs: poster/attēls (vienmēr next/image ar priority — LCP) + neobligāts
- * video virsū. Video ielādējas TIKAI desktopā (≥768px) un ja nav
- * prefers-reduced-motion; citādi redzams tikai poster (video vispār nemontējas).
+ * video virsū. Video atskaņojas visos ekrānos (arī telefonā), izņemot ja
+ * prefers-reduced-motion — tad redzams tikai poster (video vispār nemontējas).
  * preload="none" visur, izņemot sākumlapu (preloadMeta → "metadata").
  */
 export default function HeroMedia({
@@ -33,14 +33,19 @@ export default function HeroMedia({
 
   useEffect(() => {
     if (!mp4) return;
-    const desktop = window.matchMedia("(min-width: 768px)").matches;
+    // Atskaņo visos ekrānos (arī mobilajā). Tikai reduced-motion to atslēdz.
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setShowVideo(desktop && !reduce);
+    setShowVideo(!reduce);
   }, [mp4]);
 
   useEffect(() => {
     const v = ref.current;
     if (!v || !showVideo) return;
+    // iOS/Android autoplay prasa muted+playsInline. React `muted` prop ne vienmēr
+    // uzstāda DOM atribūtu, tāpēc iestatām tieši, pirms play().
+    v.muted = true;
+    v.setAttribute("muted", "");
+    v.playsInline = true;
     const p = v.play();
     if (p && typeof p.catch === "function") p.catch(() => {});
   }, [showVideo]);
