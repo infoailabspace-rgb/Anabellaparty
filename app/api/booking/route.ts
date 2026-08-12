@@ -12,11 +12,6 @@ import {
 
 export const runtime = "nodejs";
 
-const NAVY = "#1A3A4A";
-const GOLD = "#D4A960";
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://anabellaparty.vercel.app";
-
 function eur(n: number) {
   return Number.isInteger(n) ? `${n} €` : `${n.toFixed(2)} €`;
 }
@@ -45,35 +40,33 @@ function summaryHtml(
   deposit: number,
 ) {
   const quote = computeQuote(payload.items, products);
-  const rows = quote.lines
+  // Viegls teksta HTML (bez ārēja attēla, tumša fona un tabulas) — labākai
+  // piegādei (smags HTML ar ārēju <img> nonāca spam/All Mail).
+  const lines = quote.lines
     .map(
       (l) =>
-        `<tr><td style="padding:4px 8px;">${esc(l.name)} (${esc(l.tierLabel)})</td><td style="padding:4px 8px;text-align:right;">${
+        `${esc(l.name)} (${esc(l.tierLabel)}) — ${
           l.contactOnly ? "vienojoties" : eur(l.lineTotal)
-        }</td></tr>`,
+        }`,
     )
-    .join("");
+    .join("<br>");
   const e = payload.event;
   const d = payload.delivery;
   const totals = computeTotals(subtotal, deliveryCost);
   return `
-  <div style="font-family:Arial,sans-serif;background:${NAVY};color:#F5F5F0;padding:24px;border-radius:12px;max-width:600px;">
-    <div style="text-align:center;margin-bottom:12px;"><img src="${SITE_URL}/logo/logo-full.png" width="200" alt="Anabella Party — Svētku inventārs" style="max-width:200px;height:auto;" /></div>
-    <h2 style="color:${GOLD};margin:0 0 12px;">Anabella Party — pieteikuma kopsavilkums</h2>
-    <p style="margin:4px 0;"><b>Datums:</b> ${esc(e.date)}${e.time ? " " + esc(e.time) : ""}</p>
-    <p style="margin:4px 0;"><b>Veids:</b> ${esc(e.type)}</p>
-    <p style="margin:4px 0;"><b>Vieta:</b> ${esc(e.location)}</p>
-    ${d?.address ? `<p style="margin:4px 0;"><b>Piegādes adrese:</b> ${esc(d.address)}${d.km ? ` (~${esc(d.km)} km)` : ""}</p>` : ""}
-    ${e.guestCount ? `<p style="margin:4px 0;"><b>Viesi:</b> ${esc(e.guestCount)}</p>` : ""}
-    <table style="width:100%;border-collapse:collapse;margin-top:12px;border-top:1px solid ${GOLD};">${rows}</table>
-    <p style="margin:12px 0 2px;text-align:right;">Inventārs: ${eur(subtotal)}</p>
-    <p style="margin:0 0 2px;text-align:right;">Piegāde: ${deliveryCost > 0 ? eur(deliveryCost) : "bez maksas"}</p>
-    <p style="margin:0 0 2px;text-align:right;">Kopā bez PVN: ${eur(totals.net)}</p>
-    <p style="margin:0 0 2px;text-align:right;">PVN 21%: ${eur(totals.vat)}</p>
-    <p style="margin:0 0 4px;text-align:right;"><b>Kopā ar PVN (orientējoši):</b> ${eur(totals.gross)}</p>
-    <p style="margin:0;text-align:right;color:${GOLD};"><b>Avanss (50%):</b> ${eur(deposit)}</p>
-    ${quote.hasContactOnly ? `<p style="font-size:12px;color:#E8A87C;">* Daži produkti — cena vienojoties, nav iekļauti summā.</p>` : ""}
-    <p style="font-size:12px;color:#F5F5F0;opacity:.7;margin-top:12px;">Cenas norādītas bez PVN 21%. Aprēķins orientējošs — precīzu piedāvājumu nosūtīsim atsevišķi.</p>
+  <div style="font-family:Arial,sans-serif;color:#1A3A4A;">
+    <p><b>Datums:</b> ${esc(e.date)}${e.time ? " " + esc(e.time) : ""}<br>
+       <b>Veids:</b> ${esc(e.type)}<br>
+       <b>Vieta:</b> ${esc(e.location)}${d?.address ? `<br><b>Piegādes adrese:</b> ${esc(d.address)}${d.km ? ` (~${esc(d.km)} km)` : ""}` : ""}${e.guestCount ? `<br><b>Viesi:</b> ${esc(e.guestCount)}` : ""}</p>
+    <p><b>Inventārs:</b><br>${lines}</p>
+    <p><b>Inventārs kopā:</b> ${eur(subtotal)}<br>
+       <b>Piegāde:</b> ${deliveryCost > 0 ? eur(deliveryCost) : "bez maksas"}<br>
+       <b>Kopā bez PVN:</b> ${eur(totals.net)}<br>
+       <b>PVN 21%:</b> ${eur(totals.vat)}<br>
+       <b>Kopā ar PVN (orientējoši):</b> ${eur(totals.gross)}<br>
+       <b>Avanss (50%):</b> ${eur(deposit)}</p>
+    ${quote.hasContactOnly ? `<p style="font-size:12px;color:#555;">* Daži produkti — cena vienojoties, nav iekļauti summā.</p>` : ""}
+    <p style="font-size:12px;color:#555;">Cenas norādītas bez PVN 21%. Aprēķins orientējošs — precīzu piedāvājumu nosūtīsim atsevišķi.</p>
   </div>`;
 }
 
