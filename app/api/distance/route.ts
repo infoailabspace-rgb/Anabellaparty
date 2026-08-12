@@ -5,10 +5,17 @@ import {
   isInFreeZone,
   FREE_ZONE,
 } from "@/lib/delivery";
+import { getSupabaseServer } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
 const ORS = "https://api.openrouteservice.org";
+
+function clientIp(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  return req.headers.get("x-real-ip") || "unknown";
+}
 
 export async function POST(req: Request) {
   let address = "";
@@ -19,6 +26,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
   if (!address) return NextResponse.json({ ok: false, error: "Trūkst adreses." });
+
+  // Rate-limit (15 / IP / 10 min) — ORS ģeokodēšana ir maksas, sargā kvotu.
+  const supabase = getSupabaseServer();
+  if (supabase) {
+    const { data: allowed, error: rateErr } = await supabase.rpc(
+      "check_distance_rate",
+      { p_ip: clientIp(req), p_limit: 15, p_window: "10 minutes" },
+    );
+    if (!rateErr && allowed === false) {
+      return NextResponse.json(
+        { ok: false, error: "Pārāk daudz aprēķinu. Pamēģini pēc brīža." },
+        { status: 429 },
+      );
+    }
+  }
 
   const key = process.env.ORS_API_KEY;
   if (!key) {
