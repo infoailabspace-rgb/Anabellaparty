@@ -69,6 +69,8 @@ export function validateBooking(payload: BookingPayload): string[] {
   }
   if (!e.type?.trim()) errors.push("Trūkst pasākuma veida.");
   if (!e.location?.trim()) errors.push("Trūkst norises vietas.");
+  if (!payload.delivery?.address?.trim())
+    errors.push("Trūkst piegādes adreses (iela un pilsēta).");
   if (!Array.isArray(payload.items) || payload.items.length === 0)
     errors.push("Nav izvēlēts inventārs.");
   if (!payload.consent) errors.push("Jāpiekrīt noteikumiem.");

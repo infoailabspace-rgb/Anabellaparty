@@ -293,6 +293,8 @@ export default function BookingForm({ products }: { products: Product[] }) {
         e.push(t("errDatePast"));
       if (!event.type) e.push(t("errType"));
       if (!event.location.trim()) e.push(t("errLocation"));
+      if (!deliveryStreet.trim()) e.push(t("errDeliveryStreet"));
+      if (!deliveryCity.trim()) e.push(t("errDeliveryCity"));
     }
     if (s === 3) {
       if (!contact.name.trim()) e.push(t("errName"));

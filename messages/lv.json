@@ -214,6 +214,8 @@
     "errDatePast": "Datums nedrīkst būt pagātnē.",
     "errType": "Izvēlies pasākuma veidu.",
     "errLocation": "Norādi norises vietu.",
+    "errDeliveryStreet": "Norādi piegādes ielu un mājas nr.",
+    "errDeliveryCity": "Norādi piegādes pilsētu / novadu.",
     "errName": "Norādi vārdu.",
     "errPhone": "Norādi derīgu telefona numuru.",
     "errEmail": "Norādi derīgu e-pastu.",

@@ -214,6 +214,8 @@
     "errDatePast": "The date cannot be in the past.",
     "errType": "Choose the event type.",
     "errLocation": "Enter the venue.",
+    "errDeliveryStreet": "Enter the delivery street and house no.",
+    "errDeliveryCity": "Enter the delivery city / municipality.",
     "errName": "Enter your name.",
     "errPhone": "Enter a valid phone number.",
     "errEmail": "Enter a valid email.",
