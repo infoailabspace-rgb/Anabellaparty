@@ -7,9 +7,13 @@ import Reveal from "@/components/reveal";
 
 function Stars({ n }: { n: number }) {
   return (
-    <div className="flex gap-1 text-gold" aria-label={`${n} no 5`}>
+    <div
+      className="flex gap-1 text-gold"
+      role="img"
+      aria-label={`${n} no 5 zvaigznēm`}
+    >
       {Array.from({ length: 5 }, (_, i) => (
-        <span key={i} aria-hidden>
+        <span key={i} aria-hidden="true">
           {i < n ? "★" : "☆"}
         </span>
       ))}
