@@ -97,7 +97,6 @@ export default function Navbar() {
         { href: "/svinibu-inventars/kublsballa", label: t("kubli") },
       ],
     },
-    { label: tc("izklaides-punktsName"), comingSoon: true, badge: t("drizuma") },
     { label: t("musuDraugi"), href: "/musu-draugi" },
     { label: t("blogs"), href: "/blogs" },
     { label: t("kontakti"), href: "/kontakti" },
