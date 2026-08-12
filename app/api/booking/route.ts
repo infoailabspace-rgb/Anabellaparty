@@ -58,20 +58,30 @@ function summaryHtml(
   const d = payload.delivery;
   const totals = computeTotals(subtotal, deliveryCost);
   return `
-  <div style="font-family:Arial,sans-serif;color:#1A3A4A;max-width:600px;">
-    <div style="text-align:center;margin-bottom:16px;"><img src="${SITE_URL}/logo/logo-full.png" width="180" alt="Anabella Party" style="max-width:180px;height:auto;" /></div>
-    <p><b>Datums:</b> ${esc(e.date)}${e.time ? " " + esc(e.time) : ""}<br>
-       <b>Veids:</b> ${esc(e.type)}<br>
-       <b>Vieta:</b> ${esc(e.location)}${d?.address ? `<br><b>Piegādes adrese:</b> ${esc(d.address)}${d.km ? ` (~${esc(d.km)} km)` : ""}` : ""}${e.guestCount ? `<br><b>Viesi:</b> ${esc(e.guestCount)}` : ""}</p>
-    <p><b>Inventārs:</b><br>${lines}</p>
-    <p><b>Inventārs kopā:</b> ${eur(subtotal)}<br>
-       <b>Piegāde:</b> ${deliveryCost > 0 ? eur(deliveryCost) : "bez maksas"}<br>
-       <b>Kopā bez PVN:</b> ${eur(totals.net)}<br>
-       <b>PVN 21%:</b> ${eur(totals.vat)}<br>
-       <b>Kopā ar PVN (orientējoši):</b> ${eur(totals.gross)}<br>
-       <b>Avanss (50%):</b> ${eur(deposit)}</p>
-    ${quote.hasContactOnly ? `<p style="font-size:12px;color:#555;">* Daži produkti — cena vienojoties, nav iekļauti summā.</p>` : ""}
-    <p style="font-size:12px;color:#555;">Cenas norādītas bez PVN 21%. Aprēķins orientējošs — precīzu piedāvājumu nosūtīsim atsevišķi.</p>
+  <div style="font-family:Arial,sans-serif;background:#F5F5F0;padding:16px;">
+    <div style="max-width:600px;margin:0 auto;background:#ffffff;border:1px solid #e6e1d6;border-radius:12px;overflow:hidden;">
+      <div style="background:#1A3A4A;padding:24px;text-align:center;">
+        <img src="${SITE_URL}/logo/logo-full.png" width="170" alt="Anabella Party" style="max-width:170px;height:auto;" />
+      </div>
+      <div style="height:4px;background:#D4A960;"></div>
+      <div style="padding:24px;color:#1A3A4A;">
+        <h2 style="margin:0 0 16px;font-size:18px;color:#1A3A4A;">Pieteikuma kopsavilkums</h2>
+        <p style="margin:0 0 12px;"><b>Datums:</b> ${esc(e.date)}${e.time ? " " + esc(e.time) : ""}<br>
+           <b>Veids:</b> ${esc(e.type)}<br>
+           <b>Vieta:</b> ${esc(e.location)}${d?.address ? `<br><b>Piegādes adrese:</b> ${esc(d.address)}${d.km ? ` (~${esc(d.km)} km)` : ""}` : ""}${e.guestCount ? `<br><b>Viesi:</b> ${esc(e.guestCount)}` : ""}</p>
+        <p style="margin:0 0 12px;"><b>Inventārs:</b><br>${lines}</p>
+        <div style="background:#faf6ec;border-left:3px solid #D4A960;padding:12px 16px;border-radius:4px;">
+          <b>Inventārs kopā:</b> ${eur(subtotal)}<br>
+          <b>Piegāde:</b> ${deliveryCost > 0 ? eur(deliveryCost) : "bez maksas"}<br>
+          <b>Kopā bez PVN:</b> ${eur(totals.net)}<br>
+          <b>PVN 21%:</b> ${eur(totals.vat)}<br>
+          <b>Kopā ar PVN (orientējoši):</b> ${eur(totals.gross)}<br>
+          <b style="color:#B0842E;">Avanss (50%): ${eur(deposit)}</b>
+        </div>
+        ${quote.hasContactOnly ? `<p style="font-size:12px;color:#777;margin-top:12px;">* Daži produkti — cena vienojoties, nav iekļauti summā.</p>` : ""}
+        <p style="font-size:12px;color:#777;margin-top:12px;">Cenas norādītas bez PVN 21%. Aprēķins orientējošs — precīzu piedāvājumu nosūtīsim atsevišķi.</p>
+      </div>
+    </div>
   </div>`;
 }
 
