@@ -82,9 +82,17 @@ export async function POST(req: Request) {
     );
   }
 
+  const resend = new Resend(resendKey);
+  // Brīdinājums, ja FROM == NOTIFY (pašsūtīšana → spam risks).
+  const fromAddr = (from.match(/<([^>]+)>/)?.[1] || from).trim().toLowerCase();
+  if (fromAddr === notify.trim().toLowerCase()) {
+    console.warn(
+      `[contact] BRĪDINĀJUMS: FROM (${fromAddr}) == NOTIFY (${notify}) — pašsūtīšana var nonākt spam. Iestati BOOKING_NOTIFY_EMAIL != BOOKING_FROM_EMAIL.`,
+    );
+  }
+
   try {
-    const resend = new Resend(resendKey);
-    await resend.emails.send({
+    const r = await resend.emails.send({
       from,
       to: notify,
       replyTo: email, // Roberts var atbildēt tieši sūtītājam
@@ -97,7 +105,17 @@ export async function POST(req: Request) {
         <p><b>Ziņa:</b><br>${esc(message).replace(/\n/g, "<br>")}</p>
       </div>`,
     });
-  } catch {
+    // Resend API kļūda nāk `error` laukā (netiek mesta) — logo un atgriež kļūdu.
+    if (r.error) {
+      console.error(`[contact] E-pasts NEIZDEVĀS (to=${notify}):`, JSON.stringify(r.error));
+      return NextResponse.json(
+        { ok: false, error: "Neizdevās nosūtīt. Lūdzu, mēģini vēlreiz vai zvani." },
+        { status: 502 },
+      );
+    }
+    console.log(`[contact] E-pasts nosūtīts id=${r.data?.id} to=${notify}`);
+  } catch (e) {
+    console.error("[contact] E-pasta izņēmums:", e instanceof Error ? e.message : String(e));
     return NextResponse.json(
       { ok: false, error: "Neizdevās nosūtīt. Lūdzu, mēģini vēlreiz vai zvani." },
       { status: 502 },
