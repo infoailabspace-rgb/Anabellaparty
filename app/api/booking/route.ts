@@ -68,7 +68,7 @@ function summaryHtml(
         <h2 style="margin:0 0 16px;font-size:18px;color:#1A3A4A;">Pieteikuma kopsavilkums</h2>
         <p style="margin:0 0 12px;"><b>Datums:</b> ${esc(e.date)}${e.time ? " " + esc(e.time) : ""}<br>
            <b>Veids:</b> ${esc(e.type)}<br>
-           <b>Vieta:</b> ${esc(e.location)}${d?.address ? `<br><b>Piegādes adrese:</b> ${esc(d.address)}${d.km ? ` (~${esc(d.km)} km)` : ""}` : ""}${e.guestCount ? `<br><b>Viesi:</b> ${esc(e.guestCount)}` : ""}</p>
+           <b>Norises un piegādes vieta:</b> ${esc(e.location)}${d?.km ? ` (~${esc(d.km)} km)` : ""}${e.guestCount ? `<br><b>Viesi:</b> ${esc(e.guestCount)}` : ""}</p>
         <p style="margin:0 0 12px;"><b>Inventārs:</b><br>${lines}</p>
         <div style="background:#faf6ec;border-left:3px solid #D4A960;padding:12px 16px;border-radius:4px;">
           <b>Inventārs kopā:</b> ${eur(subtotal)}<br>

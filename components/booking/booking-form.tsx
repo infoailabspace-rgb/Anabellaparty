@@ -27,7 +27,6 @@ const EVENT_TYPES = [
   { v: "Kristības", k: "etChristening" },
   { v: "Cits", k: "etOther" },
 ] as const;
-const DURATIONS = ["2h", "4h", "6h", "10h", "12h", "Visa diena"];
 const IO_OPTIONS = [
   { v: "Telpās", k: "ioIndoor" },
   { v: "Ārā", k: "ioOutdoor" },
@@ -292,7 +291,6 @@ export default function BookingForm({ products }: { products: Product[] }) {
       else if (new Date(event.date) < new Date(todayStr))
         e.push(t("errDatePast"));
       if (!event.type) e.push(t("errType"));
-      if (!event.location.trim()) e.push(t("errLocation"));
       if (!deliveryStreet.trim()) e.push(t("errDeliveryStreet"));
       if (!deliveryCity.trim()) e.push(t("errDeliveryCity"));
     }
@@ -324,6 +322,10 @@ export default function BookingForm({ products }: { products: Product[] }) {
     setErrors(e);
     if (e.length > 0) return;
     setSubmitting(true);
+    // Norises vieta = piegādes adrese (viens lauks abiem).
+    const deliveryFull = [deliveryStreet.trim(), deliveryCity.trim()]
+      .filter(Boolean)
+      .join(", ");
     try {
       const res = await fetch("/api/booking", {
         method: "POST",
@@ -331,13 +333,11 @@ export default function BookingForm({ products }: { products: Product[] }) {
         body: JSON.stringify({
           items,
           contact: { ...contact, phone: normalizePhone(contact.phone) },
-          event,
+          event: { ...event, location: deliveryFull },
           description,
           consent,
           delivery: {
-            address: [deliveryStreet.trim(), deliveryCity.trim()]
-              .filter(Boolean)
-              .join(", "),
+            address: deliveryFull,
             km: delivery?.km,
             cost: delivery?.cost,
             geocoded: delivery?.geocoded ?? null,
@@ -433,6 +433,9 @@ export default function BookingForm({ products }: { products: Product[] }) {
               <StepReview
                 items={items}
                 event={event}
+                location={[deliveryStreet.trim(), deliveryCity.trim()]
+                  .filter(Boolean)
+                  .join(", ")}
                 contact={contact}
                 description={description}
                 setDescription={setDescription}
@@ -746,21 +749,6 @@ function StepEvent({
           />
         </label>
         <label className="block">
-          <span className="text-sm text-text/70">{t("evDuration")}</span>
-          <select
-            value={event.duration}
-            onChange={(e) => set({ duration: e.target.value })}
-            className={`mt-1 ${field}`}
-          >
-            <option value="">{t("choose")}</option>
-            {DURATIONS.map((d) => (
-              <option key={d} value={d}>
-                {d === "Visa diena" ? t("durAllDay") : d}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block">
           <span className="text-sm text-text/70">{t("evType")}</span>
           <select
             value={event.type}
@@ -783,16 +771,6 @@ function StepEvent({
             min={0}
             value={event.guestCount}
             onChange={(e) => set({ guestCount: e.target.value })}
-            className={`mt-1 ${field}`}
-          />
-        </label>
-        <label className="block">
-          <span className="text-sm text-text/70">{t("evLocation")}</span>
-          <input
-            type="text"
-            placeholder={t("evLocationPh")}
-            value={event.location}
-            onChange={(e) => set({ location: e.target.value })}
             className={`mt-1 ${field}`}
           />
         </label>
@@ -820,7 +798,9 @@ function StepEvent({
       <div className="mt-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="text-sm text-text/70">{t("evDeliveryAddr")}</span>
+            <span className="text-sm text-text/70">
+              {t("evDeliveryAddr")} <span className="text-gold">*</span>
+            </span>
             <input
               type="text"
               placeholder={t("evDeliveryPh")}
@@ -991,6 +971,7 @@ function StepContact({
 function StepReview({
   items,
   event,
+  location,
   contact,
   description,
   setDescription,
@@ -999,6 +980,7 @@ function StepReview({
 }: {
   items: CartItem[];
   event: BookingEvent;
+  location: string;
   contact: BookingContact;
   description: string;
   setDescription: (v: string) => void;
@@ -1028,7 +1010,7 @@ function StepReview({
           {event.time ? " " + event.time : ""} · {event.type || "—"}
         </p>
         <p className="text-text/60">
-          {event.location || "—"} · {contact.name || "—"} ·{" "}
+          {location || "—"} · {contact.name || "—"} ·{" "}
           {contact.phone || "—"}
         </p>
       </div>
