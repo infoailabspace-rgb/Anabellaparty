@@ -11,6 +11,18 @@ export const runtime = "nodejs";
 
 const ORS = "https://api.openrouteservice.org";
 
+// Normalizē LV vietvārdu salīdzināšanai: mazie burti, bez diakritikas, tikai burti.
+function normPlace(s: unknown): string {
+  const map: Record<string, string> = {
+    ā: "a", č: "c", ē: "e", ģ: "g", ī: "i", ķ: "k",
+    ļ: "l", ņ: "n", š: "s", ū: "u", ž: "z",
+  };
+  return String(s ?? "")
+    .toLowerCase()
+    .replace(/[āčēģīķļņšūž]/g, (m) => map[m] || m)
+    .replace(/[^a-z]/g, "");
+}
+
 function clientIp(req: Request): string {
   const fwd = req.headers.get("x-forwarded-for");
   if (fwd) return fwd.split(",")[0].trim();
@@ -19,9 +31,11 @@ function clientIp(req: Request): string {
 
 export async function POST(req: Request) {
   let address = "";
+  let enteredCity = "";
   try {
     const body = await req.json();
     address = (body?.address ?? "").toString().trim();
+    enteredCity = (body?.city ?? "").toString().trim();
   } catch {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
@@ -99,6 +113,26 @@ export async function POST(req: Request) {
     }
 
     const cost = deliveryPrice(km ?? 0, inFreeZone);
+
+    // Drošības slānis: vai lietotāja pilsēta atbilst atrastajai vietai?
+    // Salīdzina pret locality/localadmin/region/county — ja nesakrīt nevienam,
+    // atzīmē mismatch (Liepāja/Jelgava tips), lai klients apstiprina.
+    const nCity = normPlace(enteredCity);
+    const placeNames = [
+      props.locality,
+      props.localadmin,
+      props.region,
+      props.county,
+      props.macrocounty,
+    ]
+      .map(normPlace)
+      .filter(Boolean);
+    const cityMismatch = Boolean(
+      nCity &&
+        placeNames.length &&
+        !placeNames.some((p) => p.includes(nCity) || nCity.includes(p)),
+    );
+
     return NextResponse.json({
       ok: true,
       km: km ?? 0,
@@ -107,6 +141,9 @@ export async function POST(req: Request) {
       inFreeZone,
       region: regionName ?? null,
       geocoded,
+      label: geocoded,
+      resolvedCity: props.locality || props.localadmin || props.region || null,
+      cityMismatch,
       freeZone: FREE_ZONE,
       origin: ORIGIN.label,
     });

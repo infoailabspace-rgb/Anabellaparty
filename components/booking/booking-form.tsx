@@ -34,6 +34,18 @@ const IO_OPTIONS = [
   { v: "Vēl nezinu", k: "ioUnknown" },
 ] as const;
 
+// Pilsētu/novadu ieteikumi datalist-am. Sākumā Ķekavas novads (bezmaksas zona) —
+// klienti no ciemiem bieži nezina, vai rakstīt "Ķekava" vai ciema nosaukumu.
+const LV_CITIES = [
+  "Ķekava", "Baloži", "Daugmale", "Baldone", "Katlakalns", "Rāmava",
+  "Valdlauči", "Odukalns", "Pļavniekkalns",
+  "Rīga", "Jūrmala", "Olaine", "Ogre", "Salaspils", "Ikšķile", "Mārupe",
+  "Piņķi", "Ādaži", "Saulkrasti", "Sigulda", "Cēsis", "Jelgava", "Ozolnieki",
+  "Bauska", "Tukums", "Dobele", "Valmiera", "Limbaži", "Aizkraukle",
+  "Liepāja", "Ventspils", "Talsi", "Kuldīga", "Saldus", "Daugavpils",
+  "Rēzekne", "Jēkabpils", "Madona", "Gulbene", "Valka", "Preiļi", "Krāslava",
+];
+
 const emptyContact: BookingContact = {
   name: "",
   phone: "",
@@ -72,16 +84,24 @@ export default function BookingForm({ products }: { products: Product[] }) {
   const [event, setEvent] = useState<BookingEvent>(emptyEvent);
   const [description, setDescription] = useState("");
   const [consent, setConsent] = useState(false);
-  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [deliveryStreet, setDeliveryStreet] = useState("");
+  const [deliveryCity, setDeliveryCity] = useState("");
   const [delivery, setDelivery] = useState<{
     km: number;
     cost: number;
     geocoded?: string | null;
   } | null>(null);
   const [deliveryStatus, setDeliveryStatus] = useState<
-    "idle" | "loading" | "ok" | "error"
+    "idle" | "loading" | "ok" | "error" | "confirm"
   >("idle");
   const [deliveryError, setDeliveryError] = useState("");
+  // Neatbilstības apstiprinājums (pilsēta ≠ atrastā vieta) — gaida klienta "Jā".
+  const [deliveryConfirm, setDeliveryConfirm] = useState<{
+    km: number;
+    cost: number;
+    geocoded?: string | null;
+    label: string;
+  } | null>(null);
   const [activeCat, setActiveCat] = useState(bookingCategories[0].id);
   const [errors, setErrors] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -102,7 +122,8 @@ export default function BookingForm({ products }: { products: Product[] }) {
         setEvent({ ...emptyEvent, ...(s.event ?? {}) });
         setDescription(s.description ?? "");
         setConsent(Boolean(s.consent));
-        setDeliveryAddress(s.deliveryAddress ?? "");
+        setDeliveryStreet(s.deliveryStreet ?? "");
+        setDeliveryCity(s.deliveryCity ?? "");
         if (s.delivery) {
           setDelivery(s.delivery);
           setDeliveryStatus("ok");
@@ -137,7 +158,8 @@ export default function BookingForm({ products }: { products: Product[] }) {
           event,
           description,
           consent,
-          deliveryAddress,
+          deliveryStreet,
+          deliveryCity,
           delivery,
         }),
       );
@@ -152,30 +174,49 @@ export default function BookingForm({ products }: { products: Product[] }) {
     event,
     description,
     consent,
-    deliveryAddress,
+    deliveryStreet,
+    deliveryCity,
     delivery,
   ]);
 
-  async function computeDelivery(address: string) {
-    const a = address.trim();
-    if (!a) {
+  async function computeDelivery(street: string, city: string) {
+    const s = street.trim();
+    const c = city.trim();
+    // Abi lauki obligāti. Bez pilsētas — negaida, nerāda kļūdu, neaprēķina.
+    if (!s || !c) {
       setDelivery(null);
+      setDeliveryConfirm(null);
       setDeliveryStatus("idle");
       setDeliveryError("");
       return;
     }
+    // Geokods VIENMĒR ar pilnu adresi (iela + pilsēta), nekad tikai vienu lauku.
+    const address = `${s}, ${c}`;
     setDeliveryStatus("loading");
     setDeliveryError("");
+    setDeliveryConfirm(null);
     try {
       const res = await fetch("/api/distance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address: a }),
+        body: JSON.stringify({ address, city: c }),
       });
       const data = await res.json();
       if (data.ok) {
-        setDelivery({ km: data.km, cost: data.cost, geocoded: data.geocoded });
-        setDeliveryStatus("ok");
+        if (data.cityMismatch) {
+          // Pilsēta ≠ atrastā vieta — NEIZMANTO uzreiz, prasa apstiprinājumu.
+          setDelivery(null);
+          setDeliveryConfirm({
+            km: data.km,
+            cost: data.cost,
+            geocoded: data.geocoded,
+            label: data.label ?? address,
+          });
+          setDeliveryStatus("confirm");
+        } else {
+          setDelivery({ km: data.km, cost: data.cost, geocoded: data.geocoded });
+          setDeliveryStatus("ok");
+        }
       } else {
         setDelivery(null);
         setDeliveryStatus("error");
@@ -186,6 +227,26 @@ export default function BookingForm({ products }: { products: Product[] }) {
       setDeliveryStatus("error");
       setDeliveryError(t("errCalcManual"));
     }
+  }
+
+  // Klients apstiprina neatbilstošo adresi → izmanto attālumu cenā.
+  function acceptDeliveryConfirm() {
+    if (!deliveryConfirm) return;
+    setDelivery({
+      km: deliveryConfirm.km,
+      cost: deliveryConfirm.cost,
+      geocoded: deliveryConfirm.geocoded,
+    });
+    setDeliveryConfirm(null);
+    setDeliveryStatus("ok");
+  }
+
+  // Klients noraida → notīra, cena netiek izmantota, jāprecizē pilsēta.
+  function rejectDeliveryConfirm() {
+    setDeliveryConfirm(null);
+    setDelivery(null);
+    setDeliveryStatus("idle");
+    setDeliveryError("");
   }
 
   const has = (slug: string) => items.some((i) => i.slug === slug);
@@ -272,7 +333,9 @@ export default function BookingForm({ products }: { products: Product[] }) {
           description,
           consent,
           delivery: {
-            address: deliveryAddress,
+            address: [deliveryStreet.trim(), deliveryCity.trim()]
+              .filter(Boolean)
+              .join(", "),
             km: delivery?.km,
             cost: delivery?.cost,
             geocoded: delivery?.geocoded ?? null,
@@ -350,12 +413,17 @@ export default function BookingForm({ products }: { products: Product[] }) {
                 event={event}
                 setEvent={setEvent}
                 todayStr={todayStr}
-                deliveryAddress={deliveryAddress}
-                setDeliveryAddress={setDeliveryAddress}
+                deliveryStreet={deliveryStreet}
+                setDeliveryStreet={setDeliveryStreet}
+                deliveryCity={deliveryCity}
+                setDeliveryCity={setDeliveryCity}
                 computeDelivery={computeDelivery}
                 delivery={delivery}
                 deliveryStatus={deliveryStatus}
                 deliveryError={deliveryError}
+                deliveryConfirm={deliveryConfirm}
+                onAcceptConfirm={acceptDeliveryConfirm}
+                onRejectConfirm={rejectDeliveryConfirm}
               />
             )}
             {step === 3 && <StepContact contact={contact} setContact={setContact} />}
@@ -616,22 +684,37 @@ function StepEvent({
   event,
   setEvent,
   todayStr,
-  deliveryAddress,
-  setDeliveryAddress,
+  deliveryStreet,
+  setDeliveryStreet,
+  deliveryCity,
+  setDeliveryCity,
   computeDelivery,
   delivery,
   deliveryStatus,
   deliveryError,
+  deliveryConfirm,
+  onAcceptConfirm,
+  onRejectConfirm,
 }: {
   event: BookingEvent;
   setEvent: (e: BookingEvent) => void;
   todayStr: string;
-  deliveryAddress: string;
-  setDeliveryAddress: (v: string) => void;
-  computeDelivery: (address: string) => void;
+  deliveryStreet: string;
+  setDeliveryStreet: (v: string) => void;
+  deliveryCity: string;
+  setDeliveryCity: (v: string) => void;
+  computeDelivery: (street: string, city: string) => void;
   delivery: { km: number; cost: number } | null;
-  deliveryStatus: "idle" | "loading" | "ok" | "error";
+  deliveryStatus: "idle" | "loading" | "ok" | "error" | "confirm";
   deliveryError: string;
+  deliveryConfirm: {
+    km: number;
+    cost: number;
+    geocoded?: string | null;
+    label: string;
+  } | null;
+  onAcceptConfirm: () => void;
+  onRejectConfirm: () => void;
 }) {
   const t = useTranslations("booking");
   const set = (patch: Partial<BookingEvent>) => setEvent({ ...event, ...patch });
@@ -731,19 +814,40 @@ function StepEvent({
         </div>
       </div>
 
-      {/* Piegādes adrese ar auto-aprēķinu */}
+      {/* Piegādes adrese — divi lauki (iela + obligāta pilsēta) ar auto-aprēķinu */}
       <div className="mt-6">
-        <label className="block">
-          <span className="text-sm text-text/70">{t("evDeliveryAddr")}</span>
-          <input
-            type="text"
-            placeholder={t("evDeliveryPh")}
-            value={deliveryAddress}
-            onChange={(e) => setDeliveryAddress(e.target.value)}
-            onBlur={(e) => computeDelivery(e.target.value)}
-            className={`mt-1 ${field}`}
-          />
-        </label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block">
+            <span className="text-sm text-text/70">{t("evDeliveryAddr")}</span>
+            <input
+              type="text"
+              placeholder={t("evDeliveryPh")}
+              value={deliveryStreet}
+              onChange={(e) => setDeliveryStreet(e.target.value)}
+              onBlur={() => computeDelivery(deliveryStreet, deliveryCity)}
+              className={`mt-1 ${field}`}
+            />
+          </label>
+          <label className="block">
+            <span className="text-sm text-text/70">
+              {t("evDeliveryCity")} <span className="text-gold">*</span>
+            </span>
+            <input
+              type="text"
+              list="lv-cities"
+              placeholder={t("evDeliveryCityPh")}
+              value={deliveryCity}
+              onChange={(e) => setDeliveryCity(e.target.value)}
+              onBlur={() => computeDelivery(deliveryStreet, deliveryCity)}
+              className={`mt-1 ${field}`}
+            />
+            <datalist id="lv-cities">
+              {LV_CITIES.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
+          </label>
+        </div>
 
         <div className="mt-2 rounded-xl border border-gold/20 bg-navy/25 p-4 text-sm">
           {deliveryStatus === "loading" && (
@@ -760,11 +864,48 @@ function StepEvent({
               </span>
             </div>
           )}
+          {deliveryStatus === "confirm" && deliveryConfirm && (
+            <div className="space-y-3">
+              <p className="font-semibold text-rose-gold">
+                ⚠ {t("confirmTitle")}
+              </p>
+              <p className="text-text/85">{deliveryConfirm.label}</p>
+              <p className="text-text/75">
+                {t("distanceFrom", { km: deliveryConfirm.km })} —{" "}
+                <span className="font-mono font-semibold text-gold">
+                  {t("deliveryLabel")}{" "}
+                  {deliveryConfirm.cost > 0
+                    ? formatEur(deliveryConfirm.cost)
+                    : t("free")}
+                </span>
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={onAcceptConfirm}
+                  className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black transition-transform hover:scale-[1.03]"
+                >
+                  {t("confirmYes")}
+                </button>
+                <button
+                  type="button"
+                  onClick={onRejectConfirm}
+                  className="rounded-full border border-gold/40 px-5 py-2 text-sm font-semibold text-text/80 transition-colors hover:border-gold"
+                >
+                  {t("confirmNo")}
+                </button>
+              </div>
+            </div>
+          )}
           {deliveryStatus === "error" && (
             <span className="text-rose-gold">{deliveryError}</span>
           )}
           {deliveryStatus === "idle" && (
-            <span className="text-text/50">{t("deliveryIdle")}</span>
+            <span className="text-text/50">
+              {deliveryStreet.trim() && !deliveryCity.trim()
+                ? t("deliveryNeedCity")
+                : t("deliveryIdle")}
+            </span>
           )}
         </div>
       </div>
