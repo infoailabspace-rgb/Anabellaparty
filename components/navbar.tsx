@@ -262,30 +262,33 @@ export default function Navbar() {
           />
         </div>
 
-        {/* Mobile toggle */}
-        <button
-          type="button"
-          aria-label={t("izvelne")}
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-          className="flex flex-col gap-1.5 xl:hidden"
-        >
-          <span
-            className={`h-0.5 w-6 bg-gold transition-transform ${
-              open ? "translate-y-2 rotate-45" : ""
-            }`}
-          />
-          <span
-            className={`h-0.5 w-6 bg-gold transition-opacity ${
-              open ? "opacity-0" : ""
-            }`}
-          />
-          <span
-            className={`h-0.5 w-6 bg-gold transition-transform ${
-              open ? "-translate-y-2 -rotate-45" : ""
-            }`}
-          />
-        </button>
+        {/* Mobile: valodas pārslēdzējs VIENMĒR redzams + hamburgeris */}
+        <div className="flex items-center gap-4 xl:hidden">
+          <LocaleSwitcher />
+          <button
+            type="button"
+            aria-label={t("izvelne")}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            className="flex flex-col gap-1.5"
+          >
+            <span
+              className={`h-0.5 w-6 bg-gold transition-transform ${
+                open ? "translate-y-2 rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`h-0.5 w-6 bg-gold transition-opacity ${
+                open ? "opacity-0" : ""
+              }`}
+            />
+            <span
+              className={`h-0.5 w-6 bg-gold transition-transform ${
+                open ? "-translate-y-2 -rotate-45" : ""
+              }`}
+            />
+          </button>
+        </div>
       </nav>
 
       {/* Mobile menu */}

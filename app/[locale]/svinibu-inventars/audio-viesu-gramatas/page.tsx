@@ -104,7 +104,7 @@ export default async function AudioViesuGramatasPage() {
             <div className="mt-5 aspect-video w-full overflow-hidden rounded-xl">
               <iframe
                 title={ts("avTutorial")}
-                src="https://www.youtube.com/embed/hIrsgkIkbnY"
+                src="https://www.youtube-nocookie.com/embed/hIrsgkIkbnY"
                 className="h-full w-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
