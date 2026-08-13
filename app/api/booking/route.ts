@@ -191,7 +191,7 @@ export async function POST(req: Request) {
         to: notify,
         replyTo: payload.contact.email.trim(),
         subject: `Jauns pieteikums — ${payload.event.date} — ${payload.contact.name}`,
-        html: `<p style="font-family:Arial,sans-serif;">Jauns rezervācijas pieteikums no <b>${esc(payload.contact.name)}</b> (${esc(phone)}, ${esc(payload.contact.email)}).</p>${html}`,
+        html: `<meta charset="utf-8"><p style="font-family:Arial,sans-serif;">Jauns rezervācijas pieteikums no <b>${esc(payload.contact.name)}</b> (${esc(phone)}, ${esc(payload.contact.email)}).</p>${html}`,
       });
       if (rNotify.error)
         console.error(`[booking] Roberta e-pasts NEIZDEVĀS (to=${notify}):`, JSON.stringify(rNotify.error));
@@ -202,7 +202,7 @@ export async function POST(req: Request) {
         from,
         to: payload.contact.email.trim(),
         subject: "Tavs pieteikums saņemts — Anabella Party",
-        html: `<p style="font-family:Arial,sans-serif;">Paldies, ${esc(payload.contact.name)}! Tavs pieteikums saņemts. Atbildēsim 24 stundu laikā ar precīzu piedāvājumu. Ja steidz — zvani +371 29222761.</p>${html}`,
+        html: `<meta charset="utf-8"><p style="font-family:Arial,sans-serif;">Paldies, ${esc(payload.contact.name)}! Tavs pieteikums saņemts. Atbildēsim 24 stundu laikā ar precīzu piedāvājumu. Ja steidz — zvani +371 29222761.</p>${html}`,
       });
       if (rClient.error)
         console.error(`[booking] Klienta e-pasts NEIZDEVĀS:`, JSON.stringify(rClient.error));

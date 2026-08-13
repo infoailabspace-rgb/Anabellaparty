@@ -97,7 +97,7 @@ export async function POST(req: Request) {
       to: notify,
       replyTo: email, // Roberts var atbildēt tieši sūtītājam
       subject: `Jauns ziņojums no kontaktu formas — ${name}`,
-      html: `<div style="font-family:Arial,sans-serif;color:#1A3A4A;">
+      html: `<meta charset="utf-8"><div style="font-family:Arial,sans-serif;color:#1A3A4A;">
         <p>Jauns ziņojums no kontaktu formas <b>anabellaparty.lv</b>:</p>
         <p><b>Vārds:</b> ${esc(name)}</p>
         <p><b>E-pasts:</b> ${esc(email)}</p>
