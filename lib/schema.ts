@@ -52,6 +52,12 @@ export function productNode(p: Product, locale: string, pagePath: string) {
       availability: "https://schema.org/InStock",
       url: pageUrl,
       seller: { "@id": `${SITE_URL}/#business` },
+      // Noma ar neatgriežamu avansu → atgriešana nav atļauta (atbilst noteikumiem).
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "LV",
+        returnPolicyCategory: "https://schema.org/MerchantReturnNotPermitted",
+      },
     };
   }
   return node;
