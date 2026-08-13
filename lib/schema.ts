@@ -43,7 +43,10 @@ export function productNode(p: Product, locale: string, pagePath: string) {
     brand: { "@type": "Brand", name: COMPANY.brandName },
     url: `${pageUrl}#${p.slug}`,
   };
-  if (p.coverImage) node.image = abs(p.coverImage);
+  if (p.coverImage)
+    node.image = p.coverImage.startsWith("http")
+      ? p.coverImage
+      : abs(p.coverImage);
   if (priced.length) {
     node.offers = {
       "@type": "Offer",

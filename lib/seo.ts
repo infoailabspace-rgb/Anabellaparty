@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://anabellaparty.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.anabellaparty.lv";
 
 // Ceļš ar valodas prefiksu (LV saknē, en/ru ar prefiksu) + trailingSlash.
 export function localizedPath(locale: string, path = ""): string {
