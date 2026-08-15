@@ -10,17 +10,25 @@ export default async function TiribaPage() {
   // (is_active=false, piem. bumbu somas) — tāpēc bez is_active filtra.
   const { data } = await supabase
     .from("products")
-    .select("id, slug, name, category, cleaning_status, cleaning_notes, is_active")
+    .select("id, slug, name, category, cleaning_status, cleaning_notes, is_active, unit_of")
     .order("category", { ascending: true })
     .order("sort_order", { ascending: true });
 
-  const rows: CRow[] = (data ?? []).map((r: any) => ({
-    id: r.id,
-    name: (typeof r.name === "string" ? r.name : r.name?.lv) || r.slug,
-    category: r.category ?? "cits",
-    cleaning_status: r.cleaning_status ?? null,
-    cleaning_notes: r.cleaning_notes ?? "",
-  }));
+  // Kataloga produkti, kuriem ir piesaistītas fiziskās vienības (unit_of → slug),
+  // NErādās — tīrību seko per-vienībai. Vienības un pārējie produkti paliek.
+  const parentSlugs = new Set(
+    (data ?? []).map((r: any) => r.unit_of).filter(Boolean),
+  );
+
+  const rows: CRow[] = (data ?? [])
+    .filter((r: any) => !parentSlugs.has(r.slug))
+    .map((r: any) => ({
+      id: r.id,
+      name: (typeof r.name === "string" ? r.name : r.name?.lv) || r.slug,
+      category: r.category ?? "cits",
+      cleaning_status: r.cleaning_status ?? null,
+      cleaning_notes: r.cleaning_notes ?? "",
+    }));
 
   return <CleaningAdmin rows={rows} />;
 }
