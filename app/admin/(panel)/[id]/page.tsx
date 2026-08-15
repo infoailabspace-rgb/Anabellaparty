@@ -52,6 +52,27 @@ export default async function BookingPage({
   const conflicts = (conflictData as Conflict[] | null) ?? [];
   const nameBySlug = new Map(quote.lines.map((l) => [l.slug, l.name]));
 
+  // Saistītie rēķini (Fāze 3).
+  const { data: invData } = await supabase
+    .from("invoices")
+    .select("id, invoice_number, amount_total, status, issue_date")
+    .eq("booking_request_id", id)
+    .order("issue_date", { ascending: false });
+  const invoices = (invData ?? []) as {
+    id: string;
+    invoice_number: string;
+    amount_total: number;
+    status: string;
+    issue_date: string;
+  }[];
+  const INV_STATUS_LV: Record<string, string> = {
+    draft: "Melnraksts",
+    sent: "Nosūtīts",
+    paid: "Apmaksāts",
+    overdue: "Nokavēts",
+    cancelled: "Atcelts",
+  };
+
   // Vai klienta ievadītā adrese un ģeokodētā būtiski atšķiras (mismatch).
   // Heiristika: normalizē (bez diakritikas), izmet pieturas/īsos/skaitļus, salīdzina
   // vārdu 4-zīmju saknes; ja nav kopīgas → iezīmē.
@@ -216,6 +237,47 @@ export default async function BookingPage({
                 <div className="flex justify-between border-t border-gold/15 pt-2 font-semibold"><span>Galīgā summa</span><span className="font-mono text-gold">{b.final_total} €</span></div>
               )}
             </div>
+          </section>
+
+          {/* Rēķini un maksājumi */}
+          <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
+            <div className="flex items-center justify-between">
+              <h2 className="font-display text-lg font-semibold text-gold">
+                Rēķini un maksājumi
+              </h2>
+              <Link
+                href={`/admin/rekini/jauns?booking=${b.id}`}
+                className="rounded-full border border-gold/40 px-3 py-1 text-xs text-gold hover:border-gold"
+              >
+                + Jauns rēķins
+              </Link>
+            </div>
+            {invoices.length === 0 ? (
+              <p className="mt-3 text-sm text-text/40">
+                Nav rēķinu šim pieteikumam.
+              </p>
+            ) : (
+              <ul className="mt-3 space-y-2">
+                {invoices.map((iv) => (
+                  <li key={iv.id}>
+                    <Link
+                      href={`/admin/rekini/${iv.id}`}
+                      className="flex items-center justify-between rounded-lg border border-gold/15 bg-bg/40 p-3 hover:border-gold/40"
+                    >
+                      <span className="font-mono text-sm text-gold">
+                        {iv.invoice_number}
+                      </span>
+                      <span className="text-xs text-text/60">
+                        {INV_STATUS_LV[iv.status] ?? iv.status}
+                      </span>
+                      <span className="font-mono text-sm text-text/90">
+                        {Number(iv.amount_total).toFixed(2)} €
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         </div>
 

@@ -63,6 +63,9 @@ export default async function PanelLayout({
               >
                 Kalendārs
               </Link>
+              <Link href="/admin/rekini" className="text-text/80 hover:text-gold">
+                Rēķini
+              </Link>
               <Link
                 href="/admin/inventars"
                 className="text-text/80 hover:text-gold"

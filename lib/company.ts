@@ -37,11 +37,11 @@ export const COMPANY = {
     facebook: "https://www.facebook.com/anabellaparty.lv",
   },
 
-  // [JĀAPSTIPRINA] — bankas rekvizīti (vajadzīgi rēķiniem)
+  // Bankas rekvizīti (rēķiniem)
   bank: {
-    name: "",
-    iban: "",
-    swift: "",
+    name: "Citadele",
+    iban: "LV90PARX0023594950001",
+    swift: "PARXLV22",
   },
 } as const;
 
