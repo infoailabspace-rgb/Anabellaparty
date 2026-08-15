@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { getSiteImage } from "@/lib/site-content";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.anabellaparty.lv";
@@ -13,12 +14,15 @@ export function localizedPath(locale: string, path = ""): string {
   return p.endsWith("/") ? p : `${p}/`;
 }
 
-// OG attēla URL: per-lapas virsraksts, ja padots; citādi zīmola tagline fallback.
-// Slīpsvītra pirms ? — atbilst trailingSlash (bez redirect uz attēla URL).
-export function ogImageUrl(locale: string, title?: string): string {
-  const q = new URLSearchParams({ locale });
-  if (title) q.set("title", title);
-  return `/og/?${q.toString()}`;
+// Statiskais rezerves OG attēls (public/) — vienmēr pieejams, ja admin nav iestatījis.
+const OG_STATIC_FALLBACK = "/og-image.jpg";
+
+// OG attēls: admin panelī iestatītais (site_content 'og.fallback', Supabase URL),
+// citādi statiskais /og-image.jpg. metadataBase padara relatīvo absolūtu.
+// (Dinamiskais /og route vairs netiek lietots — tas 404 produkcijā.)
+async function ogImages(): Promise<NonNullable<Metadata["openGraph"]>["images"]> {
+  const admin = await getSiteImage("og.fallback");
+  return [{ url: admin || OG_STATIC_FALLBACK, width: 1200, height: 630 }];
 }
 
 // alternates bloks generateMetadata vajadzībām (canonical + hreflang).
@@ -30,15 +34,14 @@ export function alternatesFor(locale: string, path = "") {
   return { canonical: localizedPath(locale, path), languages };
 }
 
-// OpenGraph + Twitter bloks (kopīgs). title → OG attēlā; ja nav → tagline fallback.
-export function ogMetadata(
+// OpenGraph + Twitter bloks (kopīgs). Attēls = admin OG vai statiskais fallback.
+export async function ogMetadata(
   locale: string,
   path: string,
   title: string,
   description: string,
-  ogTitle?: string,
-): Metadata {
-  const images = [{ url: ogImageUrl(locale, ogTitle), width: 1200, height: 630 }];
+): Promise<Metadata> {
+  const images = await ogImages();
   return {
     openGraph: {
       title,
@@ -64,15 +67,15 @@ const HOME_DESC: Record<string, string> = {
   ru: "Фотобудки, надувные аттракционы, спецэффекты и аудио гостевая книга для вашей незабываемой вечеринки. Доставка по всей Латвии.",
 };
 
-// Sākumlapas metadata — zīmola virsraksts + OG (tagline fallback, bez per-lapas virsraksta).
-export function homeMetadata(locale: string): Metadata {
+// Sākumlapas metadata — zīmola virsraksts + OG (admin/statiskais attēls).
+export async function homeMetadata(locale: string): Promise<Metadata> {
   const title = `Anabella Party — ${HOME_TITLE[locale] ?? HOME_TITLE.lv}`;
   const description = HOME_DESC[locale] ?? HOME_DESC.lv;
   return {
     title,
     description,
     alternates: alternatesFor(locale, ""),
-    ...ogMetadata(locale, "", title, description),
+    ...(await ogMetadata(locale, "", title, description)),
   };
 }
 
@@ -90,6 +93,6 @@ export async function pageMetadata(
     title,
     description,
     alternates: alternatesFor(locale, path),
-    ...ogMetadata(locale, path, title, description, pageTitle),
+    ...(await ogMetadata(locale, path, title, description)),
   };
 }

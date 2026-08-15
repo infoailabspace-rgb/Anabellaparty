@@ -20,7 +20,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: alternatesFor(locale, "/blogs"),
-    ...ogMetadata(locale, "/blogs", title, description),
+    ...(await ogMetadata(locale, "/blogs", title, description)),
   };
 }
 

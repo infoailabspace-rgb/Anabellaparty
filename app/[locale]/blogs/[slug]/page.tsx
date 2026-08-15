@@ -25,7 +25,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: alternatesFor(locale, `/blogs/${slug}`),
-    ...ogMetadata(locale, `/blogs/${slug}`, title, description),
+    ...(await ogMetadata(locale, `/blogs/${slug}`, title, description)),
   };
   if (post.cover) {
     md.openGraph = {
