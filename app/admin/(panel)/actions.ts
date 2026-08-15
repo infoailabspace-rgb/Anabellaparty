@@ -13,6 +13,30 @@ export async function signOut() {
 export async function setStatus(id: string, status: string) {
   const supabase = await createClient();
   await supabase.from("booking_requests").update({ status }).eq("id", id);
+
+  // Aprīkojuma rezervācijas pastāv TIKAI kamēr status = 'confirmed'.
+  // Vienmēr notīra esošās (idempotenti), pēc tam apstiprinātam booking izveido no jauna.
+  await supabase.from("equipment_bookings").delete().eq("booking_request_id", id);
+  if (status === "confirmed") {
+    const { data: b } = await supabase
+      .from("booking_requests")
+      .select("event_date, items")
+      .eq("id", id)
+      .single();
+    // CartItem = viens produkta eksemplārs (bez qty lauka) → quantity_reserved = 1.
+    const items = (Array.isArray(b?.items) ? b?.items : []) as { slug?: string }[];
+    const rows = items
+      .filter((it) => it.slug)
+      .map((it) => ({
+        booking_request_id: id,
+        product_slug: it.slug as string,
+        quantity_reserved: 1,
+        start_date: b!.event_date as string,
+        end_date: b!.event_date as string,
+      }));
+    if (rows.length) await supabase.from("equipment_bookings").insert(rows);
+  }
+
   revalidatePath("/admin");
   revalidatePath(`/admin/${id}`);
   revalidatePath("/admin/kalendars");

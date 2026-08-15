@@ -42,6 +42,7 @@ export type ProductInput = {
   contact_only: boolean;
   specs: { label: ML; value: ML }[];
   alt_phone: string | null;
+  quantity: number;
   is_active: boolean;
   is_featured: boolean;
   is_special: boolean;
@@ -116,6 +117,7 @@ function toRow(p: ProductInput) {
     contact_only: p.contact_only,
     specs: specs.length ? specs : null,
     alt_phone: p.alt_phone || null,
+    quantity: Number.isFinite(p.quantity) && p.quantity > 0 ? Math.floor(p.quantity) : 1,
     is_active: p.is_active,
     is_featured: p.is_featured,
     is_special: p.is_special,

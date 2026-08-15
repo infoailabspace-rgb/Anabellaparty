@@ -50,6 +50,7 @@ export default async function EditProductPage({
       value: mlOf(s.value),
     })),
     alt_phone: d.alt_phone ?? null,
+    quantity: Number(d.quantity) > 0 ? Number(d.quantity) : 1,
     is_active: d.is_active,
     is_featured: Boolean(d.is_featured),
     is_special: Boolean(d.is_special),

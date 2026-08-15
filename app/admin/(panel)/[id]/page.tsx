@@ -36,6 +36,22 @@ export default async function BookingPage({
   const delivery = Number(b.delivery_cost) || 0;
   const deposit = computeDeposit(quote.subtotal, delivery);
 
+  // Aprīkojuma pieejamība: konflikti ar citu apstiprinātu bookingu rezervācijām
+  // tajā pašā datumā (advisory — nebloķē statusa maiņu).
+  type Conflict = {
+    slug: string;
+    requested: number;
+    reserved: number;
+    quantity: number;
+    available: number;
+  };
+  const { data: conflictData } = await supabase.rpc(
+    "check_booking_availability",
+    { p_booking_id: id },
+  );
+  const conflicts = (conflictData as Conflict[] | null) ?? [];
+  const nameBySlug = new Map(quote.lines.map((l) => [l.slug, l.name]));
+
   // Vai klienta ievadītā adrese un ģeokodētā būtiski atšķiras (mismatch).
   // Heiristika: normalizē (bez diakritikas), izmet pieturas/īsos/skaitļus, salīdzina
   // vārdu 4-zīmju saknes; ja nav kopīgas → iezīmē.
@@ -68,6 +84,29 @@ export default async function BookingPage({
       <Link href="/admin" className="text-sm text-gold hover:underline">
         ← Pieteikumi
       </Link>
+
+      {conflicts.length > 0 && (
+        <div className="mt-4 rounded-2xl border border-amber-500/60 bg-amber-500/10 p-4">
+          <p className="text-sm font-semibold text-amber-300">
+            ⚠ Aprīkojuma pieejamības konflikts ({b.event_date})
+          </p>
+          <ul className="mt-2 space-y-1 text-sm text-amber-200/90">
+            {conflicts.map((c) => (
+              <li key={c.slug}>
+                <span className="font-semibold">
+                  {nameBySlug.get(c.slug) ?? c.slug}
+                </span>{" "}
+                — jau rezervēts {c.reserved}/{c.quantity}, pieejams{" "}
+                {c.available}, šis pieprasa {c.requested}.
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-xs text-amber-200/60">
+            Rezervāciju rēķina no citiem “Apstiprināts” pieteikumiem tajā pašā
+            datumā. Šis brīdinājums nebloķē — pārbaudi manuāli pirms apstiprini.
+          </p>
+        </div>
+      )}
 
       <div className="mt-4 grid gap-6 lg:grid-cols-[1fr_340px]">
         <div className="space-y-6">

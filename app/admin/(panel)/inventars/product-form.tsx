@@ -32,6 +32,7 @@ const empty: ProductInput = {
   contact_only: false,
   specs: [],
   alt_phone: null,
+  quantity: 1,
   is_active: true,
   is_featured: false,
   is_special: false,
@@ -211,7 +212,21 @@ export default function ProductForm({
             <input type="checkbox" checked={p.contact_only} onChange={(e) => set({ contact_only: e.target.checked })} className="accent-[#D4A960]" />
             Cena vienojoties
           </label>
+          <label className="flex items-center gap-2 text-sm">
+            Eksemplāru skaits
+            <input
+              type="number"
+              min={1}
+              value={p.quantity}
+              onChange={(e) => set({ quantity: Number(e.target.value) })}
+              className={`${field} w-20`}
+            />
+          </label>
         </div>
+        <p className="mt-2 text-xs text-text/40">
+          Eksemplāru skaits nosaka pieejamību — cik reižu produktu var rezervēt
+          vienā datumā, pirms parādās dubultrezervācijas brīdinājums.
+        </p>
       </section>
 
       {/* Cenas */}
