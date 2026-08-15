@@ -5,6 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 import { computeQuote } from "@/lib/pricing";
 import type { Product } from "@/lib/products";
 import { STATUSES, urgency, type Booking } from "@/lib/admin";
+import { bookingBadge, bookingAmount } from "@/lib/booking-status";
 import { setStatus, deleteBooking } from "./actions";
 
 function TrashIcon() {
@@ -165,6 +166,21 @@ export default function BookingsTable({
                   </td>
                   <td className="p-3">
                     <div className="flex items-center gap-2">
+                      {(() => {
+                        const bg = bookingBadge(
+                          b.status,
+                          b.paid_sum ?? 0,
+                          bookingAmount(b),
+                          b.event_date,
+                        );
+                        return (
+                          <span
+                            className={`shrink-0 rounded-full border px-2 py-0.5 text-[11px] ${bg.cls}`}
+                          >
+                            {bg.label}
+                          </span>
+                        );
+                      })()}
                       <select
                         value={b.status}
                         onChange={(e) => changeStatus(b.id, e.target.value)}

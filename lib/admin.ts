@@ -26,6 +26,7 @@ export type Booking = {
   status: string;
   admin_notes: string | null;
   viewed_at: string | null;
+  paid_sum?: number; // summēti completed maksājumi (apmaksas krāsu shēmai)
 };
 
 export const STATUSES: { id: string; label: string }[] = [

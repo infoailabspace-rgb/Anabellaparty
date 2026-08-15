@@ -29,6 +29,8 @@ export type BookingLite = {
   status: string;
   estimated_total: number | null;
   final_total: number | null;
+  delivery_cost: number | null;
+  paid_sum: number;
 };
 
 export const SEGMENTS: Segment[] = ["new", "standard", "frequent", "vip"];

@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { upsertCustomer, deleteCustomer } from "./actions";
-import { statusLabel } from "@/lib/admin";
+import { bookingBadge, bookingAmount } from "@/lib/booking-status";
 import type { CustomerRow, BookingLite, Segment, CustomerType } from "./types";
 import { SEGMENTS, SEGMENT_LABEL } from "./types";
 
@@ -249,9 +249,21 @@ export default function CrmDetail({
                       <span className="text-sm font-semibold text-text/90">
                         {b.event_date}
                       </span>
-                      <span className="rounded-full border border-gold/30 px-2 py-0.5 text-[11px] text-gold/80">
-                        {statusLabel(b.status)}
-                      </span>
+                      {(() => {
+                        const bg = bookingBadge(
+                          b.status,
+                          b.paid_sum,
+                          bookingAmount(b),
+                          b.event_date,
+                        );
+                        return (
+                          <span
+                            className={`rounded-full border px-2 py-0.5 text-[11px] ${bg.cls}`}
+                          >
+                            {bg.label}
+                          </span>
+                        );
+                      })()}
                     </div>
                     <div className="mt-1 flex items-center justify-between text-xs text-text/60">
                       <span>{b.event_type}</span>

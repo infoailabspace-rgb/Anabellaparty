@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { statusLabel } from "@/lib/admin";
+import { bookingBadge } from "@/lib/booking-status";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +31,7 @@ type LatestItem = {
   date: string;
   status: string;
   amount: number;
+  paid_sum: number;
 };
 type TopItem = { product: string; count: number };
 type Extra = {
@@ -98,15 +99,6 @@ function RevenueCard({ title, received, planned }: { title: string; received: nu
     </div>
   );
 }
-
-const STATUS_COLOR: Record<string, string> = {
-  new: "border-text/30 text-text/60",
-  contacted: "border-blue-400/40 text-blue-300",
-  quoted: "border-purple-400/40 text-purple-300",
-  confirmed: "border-green-500/40 text-green-300",
-  completed: "border-gold/40 text-gold",
-  rejected: "border-red-500/50 text-red-300",
-};
 
 function BookingRow({ href, left, sub, right }: { href: string; left: string; sub?: string; right: string }) {
   return (
@@ -269,20 +261,23 @@ export default async function ParskatsPage() {
         <div className="rounded-2xl border border-gold/25 bg-navy/30 p-5">
           <h3 className="mb-3 font-display text-lg font-semibold">Jaunākās rezervācijas</h3>
           <div className="space-y-2">
-            {(e.latest ?? []).map((b) => (
-              <Link key={b.id} href={`/admin/${b.id}`} className="flex items-center justify-between gap-3 rounded-lg border border-gold/10 bg-bg/40 px-3 py-2 hover:border-gold/40">
-                <div className="min-w-0">
-                  <div className="truncate text-sm text-text/90">{b.name}</div>
-                  <div className="text-xs text-text/50">{b.date}</div>
-                </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  <span className={`rounded-full border px-2 py-0.5 text-[11px] ${STATUS_COLOR[b.status] ?? "border-text/30 text-text/60"}`}>
-                    {statusLabel(b.status)}
-                  </span>
-                  <span className="font-mono text-sm text-gold">{eur(b.amount)}</span>
-                </div>
-              </Link>
-            ))}
+            {(e.latest ?? []).map((b) => {
+              const bg = bookingBadge(b.status, b.paid_sum ?? 0, b.amount, b.date);
+              return (
+                <Link key={b.id} href={`/admin/${b.id}`} className="flex items-center justify-between gap-3 rounded-lg border border-gold/10 bg-bg/40 px-3 py-2 hover:border-gold/40">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm text-text/90">{b.name}</div>
+                    <div className="text-xs text-text/50">{b.date}</div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span className={`rounded-full border px-2 py-0.5 text-[11px] ${bg.cls}`}>
+                      {bg.label}
+                    </span>
+                    <span className="font-mono text-sm text-gold">{eur(b.amount)}</span>
+                  </div>
+                </Link>
+              );
+            })}
             {(e.latest ?? []).length === 0 && <p className="text-sm text-text/40">Nav rezervāciju.</p>}
           </div>
         </div>

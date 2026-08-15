@@ -17,12 +17,16 @@ export default async function BookingPage({
   const supabase = await createClient();
   const { data } = await supabase
     .from("booking_requests")
-    .select("*")
+    .select("*, payments(amount, status)")
     .eq("id", id)
     .single();
 
   if (!data) notFound();
   const b = data as Booking;
+  b.paid_sum = ((data as { payments?: { amount: number; status: string }[] })
+    .payments ?? [])
+    .filter((p) => p.status === "completed")
+    .reduce((s, p) => s + Number(p.amount), 0);
 
   // Atzīmē kā apskatītu
   if (!b.viewed_at) {

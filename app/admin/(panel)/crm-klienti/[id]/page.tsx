@@ -39,7 +39,9 @@ export default async function CustomerPage({
 
   const { data: bData } = await supabase
     .from("booking_requests")
-    .select("id, event_date, event_type, status, estimated_total, final_total")
+    .select(
+      "id, event_date, event_type, status, estimated_total, final_total, delivery_cost, payments(amount, status)",
+    )
     .eq("customer_id", id)
     .order("event_date", { ascending: false });
 
@@ -50,6 +52,10 @@ export default async function CustomerPage({
     status: b.status ?? "new",
     estimated_total: b.estimated_total,
     final_total: b.final_total,
+    delivery_cost: b.delivery_cost,
+    paid_sum: (b.payments ?? [])
+      .filter((p: any) => p.status === "completed")
+      .reduce((s: number, p: any) => s + Number(p.amount), 0),
   }));
 
   return <CrmDetail customer={customer} bookings={bookings} />;

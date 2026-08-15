@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Booking } from "@/lib/admin";
+import { bookingBadge, bookingAmount } from "@/lib/booking-status";
 
 const WD = ["P", "O", "T", "C", "Pk", "S", "Sv"];
 const MONTHS = [
@@ -102,20 +103,24 @@ export default function Calendar({ bookings }: { bookings: Booking[] }) {
                 </div>
               )}
               <div className="mt-1 space-y-1">
-                {list.slice(0, 3).map((b) => (
-                  <Link
-                    key={b.id}
-                    href={`/admin/${b.id}`}
-                    className={`block truncate rounded px-1 text-[11px] ${
-                      b.status === "confirmed"
-                        ? "bg-gold/15 text-gold"
-                        : "bg-navy/50 text-text/70"
-                    }`}
-                    title={`${b.name} — ${b.event_type}`}
-                  >
-                    {b.name}
-                  </Link>
-                ))}
+                {list.slice(0, 3).map((b) => {
+                  const bg = bookingBadge(
+                    b.status,
+                    b.paid_sum ?? 0,
+                    bookingAmount(b),
+                    b.event_date,
+                  );
+                  return (
+                    <Link
+                      key={b.id}
+                      href={`/admin/${b.id}`}
+                      className={`block truncate rounded border px-1 text-[11px] ${bg.cls}`}
+                      title={`${b.name} — ${b.event_type} · ${bg.label}`}
+                    >
+                      {b.name}
+                    </Link>
+                  );
+                })}
                 {list.length > 3 && (
                   <span className="text-[10px] text-text/40">+{list.length - 3}</span>
                 )}
@@ -129,6 +134,13 @@ export default function Calendar({ bookings }: { bookings: Booking[] }) {
         Sarkans ietvars = viens inventārs vairākos <b>apstiprinātos</b> pasākumos
         vienā datumā. Pieteikumi (ne-apstiprināti) konfliktu nerada.
       </p>
+      <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-text/50">
+        <span>🔵 Gaida apstiprinājumu</span>
+        <span>🟡 Nav apmaksāts</span>
+        <span>🟠 Daļēji (avanss)</span>
+        <span>🟢 Apmaksāts</span>
+        <span>🔴 Kavēts</span>
+      </div>
     </div>
   );
 }

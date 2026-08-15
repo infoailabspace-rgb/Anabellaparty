@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { STATUSES, type Booking } from "@/lib/admin";
+import { bookingBadge, bookingAmount } from "@/lib/booking-status";
 import { setStatus, saveNotes, setFinalTotal } from "../actions";
 
 export default function BookingDetail({ booking }: { booking: Booking }) {
@@ -53,6 +54,21 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
         <label className="text-xs uppercase tracking-wide text-text/50">
           Statuss
         </label>
+        {(() => {
+          const bg = bookingBadge(
+            status,
+            booking.paid_sum ?? 0,
+            bookingAmount(booking),
+            booking.event_date,
+          );
+          return (
+            <span
+              className={`ml-2 rounded-full border px-2 py-0.5 text-[11px] ${bg.cls}`}
+            >
+              {bg.label}
+            </span>
+          );
+        })()}
         <select
           value={status}
           onChange={(e) => onStatus(e.target.value)}
