@@ -81,8 +81,14 @@ export default async function PanelLayout({
               <Link href="/admin/atsauksmes" className="text-text/80 hover:text-gold">
                 Atsauksmes
               </Link>
+              <Link
+                href="/admin/crm-klienti"
+                className="text-text/80 hover:text-gold"
+              >
+                CRM Klienti
+              </Link>
               <Link href="/admin/klienti" className="text-text/80 hover:text-gold">
-                Klienti
+                Klientu logo
               </Link>
               <Link href="/admin/partneri" className="text-text/80 hover:text-gold">
                 Partneri

@@ -137,6 +137,31 @@ export async function POST(req: Request) {
       ? Number(payload.event.guestCount)
       : null;
 
+  // CRM: sasaista pieteikumu ar klientu (find-or-create pēc e-pasta).
+  // SECURITY DEFINER RPC — strādā arī ar anon atslēgu (customers ir admin-only RLS).
+  // Nav fatāla: ja sasaiste neizdodas, pieteikums tik un tā tiek saglabāts (customer_id null).
+  let customerId: string | null = null;
+  try {
+    const { data: cid, error: linkErr } = await supabase.rpc(
+      "booking_link_customer",
+      {
+        p_email: payload.contact.email.trim(),
+        p_name: payload.contact.name.trim(),
+        p_phone: phone,
+        p_company: payload.contact.company?.trim() || null,
+        p_reg_nr: payload.contact.regNr?.trim() || null,
+      },
+    );
+    if (linkErr)
+      console.error("[booking] klienta sasaiste NEIZDEVĀS:", linkErr.message);
+    else customerId = (cid as string | null) ?? null;
+  } catch (e) {
+    console.error(
+      "[booking] klienta sasaistes izņēmums:",
+      e instanceof Error ? e.message : String(e),
+    );
+  }
+
   // Bez .select() — anon lomai nav SELECT politikas, tāpēc INSERT…RETURNING
   // izgāztos. Insert-only (return=minimal) atbilst publiskās formas RLS.
   const { error } = await supabase.from("booking_requests").insert({
@@ -159,6 +184,7 @@ export async function POST(req: Request) {
     delivery_distance_km: deliveryKm,
     delivery_cost: deliveryCost || null,
     delivery_geocoded: payload.delivery?.geocoded?.trim() || null,
+    customer_id: customerId,
     status: "new",
   });
 

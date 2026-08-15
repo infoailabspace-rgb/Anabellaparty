@@ -111,7 +111,7 @@ export default function ClientsAdmin({ rows }: { rows: CRow[] }) {
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold">Klienti</h1>
+        <h1 className="font-display text-2xl font-bold">Klientu logo</h1>
         <button onClick={() => setList((l) => [{ id: null, name: "", logo_url: "", website: "", sort_order: 0, is_active: true }, ...l])} className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black">+ Jauns</button>
       </div>
       <p className="mb-6 text-xs text-text/50">
