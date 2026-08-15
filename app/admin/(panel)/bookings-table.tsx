@@ -36,9 +36,15 @@ function itemsSummary(b: Booking, products: Product[]): string {
 export default function BookingsTable({
   bookings,
   products,
+  scope,
+  title,
 }: {
   bookings: Booking[];
   products: Product[];
+  // Statusi, ko šī sadaļa rāda. Kad ieraksta statuss iziet ārpus scope,
+  // tas automātiski pazūd no saraksta (piem. quoted → confirmed).
+  scope: string[];
+  title: string;
 }) {
   const [rows, setRows] = useState(bookings);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -47,9 +53,12 @@ export default function BookingsTable({
   const [to, setTo] = useState("");
   const [, startTransition] = useTransition();
 
+  const scopeStatuses = STATUSES.filter((s) => scope.includes(s.id));
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return rows.filter((b) => {
+      if (!scope.includes(b.status)) return false; // ārpus sadaļas → paslēpts
       if (statusFilter !== "all" && b.status !== statusFilter) return false;
       if (from && b.event_date < from) return false;
       if (to && b.event_date > to) return false;
@@ -59,7 +68,7 @@ export default function BookingsTable({
       }
       return true;
     });
-  }, [rows, statusFilter, q, from, to]);
+  }, [rows, scope, statusFilter, q, from, to]);
 
   function changeStatus(id: string, status: string) {
     setRows((r) => r.map((b) => (b.id === id ? { ...b, status } : b)));
@@ -88,7 +97,7 @@ export default function BookingsTable({
     <div>
       <div className="mb-6 flex flex-wrap items-end gap-3">
         <h1 className="mr-auto font-display text-2xl font-bold">
-          Pieteikumi{" "}
+          {title}{" "}
           <span className="text-sm font-normal text-text/50">
             ({filtered.length})
           </span>
@@ -105,7 +114,7 @@ export default function BookingsTable({
           className={field}
         >
           <option value="all">Visi statusi</option>
-          {STATUSES.map((s) => (
+          {scopeStatuses.map((s) => (
             <option key={s.id} value={s.id}>
               {s.label}
             </option>

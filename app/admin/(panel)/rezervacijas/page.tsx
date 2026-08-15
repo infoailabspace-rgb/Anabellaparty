@@ -1,14 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { getAllProducts } from "@/lib/catalog";
 import type { Booking } from "@/lib/admin";
-import BookingsTable from "./bookings-table";
+import BookingsTable from "../bookings-table";
 
 export const dynamic = "force-dynamic";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const SCOPE = ["new", "contacted", "quoted"];
+const SCOPE = ["confirmed", "completed"];
 
-export default async function AdminBookingsPage() {
+export default async function RezervacijasPage() {
   const supabase = await createClient();
   const { data } = await supabase
     .from("booking_requests")
@@ -29,7 +29,7 @@ export default async function AdminBookingsPage() {
       bookings={bookings}
       products={products}
       scope={SCOPE}
-      title="Pieteikumi"
+      title="Rezervācijas"
     />
   );
 }

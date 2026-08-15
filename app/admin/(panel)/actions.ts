@@ -53,6 +53,8 @@ export async function setStatus(id: string, status: string) {
   }
 
   revalidatePath("/admin");
+  revalidatePath("/admin/rezervacijas");
+  revalidatePath("/admin/arhivs");
   revalidatePath(`/admin/${id}`);
   revalidatePath("/admin/kalendars");
 }
