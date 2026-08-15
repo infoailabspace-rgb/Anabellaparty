@@ -164,7 +164,7 @@ export default async function ParskatsPage() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Kpi label="Aktīvās rezervācijas" value={String(s.active_reservations ?? 0)} sub="Apstiprinātas, gaidāmas" icon="📅" />
         <Kpi label="Pieejams aprīkojums" value={`${s.available_equipment ?? 0} / ${s.active_products ?? 0}`} sub="Brīvs šodien" icon="📦" />
-        <Kpi label="Gaida maksājumu" value={String(s.awaiting_payment ?? 0)} sub="Apstiprinātas, nav apmaksātas" icon="⏳" />
+        <Kpi label="Gaida maksājumu" value={String(s.awaiting_payment ?? 0)} sub="gaidāmie pasākumi bez apmaksas" icon="⏳" />
       </div>
 
       {/* 3. Ieņēmumu progress */}
@@ -196,7 +196,7 @@ export default async function ParskatsPage() {
       {/* 5. Divi saraksti */}
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-2xl border border-gold/25 bg-navy/30 p-5">
-          <h3 className="mb-3 font-display text-lg font-semibold">Gaida apmaksu <span className="text-sm text-text/40">({(e.waiting_list ?? []).length})</span></h3>
+          <h3 className="mb-3 font-display text-lg font-semibold">Kopā jāsaņem (visas nesamaksātās) <span className="text-sm text-text/40">({(e.waiting_list ?? []).length})</span></h3>
           <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
             {(e.waiting_list ?? []).length === 0 && <p className="text-sm text-text/40">Nav ierakstu.</p>}
             {(e.waiting_list ?? []).map((b) => (
