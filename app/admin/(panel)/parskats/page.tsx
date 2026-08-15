@@ -163,7 +163,7 @@ export default async function ParskatsPage() {
       {/* 2. KPI */}
       <div className="grid gap-4 sm:grid-cols-3">
         <Kpi label="Aktīvās rezervācijas" value={String(s.active_reservations ?? 0)} sub="Apstiprinātas, gaidāmas" icon="📅" />
-        <Kpi label="Pieejams aprīkojums" value={`${s.available_equipment ?? 0} / ${s.active_products ?? 0}`} sub="Brīvs šodien" icon="📦" />
+        <Kpi label="Pieejami produkti (katalogā)" value={`${s.available_equipment ?? 0} / ${s.active_products ?? 0}`} sub="Brīvs šodien" icon="📦" />
         <Kpi label="Gaida maksājumu" value={String(s.awaiting_payment ?? 0)} sub="gaidāmie pasākumi bez apmaksas" icon="⏳" />
       </div>
 
@@ -288,7 +288,8 @@ export default async function ParskatsPage() {
         </div>
 
         <div className="rounded-2xl border border-gold/25 bg-navy/30 p-5">
-          <h3 className="mb-3 font-display text-lg font-semibold">Aprīkojuma statuss <span className="text-sm text-text/40">({eqTotal})</span></h3>
+          <h3 className="font-display text-lg font-semibold">Aprīkojuma statuss <span className="text-sm text-text/40">({eqTotal})</span></h3>
+          <p className="mb-3 text-xs text-text/50">ieskaitot visas fiziskās vienības</p>
           <div className="space-y-3">
             {eqRow("🟢 Pieejams", eqAvail, "bg-green-500")}
             {eqRow("🔵 Rezervēts", eqReserved, "bg-blue-500")}
