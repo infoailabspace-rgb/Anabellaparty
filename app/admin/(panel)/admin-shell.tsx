@@ -13,6 +13,7 @@ const GROUPS: Group[] = [
     title: "Bizness",
     icon: "📊",
     items: [
+      { href: "/admin/parskats", label: "Pārskats", icon: "📊" },
       { href: "/admin", label: "Pieteikumi", icon: "📥" },
       { href: "/admin/kalendars", label: "Kalendārs", icon: "📅" },
       { href: "/admin/crm-klienti", label: "CRM Klienti", icon: "👥" },
