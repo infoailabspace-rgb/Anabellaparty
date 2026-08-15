@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
@@ -30,7 +29,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: alternatesFor(locale, `/blogs/kategorija/${cat}`),
-    ...ogMetadata(locale, `/blogs/kategorija/${cat}`, title, description),
+    ...(await ogMetadata(locale, `/blogs/kategorija/${cat}`, title, description)),
   };
 }
 
@@ -56,7 +55,11 @@ export default async function CategoryArchivePage({
           ]),
         )}
       />
-      <SectionHero title={label} tagline={`Raksti kategorijā “${label}”.`} />
+      <SectionHero
+        title={label}
+        tagline={`Raksti kategorijā “${label}”.`}
+        heroKey={`blog-${cat}`}
+      />
       <div className="mx-auto max-w-6xl px-6 py-16">
         <BlogList posts={posts} />
       </div>

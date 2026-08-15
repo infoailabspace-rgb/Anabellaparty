@@ -7,6 +7,7 @@ import {
   HERO_IMAGE_PAGES,
   isVideoPage,
 } from "@/lib/hero-media";
+import { BLOG_CATEGORIES, CATEGORY_LABEL } from "@/lib/blog";
 
 export const dynamic = "force-dynamic";
 
@@ -51,12 +52,23 @@ export default async function SatursPage() {
     };
   });
 
-  const heroKeys = [...HERO_VIDEO_PAGES, ...HERO_IMAGE_PAGES];
+  // Blogu kategoriju hero attēli: key = "blog-<cat>", ceļš /blogs/kategorija/<cat>.
+  const blogHeroPaths: Record<string, string> = Object.fromEntries(
+    BLOG_CATEGORIES.map((c) => [
+      `blog-${c}`,
+      `/blogs/kategorija/${c} (${CATEGORY_LABEL[c] ?? c})`,
+    ]),
+  );
+  const heroKeys = [
+    ...HERO_VIDEO_PAGES,
+    ...HERO_IMAGE_PAGES,
+    ...BLOG_CATEGORIES.map((c) => `blog-${c}`),
+  ];
   const heroPages: HeroPage[] = heroKeys.map((key) => {
     const v: any = map.get(`hero.${key}`)?.value ?? {};
     return {
       key,
-      path: HERO_PATHS[key] ?? key,
+      path: HERO_PATHS[key] ?? blogHeroPaths[key] ?? key,
       video: isVideoPage(key),
       media: {
         mp4: v.mp4 ?? null,
