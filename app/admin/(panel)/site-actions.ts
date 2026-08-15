@@ -187,22 +187,24 @@ export async function upsertPartner(
   id: string | null,
   d: { name: string; description: ML; url: string; logo_url: string; sort_order: number; is_active: boolean },
 ) {
+  const name = d.name.trim();
+  if (!name) return { error: "Nosaukums ir obligāts" };
   const supabase = await createClient();
   const row = {
-    name: d.name,
+    name,
     description: d.description,
     url: d.url || null,
     logo_url: d.logo_url || null,
     sort_order: d.sort_order,
     is_active: d.is_active,
   };
-  const { error } = id
-    ? await supabase.from("site_partners").update(row).eq("id", id)
-    : await supabase.from("site_partners").insert(row);
+  const { data, error } = id
+    ? await supabase.from("site_partners").update(row).eq("id", id).select("id").single()
+    : await supabase.from("site_partners").insert(row).select("id").single();
   if (error) return { error: error.message };
   await audit(id ? "update" : "create", "partner", id, row);
   revalidatePath("/", "layout");
-  return { ok: true };
+  return { ok: true, id: (data?.id ?? id) as string };
 }
 export async function deletePartner(id: string) {
   const supabase = await createClient();

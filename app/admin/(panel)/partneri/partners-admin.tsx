@@ -97,7 +97,15 @@ function Card({
         ))}
       </div>
       <div className="mt-3 flex items-center gap-3">
-        <button onClick={() => start(async () => { const res = await upsertPartner(row.id, row); setMsg(res?.error ?? "Saglabāts ✓"); })} disabled={pending} className="rounded-full bg-gold px-4 py-1.5 text-xs font-semibold text-black disabled:opacity-60">
+        <button onClick={() => {
+          if (!row.name.trim()) { setMsg("Nosaukums ir obligāts"); return; }
+          start(async () => {
+            const res = await upsertPartner(row.id, row);
+            if (res?.error) { setMsg(res.error); return; }
+            if (!row.id && res?.id) onChange({ ...row, id: res.id });
+            setMsg("Saglabāts ✓");
+          });
+        }} disabled={pending} className="rounded-full bg-gold px-4 py-1.5 text-xs font-semibold text-black disabled:opacity-60">
           {pending ? "Saglabā…" : "Saglabāt"}
         </button>
         {row.id && <button onClick={() => { if (confirm("Dzēst partneri?")) start(() => { deletePartner(row.id!); onDelete(row.id!); }); }} className="rounded-full border border-red-500/50 px-3 py-1.5 text-xs text-red-300">Dzēst</button>}

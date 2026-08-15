@@ -58,7 +58,7 @@ export default async function MusuDraugiPage() {
         ) : (
           <div className="mx-auto max-w-4xl space-y-6">
             {partners.map((p, i) => (
-              <Reveal key={p.name} delay={i * 0.08}>
+              <Reveal key={p.id ?? p.name} delay={i * 0.08}>
                 <div
                   className={`grid overflow-hidden rounded-2xl border-2 border-gold/25 bg-navy/25 ${
                     p.logoUrl ? "md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]" : ""

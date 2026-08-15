@@ -98,6 +98,7 @@ export async function getPartners(): Promise<Partner[]> {
         .order("sort_order", { ascending: true });
       if (data && data.length)
         return data.map((r: any) => ({
+          id: r.id,
           name: r.name,
           description: pickStr(r.description, locale),
           url: r.url ?? undefined,
