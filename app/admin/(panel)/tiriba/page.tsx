@@ -6,10 +6,11 @@ export const dynamic = "force-dynamic";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export default async function TiribaPage() {
   const supabase = await createClient();
+  // Tīrība attiecas uz VISIEM produktiem, arī iekšējiem/nepubliskiem
+  // (is_active=false, piem. bumbu somas) — tāpēc bez is_active filtra.
   const { data } = await supabase
     .from("products")
     .select("id, slug, name, category, cleaning_status, cleaning_notes, is_active")
-    .eq("is_active", true)
     .order("category", { ascending: true })
     .order("sort_order", { ascending: true });
 
