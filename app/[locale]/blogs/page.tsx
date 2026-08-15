@@ -36,6 +36,7 @@ export default async function BlogsPage() {
       <SectionHero
         title="Blogs"
         tagline="Stāsti no pasākumiem, praktiski padomi un jaunumi."
+        heroKey="blog"
       />
       <div className="mx-auto max-w-6xl px-6 py-16">
         <BlogList posts={posts} />

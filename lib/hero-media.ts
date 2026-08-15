@@ -26,6 +26,7 @@ export const HERO_IMAGE_PAGES = [
   "kontakti",
   "faq",
   "musu-draugi",
+  "blog",
 ] as const;
 
 export type HeroPageKey =

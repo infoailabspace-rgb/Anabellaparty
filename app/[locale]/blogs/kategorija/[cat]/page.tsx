@@ -58,7 +58,7 @@ export default async function CategoryArchivePage({
       <SectionHero
         title={label}
         tagline={`Raksti kategorijā “${label}”.`}
-        heroKey={`blog-${cat}`}
+        heroKey="blog"
       />
       <div className="mx-auto max-w-6xl px-6 py-16">
         <BlogList posts={posts} />
