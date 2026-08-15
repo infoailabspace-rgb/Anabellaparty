@@ -72,6 +72,12 @@ export default async function PanelLayout({
               >
                 Inventārs
               </Link>
+              <Link href="/admin/tiriba" className="text-text/80 hover:text-gold">
+                Tīrība
+              </Link>
+              <Link href="/admin/noliktava" className="text-text/80 hover:text-gold">
+                Noliktava
+              </Link>
               <Link href="/admin/saturs" className="text-text/80 hover:text-gold">
                 Saturs
               </Link>

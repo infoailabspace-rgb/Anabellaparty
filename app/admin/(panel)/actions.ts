@@ -14,27 +14,42 @@ export async function setStatus(id: string, status: string) {
   const supabase = await createClient();
   await supabase.from("booking_requests").update({ status }).eq("id", id);
 
-  // Aprīkojuma rezervācijas pastāv TIKAI kamēr status = 'confirmed'.
-  // Vienmēr notīra esošās (idempotenti), pēc tam apstiprinātam booking izveido no jauna.
-  await supabase.from("equipment_bookings").delete().eq("booking_request_id", id);
-  if (status === "confirmed") {
+  // Booking produktu slug'i (vajadzīgi gan rezervācijai, gan tīrības statusam).
+  let slugs: string[] = [];
+  let eventDate: string | null = null;
+  if (status === "confirmed" || status === "completed") {
     const { data: b } = await supabase
       .from("booking_requests")
       .select("event_date, items")
       .eq("id", id)
       .single();
-    // CartItem = viens produkta eksemplārs (bez qty lauka) → quantity_reserved = 1.
+    eventDate = (b?.event_date as string) ?? null;
     const items = (Array.isArray(b?.items) ? b?.items : []) as { slug?: string }[];
-    const rows = items
-      .filter((it) => it.slug)
-      .map((it) => ({
-        booking_request_id: id,
-        product_slug: it.slug as string,
-        quantity_reserved: 1,
-        start_date: b!.event_date as string,
-        end_date: b!.event_date as string,
-      }));
+    slugs = items.map((it) => it.slug).filter((s): s is string => Boolean(s));
+  }
+
+  // Aprīkojuma rezervācijas pastāv TIKAI kamēr status = 'confirmed'.
+  // Vienmēr notīra esošās (idempotenti), pēc tam apstiprinātam booking izveido no jauna.
+  await supabase.from("equipment_bookings").delete().eq("booking_request_id", id);
+  if (status === "confirmed" && eventDate) {
+    // CartItem = viens produkta eksemplārs (bez qty lauka) → quantity_reserved = 1.
+    const rows = slugs.map((slug) => ({
+      booking_request_id: id,
+      product_slug: slug,
+      quantity_reserved: 1,
+      start_date: eventDate as string,
+      end_date: eventDate as string,
+    }));
     if (rows.length) await supabase.from("equipment_bookings").insert(rows);
+  }
+
+  // Pabeigts pasākums → attiecīgie produkti jātīra (cleaning_status = 'dirty').
+  if (status === "completed" && slugs.length) {
+    await supabase
+      .from("products")
+      .update({ cleaning_status: "dirty" })
+      .in("slug", slugs);
+    revalidatePath("/admin/tiriba");
   }
 
   revalidatePath("/admin");
