@@ -170,7 +170,7 @@ export default function BookingsTable({
                     </a>
                     {b.email && (
                       <a
-                        href={`https://commandoai.app/Emails?to=${encodeURIComponent(b.email)}&subject=${encodeURIComponent(`Anabella Party — ${b.event_date}`)}`}
+                        href={`https://www.commandoai.app/Emails?to=${encodeURIComponent(b.email)}&subject=${encodeURIComponent(`Anabella Party — ${b.event_date}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         title="Rakstīt e-pastu caur CommandoAI"

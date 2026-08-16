@@ -152,7 +152,7 @@ export default async function BookingPage({
                 WhatsApp
               </a>
               <a
-                href={`https://commandoai.app/Emails?to=${encodeURIComponent(b.email)}&subject=${mailSubject}`}
+                href={`https://www.commandoai.app/Emails?to=${encodeURIComponent(b.email)}&subject=${mailSubject}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Rakstīt e-pastu caur CommandoAI (AI rediģēšana + sūtīšana no info@anabellaparty.lv)"
