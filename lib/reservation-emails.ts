@@ -45,6 +45,17 @@ export function arrivalText(eventTime: string | null | undefined): string {
   return "aptuveni stundu pirms sākuma";
 }
 
+/** Īss ierašanās laiks priekš "📍 Ierašanās laiks:" rindas. */
+export function arrivalTimeShort(eventTime: string | null | undefined): string {
+  const m = String(eventTime ?? "").match(/^(\d{1,2}):(\d{2})/);
+  if (m) {
+    let h = parseInt(m[1], 10) - 1;
+    if (h < 0) h += 24;
+    return `plkst. ${String(h).padStart(2, "0")}:${m[2]}`;
+  }
+  return "aptuveni stundu pirms pasākuma sākuma";
+}
+
 /** YYYY-MM-DD → DD.MM.YYYY (draudzīgākam izskatam). */
 export function formatDate(d: string): string {
   const m = String(d ?? "").match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -52,7 +63,11 @@ export function formatDate(d: string): string {
 }
 
 // Zīmola HTML ietvars (navy galvene + logo, zelta akcents, balta karte).
-function wrap(inner: string): string {
+// showFooter=false, ja pamatteksts jau satur savu kontaktu rindu.
+function wrap(inner: string, showFooter = true): string {
+  const footer = showFooter
+    ? `<p style="font-size:12px;color:#777;margin-top:20px;">Ja rodas jautājumi — atbildi uz šo e-pastu vai zvani +371 29222761.</p>`
+    : "";
   return `
   <div style="font-family:Arial,sans-serif;background:#F5F5F0;padding:16px;">
     <div style="max-width:600px;margin:0 auto;background:#ffffff;border:1px solid #e6e1d6;border-radius:12px;overflow:hidden;">
@@ -62,7 +77,7 @@ function wrap(inner: string): string {
       <div style="height:4px;background:#D4A960;"></div>
       <div style="padding:24px;color:#1A3A4A;font-size:15px;line-height:1.6;">
         ${inner}
-        <p style="font-size:12px;color:#777;margin-top:20px;">Ja rodas jautājumi — atbildi uz šo e-pastu vai zvani +371 29222761.</p>
+        ${footer}
       </div>
     </div>
   </div>`;
@@ -93,21 +108,27 @@ export function reminderHtml(
   products: Product[],
   when: "tomorrow" | "today",
 ): string {
-  const arrival = arrivalText(b.event_time);
   const items = itemsDescription(b.items, products);
-  const lead =
-    when === "tomorrow"
-      ? `Sveiki${b.name ? ", " + esc(b.name) : ""}! <b>Rīt</b> (${esc(formatDate(b.event_date))}) mums ir rezervēts inventārs pie jums — <b>${esc(items)}</b>.`
-      : `Sveiki${b.name ? ", " + esc(b.name) : ""}! <b>Šodien</b> (${esc(formatDate(b.event_date))}) mēs būsim pie jums ar rezervēto inventāru — <b>${esc(items)}</b>.`;
-  const arriveLine =
-    when === "tomorrow"
-      ? `Būsim pie jums ${esc(arrival)}.`
-      : `Būsim pie jums ${esc(arrival)}.`;
-  return wrap(`
-    <h2 style="margin:0 0 12px;font-size:19px;">Atgādinājums par pasākumu</h2>
-    <p style="margin:0 0 12px;">${lead}</p>
-    <p style="margin:0;">${arriveLine}</p>
-  `);
+  const date = esc(formatDate(b.event_date));
+  const arrival = esc(arrivalTimeShort(b.event_time));
+  const hello = b.name ? `Sveiki, ${esc(b.name)}! 👋` : "Sveiki! 👋";
+  const title = when === "tomorrow" ? "Tiekamies jau rīt!" : "Tiekamies šodien!";
+  const dayWord = when === "tomorrow" ? "Rīt" : "Šodien";
+  const closing = when === "tomorrow" ? "Uz tikšanos rīt! 🎉" : "Uz tikšanos šodien! 🎉";
+  return wrap(
+    `
+    <h2 style="margin:0 0 16px;font-size:20px;color:#1A3A4A;">🎉 ${title}</h2>
+    <p style="margin:0 0 14px;">${hello}</p>
+    <p style="margin:0 0 14px;"><b>${dayWord}</b>, <b>${date}</b>., tiekamies pie Jums ar rezervēto inventāru (<b>${esc(items)}</b>).</p>
+    <p style="margin:0 0 14px;padding:10px 14px;background:#FBF6EC;border-left:3px solid #D4A960;border-radius:6px;">
+      📍 <b>Ierašanās laiks:</b> <b>${arrival}</b>
+    </p>
+    <p style="margin:0 0 14px;">Plānojam ierasties aptuveni stundu pirms pasākuma sākuma, lai visu nepieciešamo sagatavotu un uzstādītu.</p>
+    <p style="margin:0 0 14px;">Ja rodas kādi jautājumi vai nepieciešams ko precizēt, droši atbildiet uz šo e-pastu vai zvaniet <b>+371 29222761</b>.</p>
+    <p style="margin:0;font-size:16px;">${closing}</p>
+  `,
+    false,
+  );
 }
 
 /** Nosūta e-pastu caur Resend. bccNotify → kopija uz info@anabellaparty.lv. */

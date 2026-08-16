@@ -72,8 +72,8 @@ export async function GET(req: Request) {
       );
       const subject =
         kind === "tomorrow"
-          ? `Atgādinājums — rīt jūsu pasākums (${b.event_date}) · Anabella Party`
-          : `Šodien būsim pie jums (${b.event_date}) · Anabella Party`;
+          ? `🎉 Tiekamies jau rīt! · Anabella Party`
+          : `🎉 Tiekamies šodien! · Anabella Party`;
       const res = await sendReservationEmail({ to: b.email, subject, html, bccNotify: true });
       if (res.ok) {
         await supabase!.from("booking_requests").update({ [flagCol]: true }).eq("id", b.id);
