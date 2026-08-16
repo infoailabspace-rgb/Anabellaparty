@@ -16,6 +16,7 @@ export type AddOn = {
   name: string;
   price: number;
   unit?: string; // "gb", "1L", "100gr"
+  single?: boolean; // true → jā/nē izvēle (checkbox), nevis ± skaitītājs
 };
 
 export type Product = {
@@ -74,7 +75,10 @@ export const products: Product[] = [
       { duration: "Uz visu pasākumu", price: 0, note: "cena vienojoties" },
     ],
     hourlyExtra: 110,
-    addOns: [{ name: "Sarkanais paklājs un stabiņi", price: 40 }],
+    addOns: [
+      { name: "AI foto funkcija", price: 100, single: true },
+      { name: "Sarkanais paklājs un stabiņi", price: 40, single: true },
+    ],
     includes: fotoKasteIncludes,
     coverImage: cover("spogulis"),
     gallery: gallery("spogulis"),
@@ -92,6 +96,10 @@ export const products: Product[] = [
       { duration: "Uz visu pasākumu", price: 0, note: "cena vienojoties" },
     ],
     hourlyExtra: 100,
+    addOns: [
+      { name: "AI foto funkcija", price: 100, single: true },
+      { name: "Sarkanais paklājs un stabiņi", price: 40, single: true },
+    ],
     includes: fotoKasteIncludes,
     coverImage: cover("ozols"),
     gallery: gallery("ozols"),
@@ -109,6 +117,10 @@ export const products: Product[] = [
       { duration: "Uz visu pasākumu", price: 0, note: "cena vienojoties" },
     ],
     hourlyExtra: 100,
+    addOns: [
+      { name: "AI foto funkcija", price: 100, single: true },
+      { name: "Sarkanais paklājs un stabiņi", price: 40, single: true },
+    ],
     includes: fotoKasteIncludes,
     coverImage: cover("instagram"),
     gallery: gallery("instagram"),

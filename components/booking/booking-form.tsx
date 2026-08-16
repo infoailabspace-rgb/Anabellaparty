@@ -630,14 +630,23 @@ function StepInventory({
                   )}
 
                   {/* Papildinājumi */}
-                  {p.addOns?.map((a) => (
-                    <Counter
-                      key={a.name}
-                      label={`${a.name} (${a.price} €${a.unit ? "/" + a.unit : ""})`}
-                      value={item.addOns[a.name] ?? 0}
-                      onChange={(v) => setAddOn(p.slug, a.name, v)}
-                    />
-                  ))}
+                  {p.addOns?.map((a) =>
+                    a.single ? (
+                      <AddOnToggle
+                        key={a.name}
+                        label={`${a.name} (+${a.price} €)`}
+                        checked={(item.addOns[a.name] ?? 0) > 0}
+                        onChange={(on) => setAddOn(p.slug, a.name, on ? 1 : 0)}
+                      />
+                    ) : (
+                      <Counter
+                        key={a.name}
+                        label={`${a.name} (${a.price} €${a.unit ? "/" + a.unit : ""})`}
+                        value={item.addOns[a.name] ?? 0}
+                        onChange={(v) => setAddOn(p.slug, a.name, v)}
+                      />
+                    ),
+                  )}
                 </div>
               )}
             </div>
@@ -645,6 +654,28 @@ function StepInventory({
         })}
       </div>
     </div>
+  );
+}
+
+function AddOnToggle({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (on: boolean) => void;
+}) {
+  return (
+    <label className="flex cursor-pointer items-center justify-between gap-3">
+      <span className="text-sm text-text/75">{label}</span>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="h-5 w-5 shrink-0 accent-[#D4A960]"
+      />
+    </label>
   );
 }
 

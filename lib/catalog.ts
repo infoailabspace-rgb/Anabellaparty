@@ -40,6 +40,7 @@ function mapRow(r: any, locale: string): Product {
         name: mlPick(a.name, locale),
         price: Number(a.price) || 0,
         ...(a.unit != null ? { unit: mlPick(a.unit, locale) } : {}),
+        ...(a.single ? { single: true } : {}),
       }))
     : undefined;
   const specs = Array.isArray(r.specs)

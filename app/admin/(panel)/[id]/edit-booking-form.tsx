@@ -27,6 +27,18 @@ function itemsToLines(items: CartItem[]): Line[] {
   return [...map.values()];
 }
 
+// Skatīšanas režīma teksta rinda (label + vērtība).
+function ViewRow({ label: lbl, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div>
+      <p className={label}>{lbl}</p>
+      <p className="mt-1 text-sm text-text/90">
+        {value === "" || value == null ? "—" : value}
+      </p>
+    </div>
+  );
+}
+
 export default function EditBookingForm({
   booking,
   products,
@@ -35,6 +47,7 @@ export default function EditBookingForm({
   products: Product[];
 }) {
   const router = useRouter();
+  const [isEditing, setIsEditing] = useState(false);
 
   const [name, setName] = useState(booking.name ?? "");
   const [email, setEmail] = useState(clean(booking.email));
@@ -101,6 +114,35 @@ export default function EditBookingForm({
     setLines((l) => l.map((x, j) => (j === i ? { ...x, ...patch } : x)));
   const removeLine = (i: number) => setLines((l) => l.filter((_, j) => j !== i));
 
+  // Atmet nesaglabātās izmaiņas → sākotnējās vērtības.
+  function resetForm() {
+    setName(booking.name ?? "");
+    setEmail(clean(booking.email));
+    setPhone(clean(booking.phone));
+    setCompany(booking.company ?? "");
+    setRegNr(booking.reg_nr ?? "");
+    setEventDate(booking.event_date ?? "");
+    setEventTime(booking.event_time ? booking.event_time.slice(0, 5) : "");
+    setDuration(booking.duration ?? "");
+    setEventType(booking.event_type ?? "");
+    setGuestCount(booking.guest_count != null ? String(booking.guest_count) : "");
+    setLocation(clean(booking.location));
+    setIndoorOutdoor(booking.indoor_outdoor ?? "");
+    setDescription(booking.description ?? "");
+    setLines(itemsToLines(booking.items || []));
+    setDeliveryCost(booking.delivery_cost != null ? String(booking.delivery_cost) : "0");
+    setDeliveryKm(
+      booking.delivery_distance_km != null ? String(booking.delivery_distance_km) : "",
+    );
+    setFinalTotal(booking.final_total != null ? String(booking.final_total) : "");
+  }
+
+  function cancel() {
+    resetForm();
+    setMsg("");
+    setIsEditing(false);
+  }
+
   function save() {
     if (!name.trim()) return setMsg("Vārds/nosaukums ir obligāts");
     if (!eventDate) return setMsg("Pasākuma datums ir obligāts");
@@ -127,81 +169,173 @@ export default function EditBookingForm({
       });
       if (res?.error) return setMsg(res.error);
       setMsg("Saglabāts ✓");
+      setIsEditing(false);
       router.refresh();
     });
   }
 
+  const tierLabel = (l: Line): string => {
+    const p = bySlug.get(l.slug);
+    const t = p?.tiers?.[l.tierIndex];
+    if (!t) return "";
+    return `${t.duration}${t.price ? ` — ${t.price} €` : " — vienojoties"}`;
+  };
+
   return (
     <div className="space-y-4">
+      {/* Galvenes josla ar režīma pogām */}
+      <div className="flex items-center justify-between">
+        <h2 className="font-display text-lg font-semibold text-gold">
+          Rezervācijas dati
+        </h2>
+        {isEditing ? (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={save}
+              disabled={pending}
+              className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black disabled:opacity-60"
+            >
+              {pending ? "Saglabā…" : "💾 Saglabāt"}
+            </button>
+            <button
+              onClick={cancel}
+              disabled={pending}
+              className="rounded-full border border-gold/40 px-4 py-2 text-sm text-text/80 hover:border-gold disabled:opacity-60"
+            >
+              ✖️ Atcelt
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="rounded-full border border-gold/40 px-5 py-2 text-sm font-semibold text-gold hover:bg-gold/10"
+          >
+            ✏️ Rediģēt
+          </button>
+        )}
+      </div>
+
       {/* Kontakts */}
       <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
-        <h2 className="mb-3 font-display text-lg font-semibold text-gold">Kontakts</h2>
+        <h3 className="mb-3 font-display text-base font-semibold text-gold">Kontakts</h3>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div><label className={label}>Vārds / uzņēmums *</label><input value={name} onChange={(e) => setName(e.target.value)} className={`${field} mt-1`} /></div>
-          <div><label className={label}>E-pasts</label><input value={email} onChange={(e) => setEmail(e.target.value)} className={`${field} mt-1`} /></div>
-          <div><label className={label}>Telefons</label><input value={phone} onChange={(e) => setPhone(e.target.value)} className={`${field} mt-1`} /></div>
-          <div><label className={label}>Uzņēmums</label><input value={company} onChange={(e) => setCompany(e.target.value)} className={`${field} mt-1`} /></div>
-          <div><label className={label}>Reģ. Nr.</label><input value={regNr} onChange={(e) => setRegNr(e.target.value)} className={`${field} mt-1`} /></div>
+          {isEditing ? (
+            <>
+              <div><label className={label}>Vārds / uzņēmums *</label><input value={name} onChange={(e) => setName(e.target.value)} className={`${field} mt-1`} /></div>
+              <div><label className={label}>E-pasts</label><input value={email} onChange={(e) => setEmail(e.target.value)} className={`${field} mt-1`} /></div>
+              <div><label className={label}>Telefons</label><input value={phone} onChange={(e) => setPhone(e.target.value)} className={`${field} mt-1`} /></div>
+              <div><label className={label}>Uzņēmums</label><input value={company} onChange={(e) => setCompany(e.target.value)} className={`${field} mt-1`} /></div>
+              <div><label className={label}>Reģ. Nr.</label><input value={regNr} onChange={(e) => setRegNr(e.target.value)} className={`${field} mt-1`} /></div>
+            </>
+          ) : (
+            <>
+              <ViewRow label="Vārds / uzņēmums" value={name} />
+              <ViewRow label="E-pasts" value={email} />
+              <ViewRow label="Telefons" value={phone} />
+              <ViewRow label="Uzņēmums" value={company} />
+              <ViewRow label="Reģ. Nr." value={regNr} />
+            </>
+          )}
         </div>
       </section>
 
       {/* Pasākums */}
       <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
-        <h2 className="mb-3 font-display text-lg font-semibold text-gold">Pasākums</h2>
+        <h3 className="mb-3 font-display text-base font-semibold text-gold">Pasākums</h3>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div><label className={label}>Datums *</label><input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} className={`${field} mt-1`} /></div>
-          <div><label className={label}>Laiks</label><input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className={`${field} mt-1`} /></div>
-          <div><label className={label}>Ilgums</label><input value={duration} onChange={(e) => setDuration(e.target.value)} className={`${field} mt-1`} /></div>
-          <div><label className={label}>Veids</label><input value={eventType} onChange={(e) => setEventType(e.target.value)} className={`${field} mt-1`} /></div>
-          <div><label className={label}>Viesu skaits</label><input type="number" value={guestCount} onChange={(e) => setGuestCount(e.target.value)} className={`${field} mt-1`} /></div>
-          <div><label className={label}>Telpās / ārā</label><select value={indoorOutdoor} onChange={(e) => setIndoorOutdoor(e.target.value)} className={`${field} mt-1`}><option value="">—</option><option value="telpās">Telpās</option><option value="ārā">Ārā</option></select></div>
-          <div className="sm:col-span-2"><label className={label}>Norises / piegādes vieta</label><input value={location} onChange={(e) => setLocation(e.target.value)} className={`${field} mt-1`} /></div>
-          <div className="sm:col-span-2"><label className={label}>Apraksts / piezīmes</label><textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} className={`${field} mt-1`} /></div>
+          {isEditing ? (
+            <>
+              <div><label className={label}>Datums *</label><input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} className={`${field} mt-1`} /></div>
+              <div><label className={label}>Laiks</label><input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className={`${field} mt-1`} /></div>
+              <div><label className={label}>Ilgums</label><input value={duration} onChange={(e) => setDuration(e.target.value)} className={`${field} mt-1`} /></div>
+              <div><label className={label}>Veids</label><input value={eventType} onChange={(e) => setEventType(e.target.value)} className={`${field} mt-1`} /></div>
+              <div><label className={label}>Viesu skaits</label><input type="number" value={guestCount} onChange={(e) => setGuestCount(e.target.value)} className={`${field} mt-1`} /></div>
+              <div><label className={label}>Telpās / ārā</label><select value={indoorOutdoor} onChange={(e) => setIndoorOutdoor(e.target.value)} className={`${field} mt-1`}><option value="">—</option><option value="telpās">Telpās</option><option value="ārā">Ārā</option></select></div>
+              <div className="sm:col-span-2"><label className={label}>Norises / piegādes vieta</label><input value={location} onChange={(e) => setLocation(e.target.value)} className={`${field} mt-1`} /></div>
+              <div className="sm:col-span-2"><label className={label}>Apraksts / piezīmes</label><textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} className={`${field} mt-1`} /></div>
+            </>
+          ) : (
+            <>
+              <ViewRow label="Datums" value={eventDate} />
+              <ViewRow label="Laiks" value={eventTime} />
+              <ViewRow label="Ilgums" value={duration} />
+              <ViewRow label="Veids" value={eventType} />
+              <ViewRow label="Viesu skaits" value={guestCount} />
+              <ViewRow label="Telpās / ārā" value={indoorOutdoor} />
+              <div className="sm:col-span-2"><ViewRow label="Norises / piegādes vieta" value={location} /></div>
+              <div className="sm:col-span-2"><ViewRow label="Apraksts / piezīmes" value={description} /></div>
+            </>
+          )}
         </div>
       </section>
 
       {/* Inventārs + cena */}
       <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold text-gold">Inventārs</h2>
-          <button type="button" onClick={addLine} className="rounded-full border border-gold/40 px-3 py-1 text-xs text-gold hover:border-gold">+ Pievienot</button>
+          <h3 className="font-display text-base font-semibold text-gold">Inventārs</h3>
+          {isEditing && (
+            <button type="button" onClick={addLine} className="rounded-full border border-gold/40 px-3 py-1 text-xs text-gold hover:border-gold">+ Pievienot</button>
+          )}
         </div>
-        <div className="space-y-2">
-          {lines.map((l, i) => {
-            const p = bySlug.get(l.slug);
-            return (
-              <div key={i} className="flex flex-wrap items-center gap-2">
-                <select value={l.slug} onChange={(e) => setLine(i, { slug: e.target.value, tierIndex: 0 })} className={`${field} flex-1`}>
-                  <option value="">— produkts —</option>
-                  {products.map((pr) => (<option key={pr.slug} value={pr.slug}>{pr.name}</option>))}
-                </select>
-                <select value={l.tierIndex} onChange={(e) => setLine(i, { tierIndex: Number(e.target.value) })} disabled={!p} className={`${field} w-48`}>
-                  {(p?.tiers ?? []).map((t, ti) => (<option key={ti} value={ti}>{t.duration} — {t.price ? `${t.price} €` : "vienojoties"}</option>))}
-                </select>
-                <input type="number" min={1} value={l.qty} onChange={(e) => setLine(i, { qty: Math.max(1, Number(e.target.value)) })} className={`${field} w-20`} />
-                <button type="button" onClick={() => removeLine(i)} className="rounded-lg border border-red-500/40 px-2 py-1.5 text-xs text-red-300">✕</button>
-              </div>
-            );
-          })}
-          {lines.length === 0 && <p className="text-sm text-text/40">Nav produktu.</p>}
-        </div>
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
-          <div><label className={label}>Piegādes maksa (€)</label><input type="number" value={deliveryCost} onChange={(e) => setDeliveryCost(e.target.value)} className={`${field} mt-1`} /></div>
-          <div><label className={label}>Piegādes attālums (km)</label><input type="number" value={deliveryKm} onChange={(e) => setDeliveryKm(e.target.value)} className={`${field} mt-1`} /></div>
-          <div><label className={label}>Galīgā summa (€)</label><input type="number" value={finalTotal} onChange={(e) => setFinalTotal(e.target.value)} placeholder={`Auto: ${quote.subtotal}`} className={`${field} mt-1`} /></div>
-        </div>
+
+        {isEditing ? (
+          <div className="space-y-2">
+            {lines.map((l, i) => {
+              const p = bySlug.get(l.slug);
+              return (
+                <div key={i} className="flex flex-wrap items-center gap-2">
+                  <select value={l.slug} onChange={(e) => setLine(i, { slug: e.target.value, tierIndex: 0 })} className={`${field} flex-1`}>
+                    <option value="">— produkts —</option>
+                    {products.map((pr) => (<option key={pr.slug} value={pr.slug}>{pr.name}</option>))}
+                  </select>
+                  <select value={l.tierIndex} onChange={(e) => setLine(i, { tierIndex: Number(e.target.value) })} disabled={!p} className={`${field} w-48`}>
+                    {(p?.tiers ?? []).map((t, ti) => (<option key={ti} value={ti}>{t.duration} — {t.price ? `${t.price} €` : "vienojoties"}</option>))}
+                  </select>
+                  <input type="number" min={1} value={l.qty} onChange={(e) => setLine(i, { qty: Math.max(1, Number(e.target.value)) })} className={`${field} w-20`} />
+                  <button type="button" onClick={() => removeLine(i)} className="rounded-lg border border-red-500/40 px-2 py-1.5 text-xs text-red-300">✕</button>
+                </div>
+              );
+            })}
+            {lines.length === 0 && <p className="text-sm text-text/40">Nav produktu.</p>}
+          </div>
+        ) : (
+          <ul className="space-y-1.5">
+            {lines.filter((l) => l.slug).map((l, i) => (
+              <li key={i} className="flex items-center justify-between text-sm">
+                <span className="text-text/90">
+                  {bySlug.get(l.slug)?.name ?? l.slug}
+                  <span className="text-text/50"> × {l.qty}</span>
+                  <span className="ml-2 text-xs text-text/40">{tierLabel(l)}</span>
+                </span>
+              </li>
+            ))}
+            {lines.filter((l) => l.slug).length === 0 && (
+              <li className="text-sm text-text/40">Nav produktu.</li>
+            )}
+          </ul>
+        )}
+
+        {isEditing ? (
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <div><label className={label}>Piegādes maksa (€)</label><input type="number" value={deliveryCost} onChange={(e) => setDeliveryCost(e.target.value)} className={`${field} mt-1`} /></div>
+            <div><label className={label}>Piegādes attālums (km)</label><input type="number" value={deliveryKm} onChange={(e) => setDeliveryKm(e.target.value)} className={`${field} mt-1`} /></div>
+            <div><label className={label}>Galīgā summa (€)</label><input type="number" value={finalTotal} onChange={(e) => setFinalTotal(e.target.value)} placeholder={`Auto: ${quote.subtotal}`} className={`${field} mt-1`} /></div>
+          </div>
+        ) : (
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <ViewRow label="Piegādes maksa" value={`${Number(deliveryCost) || 0} €`} />
+            <ViewRow label="Piegādes attālums" value={deliveryKm.trim() ? `${deliveryKm} km` : "—"} />
+            <ViewRow label="Galīgā summa" value={finalTotal.trim() ? `${finalTotal} €` : `Auto: ${quote.subtotal} €`} />
+          </div>
+        )}
+
         <div className="mt-3 rounded-lg border border-gold/20 bg-bg/40 p-3 text-sm">
           <div className="flex justify-between"><span className="text-text/60">Inventārs (auto)</span><span className="font-mono">{eur(quote.subtotal)}</span></div>
           <div className="mt-1 flex justify-between border-t border-gold/15 pt-1 font-semibold"><span>Kopā{finalTotal.trim() ? " (koriģēts)" : ""}</span><span className="font-mono text-gold">{eur(grandTotal)}</span></div>
         </div>
       </section>
 
-      <div className="flex items-center gap-3">
-        <button onClick={save} disabled={pending} className="rounded-full bg-gold px-6 py-2 text-sm font-semibold text-black disabled:opacity-60">
-          {pending ? "Saglabā…" : "Saglabāt izmaiņas"}
-        </button>
-        {msg && <span className="text-sm text-gold">{msg}</span>}
-      </div>
+      {msg && <p className="text-sm text-gold">{msg}</p>}
     </div>
   );
 }
