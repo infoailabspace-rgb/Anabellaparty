@@ -5,7 +5,12 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getAllProducts } from "@/lib/catalog";
 import { computeQuote, type CartItem } from "@/lib/pricing";
-import { confirmationHtml, sendReservationEmail } from "@/lib/reservation-emails";
+import {
+  confirmationHtml,
+  sendReservationEmail,
+  itemsDescription,
+} from "@/lib/reservation-emails";
+import { createEventForBooking, deleteEvent } from "@/lib/google-calendar";
 
 export type ManualBookingInput = {
   name: string;
@@ -101,27 +106,32 @@ type BookingEmailRow = {
   items: unknown;
   name: string | null;
   email: string | null;
+  location: string | null;
+  event_type: string | null;
+  duration: string | null;
+  google_event_id: string | null;
 };
 
 export async function setStatus(id: string, status: string) {
   const supabase = await createClient();
   await supabase.from("booking_requests").update({ status }).eq("id", id);
 
-  // Booking produktu slug'i (vajadzīgi gan rezervācijai, gan tīrības statusam).
-  let slugs: string[] = [];
-  let eventDate: string | null = null;
-  let booking: BookingEmailRow | null = null;
-  if (status === "confirmed" || status === "completed") {
-    const { data: b } = await supabase
-      .from("booking_requests")
-      .select("event_date, event_time, items, name, email")
-      .eq("id", id)
-      .single();
-    booking = (b as BookingEmailRow | null) ?? null;
-    eventDate = (b?.event_date as string) ?? null;
-    const items = (Array.isArray(b?.items) ? b?.items : []) as { slug?: string }[];
-    slugs = items.map((it) => it.slug).filter((s): s is string => Boolean(s));
-  }
+  // Booking dati (vajadzīgi rezervācijai, tīrībai, e-pastam, kalendāram).
+  const { data: b } = await supabase
+    .from("booking_requests")
+    .select(
+      "event_date, event_time, items, name, email, location, event_type, duration, google_event_id",
+    )
+    .eq("id", id)
+    .single();
+  const booking = (b as BookingEmailRow | null) ?? null;
+  const eventDate = booking?.event_date ?? null;
+  const itemsArr = (Array.isArray(booking?.items) ? booking?.items : []) as {
+    slug?: string;
+  }[];
+  const slugs = itemsArr
+    .map((it) => it.slug)
+    .filter((s): s is string => Boolean(s));
 
   // Aprīkojuma rezervācijas pastāv TIKAI kamēr status = 'confirmed'.
   // Vienmēr notīra esošās (idempotenti), pēc tam apstiprinātam booking izveido no jauna.
@@ -172,6 +182,40 @@ export async function setStatus(id: string, status: string) {
         e instanceof Error ? e.message : String(e),
       );
     }
+  }
+
+  // Google Calendar sinhronizācija (nav fatāla):
+  //  - apstiprināts un vēl nav notikuma → izveido + saglabā google_event_id
+  //  - vairs nav apstiprināts, bet notikums ir → dzēš + notīra id
+  try {
+    if (status === "confirmed" && booking && !booking.google_event_id) {
+      const products = await getAllProducts();
+      const ev = await createEventForBooking({
+        name: booking.name,
+        event_type: booking.event_type,
+        event_date: booking.event_date,
+        event_time: booking.event_time,
+        duration: booking.duration,
+        location: booking.location,
+        itemsText: itemsDescription(itemsArr as CartItem[], products),
+      });
+      if (ev.id)
+        await supabase
+          .from("booking_requests")
+          .update({ google_event_id: ev.id })
+          .eq("id", id);
+    } else if (status !== "confirmed" && booking?.google_event_id) {
+      await deleteEvent(booking.google_event_id);
+      await supabase
+        .from("booking_requests")
+        .update({ google_event_id: null })
+        .eq("id", id);
+    }
+  } catch (e) {
+    console.error(
+      "[setStatus] kalendāra izņēmums:",
+      e instanceof Error ? e.message : String(e),
+    );
   }
 
   revalidatePath("/admin");

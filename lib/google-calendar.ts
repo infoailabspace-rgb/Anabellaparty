@@ -25,13 +25,15 @@ export function getCalendar(): calendar_v3.Calendar {
   return google.calendar({ version: "v3", auth });
 }
 
-/** Izveido notikumu kalendārā. Atgriež id + saiti. */
+const RIGA = "Europe/Riga";
+type EventTime = { dateTime?: string; date?: string; timeZone?: string };
+
 export async function createEvent(input: {
   summary: string;
   description?: string;
-  start: Date;
-  end: Date;
   location?: string;
+  start: EventTime;
+  end: EventTime;
 }): Promise<{ id?: string | null; htmlLink?: string | null }> {
   const calendar = getCalendar();
   const res = await calendar.events.insert({
@@ -40,14 +42,77 @@ export async function createEvent(input: {
       summary: input.summary,
       description: input.description,
       location: input.location,
-      start: { dateTime: input.start.toISOString(), timeZone: "Europe/Riga" },
-      end: { dateTime: input.end.toISOString(), timeZone: "Europe/Riga" },
+      start: input.start,
+      end: input.end,
     },
   });
   return { id: res.data.id, htmlLink: res.data.htmlLink };
 }
 
-/** Vienkāršs tests — izveido testa notikumu (+1h no tagad), lai apstiprinātu, ka credentials strādā. */
+export async function deleteEvent(eventId: string): Promise<void> {
+  const calendar = getCalendar();
+  await calendar.events.delete({ calendarId: CALENDAR_ID, eventId });
+}
+
+// "18:00" / "18:00:00" → "18:00:00"; citādi null.
+function normTime(t?: string | null): string | null {
+  const m = String(t ?? "").match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+  if (!m) return null;
+  return `${m[1].padStart(2, "0")}:${m[2]}:${m[3] ?? "00"}`;
+}
+function plusHours(date: string, time: string, hours: number): string {
+  const [h, mm] = time.split(":");
+  let eh = parseInt(h, 10) + hours;
+  let d = date;
+  if (eh >= 24) {
+    eh -= 24;
+    const x = new Date(date + "T00:00:00");
+    x.setDate(x.getDate() + 1);
+    d = x.toLocaleDateString("en-CA");
+  }
+  return `${d}T${String(eh).padStart(2, "0")}:${mm}:00`;
+}
+function nextDay(date: string): string {
+  const x = new Date(date + "T00:00:00");
+  x.setDate(x.getDate() + 1);
+  return x.toLocaleDateString("en-CA");
+}
+
+/** Izveido kalendāra notikumu no rezervācijas (wall-clock + Europe/Riga → DST korekti). */
+export async function createEventForBooking(b: {
+  name?: string | null;
+  event_type?: string | null;
+  event_date: string;
+  event_time?: string | null;
+  duration?: string | null;
+  location?: string | null;
+  itemsText?: string;
+}): Promise<{ id?: string | null; htmlLink?: string | null }> {
+  const summary = `Anabella Party — ${b.name || "rezervācija"}${b.event_type ? ` (${b.event_type})` : ""}`;
+  const desc: string[] = [];
+  if (b.itemsText) desc.push(`Inventārs: ${b.itemsText}`);
+  if (b.duration) desc.push(`Ilgums: ${b.duration}`);
+
+  const time = normTime(b.event_time);
+  let start: EventTime;
+  let end: EventTime;
+  if (time) {
+    start = { dateTime: `${b.event_date}T${time}`, timeZone: RIGA };
+    end = { dateTime: plusHours(b.event_date, time, 2), timeZone: RIGA }; // noklusējums 2h
+  } else {
+    start = { date: b.event_date }; // visas dienas notikums
+    end = { date: nextDay(b.event_date) };
+  }
+  return createEvent({
+    summary,
+    description: desc.join("\n") || undefined,
+    location: b.location || undefined,
+    start,
+    end,
+  });
+}
+
+/** Vienkāršs tests — izveido testa notikumu (+1h no tagad). */
 export async function testEventCreate(): Promise<{
   id?: string | null;
   htmlLink?: string | null;
@@ -56,9 +121,8 @@ export async function testEventCreate(): Promise<{
   const end = new Date(start.getTime() + 60 * 60 * 1000);
   return createEvent({
     summary: "TESTS — Anabella Party kalendāra integrācija",
-    description:
-      "Automātisks tests, ka Service Account credentials strādā. Šo notikumu var dzēst.",
-    start,
-    end,
+    description: "Automātisks tests. Šo notikumu var dzēst.",
+    start: { dateTime: start.toISOString(), timeZone: RIGA },
+    end: { dateTime: end.toISOString(), timeZone: RIGA },
   });
 }
