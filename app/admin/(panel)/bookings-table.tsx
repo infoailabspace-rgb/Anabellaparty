@@ -168,6 +168,17 @@ export default function BookingsTable({
                     <a href={`tel:${b.phone}`} className="text-text/80 hover:text-gold">
                       {b.phone}
                     </a>
+                    {b.email && (
+                      <a
+                        href={`https://commandoai.app/Emails?to=${encodeURIComponent(b.email)}&subject=${encodeURIComponent(`Anabella Party — ${b.event_date}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Rakstīt e-pastu caur CommandoAI"
+                        className="mt-0.5 block truncate text-xs text-text/50 hover:text-gold"
+                      >
+                        ✉ {b.email}
+                      </a>
+                    )}
                   </td>
                   <td className="p-3 text-text/70">{itemsSummary(b, products)}</td>
                   <td className="p-3 text-right font-mono text-gold">

@@ -151,8 +151,14 @@ export default async function BookingPage({
               <a href={`https://wa.me/${b.phone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="rounded-full border border-gold px-5 py-2 text-sm font-semibold text-gold">
                 WhatsApp
               </a>
-              <a href={`mailto:${b.email}?subject=${mailSubject}`} className="rounded-full border border-gold/40 px-5 py-2 text-sm font-semibold text-text/80">
-                {b.email}
+              <a
+                href={`https://commandoai.app/Emails?to=${encodeURIComponent(b.email)}&subject=${mailSubject}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Rakstīt e-pastu caur CommandoAI (AI rediģēšana + sūtīšana no info@anabellaparty.lv)"
+                className="rounded-full border border-gold/40 px-5 py-2 text-sm font-semibold text-text/80 hover:border-gold"
+              >
+                ✉ {b.email}
               </a>
             </div>
           </section>
