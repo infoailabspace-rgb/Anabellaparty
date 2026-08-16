@@ -268,7 +268,8 @@
     "book": "Забронировать",
     "eachAdditionalHour": "Каждый следующий час",
     "priceByArrangement": "Цена по договорённости",
-    "contactUs": "Связаться"
+    "contactUs": "Связаться",
+    "vatNote": "* Все цены указаны без НДС"
   },
   "sec": {
     "cReachUs": "Свяжитесь с нами",

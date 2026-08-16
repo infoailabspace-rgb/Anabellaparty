@@ -268,7 +268,8 @@
     "book": "Book now",
     "eachAdditionalHour": "Each additional hour",
     "priceByArrangement": "Price by arrangement",
-    "contactUs": "Contact us"
+    "contactUs": "Contact us",
+    "vatNote": "* All prices excluding VAT"
   },
   "sec": {
     "cReachUs": "Get in touch",

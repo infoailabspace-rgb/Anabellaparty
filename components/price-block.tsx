@@ -87,6 +87,8 @@ export default async function PriceBlock({ product }: { product: Product }) {
           ))}
         </ul>
       )}
+
+      <p className="pt-1 text-xs text-text/40">{t("vatNote")}</p>
     </div>
   );
 }

@@ -7,7 +7,13 @@ import type { Product } from "@/lib/products";
 import type { Booking } from "@/lib/admin";
 import { updateBooking } from "../actions";
 
-type Line = { slug: string; tierIndex: number; qty: number };
+type Line = {
+  slug: string;
+  tierIndex: number;
+  qty: number;
+  extraHours: number;
+  addOns: Record<string, number>;
+};
 
 const field =
   "w-full rounded-lg border border-gold/25 bg-navy/40 px-3 py-2 text-sm text-text outline-none focus:border-gold";
@@ -15,14 +21,34 @@ const label = "block text-xs uppercase tracking-wide text-text/50";
 const eur = (n: number) => `${Number(n || 0).toFixed(0)} €`;
 const clean = (v: string | null | undefined) => (v && v !== "-" ? v : "");
 
+// Normalizē addOns → stabila atslēga (izmet 0-daudzumus, sakārto), lai grupē
+// TIKAI patiešām identiskus item objektus (ieskaitot add-onus + papildstundas).
+function addOnsKey(addOns: Record<string, number> | undefined): string {
+  const entries = Object.entries(addOns ?? {})
+    .filter(([, v]) => (Number(v) || 0) > 0)
+    .sort(([a], [b]) => a.localeCompare(b));
+  return JSON.stringify(entries);
+}
+
 function itemsToLines(items: CartItem[]): Line[] {
   const map = new Map<string, Line>();
   for (const it of items || []) {
     if (!it?.slug) continue;
-    const key = `${it.slug}|${it.tierIndex ?? 0}`;
+    const extraHours = Math.max(0, it.extraHours ?? 0);
+    const addOns = it.addOns ?? {};
+    // Atslēga ietver arī papildstundas + add-onus → dažādi papildinājumi
+    // paliek atsevišķās rindās (nepazūd saglabājot).
+    const key = `${it.slug}|${it.tierIndex ?? 0}|${extraHours}|${addOnsKey(addOns)}`;
     const ex = map.get(key);
     if (ex) ex.qty += 1;
-    else map.set(key, { slug: it.slug, tierIndex: it.tierIndex ?? 0, qty: 1 });
+    else
+      map.set(key, {
+        slug: it.slug,
+        tierIndex: it.tierIndex ?? 0,
+        qty: 1,
+        extraHours,
+        addOns,
+      });
   }
   return [...map.values()];
 }
@@ -91,8 +117,8 @@ export default function EditBookingForm({
           ? Array.from({ length: Math.max(1, l.qty) }, () => ({
               slug: l.slug,
               tierIndex: l.tierIndex,
-              extraHours: 0,
-              addOns: {},
+              extraHours: l.extraHours || 0,
+              addOns: l.addOns || {},
             }))
           : [],
       ),
@@ -109,7 +135,11 @@ export default function EditBookingForm({
     (finalTotal.trim() ? Number(finalTotal) : quote.subtotal) +
     (Number(deliveryCost) || 0);
 
-  const addLine = () => setLines((l) => [...l, { slug: "", tierIndex: 0, qty: 1 }]);
+  const addLine = () =>
+    setLines((l) => [
+      ...l,
+      { slug: "", tierIndex: 0, qty: 1, extraHours: 0, addOns: {} },
+    ]);
   const setLine = (i: number, patch: Partial<Line>) =>
     setLines((l) => l.map((x, j) => (j === i ? { ...x, ...patch } : x)));
   const removeLine = (i: number) => setLines((l) => l.filter((_, j) => j !== i));
@@ -179,6 +209,23 @@ export default function EditBookingForm({
     const t = p?.tiers?.[l.tierIndex];
     if (!t) return "";
     return `${t.duration}${t.price ? ` — ${t.price} €` : " — vienojoties"}`;
+  };
+
+  // Papildu stundas + add-oni cilvēklasāmi (saglabāti, arī ja formā nerediģējami).
+  const extrasLabel = (l: Line): string => {
+    const p = bySlug.get(l.slug);
+    const parts: string[] = [];
+    if (l.extraHours > 0) {
+      const hp = p?.hourlyExtra ?? 0;
+      parts.push(`+${l.extraHours}h${hp ? ` (${l.extraHours * hp} €)` : ""}`);
+    }
+    for (const [naam, qty] of Object.entries(l.addOns || {})) {
+      if ((Number(qty) || 0) <= 0) continue;
+      const a = p?.addOns?.find((x) => x.name === naam);
+      const price = a ? a.price * qty : 0;
+      parts.push(`${naam}${qty > 1 ? ` ×${qty}` : ""}${price ? ` (+${price} €)` : ""}`);
+    }
+    return parts.join(" · ");
   };
 
   return (
@@ -282,17 +329,26 @@ export default function EditBookingForm({
           <div className="space-y-2">
             {lines.map((l, i) => {
               const p = bySlug.get(l.slug);
+              const extras = extrasLabel(l);
               return (
-                <div key={i} className="flex flex-wrap items-center gap-2">
-                  <select value={l.slug} onChange={(e) => setLine(i, { slug: e.target.value, tierIndex: 0 })} className={`${field} flex-1`}>
-                    <option value="">— produkts —</option>
-                    {products.map((pr) => (<option key={pr.slug} value={pr.slug}>{pr.name}</option>))}
-                  </select>
-                  <select value={l.tierIndex} onChange={(e) => setLine(i, { tierIndex: Number(e.target.value) })} disabled={!p} className={`${field} w-48`}>
-                    {(p?.tiers ?? []).map((t, ti) => (<option key={ti} value={ti}>{t.duration} — {t.price ? `${t.price} €` : "vienojoties"}</option>))}
-                  </select>
-                  <input type="number" min={1} value={l.qty} onChange={(e) => setLine(i, { qty: Math.max(1, Number(e.target.value)) })} className={`${field} w-20`} />
-                  <button type="button" onClick={() => removeLine(i)} className="rounded-lg border border-red-500/40 px-2 py-1.5 text-xs text-red-300">✕</button>
+                <div key={i} className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <select value={l.slug} onChange={(e) => setLine(i, { slug: e.target.value, tierIndex: 0, extraHours: 0, addOns: {} })} className={`${field} flex-1`}>
+                      <option value="">— produkts —</option>
+                      {products.map((pr) => (<option key={pr.slug} value={pr.slug}>{pr.name}</option>))}
+                    </select>
+                    <select value={l.tierIndex} onChange={(e) => setLine(i, { tierIndex: Number(e.target.value) })} disabled={!p} className={`${field} w-48`}>
+                      {(p?.tiers ?? []).map((t, ti) => (<option key={ti} value={ti}>{t.duration} — {t.price ? `${t.price} €` : "vienojoties"}</option>))}
+                    </select>
+                    <input type="number" min={1} value={l.qty} onChange={(e) => setLine(i, { qty: Math.max(1, Number(e.target.value)) })} className={`${field} w-20`} />
+                    <button type="button" onClick={() => removeLine(i)} className="rounded-lg border border-red-500/40 px-2 py-1.5 text-xs text-red-300">✕</button>
+                  </div>
+                  {extras && (
+                    <p className="pl-1 text-xs text-gold/70">
+                      + {extras}{" "}
+                      <span className="text-text/40">(saglabāts no klienta izvēles)</span>
+                    </p>
+                  )}
                 </div>
               );
             })}
@@ -300,15 +356,19 @@ export default function EditBookingForm({
           </div>
         ) : (
           <ul className="space-y-1.5">
-            {lines.filter((l) => l.slug).map((l, i) => (
-              <li key={i} className="flex items-center justify-between text-sm">
-                <span className="text-text/90">
-                  {bySlug.get(l.slug)?.name ?? l.slug}
-                  <span className="text-text/50"> × {l.qty}</span>
-                  <span className="ml-2 text-xs text-text/40">{tierLabel(l)}</span>
-                </span>
-              </li>
-            ))}
+            {lines.filter((l) => l.slug).map((l, i) => {
+              const extras = extrasLabel(l);
+              return (
+                <li key={i} className="text-sm">
+                  <span className="text-text/90">
+                    {bySlug.get(l.slug)?.name ?? l.slug}
+                    <span className="text-text/50"> × {l.qty}</span>
+                    <span className="ml-2 text-xs text-text/40">{tierLabel(l)}</span>
+                  </span>
+                  {extras && <span className="ml-1 block pl-1 text-xs text-gold/70">+ {extras}</span>}
+                </li>
+              );
+            })}
             {lines.filter((l) => l.slug).length === 0 && (
               <li className="text-sm text-text/40">Nav produktu.</li>
             )}

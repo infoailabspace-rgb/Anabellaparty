@@ -268,7 +268,8 @@
     "book": "Rezervēt",
     "eachAdditionalHour": "Katra nākamā stunda",
     "priceByArrangement": "Cena vienojoties",
-    "contactUs": "Sazināties"
+    "contactUs": "Sazināties",
+    "vatNote": "* Visas cenas norādītas bez PVN"
   },
   "sec": {
     "cReachUs": "Sazinies ar mums",
