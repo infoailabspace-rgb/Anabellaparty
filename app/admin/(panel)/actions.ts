@@ -3,12 +3,23 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getAllProducts } from "@/lib/catalog";
+import type { CartItem } from "@/lib/pricing";
+import { confirmationHtml, sendReservationEmail } from "@/lib/reservation-emails";
 
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/admin/login");
 }
+
+type BookingEmailRow = {
+  event_date: string;
+  event_time: string | null;
+  items: unknown;
+  name: string | null;
+  email: string | null;
+};
 
 export async function setStatus(id: string, status: string) {
   const supabase = await createClient();
@@ -17,12 +28,14 @@ export async function setStatus(id: string, status: string) {
   // Booking produktu slug'i (vajadzīgi gan rezervācijai, gan tīrības statusam).
   let slugs: string[] = [];
   let eventDate: string | null = null;
+  let booking: BookingEmailRow | null = null;
   if (status === "confirmed" || status === "completed") {
     const { data: b } = await supabase
       .from("booking_requests")
-      .select("event_date, items")
+      .select("event_date, event_time, items, name, email")
       .eq("id", id)
       .single();
+    booking = (b as BookingEmailRow | null) ?? null;
     eventDate = (b?.event_date as string) ?? null;
     const items = (Array.isArray(b?.items) ? b?.items : []) as { slug?: string }[];
     slugs = items.map((it) => it.slug).filter((s): s is string => Boolean(s));
@@ -50,6 +63,33 @@ export async function setStatus(id: string, status: string) {
       .update({ cleaning_status: "dirty" })
       .in("slug", slugs);
     revalidatePath("/admin/tiriba");
+  }
+
+  // TŪLĪTĒJS apstiprinājuma e-pasts klientam (nav fatāls, ja neizdodas).
+  if (status === "confirmed" && booking?.email) {
+    try {
+      const products = await getAllProducts();
+      const html = confirmationHtml(
+        {
+          name: booking.name,
+          event_date: booking.event_date,
+          event_time: booking.event_time,
+          items: (Array.isArray(booking.items) ? booking.items : []) as CartItem[],
+        },
+        products,
+      );
+      const res = await sendReservationEmail({
+        to: booking.email,
+        subject: `Rezervācija apstiprināta — ${booking.event_date} · Anabella Party`,
+        html,
+      });
+      if (!res.ok) console.error("[setStatus] apstiprinājuma e-pasts:", res.error);
+    } catch (e) {
+      console.error(
+        "[setStatus] apstiprinājuma e-pasta izņēmums:",
+        e instanceof Error ? e.message : String(e),
+      );
+    }
   }
 
   revalidatePath("/admin");
