@@ -20,6 +20,7 @@ const GROUPS: Group[] = [
       { href: "/admin/kalendars", label: "Kalendārs", icon: "📅" },
       { href: "/admin/crm-klienti", label: "CRM Klienti", icon: "👥" },
       { href: "/admin/rekini", label: "Rēķini", icon: "🧾" },
+      { href: "/admin/atgadinajumi", label: "Atgādinājumi", icon: "🔔" },
       { href: "/admin/inventars", label: "Inventārs", icon: "📦" },
       { href: "/admin/tiriba", label: "Tīrība", icon: "🧽" },
       { href: "/admin/noliktava", label: "Noliktava", icon: "🗄️" },
