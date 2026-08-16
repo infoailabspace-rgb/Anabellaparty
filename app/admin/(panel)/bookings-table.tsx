@@ -119,6 +119,12 @@ export default function BookingsTable({
             ({filtered.length})
           </span>
         </h1>
+        <Link
+          href="/admin/jauns"
+          className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black"
+        >
+          + Jauns pieteikums
+        </Link>
         <input
           placeholder="Meklēt (vārds/telefons/e-pasts)"
           value={q}
