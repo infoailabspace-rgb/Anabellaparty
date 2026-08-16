@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { upsertCustomer, deleteCustomer } from "./actions";
 import { bookingBadge, bookingAmount } from "@/lib/booking-status";
+import BackButton from "@/components/admin/back-button";
 import type { CustomerRow, BookingLite, Segment, CustomerType } from "./types";
 import { SEGMENTS, SEGMENT_LABEL } from "./types";
 
@@ -69,12 +70,7 @@ export default function CrmDetail({
 
   return (
     <div>
-      <Link
-        href="/admin/crm-klienti"
-        className="text-sm text-gold hover:underline"
-      >
-        ← CRM Klienti
-      </Link>
+      <BackButton fallback="/admin/crm-klienti" />
 
       <div className="mt-4 grid gap-6 lg:grid-cols-[1fr_360px]">
         {/* Rediģēšana */}

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { saveProduct, deleteProduct, type ProductInput } from "./actions";
 import ImageUploader from "@/components/admin/image-uploader";
+import BackButton from "@/components/admin/back-button";
 import { LangTabs } from "../saturs/content-editor";
 
 const LANGS = ["lv", "en", "ru"] as const;
@@ -101,6 +102,7 @@ export default function ProductForm({
 
   return (
     <div className="space-y-8">
+      <BackButton fallback="/admin/inventars" />
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl font-bold">
           {id ? "Rediģēt produktu" : "Jauns produkts"}

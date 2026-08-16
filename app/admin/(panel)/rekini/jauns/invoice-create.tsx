@@ -2,8 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { createInvoice } from "../actions";
+import BackButton from "@/components/admin/back-button";
 import type { BookingOption, InvoiceStatus } from "../types";
 import {
   INVOICE_STATUSES,
@@ -74,9 +74,7 @@ export default function InvoiceCreate({
 
   return (
     <div className="max-w-2xl">
-      <Link href="/admin/rekini" className="text-sm text-gold hover:underline">
-        ← Rēķini
-      </Link>
+      <BackButton fallback="/admin/rekini" />
       <h1 className="mt-4 font-display text-2xl font-bold">Jauns rēķins</h1>
       <p className="mb-4 mt-1 text-xs text-text/50">
         Numuru piešķir automātiski (YYYY-NNN) pēc saglabāšanas.

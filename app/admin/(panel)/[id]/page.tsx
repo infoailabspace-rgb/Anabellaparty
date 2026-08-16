@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { computeQuote, computeDeposit } from "@/lib/pricing";
+import { computeQuote } from "@/lib/pricing";
 import { getAllProducts } from "@/lib/catalog";
 import type { Booking } from "@/lib/admin";
 import BookingDetail from "./booking-detail";
+import EditBookingForm from "./edit-booking-form";
+import BackButton from "@/components/admin/back-button";
 
 export const dynamic = "force-dynamic";
 
@@ -36,9 +38,9 @@ export default async function BookingPage({
       .eq("id", id);
   }
 
-  const quote = computeQuote(b.items || [], await getAllProducts());
+  const products = await getAllProducts();
+  const quote = computeQuote(b.items || [], products);
   const delivery = Number(b.delivery_cost) || 0;
-  const deposit = computeDeposit(quote.subtotal, delivery);
 
   // Aprīkojuma pieejamība: konflikti ar citu apstiprinātu bookingu rezervācijām
   // tajā pašā datumā (advisory — nebloķē statusa maiņu).
@@ -106,9 +108,7 @@ export default async function BookingPage({
 
   return (
     <div>
-      <Link href="/admin" className="text-sm text-gold hover:underline">
-        ← Pieteikumi
-      </Link>
+      <BackButton fallback="/admin" />
 
       {conflicts.length > 0 && (
         <div className="mt-4 rounded-2xl border border-amber-500/60 bg-amber-500/10 p-4">
@@ -163,91 +163,31 @@ export default async function BookingPage({
             </div>
           </section>
 
-          {/* Pasākums */}
-          <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
-            <h2 className="font-display text-lg font-semibold text-gold">Pasākums</h2>
-            <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-              <Row label="Datums" value={`${b.event_date}${b.event_time ? " " + b.event_time.slice(0, 5) : ""}`} />
-              <Row label="Veids" value={b.event_type} />
-              <Row label="Ilgums" value={b.duration ?? "—"} />
-              <Row label="Viesi" value={b.guest_count != null ? String(b.guest_count) : "—"} />
-              <Row label="Vieta" value={b.location} />
-              <Row label="Telpās/ārā" value={b.indoor_outdoor ?? "—"} />
-            </dl>
+          {/* Pilna rediģēšana (visi lauki) */}
+          <EditBookingForm booking={b} products={products} />
 
-            {b.delivery_address && (
-              <div className="mt-4 border-t border-gold/15 pt-4">
-                <p className="text-sm font-semibold text-gold">Piegādes adrese</p>
-                <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-text/50">
-                      Klienta ievadītā
-                    </p>
-                    <p className="mt-1 text-sm text-text/90">
-                      {b.delivery_address}
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      deliveryMismatch
-                        ? "rounded-lg border border-amber-500/60 bg-amber-500/10 p-2"
-                        : ""
-                    }
-                  >
-                    <p className="text-xs uppercase tracking-wide text-text/50">
-                      Ģeokodētā (ORS){deliveryMismatch ? " — ⚠ neatbilst" : ""}
-                    </p>
-                    <p className="mt-1 text-sm text-text/90">
-                      {b.delivery_geocoded ?? "—"}
-                    </p>
-                    <p className="mt-1 font-mono text-sm text-gold">
-                      {b.delivery_distance_km != null
-                        ? `~${b.delivery_distance_km} km`
-                        : "—"}{" "}
-                      · {delivery > 0 ? `${delivery} €` : "bez maksas"}
-                    </p>
-                  </div>
+          {/* Piegādes adrese (ORS ģeokods) — tikai info, ja publiskā forma to sniedza */}
+          {b.delivery_address && (
+            <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
+              <p className="text-sm font-semibold text-gold">Piegādes adrese (ORS)</p>
+              <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-text/50">Klienta ievadītā</p>
+                  <p className="mt-1 text-sm text-text/90">{b.delivery_address}</p>
                 </div>
-                {deliveryMismatch && (
-                  <p className="mt-2 text-xs text-amber-300">
-                    Klienta teksts un ģeokodētā adrese būtiski atšķiras —
-                    pārbaudi km un cenu manuāli pirms piedāvājuma.
+                <div className={deliveryMismatch ? "rounded-lg border border-amber-500/60 bg-amber-500/10 p-2" : ""}>
+                  <p className="text-xs uppercase tracking-wide text-text/50">
+                    Ģeokodētā{deliveryMismatch ? " — ⚠ neatbilst" : ""}
                   </p>
-                )}
+                  <p className="mt-1 text-sm text-text/90">{b.delivery_geocoded ?? "—"}</p>
+                  <p className="mt-1 font-mono text-sm text-gold">
+                    {b.delivery_distance_km != null ? `~${b.delivery_distance_km} km` : "—"} ·{" "}
+                    {delivery > 0 ? `${delivery} €` : "bez maksas"}
+                  </p>
+                </div>
               </div>
-            )}
-            {b.description && (
-              <p className="mt-4 whitespace-pre-wrap border-t border-gold/15 pt-4 text-sm text-text/80">
-                {b.description}
-              </p>
-            )}
-          </section>
-
-          {/* Inventārs + cena */}
-          <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
-            <h2 className="font-display text-lg font-semibold text-gold">Inventārs</h2>
-            <ul className="mt-3 space-y-1 text-sm">
-              {quote.lines.map((l) => (
-                <li key={l.slug} className="flex justify-between">
-                  <span className="text-text/85">
-                    {l.name} <span className="text-text/40">({l.tierLabel})</span>
-                  </span>
-                  <span className="font-mono text-gold">
-                    {l.contactOnly ? "vienojoties" : `${l.lineTotal} €`}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-4 space-y-1 border-t border-gold/15 pt-3 text-sm">
-              <div className="flex justify-between"><span>Inventārs</span><span className="font-mono">{quote.subtotal} €</span></div>
-              <div className="flex justify-between text-text/70"><span>Piegāde{b.delivery_distance_km ? ` (${b.delivery_distance_km} km)` : ""}</span><span className="font-mono">{delivery > 0 ? `${delivery} €` : "bez maksas"}</span></div>
-              <div className="flex justify-between font-semibold"><span>Kopā</span><span className="font-mono text-gold">{quote.subtotal + delivery} €</span></div>
-              <div className="flex justify-between"><span>Avanss (50%)</span><span className="font-mono text-gold">{deposit} €</span></div>
-              {b.final_total != null && (
-                <div className="flex justify-between border-t border-gold/15 pt-2 font-semibold"><span>Galīgā summa</span><span className="font-mono text-gold">{b.final_total} €</span></div>
-              )}
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* Rēķini un maksājumi */}
           <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
@@ -294,15 +234,6 @@ export default async function BookingPage({
         {/* Rediģēšana */}
         <BookingDetail booking={b} />
       </div>
-    </div>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="text-xs uppercase tracking-wide text-text/40">{label}</dt>
-      <dd className="text-text/90">{value}</dd>
     </div>
   );
 }

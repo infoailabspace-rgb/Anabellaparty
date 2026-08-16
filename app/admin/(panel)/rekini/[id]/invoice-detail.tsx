@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import BackButton from "@/components/admin/back-button";
 import { createClient } from "@/lib/supabase/client";
 import { renderElementToPdfBlob } from "@/lib/invoice-pdf";
 import { COMPANY } from "@/lib/company";
@@ -166,9 +167,7 @@ export default function InvoiceDetail({
   return (
     <>
     <div>
-      <Link href="/admin/rekini" className="text-sm text-gold hover:underline">
-        ← Rēķini
-      </Link>
+      <BackButton fallback="/admin/rekini" />
 
       <div className="mt-4 flex flex-wrap items-baseline justify-between gap-2">
         <h1 className="font-display text-2xl font-bold">

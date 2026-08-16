@@ -10,7 +10,11 @@ import {
   sendReservationEmail,
   itemsDescription,
 } from "@/lib/reservation-emails";
-import { createEventForBooking, deleteEvent } from "@/lib/google-calendar";
+import {
+  createEventForBooking,
+  updateEventForBooking,
+  deleteEvent,
+} from "@/lib/google-calendar";
 
 export type ManualBookingInput = {
   name: string;
@@ -92,6 +96,139 @@ export async function createManualBooking(d: ManualBookingInput) {
   revalidatePath("/admin");
   revalidatePath("/admin/rezervacijas");
   return { ok: true, id };
+}
+
+export type UpdateBookingInput = {
+  name: string;
+  phone: string;
+  email: string;
+  company: string;
+  reg_nr: string;
+  event_date: string;
+  event_time: string;
+  duration: string;
+  event_type: string;
+  guest_count: string;
+  location: string;
+  indoor_outdoor: string;
+  description: string;
+  items: CartItem[];
+  final_total: number | null;
+  delivery_cost: number;
+  delivery_distance_km: number | null;
+};
+
+export async function updateBooking(id: string, d: UpdateBookingInput) {
+  const name = d.name.trim();
+  if (!name) return { error: "Vārds/nosaukums ir obligāts" };
+  if (!d.event_date) return { error: "Pasākuma datums ir obligāts" };
+
+  const supabase = await createClient();
+  const products = await getAllProducts();
+  const quote = computeQuote(d.items || [], products);
+
+  // Esošais statuss + kalendāra id (kalendāra sinhronizācijai).
+  const { data: cur } = await supabase
+    .from("booking_requests")
+    .select("status, google_event_id")
+    .eq("id", id)
+    .single();
+
+  // Klienta pārsaiste, ja e-pasts norādīts.
+  let customerId: string | null | undefined = undefined;
+  const email = d.email.trim();
+  if (email) {
+    const { data: cid } = await supabase.rpc("booking_link_customer", {
+      p_email: email,
+      p_name: name,
+      p_phone: d.phone.trim() || null,
+      p_company: d.company.trim() || null,
+      p_reg_nr: d.reg_nr.trim() || null,
+    });
+    customerId = (cid as string | null) ?? null;
+  }
+
+  const guest = d.guest_count.trim() ? Number(d.guest_count) : null;
+  const row: Record<string, unknown> = {
+    name,
+    phone: d.phone.trim() || "-",
+    email: email || "-",
+    company: d.company.trim() || null,
+    reg_nr: d.reg_nr.trim() || null,
+    event_date: d.event_date,
+    event_time: d.event_time || null,
+    duration: d.duration.trim() || null,
+    event_type: d.event_type.trim() || "Pasākums",
+    guest_count: Number.isFinite(guest as number) ? guest : null,
+    location: d.location.trim() || "-",
+    indoor_outdoor: d.indoor_outdoor || null,
+    description: d.description.trim() || null,
+    items: d.items ?? [],
+    estimated_total: quote.subtotal,
+    final_total: d.final_total,
+    delivery_cost: d.delivery_cost || null,
+    delivery_distance_km: d.delivery_distance_km,
+  };
+  if (customerId !== undefined) row.customer_id = customerId;
+
+  const { error } = await supabase
+    .from("booking_requests")
+    .update(row)
+    .eq("id", id);
+  if (error) return { error: error.message };
+
+  // Ja apstiprināts: equipment_bookings pārrēķins (datums/inventārs varēja mainīties).
+  if (cur?.status === "confirmed") {
+    const slugs = (d.items || [])
+      .map((it) => it.slug)
+      .filter((s): s is string => Boolean(s));
+    await supabase.from("equipment_bookings").delete().eq("booking_request_id", id);
+    if (slugs.length)
+      await supabase.from("equipment_bookings").insert(
+        slugs.map((slug) => ({
+          booking_request_id: id,
+          product_slug: slug,
+          quantity_reserved: 1,
+          start_date: d.event_date,
+          end_date: d.event_date,
+        })),
+      );
+
+    // Google Calendar: UPDATE esošo notikumu (datums/laiks/inventārs), vai izveido.
+    try {
+      const itemsText = itemsDescription(d.items as CartItem[], products);
+      const ev = {
+        name,
+        event_type: d.event_type,
+        event_date: d.event_date,
+        event_time: d.event_time,
+        duration: d.duration,
+        location: d.location,
+        itemsText,
+      };
+      if (cur.google_event_id) {
+        await updateEventForBooking(cur.google_event_id, ev);
+      } else {
+        const created = await createEventForBooking(ev);
+        if (created.id)
+          await supabase
+            .from("booking_requests")
+            .update({ google_event_id: created.id })
+            .eq("id", id);
+      }
+    } catch (e) {
+      console.error(
+        "[updateBooking] kalendāra izņēmums:",
+        e instanceof Error ? e.message : String(e),
+      );
+    }
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/rezervacijas");
+  revalidatePath(`/admin/${id}`);
+  revalidatePath("/admin/kalendars");
+  return { ok: true };
 }
 
 export async function signOut() {

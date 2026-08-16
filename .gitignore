@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Google service-account credentials (NEVER commit — secret private key)
+anabella-calendar-*.json
+
 # dependencies
 /node_modules
 /.pnp

@@ -2,10 +2,10 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { computeQuote, type CartItem } from "@/lib/pricing";
 import type { Product } from "@/lib/products";
 import { createManualBooking } from "../actions";
+import BackButton from "@/components/admin/back-button";
 
 type Cust = { id: string; name: string; email: string; phone: string };
 type Line = { slug: string; tierIndex: number; qty: number };
@@ -150,9 +150,7 @@ export default function NewBookingForm({
 
   return (
     <div className="max-w-3xl">
-      <Link href="/admin" className="text-sm text-gold hover:underline">
-        ← Pieteikumi
-      </Link>
+      <BackButton fallback="/admin" />
       <h1 className="mt-3 font-display text-2xl font-bold">Jauns pieteikums</h1>
       <p className="mb-4 mt-1 text-xs text-text/50">
         Manuāla rezervācija (telefona/WhatsApp sarunām). Klientu meklē vai ievadi

@@ -78,8 +78,7 @@ function nextDay(date: string): string {
   return x.toLocaleDateString("en-CA");
 }
 
-/** Izveido kalendāra notikumu no rezervācijas (wall-clock + Europe/Riga → DST korekti). */
-export async function createEventForBooking(b: {
+type BookingEvent = {
   name?: string | null;
   event_type?: string | null;
   event_date: string;
@@ -87,12 +86,20 @@ export async function createEventForBooking(b: {
   duration?: string | null;
   location?: string | null;
   itemsText?: string;
-}): Promise<{ id?: string | null; htmlLink?: string | null }> {
+};
+
+// Kopīgs notikuma ķermenis (izmanto create + update) — wall-clock + Europe/Riga.
+function buildBookingEventBody(b: BookingEvent): {
+  summary: string;
+  description?: string;
+  location?: string;
+  start: EventTime;
+  end: EventTime;
+} {
   const summary = `Anabella Party — ${b.name || "rezervācija"}${b.event_type ? ` (${b.event_type})` : ""}`;
   const desc: string[] = [];
   if (b.itemsText) desc.push(`Inventārs: ${b.itemsText}`);
   if (b.duration) desc.push(`Ilgums: ${b.duration}`);
-
   const time = normTime(b.event_time);
   let start: EventTime;
   let end: EventTime;
@@ -103,12 +110,39 @@ export async function createEventForBooking(b: {
     start = { date: b.event_date }; // visas dienas notikums
     end = { date: nextDay(b.event_date) };
   }
-  return createEvent({
+  return {
     summary,
     description: desc.join("\n") || undefined,
     location: b.location || undefined,
     start,
     end,
+  };
+}
+
+/** Izveido kalendāra notikumu no rezervācijas. */
+export async function createEventForBooking(
+  b: BookingEvent,
+): Promise<{ id?: string | null; htmlLink?: string | null }> {
+  return createEvent(buildBookingEventBody(b));
+}
+
+/** Atjaunina esošu kalendāra notikumu (piem. pēc datuma/laika izmaiņas). */
+export async function updateEventForBooking(
+  eventId: string,
+  b: BookingEvent,
+): Promise<void> {
+  const calendar = getCalendar();
+  const body = buildBookingEventBody(b);
+  await calendar.events.patch({
+    calendarId: CALENDAR_ID,
+    eventId,
+    requestBody: {
+      summary: body.summary,
+      description: body.description,
+      location: body.location,
+      start: body.start,
+      end: body.end,
+    },
   });
 }
 
