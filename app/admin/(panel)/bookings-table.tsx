@@ -55,19 +55,36 @@ export default function BookingsTable({
 
   const scopeStatuses = STATUSES.filter((s) => scope.includes(s.id));
 
+  // Biznesa prioritātes grupa (mazāks = augstāk). Katrā grupā pēc event_date ASC.
+  const PRE = ["new", "contacted", "quoted"];
+  function priorityGroup(b: Booking, todayStr: string): number {
+    if (b.status === "confirmed" && b.event_date >= todayStr) return 1; // apstiprinātie, gaidāmie
+    if (PRE.includes(b.status)) return 2; // jaunie pieteikumi
+    if (b.status === "completed") return 3; // pabeigtie
+    return 4; // rejected + confirmed pagājušie
+  }
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    return rows.filter((b) => {
-      if (!scope.includes(b.status)) return false; // ārpus sadaļas → paslēpts
-      if (statusFilter !== "all" && b.status !== statusFilter) return false;
-      if (from && b.event_date < from) return false;
-      if (to && b.event_date > to) return false;
-      if (needle) {
-        const hay = `${b.name} ${b.phone} ${b.email}`.toLowerCase();
-        if (!hay.includes(needle)) return false;
-      }
-      return true;
-    });
+    const todayStr = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD (lokāli)
+    return rows
+      .filter((b) => {
+        if (!scope.includes(b.status)) return false; // ārpus sadaļas → paslēpts
+        if (statusFilter !== "all" && b.status !== statusFilter) return false;
+        if (from && b.event_date < from) return false;
+        if (to && b.event_date > to) return false;
+        if (needle) {
+          const hay = `${b.name} ${b.phone} ${b.email}`.toLowerCase();
+          if (!hay.includes(needle)) return false;
+        }
+        return true;
+      })
+      .sort(
+        (a, b) =>
+          priorityGroup(a, todayStr) - priorityGroup(b, todayStr) ||
+          a.event_date.localeCompare(b.event_date),
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, scope, statusFilter, q, from, to]);
 
   function changeStatus(id: string, status: string) {
