@@ -15,6 +15,7 @@ import {
   updateEventForBooking,
   deleteEvent,
 } from "@/lib/google-calendar";
+import { bookingAmount, type PaymentState } from "@/lib/booking-status";
 
 export type ManualBookingInput = {
   name: string;
@@ -397,6 +398,82 @@ export async function setFinalTotal(id: string, final: number | null) {
     .update({ final_total: final })
     .eq("id", id);
   revalidatePath(`/admin/${id}`);
+}
+
+/**
+ * Iestata rezervācijas apmaksas stāvokli. Payments tabula = vienīgais naudas
+ * avots (nav/daļēji/apmaksāts atvasina no paid_sum). Dropdown pārvalda VIENU
+ * "manual-admin" payment ierakstu (invoice_id NULL), neaiztiekot reālos rēķinu/
+ * Stripe maksājumus. "deferred" = booking_requests.payment_deferred karodziņš.
+ */
+export async function setPaymentState(
+  id: string,
+  state: PaymentState,
+  avans?: number,
+) {
+  const supabase = await createClient();
+
+  const { data: b } = await supabase
+    .from("booking_requests")
+    .select(
+      "final_total, estimated_total, delivery_cost, payments(amount, status, method)",
+    )
+    .eq("id", id)
+    .single();
+  if (!b) return { error: "Rezervācija nav atrasta." };
+
+  const amount = bookingAmount(b);
+  // Reāli (ne-manuāli) completed maksājumi paliek neskarti.
+  const realPaid = (
+    (b as { payments?: { amount: number; status: string; method: string | null }[] })
+      .payments ?? []
+  )
+    .filter((p) => p.status === "completed" && p.method !== "manual-admin")
+    .reduce((s, p) => s + Number(p.amount), 0);
+
+  // Noņem esošo manuālo ierakstu — pārrēķinām no jauna.
+  await supabase
+    .from("payments")
+    .delete()
+    .eq("booking_request_id", id)
+    .eq("method", "manual-admin");
+
+  async function insertManual(amt: number, type: "advance" | "full") {
+    if (amt <= 0) return;
+    await supabase.from("payments").insert({
+      booking_request_id: id,
+      invoice_id: null,
+      amount: amt,
+      type,
+      method: "manual-admin",
+      status: "completed",
+      paid_at: new Date().toISOString(),
+    });
+  }
+
+  let deferred = false;
+  if (state === "paid") {
+    await insertManual(Math.max(0, amount - realPaid), "full");
+  } else if (state === "partial") {
+    const a = Number(avans) || 0;
+    if (a <= 0) return { error: "Norādi avansa summu (€)." };
+    await insertManual(a, "advance");
+  } else if (state === "deferred") {
+    deferred = true;
+  }
+  // "unpaid" → tikai manuālais ieraksts noņemts, deferred=false.
+
+  const { error } = await supabase
+    .from("booking_requests")
+    .update({ payment_deferred: deferred })
+    .eq("id", id);
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/rezervacijas");
+  revalidatePath("/admin/arhivs");
+  revalidatePath(`/admin/${id}`);
+  return { ok: true };
 }
 
 export async function markViewed(id: string) {

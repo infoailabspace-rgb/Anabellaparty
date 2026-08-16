@@ -2,15 +2,26 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { STATUSES, type Booking } from "@/lib/admin";
-import { bookingBadge, bookingAmount } from "@/lib/booking-status";
-import { setStatus, saveNotes } from "../actions";
+import {
+  bookingBadge,
+  bookingAmount,
+  paymentState,
+  PAYMENT_STATE_LABEL,
+  type PaymentState,
+} from "@/lib/booking-status";
+import { setStatus, saveNotes, setPaymentState } from "../actions";
+
+const PAY_STATES: PaymentState[] = ["unpaid", "partial", "paid", "deferred"];
 
 export default function BookingDetail({ booking }: { booking: Booking }) {
   const [status, setStatusState] = useState(booking.status);
   const [notes, setNotes] = useState(booking.admin_notes ?? "");
   const [notesSaved, setNotesSaved] = useState(true);
+  const [paidSum, setPaidSum] = useState(booking.paid_sum ?? 0);
+  const [deferred, setDeferred] = useState(Boolean(booking.payment_deferred));
   const [, startTransition] = useTransition();
   const notesTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const amount = bookingAmount(booking);
 
   // Piezīmju autosave (debounce)
   useEffect(() => {
@@ -37,6 +48,24 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
     startTransition(() => setStatus(booking.id, v));
   }
 
+  function onPayment(next: PaymentState) {
+    let avans: number | undefined;
+    if (next === "partial") {
+      const input = window.prompt("Avansa summa (€)?", "");
+      if (input == null) return;
+      avans = Number(input.replace(",", "."));
+      if (!avans || avans <= 0) {
+        alert("Nederīga summa.");
+        return;
+      }
+    }
+    setPaidSum(next === "paid" ? amount : next === "partial" ? (avans as number) : 0);
+    setDeferred(next === "deferred");
+    startTransition(() => {
+      void setPaymentState(booking.id, next, avans);
+    });
+  }
+
   const field =
     "rounded-lg border border-gold/25 bg-navy/40 px-3 py-2 text-sm text-text outline-none focus:border-gold";
 
@@ -49,9 +78,10 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
         {(() => {
           const bg = bookingBadge(
             status,
-            booking.paid_sum ?? 0,
-            bookingAmount(booking),
+            paidSum,
+            amount,
             booking.event_date,
+            deferred,
           );
           return (
             <span
@@ -69,6 +99,23 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
           {STATUSES.map((s) => (
             <option key={s.id} value={s.id}>
               {s.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="text-xs uppercase tracking-wide text-text/50">
+          Apmaksa
+        </label>
+        <select
+          value={paymentState(paidSum, amount, deferred)}
+          onChange={(e) => onPayment(e.target.value as PaymentState)}
+          className={`mt-1 block w-full ${field}`}
+        >
+          {PAY_STATES.map((s) => (
+            <option key={s} value={s}>
+              {PAYMENT_STATE_LABEL[s]}
             </option>
           ))}
         </select>

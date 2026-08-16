@@ -23,11 +23,33 @@ export function bookingAmount(b: {
   return (Number(b.estimated_total) || 0) + (Number(b.delivery_cost) || 0);
 }
 
+/** Apmaksas stāvoklis (dropdown vērtība) no paid_sum + deferred karodziņa. */
+export type PaymentState = "unpaid" | "partial" | "paid" | "deferred";
+
+export function paymentState(
+  paidSum: number,
+  amount: number,
+  deferred?: boolean | null,
+): PaymentState {
+  if (amount > 0 && paidSum >= amount) return "paid";
+  if (paidSum > 0) return "partial";
+  if (deferred) return "deferred";
+  return "unpaid";
+}
+
+export const PAYMENT_STATE_LABEL: Record<PaymentState, string> = {
+  unpaid: "Nav apmaksāts",
+  partial: "Daļēji (avanss)",
+  paid: "Apmaksāts",
+  deferred: "Maksās pēc pasākuma",
+};
+
 export function bookingBadge(
   status: string,
   paidSum: number,
   amount: number,
   eventDate: string,
+  deferred?: boolean | null,
 ): BookingBadge {
   if (status === "rejected")
     return { key: "rejected", label: "Atteicās", cls: "border-text/30 text-text/50" };
@@ -54,6 +76,14 @@ export function bookingBadge(
       key: "partial",
       label: "Daļēji (avanss)",
       cls: "border-orange-500/50 bg-orange-500/10 text-orange-300",
+    };
+
+  // 🟣 Maksās pēc pasākuma — apzināta vienošanās (nevis vienkārši neapmaksāts/kavēts).
+  if (deferred)
+    return {
+      key: "deferred",
+      label: "Maksās pēc pasākuma",
+      cls: "border-purple-400/40 bg-purple-500/10 text-purple-300",
     };
 
   // 🔴 Kavēts — nav apmaksāts un pasākuma datums pagājis.

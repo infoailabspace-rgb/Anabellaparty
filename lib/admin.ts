@@ -26,6 +26,7 @@ export type Booking = {
   status: string;
   admin_notes: string | null;
   viewed_at: string | null;
+  payment_deferred?: boolean | null; // klients maksās PĒC pasākuma (apzināta vienošanās)
   paid_sum?: number; // summēti completed maksājumi (apmaksas krāsu shēmai)
 };
 

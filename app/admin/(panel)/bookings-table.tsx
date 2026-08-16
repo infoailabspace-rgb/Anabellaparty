@@ -5,8 +5,16 @@ import { useMemo, useState, useTransition } from "react";
 import { computeQuote } from "@/lib/pricing";
 import type { Product } from "@/lib/products";
 import { STATUSES, urgency, type Booking } from "@/lib/admin";
-import { bookingBadge, bookingAmount } from "@/lib/booking-status";
-import { setStatus, deleteBooking } from "./actions";
+import {
+  bookingBadge,
+  bookingAmount,
+  paymentState,
+  PAYMENT_STATE_LABEL,
+  type PaymentState,
+} from "@/lib/booking-status";
+import { setStatus, deleteBooking, setPaymentState } from "./actions";
+
+const PAY_STATES: PaymentState[] = ["unpaid", "partial", "paid", "deferred"];
 
 function TrashIcon() {
   return (
@@ -91,6 +99,33 @@ export default function BookingsTable({
     setRows((r) => r.map((b) => (b.id === id ? { ...b, status } : b)));
     startTransition(() => {
       setStatus(id, status);
+    });
+  }
+
+  function changePayment(b: Booking, next: PaymentState) {
+    let avans: number | undefined;
+    if (next === "partial") {
+      const input = window.prompt("Avansa summa (€)?", "");
+      if (input == null) return; // atcelts
+      avans = Number(input.replace(",", "."));
+      if (!avans || avans <= 0) {
+        alert("Nederīga summa.");
+        return;
+      }
+    }
+    // Optimistiski: badge mainās uzreiz.
+    const amount = bookingAmount(b);
+    const paid =
+      next === "paid" ? amount : next === "partial" ? (avans as number) : 0;
+    setRows((r) =>
+      r.map((x) =>
+        x.id === b.id
+          ? { ...x, paid_sum: paid, payment_deferred: next === "deferred" }
+          : x,
+      ),
+    );
+    startTransition(() => {
+      setPaymentState(b.id, next, avans);
     });
   }
 
@@ -215,6 +250,7 @@ export default function BookingsTable({
                           b.paid_sum ?? 0,
                           bookingAmount(b),
                           b.event_date,
+                          b.payment_deferred,
                         );
                         return (
                           <span
@@ -232,6 +268,24 @@ export default function BookingsTable({
                         {STATUSES.map((s) => (
                           <option key={s.id} value={s.id}>
                             {s.label}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        value={paymentState(
+                          b.paid_sum ?? 0,
+                          bookingAmount(b),
+                          b.payment_deferred,
+                        )}
+                        onChange={(e) =>
+                          changePayment(b, e.target.value as PaymentState)
+                        }
+                        title="Apmaksas statuss"
+                        className="rounded-lg border border-gold/25 bg-navy/40 px-2 py-1 text-xs text-text outline-none focus:border-gold"
+                      >
+                        {PAY_STATES.map((s) => (
+                          <option key={s} value={s}>
+                            {PAYMENT_STATE_LABEL[s]}
                           </option>
                         ))}
                       </select>
