@@ -52,6 +52,44 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
+  // Vecās Mozello platformas URL → jaunās struktūras 301 (SEO vērtības saglabāšana).
+  // Piezīme: statusCode:301 (nevis permanent:true, kas dotu 308) — GSC prasa 301.
+  // NEredirectē /& un /$ (bojāti URL — 404 tiem ir korekta atbilde).
+  async redirects() {
+    return [
+      { source: "/sakums", destination: "/", statusCode: 301 },
+      {
+        source: "/svetku-inventars",
+        destination: "/svinibu-inventars/",
+        statusCode: 301,
+      },
+      {
+        source: "/specefekti",
+        destination: "/svinibu-inventars/specefekti/",
+        statusCode: 301,
+      },
+      {
+        source: "/audio-viesu-gramatas",
+        destination: "/svinibu-inventars/audio-viesu-gramatas/",
+        statusCode: 301,
+      },
+      {
+        source: "/piepusamas-",
+        destination: "/piepusamas-atrakcijas/",
+        statusCode: 301,
+      },
+      { source: "/og", destination: "/", statusCode: 301 },
+      // Wildcard vecajām /svinibu-inventars apakšlapām → katalogs, BET izņemot
+      // reālās kategoriju lapas (citādi tās pārtrauktu strādāt / cilpa). `.+`
+      // (ne `.*`) → base /svinibu-inventars/ NEtiek notverts (nav pašcilpas).
+      {
+        source:
+          "/svinibu-inventars/:path((?!audio-viesu-gramatas|decomebeles|kublsballa|specefekti).+)",
+        destination: "/svinibu-inventars/",
+        statusCode: 301,
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);
