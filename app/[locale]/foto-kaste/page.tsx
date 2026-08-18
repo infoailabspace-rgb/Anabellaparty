@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import JsonLd from "@/components/seo/json-ld";
-import { graph, productNode, breadcrumbNode } from "@/lib/schema";
+import { graph, productNode, breadcrumbNode, faqPageNode } from "@/lib/schema";
 import { getAllProducts } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
@@ -14,7 +14,10 @@ import ImagePlaceholder from "@/components/image-placeholder";
 import DeliveryNote from "@/components/delivery-note";
 import CtaSection from "@/components/cta-section";
 import EventGallery from "@/components/event-gallery";
-import { getGallery } from "@/lib/site-data";
+import TrustBar from "@/components/home/trust-bar";
+import ClientsMarquee from "@/components/clients-marquee";
+import FotoKasteB2b from "@/components/foto-kaste-b2b";
+import { getGallery, getClients } from "@/lib/site-data";
 import { getSiteImage } from "@/lib/site-content";
 import Reveal from "@/components/reveal";
 import { pageMetadata } from "@/lib/seo";
@@ -31,14 +34,23 @@ export async function generateMetadata({
 export const revalidate = 300;
 
 export default async function FotoKastePage() {
-  const [products, t, ts, locale, gallery, framesImage] = await Promise.all([
-    getAllProducts(),
-    getTranslations("pages"),
-    getTranslations("sec"),
-    getLocale(),
-    getGallery("foto-kaste"),
-    getSiteImage("foto-kaste.frames"),
-  ]);
+  const [products, t, ts, tfk, locale, gallery, framesImage, clients] =
+    await Promise.all([
+      getAllProducts(),
+      getTranslations("pages"),
+      getTranslations("sec"),
+      getTranslations("fkB2b"),
+      getLocale(),
+      getGallery("foto-kaste"),
+      getSiteImage("foto-kaste.frames"),
+      getClients(),
+    ]);
+  // FAQPage JSON-LD no B2B BUJ (§7 strukturētie dati).
+  const fkFaqs = [1, 2, 3, 4, 5, 6].map((n) => ({
+    question: tfk(`q${n}`),
+    answer: tfk(`a${n}`),
+    category: "produkti" as const,
+  }));
   const fkProducts = products.filter((p) => p.category === "foto-kaste");
   // Datu-vadīti (bez hardkodētiem slug — nosaukuma/slug maiņa nekad nesalauž):
   //  - galvenās kastes = nav "īpašais" un nav "cena vienojoties"
@@ -53,6 +65,7 @@ export default async function FotoKastePage() {
       <JsonLd
         data={graph(
           ...fkProducts.map((p) => productNode(p, locale, "/foto-kaste")),
+          faqPageNode(fkFaqs),
           breadcrumbNode(locale, [
             { name: t("fotoKasteTitle"), path: "/foto-kaste" },
           ]),
@@ -64,6 +77,10 @@ export default async function FotoKastePage() {
         heroKey="foto-kaste"
         video="/videos/herovideo1.mp4"
       />
+
+      {/* Uzticamības josla + klientu logo (§5) — zem H1 */}
+      <TrustBar />
+      <ClientsMarquee clients={clients} />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         {/* AI funkcija */}
@@ -197,6 +214,9 @@ export default async function FotoKastePage() {
             )}
           </div>
         </SlideReveal>
+
+        {/* B2B sekcijas (§5): iekļauts, brendēšana, dokumenti, cena, BUJ, CTA */}
+        <FotoKasteB2b />
 
         <div className="mt-12">
           <DeliveryNote />

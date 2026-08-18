@@ -57,19 +57,19 @@ export async function ogMetadata(
 }
 
 const HOME_TITLE: Record<string, string> = {
-  lv: "Pasākumu inventāra noma Latvijā",
-  en: "Event equipment rental in Latvia",
-  ru: "Аренда праздничного инвентаря в Латвии",
+  lv: "Foto kastes, AI foto un pasākumu inventārs",
+  en: "Photo booths, AI photo and event equipment",
+  ru: "Фотобудки, AI-фото и праздничный инвентарь",
 };
 const HOME_DESC: Record<string, string> = {
-  lv: "Foto kastes, piepūšamās atrakcijas, specefekti un audio grāmata Tavai neaizmirstamai ballītei. Piegāde visā Latvijā.",
-  en: "Photo booths, inflatables, special effects and an audio guest book for your unforgettable party. Delivery across Latvia.",
-  ru: "Фотобудки, надувные аттракционы, спецэффекты и аудио гостевая книга для вашей незабываемой вечеринки. Доставка по всей Латвии.",
+  lv: "Foto kastes, AI foto kaste un pasākumu inventārs. Korporatīvie pasākumi, Ziemassvētku ballītes un privātie svētki. Rēķins ar pēcapmaksu. 500+ pasākumi kopš 2022.",
+  en: "Photo booths, AI photo booth and event equipment. Corporate events, Christmas parties and private celebrations. Invoice with deferred payment. 500+ events since 2022.",
+  ru: "Фотобудки, AI-фотобудка и праздничный инвентарь. Корпоративы, новогодние вечеринки и частные праздники. Счёт с постоплатой. 500+ мероприятий с 2022 года.",
 };
 
-// Sākumlapas metadata — zīmola virsraksts + OG (admin/statiskais attēls).
+// Sākumlapas metadata — B2B virsraksts + OG (admin/statiskais attēls).
 export async function homeMetadata(locale: string): Promise<Metadata> {
-  const title = `Anabella Party — ${HOME_TITLE[locale] ?? HOME_TITLE.lv}`;
+  const title = `${HOME_TITLE[locale] ?? HOME_TITLE.lv} | Anabella Party`;
   const description = HOME_DESC[locale] ?? HOME_DESC.lv;
   return {
     title,

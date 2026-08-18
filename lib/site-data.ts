@@ -14,6 +14,18 @@ export type PublicTestimonial = {
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+// Korporatīvās/pašvaldību atsauksmes pirmās rotācijā (B2B spec §4.4) — stabila
+// kārtošana pēc event_type; sort_order saglabājas grupas iekšienē.
+const CORP_RE =
+  /korporat|uzņēm|uznem|pašvald|pasvald|iestād|iestad|konferenc|company|corporate|municipal|business/i;
+function corpFirst(list: PublicTestimonial[]): PublicTestimonial[] {
+  return [...list].sort(
+    (a, b) =>
+      (CORP_RE.test(a.event) ? 0 : 1) - (CORP_RE.test(b.event) ? 0 : 1),
+  );
+}
+
 export async function getTestimonials(): Promise<PublicTestimonial[]> {
   const sb = publicClient();
   if (sb) {
@@ -24,22 +36,26 @@ export async function getTestimonials(): Promise<PublicTestimonial[]> {
         .eq("is_published", true)
         .order("sort_order", { ascending: true });
       if (data && data.length)
-        return data.map((r: any) => ({
-          author: r.author,
-          event: r.event_type ?? "",
-          rating: r.rating ?? 5,
-          text: r.text?.lv ?? "",
-        }));
+        return corpFirst(
+          data.map((r: any) => ({
+            author: r.author,
+            event: r.event_type ?? "",
+            rating: r.rating ?? 5,
+            text: r.text?.lv ?? "",
+          })),
+        );
     } catch {
       /* fallback */
     }
   }
-  return staticTestimonials.map((t) => ({
-    author: t.author,
-    event: t.event,
-    rating: t.rating,
-    text: t.text,
-  }));
+  return corpFirst(
+    staticTestimonials.map((t) => ({
+      author: t.author,
+      event: t.event,
+      rating: t.rating,
+      text: t.text,
+    })),
+  );
 }
 
 export async function getClients(): Promise<Client[]> {
