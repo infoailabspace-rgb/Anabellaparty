@@ -1,28 +1,34 @@
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 import Reveal from "@/components/reveal";
-import CountUp from "@/components/count-up";
+import { COMPANY } from "@/lib/company";
 
-export default async function About({
-  statsEvents = "500",
-  statsUnits = "40",
-  statsSince = "2022",
-  image,
-}: {
-  statsEvents?: string;
-  statsUnits?: string;
-  statsSince?: string;
-  image?: string | null;
-}) {
+// "Par mums" (B2B spec §4.5) — pārrakstīts B2B tonī (bez ģimenes hobija iespaida),
+// + komandas bloks ar amatiem un tiešiem kontaktiem. Statistika pārcelta uz
+// TrustBar (zem hero). Team foto: getSiteImage vēlāk; pagaidām iniciāļu placeholder.
+export default async function About({ image }: { image?: string | null }) {
   const t = await getTranslations("about");
-  const photo = image?.trim() ? image : "/images/about/komanda.png";
-  const story = [t("story1"), t("story2"), t("story3"), t("story4")];
+  const photo = image?.trim() ? image : null;
+  const story = [t("story1"), t("story2"), t("story3")];
   const pluses = [t("plus1"), t("plus2"), t("plus3"), t("plus4")];
-  const stats = [
-    { to: Number(statsEvents) || 0, suffix: "+", label: t("statEvents") },
-    { to: Number(statsUnits) || 0, suffix: "+", label: t("statUnits") },
-    { to: Number(statsSince) || 0, prefix: t("sincePrefix"), label: "" },
+
+  const team = [
+    {
+      name: "Aiva Dimante",
+      role: t("teamAivaRole"),
+      phone: COMPANY.contact.phone,
+      phoneDisplay: COMPANY.contact.phoneDisplay,
+      initials: "AD",
+    },
+    {
+      name: "Roberts Dimants",
+      role: t("teamRobertsRole"),
+      phone: COMPANY.altContact.phone,
+      phoneDisplay: COMPANY.altContact.phoneDisplay,
+      initials: "RD",
+    },
   ];
+
   return (
     <section className="py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
@@ -30,13 +36,21 @@ export default async function About({
           {/* Foto — mobilajā virs teksta, desktopā pa labi */}
           <Reveal className="order-first lg:order-last" delay={0.1}>
             <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-xl border border-gold/25 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.35)]">
-              <Image
-                src={photo}
-                alt="Aiva un Roberts Dimanti — Anabella Party"
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />
+              {photo ? (
+                <Image
+                  src={photo}
+                  alt="Anabella Party komanda"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#1e4257] via-navy to-[#0a1a22]">
+                  <span className="font-display text-6xl font-bold text-gold/40">
+                    Anabella
+                  </span>
+                </div>
+              )}
             </div>
           </Reveal>
 
@@ -72,32 +86,43 @@ export default async function About({
                   ))}
                 </ul>
               </div>
-
-              <p className="mt-8 font-display text-2xl font-bold text-gold md:text-3xl">
-                {t("closing")}
-              </p>
             </div>
           </Reveal>
         </div>
 
-        {/* Statistikas josla */}
+        {/* Komandas bloks (§4.5) — foto/vārds/amats/tiešs kontakts */}
         <Reveal delay={0.1}>
-          <div className="mt-16 grid gap-6 rounded-2xl border border-gold/25 bg-navy/25 p-8 text-center shadow-[0_20px_60px_-30px_rgba(212,169,96,0.25)] sm:grid-cols-3">
-            {stats.map((s) => (
-              <div key={s.label || "gads"}>
-                <CountUp
-                  to={s.to}
-                  prefix={s.prefix}
-                  suffix={s.suffix}
-                  className="font-mono text-3xl font-bold text-gold md:text-4xl"
-                />
-                {s.label && (
-                  <p className="mt-2 text-sm uppercase tracking-wide text-text/60">
-                    {s.label}
-                  </p>
-                )}
-              </div>
-            ))}
+          <div className="mt-16">
+            <h3 className="text-center font-display text-xl font-semibold text-gold">
+              {t("teamTitle")}
+            </h3>
+            <div className="mx-auto mt-8 grid max-w-3xl gap-6 sm:grid-cols-2">
+              {team.map((m) => (
+                <div
+                  key={m.name}
+                  className="flex items-center gap-4 rounded-2xl border border-gold/25 bg-navy/25 p-5"
+                >
+                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/10 font-display text-lg font-bold text-gold">
+                    {m.initials}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="font-display font-semibold text-text">{m.name}</p>
+                    <p className="text-sm text-text/60">{m.role}</p>
+                    <div className="mt-1 flex flex-wrap gap-x-3 text-sm">
+                      <a href={`tel:${m.phone}`} className="text-gold hover:underline">
+                        {m.phoneDisplay}
+                      </a>
+                      <a
+                        href={`mailto:${COMPANY.contact.email}`}
+                        className="text-text/70 hover:text-gold"
+                      >
+                        {COMPANY.contact.email}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </Reveal>
       </div>

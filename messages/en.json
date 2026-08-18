@@ -40,6 +40,7 @@
     "atrakcijas": "Attractions",
     "svinibuInventars": "Party equipment",
     "aiFoto": "AI photo",
+    "rekviziti": "Company details",
     "drizuma": "coming soon",
     "visasTiesibas": "All rights reserved.",
     "izstradaja": "Built by"
@@ -52,7 +53,8 @@
   "home": {
     "offerTitle": "Our offering",
     "offerSubtitle": "From photo booths to hot tubs — everything for your event in one place.",
-    "viewInventory": "Browse inventory"
+    "viewInventory": "Browse inventory",
+    "b2bCta": "An event for your company"
   },
   "categories": {
     "foto-kasteName": "Photo booths",
@@ -83,11 +85,14 @@
     "s3Text": "We deliver, set up and collect. All you have to do is celebrate."
   },
   "about": {
-    "eyebrow": "Let's get acquainted",
-    "heading": "What is Anabella party inventory?",
-    "story1": "That's us — Aiva and Roberts Dimanti.",
-    "story2": "We are husband and wife who one day simply decided to do what we love. We left our stable jobs and started living for real. Now we create celebrations — ones that stay in memory not only in photos, but in the heart.",
-    "story3": "Our photo booths capture real laughter, not poses. Our white attractions delight children and amuse adults. We arrive with joy and leave with the feeling that we've made someone's day special.",
+    "eyebrow": "About us",
+    "heading": "About Anabella Party",
+    "story1": "Since 2022 we have served more than 500 events — corporate evenings, Christmas parties, conferences, openings and city festivals. Our inventory is 40+ items that we deliver, set up and operate ourselves across Latvia.",
+    "story2": "We work with a contract and invoice. We prepare branded materials with the client's identity. There is our assistant at every event.",
+    "story3": "SIA \"AR DIMANTI\", reg. no. 40203276261, VAT payer.",
+    "teamTitle": "Our team",
+    "teamAivaRole": "Project manager",
+    "teamRobertsRole": "Technical support",
     "story4": "This is not just a service. This is our passion. It's us — with all our energy, creativity and desire for your event to be the one people talk about for a long time.",
     "plusesTitle": "Our little big pluses",
     "plus1": "We do it with heart, not by template",
@@ -100,7 +105,8 @@
     "sincePrefix": "since "
   },
   "clients": {
-    "heading": "Trusted by"
+    "heading": "Trusted by",
+    "subline": "Companies, municipalities and agencies across Latvia"
   },
   "gallery": {
     "heading": "From our events",
@@ -327,6 +333,34 @@
     "atrCleanText": "The device draws in a ball, washes it with an eco-friendly, child-safe solution and releases it clean and disinfected. This is how we ensure every attraction is hygienically safe for each little guest.",
     "mdEmptyIntro": "We work with trusted partners in the events industry. The list of our friends will be here soon.",
     "mdEmptyInvite": "Would you like to become our partner? Write to —"
+  },
+  "forBusiness": {
+    "title": "An event for your company or institution",
+    "intro": "Corporate evenings, Christmas parties, conferences and openings. We work with a contract and invoice.",
+    "card1Title": "Invoice and deferred payment",
+    "card1Text": "Contract and VAT invoice. SIA \"AR DIMANTI\" is a VAT payer — VAT is recoverable.",
+    "card2Title": "Branding with your logo",
+    "card2Text": "Prints, screen design and backdrop with your company identity.",
+    "card3Title": "Assistant throughout the event",
+    "card3Text": "We set up, operate and pack up ourselves. Equipment is never left unattended.",
+    "card4Title": "Delivery across Latvia",
+    "card4Text": "Riga, regions, outside the city. We plan the logistics.",
+    "cta": "Describe your event"
+  },
+  "forMunicipal": {
+    "title": "For municipalities and public institutions",
+    "intro": "We work with municipalities, municipal enterprises and state institutions — price surveys, contracts and detailed offers.",
+    "col1Title": "Experience",
+    "col1Text": "City festivals, institutional events, school events and public events.",
+    "col2Title": "For price surveys",
+    "col2Text": "We prepare offers with a detailed item breakdown. We respond within 1 business day.",
+    "col3Title": "Compliance",
+    "col3Text": "Contract, VAT invoice, insurance (if required) and safety requirements for the equipment.",
+    "docsTitle": "Documents to download",
+    "docReqs": "Company details (PDF)",
+    "docSpecs": "Technical specification (PDF)",
+    "docsSoon": "Documents are being prepared — if you need them now, write to info@anabellaparty.lv.",
+    "cta": "Request an offer for a price survey"
   },
   "b2bForm": {
     "sectionTitle": "Enquiry for companies and institutions",

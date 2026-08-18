@@ -114,6 +114,21 @@ export default async function Footer() {
         </div>
       </div>
 
+      {/* Rekvizīti — redzami bez klikšķa (grāmatvedība/iepirkumi meklē pirmajā vizītē) */}
+      <div className="mx-auto max-w-3xl border-t border-gold/10 px-6 py-6 text-center">
+        <h4 className="font-display text-sm font-semibold text-text">
+          {t("rekviziti")}
+        </h4>
+        <ul className="mt-3 space-y-0.5 text-xs text-text/60">
+          <li>{COMPANY.legalName}</li>
+          <li>Reģ. nr. {COMPANY.regNr} · PVN reģ. nr. {COMPANY.vatNr}</li>
+          <li>{fullAddress}</li>
+          <li>
+            {COMPANY.bank.name}: {COMPANY.bank.iban} · {COMPANY.bank.swift}
+          </li>
+        </ul>
+      </div>
+
       {/* Logo — pašā apakšā, virs copyright rindas */}
       <div className="flex flex-col items-center gap-3 px-6 pb-8">
         <Image

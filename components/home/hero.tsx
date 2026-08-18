@@ -98,6 +98,13 @@ export default function Hero({
           >
             {th("viewInventory")}
           </Link>
+          {/* B2B sekundārā poga (§4.1) — 80% klientu ieeja, vizuāli neuzkrītoša */}
+          <Link
+            href="/kontakti/#pieprasijums"
+            className="rounded-full border border-gold/40 px-8 py-3 font-semibold text-text/80 transition-colors hover:border-gold hover:text-gold"
+          >
+            {th("b2bCta")} →
+          </Link>
         </motion.div>
       </div>
 

@@ -40,6 +40,7 @@
     "atrakcijas": "Atrakcijas",
     "svinibuInventars": "Svinību inventārs",
     "aiFoto": "AI foto",
+    "rekviziti": "Rekvizīti",
     "drizuma": "drīzumā",
     "visasTiesibas": "Visas tiesības aizsargātas.",
     "izstradaja": "Izstrādāja"
@@ -52,7 +53,8 @@
   "home": {
     "offerTitle": "Mūsu piedāvājums",
     "offerSubtitle": "No foto kastēm līdz kubliem — viss Tavam pasākumam vienuviet.",
-    "viewInventory": "Apskatīt inventāru"
+    "viewInventory": "Apskatīt inventāru",
+    "b2bCta": "Pasākums uzņēmumam"
   },
   "categories": {
     "foto-kasteName": "Foto kastes",
@@ -83,11 +85,14 @@
     "s3Text": "Piegādājam, uzstādām un savācam. Tev atliek tikai svinēt."
   },
   "about": {
-    "eyebrow": "Iepazīsimies?",
-    "heading": "Kas ir Svētku inventārs Anabella?",
-    "story1": "Tie esam mēs — Aiva un Roberts Dimanti.",
-    "story2": "Mēs esam vīrs un sieva, kuri vienu dienu vienkārši izlēma darīt to, kas patīk. Atstājām stabilos darbus un sākām dzīvot pa īstam. Tagad mēs radām svētkus — tādus, kas paliek atmiņā ne tikai bildēs, bet arī sirdī.",
-    "story3": "Mūsu foto kastes ķer īstus smieklus, nevis pozas. Mūsu baltās atrakcijas iepriecina bērnus un uzjautrina pieaugušos. Mēs ierodamies ar prieku un aizbraucam ar sajūtu, ka esam kādam dienu padarījuši īpašu.",
+    "eyebrow": "Par mums",
+    "heading": "Par Anabella Party",
+    "story1": "Kopš 2022. gada esam apkalpojuši vairāk nekā 500 pasākumus — korporatīvos vakarus, Ziemassvētku ballītes, konferences, atklāšanas un pilsētas svētkus. Mūsu inventārs ir 40+ vienības, ko piegādājam, uzstādām un apkalpojam paši visā Latvijā.",
+    "story2": "Strādājam ar līgumu un rēķinu. Sagatavojam brendētus materiālus ar klienta identitāti. Katrā pasākumā ir mūsu asistents.",
+    "story3": "SIA \"AR DIMANTI\", reģ. nr. 40203276261, PVN maksātājs.",
+    "teamTitle": "Mūsu komanda",
+    "teamAivaRole": "Projektu vadītāja",
+    "teamRobertsRole": "Tehniskais atbalsts",
     "story4": "Šis nav vienkārši pakalpojums. Šī ir mūsu sirdslieta. Mēs paši — ar visu savu enerģiju, radošumu un vēlmi, lai jūsu pasākums būtu tas, par ko runā vēl ilgi.",
     "plusesTitle": "Mūsu mazie lielie plusi",
     "plus1": "Mēs darām ar sirdi, ne pēc šablona",
@@ -100,7 +105,8 @@
     "sincePrefix": "kopš "
   },
   "clients": {
-    "heading": "Mums uzticas"
+    "heading": "Mums uzticas",
+    "subline": "Uzņēmumi, pašvaldības un aģentūras visā Latvijā"
   },
   "gallery": {
     "heading": "No mūsu pasākumiem",
@@ -327,6 +333,34 @@
     "atrCleanText": "Ierīce iesūc bumbu, apmazgā to ar ekoloģisku, bērniem nekaitīgu līdzekli un izmet tīru un dezinficētu. Tā mēs nodrošinām, ka katra atrakcija ir higiēniski droša ikvienam mazajam viesim.",
     "mdEmptyIntro": "Sadarbojamies ar uzticamiem partneriem pasākumu jomā. Drīzumā šeit būs mūsu draugu saraksts.",
     "mdEmptyInvite": "Vai vēlies kļūt par mūsu partneri? Raksti —"
+  },
+  "forBusiness": {
+    "title": "Pasākums uzņēmumam vai iestādei",
+    "intro": "Korporatīvie vakari, Ziemassvētku ballītes, konferences un atklāšanas. Strādājam ar līgumu un rēķinu.",
+    "card1Title": "Rēķins un pēcapmaksa",
+    "card1Text": "Līgums un PVN rēķins. SIA \"AR DIMANTI\" ir PVN maksātājs — PVN atgūstams.",
+    "card2Title": "Brendēšana ar jūsu logo",
+    "card2Text": "Izdrukas, ekrāna dizains un fons ar uzņēmuma identitāti.",
+    "card3Title": "Asistents visā pasākuma laikā",
+    "card3Text": "Uzstādām, apkalpojam un savācam paši. Tehnika nepaliek bez uzraudzības.",
+    "card4Title": "Piegāde visā Latvijā",
+    "card4Text": "Rīga, reģioni, ārpus pilsētas. Loģistiku plānojam mēs.",
+    "cta": "Aprakstiet savu pasākumu"
+  },
+  "forMunicipal": {
+    "title": "Pašvaldībām un valsts iestādēm",
+    "intro": "Strādājam ar pašvaldībām, pašvaldības uzņēmumiem un valsts iestādēm — cenu aptaujas, līgumi un detalizēti piedāvājumi.",
+    "col1Title": "Pieredze",
+    "col1Text": "Pilsētas svētki, iestāžu pasākumi, izglītības iestāžu pasākumi un publiskie pasākumi.",
+    "col2Title": "Cenu aptaujai",
+    "col2Text": "Piedāvājumu sagatavojam ar detalizētu pozīciju sadalījumu. Atsaucamies 1 darba dienas laikā.",
+    "col3Title": "Atbilstība",
+    "col3Text": "Līgums, PVN rēķins, apdrošināšana (ja nepieciešams) un drošības prasības inventāram.",
+    "docsTitle": "Dokumenti lejupielādei",
+    "docReqs": "Rekvizītu lapa (PDF)",
+    "docSpecs": "Tehniskā specifikācija (PDF)",
+    "docsSoon": "Dokumenti tiek sagatavoti — ja nepieciešams tūlīt, rakstiet info@anabellaparty.lv.",
+    "cta": "Pieprasīt piedāvājumu cenu aptaujai"
   },
   "b2bForm": {
     "sectionTitle": "Pieprasījums uzņēmumiem un iestādēm",

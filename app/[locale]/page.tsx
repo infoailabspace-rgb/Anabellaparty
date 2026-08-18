@@ -1,6 +1,9 @@
 import Hero from "@/components/home/hero";
+import TrustBar from "@/components/home/trust-bar";
 import Steps from "@/components/home/steps";
 import About from "@/components/home/about";
+import ForBusiness from "@/components/home/for-business";
+import ForMunicipal from "@/components/home/for-municipal";
 import ClientsMarquee from "@/components/clients-marquee";
 import Testimonials from "@/components/home/testimonials";
 import CategoryCard from "@/components/category-card";
@@ -60,6 +63,16 @@ export default async function Home() {
         )}
       />
 
+      {/* Uzticamības josla (skaitļi + "Mums uzticas") — tūlīt zem hero (§4.2) */}
+      <TrustBar
+        statsEvents={g("about.stats.events", "500")}
+        statsUnits={g("about.stats.units", "40")}
+        statsSince={g("about.stats.since", "2022")}
+      />
+
+      {/* Klientu logo lente — pārcelta augšup, uzreiz aiz uzticamības joslas */}
+      <ClientsMarquee clients={clients} />
+
       {/* Kā tas notiek — bg */}
       <Steps />
 
@@ -85,16 +98,11 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Par mums — bg */}
-      <About
-        statsEvents={g("about.stats.events", "500")}
-        statsUnits={g("about.stats.units", "40")}
-        statsSince={g("about.stats.since", "2022")}
-        image={aboutImage}
-      />
+      {/* Pasākums uzņēmumam vai iestādei (§4.3) — pēc piedāvājuma, pirms atsauksmēm */}
+      <ForBusiness />
 
-      {/* Mums uzticas — klientu logo lente (tukša → nerādās) */}
-      <ClientsMarquee clients={clients} />
+      {/* Par mums — bg */}
+      <About image={aboutImage} />
 
       {/* Atsauksmes — tikai ja ir reāli citāti (bez izdomātiem) */}
       {testimonials.length > 0 && (
@@ -103,6 +111,9 @@ export default async function Home() {
 
       {/* No mūsu pasākumiem — featured galerija (tukša → nerādās) */}
       <EventGallery images={featuredGallery} mode="home" />
+
+      {/* Pašvaldībām un valsts iestādēm (§4.6) — pirms noslēdzošā CTA */}
+      <ForMunicipal />
 
       {/* CTA — zelta gradients */}
       <CtaSection />
