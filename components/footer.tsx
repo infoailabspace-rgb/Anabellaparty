@@ -2,7 +2,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { SocialLinks } from "@/components/social-icons";
-import { COMPANY, legalLineShort, fullAddress } from "@/lib/company";
+import { COMPANY, fullAddress } from "@/lib/company";
 
 export default async function Footer() {
   const t = await getTranslations("footer");
@@ -144,7 +144,6 @@ export default async function Footer() {
       </div>
 
       <div className="border-t border-gold/10 py-4 text-center text-xs text-text/50">
-        <p>{legalLineShort}</p>
         <p>
           © {new Date().getFullYear()} Anabella Party. {t("visasTiesibas")}
         </p>
