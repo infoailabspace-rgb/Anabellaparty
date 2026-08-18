@@ -7,7 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { type Product } from "@/lib/products";
 import { bookingCategories } from "@/lib/categories";
 import { computeQuote, formatEur, type CartItem } from "@/lib/pricing";
-import { track, trackLead } from "@/lib/analytics";
+import { track, trackLead, trackConversion } from "@/lib/analytics";
 import {
   isValidEmail,
   isValidPhone,
@@ -351,7 +351,8 @@ export default function BookingForm({ products }: { products: Product[] }) {
         return;
       }
       const value = computeQuote(items, products).subtotal + (delivery?.cost || 0);
-      track("booking_submitted", { value });
+      // B2C rezervācija — value+currency (§8), atsevišķs source no B2B anketas.
+      trackConversion("booking_submitted", value, { source: "b2c" });
       trackLead(value);
       sessionStorage.removeItem(STORAGE_KEY);
       setSubmitted(true);
