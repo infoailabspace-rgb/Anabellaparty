@@ -39,6 +39,7 @@
     "fotoKastes": "Foto kastes",
     "atrakcijas": "Atrakcijas",
     "svinibuInventars": "Svinību inventārs",
+    "aiFoto": "AI foto",
     "drizuma": "drīzumā",
     "visasTiesibas": "Visas tiesības aizsargātas.",
     "izstradaja": "Izstrādāja"
@@ -68,6 +69,8 @@
     "kubliDesc": "VIP kubli un mobilā pirts (atrodas Jūrmalā, atsevišķs tālrunis).",
     "izklaides-punktsName": "Izklaides punkts",
     "izklaides-punktsDesc": "AI foto pārsteigumi un interaktīvas spēles jūsu pasākumam — drīzumā pieejams.",
+    "ai-fotoName": "AI foto kaste",
+    "ai-fotoDesc": "Pārvērš viesus par supervaroņiem, kosmosa ceļotājiem vai retro zvaigznēm. Pielāgojam pasākuma tematikai un uzņēmuma identitātei.",
     "comingSoonBadge": "Drīzumā"
   },
   "steps": {
@@ -292,10 +295,10 @@
     "fkFramesText": "Izvēlies izdruku rāmīti un pievieno savu logo vai tekstu. Dizainu izstrādājam individuāli katram pasākumam, lai izdrukas atbilstu Tavai iecerei.",
     "afIntro": "AI foto kaste pārvērš viesus par supervaroņiem, kosmosa ceļotājiem, retro gangsteriem un Holivudas zvaigznēm. Efektu pielāgojam pasākuma tematikai — no elegantām kāzām līdz korporatīvai tēmu ballītei.",
     "afThemesTitle": "Populārākās tēmas",
-    "afTheme1": "Gatsby retro",
+    "afTheme1": "Retro 20-tie",
     "afTheme2": "Supervaroņi",
     "afTheme3": "Kosmosa iekarotāji",
-    "afTheme4": "Harija Potera burvji",
+    "afTheme4": "Burvju skola",
     "afTheme5": "Elegantas profesijas",
     "afTheme6": "Senie laiki",
     "afTheme7": "Klienta paša ideja",

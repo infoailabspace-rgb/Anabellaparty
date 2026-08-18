@@ -74,6 +74,7 @@ export default async function SatursPage() {
     "about.photo": imgUrl("about.photo"),
     "og.fallback": imgUrl("og.fallback"),
     "category.foto-kaste": imgUrl("category.foto-kaste"),
+    "category.ai-foto": imgUrl("category.ai-foto"),
     "category.atrakcijas": imgUrl("category.atrakcijas"),
     "category.audio-video": imgUrl("category.audio-video"),
     "category.specefekti": imgUrl("category.specefekti"),

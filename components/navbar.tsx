@@ -20,7 +20,6 @@ const linkBase =
 
 export default function Navbar() {
   const t = useTranslations("nav");
-  const tc = useTranslations("categories");
   const pathname = usePathname();
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
@@ -80,7 +79,6 @@ export default function Navbar() {
       children: [
         { href: "/foto-kaste", label: t("fotoKastes") },
         { href: "/foto-kaste/ai-foto", label: t("aiFoto") },
-        { label: tc("izklaides-punktsName"), comingSoon: true, badge: t("drizuma"), hint: t("izklaidesPunktsHint") },
       ],
     },
     { label: t("atrakcijas"), href: "/piepusamas-atrakcijas" },

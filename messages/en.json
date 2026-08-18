@@ -39,6 +39,7 @@
     "fotoKastes": "Photo booths",
     "atrakcijas": "Attractions",
     "svinibuInventars": "Party equipment",
+    "aiFoto": "AI photo",
     "drizuma": "coming soon",
     "visasTiesibas": "All rights reserved.",
     "izstradaja": "Built by"
@@ -68,6 +69,8 @@
     "kubliDesc": "VIP hot tubs and a mobile sauna (located in Jūrmala, separate phone).",
     "izklaides-punktsName": "Entertainment point",
     "izklaides-punktsDesc": "AI photo surprises and interactive games for your event — coming soon.",
+    "ai-fotoName": "AI photo booth",
+    "ai-fotoDesc": "Turns guests into superheroes, space travellers or retro stars. We adapt it to your event theme and company identity.",
     "comingSoonBadge": "Coming soon"
   },
   "steps": {
@@ -292,10 +295,10 @@
     "fkFramesText": "Choose a print frame and add your logo or text. We design it individually for each event so the prints match your vision.",
     "afIntro": "The AI photo booth turns guests into superheroes, space travellers, retro gangsters and Hollywood stars. We adapt the effect to your event's theme — from an elegant wedding to a corporate themed party.",
     "afThemesTitle": "Popular themes",
-    "afTheme1": "Gatsby retro",
+    "afTheme1": "Roaring 20s",
     "afTheme2": "Superheroes",
     "afTheme3": "Space conquerors",
-    "afTheme4": "Harry Potter wizards",
+    "afTheme4": "Wizard school",
     "afTheme5": "Elegant professions",
     "afTheme6": "Ancient times",
     "afTheme7": "The client's own idea",

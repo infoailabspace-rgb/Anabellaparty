@@ -1,7 +1,7 @@
 import type { ProductCategory } from "@/lib/products";
 
 export type CategoryMeta = {
-  id: ProductCategory | "izklaides-punkts";
+  id: ProductCategory | "izklaides-punkts" | "ai-foto";
   name: string;
   short: string;
   description: string;
@@ -69,8 +69,21 @@ export const categoryMeta: Record<ProductCategory, CategoryMeta> = {
   },
 };
 
+// AI foto kaste — pilnvērtīga (pelnoša) sadaļa, saistīta ar /foto-kaste/ai-foto.
+// Rādās sākumlapā līdzās foto kastēm (B2B specifikācija §3.1).
+export const aiFotoCategory: CategoryMeta = {
+  id: "ai-foto",
+  name: "AI foto kaste",
+  short: "AI foto",
+  description:
+    "Pārvērš viesus par supervaroņiem, kosmosa ceļotājiem vai retro zvaigznēm. Pielāgojam pasākuma tematikai un uzņēmuma identitātei.",
+  href: "/foto-kaste/ai-foto",
+  bgImage: "/images/categories/ai-foto.jpg",
+};
+
 // "Izklaides punkts" — drīzumā (AI foto + spēles). Nav produktu kategorija,
 // nav klikšķināma; luxury gradienta fons + DRĪZUMĀ uzlīme.
+// (Vairs netiek rādīts sākumlapā — aizvietots ar AI foto kasti.)
 export const izklaidesPunkts: CategoryMeta = {
   id: "izklaides-punkts",
   name: "Izklaides punkts",
@@ -92,10 +105,14 @@ export const bookingCategories: CategoryMeta[] = [
   categoryMeta.deco,
 ];
 
-// Home page — 5 aktīvās kategorijas + Izklaides punkts (kubli aizvietots).
+// Home page — AI foto kaste līdzās foto kastēm (§3.1), tad pārējās kategorijas.
 export const homeCategories: CategoryMeta[] = [
-  ...bookingCategories,
-  izklaidesPunkts,
+  categoryMeta["foto-kaste"],
+  aiFotoCategory,
+  categoryMeta.atrakcijas,
+  categoryMeta["audio-video"],
+  categoryMeta.specefekti,
+  categoryMeta.deco,
 ];
 
 // /svinibu-inventars hub — 3 apakškategorijas (kubli izņemts no galerijas).

@@ -6,7 +6,6 @@ import { COMPANY, legalLineShort, fullAddress } from "@/lib/company";
 
 export default async function Footer() {
   const t = await getTranslations("footer");
-  const tc = await getTranslations("categories");
   const linkCls = "transition-colors hover:text-gold";
   return (
     <footer className="border-t border-gold/30 bg-navy/40">
@@ -33,9 +32,10 @@ export default async function Footer() {
                 {t("svinibuInventars")}
               </Link>
             </li>
-            <li className="cursor-default text-text/50">
-              {tc("izklaides-punktsName")}{" "}
-              <span className="text-text/40">({t("drizuma")})</span>
+            <li>
+              <Link href="/foto-kaste/ai-foto" className={linkCls}>
+                {t("aiFoto")}
+              </Link>
             </li>
           </ul>
         </div>

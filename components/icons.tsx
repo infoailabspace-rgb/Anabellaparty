@@ -102,11 +102,23 @@ export function IconGamepad(p: IconProps) {
   );
 }
 
+// AI foto kaste — kamera ar dzirkstelēm (AI akcents).
+export function IconAiCamera(p: IconProps) {
+  return (
+    <svg {...base} {...p}>
+      <path d="M4 8h3l1.5-2h5L15 8h2a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" />
+      <circle cx="10.5" cy="13" r="2.8" />
+      <path d="M19 3l.7 2L22 5.7l-2.3.7L19 9l-.7-2.6L16 5.7 18.3 5 19 3Z" />
+    </svg>
+  );
+}
+
 export const categoryIcons: Record<
-  ProductCategory | "izklaides-punkts",
+  ProductCategory | "izklaides-punkts" | "ai-foto",
   (p: IconProps) => ReactNode
 > = {
   "foto-kaste": IconCamera,
+  "ai-foto": IconAiCamera,
   atrakcijas: IconBalloons,
   "audio-video": IconMic,
   specefekti: IconSparkles,

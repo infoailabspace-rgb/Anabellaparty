@@ -128,6 +128,7 @@ export default function PageImagesAdmin({
       fallback: null,
     },
     { key: "category.foto-kaste", label: "Kategorija — Foto kastes", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
+    { key: "category.ai-foto", label: "Kategorija — AI foto kaste", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
     { key: "category.atrakcijas", label: "Kategorija — Atrakcijas", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
     { key: "category.audio-video", label: "Kategorija — Audio/video", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },
     { key: "category.specefekti", label: "Kategorija — Specefekti", help: "Sākumlapas kartītes fona attēls. Tukšs → tīrs navy.", fallback: null },

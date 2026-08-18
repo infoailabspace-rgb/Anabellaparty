@@ -36,6 +36,7 @@ const PAGE_IMAGE_KEYS = [
   "about.photo",
   "og.fallback",
   "category.foto-kaste",
+  "category.ai-foto",
   "category.atrakcijas",
   "category.audio-video",
   "category.specefekti",
