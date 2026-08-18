@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations, getLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import ContactForm from "@/components/contact-form";
+import B2bEnquiryForm from "@/components/b2b-enquiry-form";
 import Reveal from "@/components/reveal";
 import { getContent } from "@/lib/site-content";
 import { COMPANY, fullAddress } from "@/lib/company";
@@ -24,10 +26,11 @@ export async function generateMetadata({
 }
 
 export default async function KontaktiPage() {
-  const [hours, t, ts, locale] = await Promise.all([
+  const [hours, t, ts, tb, locale] = await Promise.all([
     getContent("contact.hours", HOURS_FALLBACK),
     getTranslations("pages"),
     getTranslations("sec"),
+    getTranslations("b2bForm"),
     getLocale(),
   ]);
   const hoursLines = hours.split("\n").filter(Boolean);
@@ -132,6 +135,24 @@ export default async function KontaktiPage() {
             </div>
           </Reveal>
         </div>
+
+        {/* B2B pieprasījuma anketa (§6) — enkurs #pieprasijums */}
+        <section
+          id="pieprasijums"
+          className="mt-16 scroll-mt-28 rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10"
+        >
+          <Reveal>
+            <h2 className="font-display text-2xl font-bold sm:text-3xl">
+              {tb("sectionTitle")}
+            </h2>
+            <p className="mt-3 max-w-2xl text-text/80">{tb("sectionIntro")}</p>
+            <div className="mt-8 max-w-3xl">
+              <Suspense fallback={null}>
+                <B2bEnquiryForm />
+              </Suspense>
+            </div>
+          </Reveal>
+        </section>
       </div>
     </>
   );
