@@ -17,6 +17,22 @@ export default async function FotoKasteB2b() {
     { q: t("q5"), a: t("a5") },
     { q: t("q6"), a: t("a6") },
   ];
+  const tech: [string, string][] = [
+    [t("techArea"), t("techAreaV")],
+    [t("techZone"), t("techZoneV")],
+    [t("techHeight"), t("techHeightV")],
+    [t("techPower"), t("techPowerV")],
+    [t("techExt"), t("techExtV")],
+    [t("techEquip"), t("techEquipV")],
+    [t("techNet"), t("techNetV")],
+  ];
+  const coord = [
+    { icon: "🚚", title: t("coord1Title"), text: t("coord1Text") },
+    { icon: "👤", title: t("coord2Title"), text: t("coord2Text") },
+    { icon: "⏱️", title: t("coord3Title"), text: t("coord3Text") },
+    { icon: "📦", title: t("coord4Title"), text: t("coord4Text") },
+    { icon: "📋", title: t("coord5Title"), text: t("coord5Text") },
+  ];
 
   return (
     <div className="mt-12 space-y-12">
@@ -68,6 +84,61 @@ export default async function FotoKasteB2b() {
           </div>
         </Reveal>
       </div>
+
+      {/* Tehniskās prasības */}
+      <Reveal>
+        <div>
+          <h2 className="font-display text-2xl font-bold">{t("techTitle")}</h2>
+          <p className="mt-3 max-w-2xl text-text/75">{t("techIntro")}</p>
+          <dl className="mt-6 overflow-hidden rounded-2xl border border-gold/20">
+            {tech.map(([k, v], i) => (
+              <div
+                key={k}
+                className={`grid gap-1 px-5 py-3 sm:grid-cols-[220px_1fr] sm:gap-4 ${
+                  i > 0 ? "border-t border-gold/10" : ""
+                }`}
+              >
+                <dt className="text-sm font-semibold text-gold">{k}</dt>
+                <dd className="text-sm text-text/85">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="mt-6 rounded-2xl border border-amber-500/60 bg-amber-500/10 p-5">
+            <p className="font-semibold text-amber-300">⚠ {t("warnTitle")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-amber-200/90">
+              {t("warnText")}
+            </p>
+          </div>
+        </div>
+      </Reveal>
+
+      {/* Ko saskaņojam pirms pasākuma */}
+      <Reveal>
+        <div>
+          <h2 className="font-display text-2xl font-bold">{t("coordTitle")}</h2>
+          <p className="mt-3 max-w-2xl text-text/75">{t("coordIntro")}</p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {coord.map((c) => (
+              <div
+                key={c.title}
+                className="flex gap-4 rounded-2xl border border-gold/20 bg-navy/25 p-5"
+              >
+                <span className="text-2xl leading-none" aria-hidden>
+                  {c.icon}
+                </span>
+                <div>
+                  <h3 className="font-display font-semibold text-gold">
+                    {c.title}
+                  </h3>
+                  <p className="mt-1 text-sm leading-relaxed text-text/80">
+                    {c.text}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Reveal>
 
       {/* BUJ */}
       <Reveal>

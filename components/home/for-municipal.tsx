@@ -11,11 +11,6 @@ export default async function ForMunicipal() {
     { title: t("col2Title"), text: t("col2Text") },
     { title: t("col3Title"), text: t("col3Text") },
   ];
-  // Dokumentu PDF (ja fails ievietots public/docs/ — citādi "sagatavošanā").
-  const docs = [
-    { label: t("docReqs"), href: "/docs/rekviziti.pdf" },
-    { label: t("docSpecs"), href: "/docs/tehniska-specifikacija.pdf" },
-  ];
   return (
     <section
       id="pasvaldibam"
@@ -45,27 +40,6 @@ export default async function ForMunicipal() {
             </Reveal>
           ))}
         </div>
-
-        {/* Dokumenti lejupielādei — pogas (PDF sagatavošanā, ja faila vēl nav) */}
-        <Reveal delay={0.1}>
-          <div className="mt-10">
-            <p className="font-display text-sm font-semibold uppercase tracking-wide text-gold">
-              {t("docsTitle")}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              {docs.map((d) => (
-                <a
-                  key={d.href}
-                  href={d.href}
-                  className="rounded-full border border-gold/40 px-5 py-2 text-sm text-text/80 transition-colors hover:border-gold hover:text-gold"
-                >
-                  ⬇ {d.label}
-                </a>
-              ))}
-            </div>
-            <p className="mt-2 text-xs text-text/40">{t("docsSoon")}</p>
-          </div>
-        </Reveal>
 
         <Reveal delay={0.15}>
           <div className="mt-10">
