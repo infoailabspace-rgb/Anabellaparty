@@ -24,6 +24,7 @@ export default async function FotoKasteB2b() {
     [t("techPower"), t("techPowerV")],
     [t("techExt"), t("techExtV")],
     [t("techEquip"), t("techEquipV")],
+    [t("techWeight"), t("techWeightV")],
     [t("techNet"), t("techNetV")],
   ];
   const coord = [
@@ -99,7 +100,7 @@ export default async function FotoKasteB2b() {
                 }`}
               >
                 <dt className="text-sm font-semibold text-gold">{k}</dt>
-                <dd className="text-sm text-text/85">{v}</dd>
+                <dd className="whitespace-pre-line text-sm text-text/85">{v}</dd>
               </div>
             ))}
           </dl>
