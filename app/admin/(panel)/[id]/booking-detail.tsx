@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { STATUSES, type Booking } from "@/lib/admin";
 import {
   bookingBadge,
@@ -9,11 +10,12 @@ import {
   PAYMENT_STATE_LABEL,
   type PaymentState,
 } from "@/lib/booking-status";
-import { setStatus, saveNotes, setPaymentState } from "../actions";
+import { setStatus, saveNotes, setPaymentState, deleteBooking } from "../actions";
 
 const PAY_STATES: PaymentState[] = ["unpaid", "partial", "paid", "deferred"];
 
 export default function BookingDetail({ booking }: { booking: Booking }) {
+  const router = useRouter();
   const [status, setStatusState] = useState(booking.status);
   const [notes, setNotes] = useState(booking.admin_notes ?? "");
   const [notesSaved, setNotesSaved] = useState(true);
@@ -132,6 +134,23 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
           onChange={(e) => setNotes(e.target.value)}
           className={`mt-1 block w-full ${field}`}
         />
+      </div>
+
+      {/* Dzēšana — pārcelta no saraksta uz detaļu skatu */}
+      <div className="border-t border-gold/15 pt-4">
+        <button
+          type="button"
+          onClick={() => {
+            if (!confirm(`Vai tiešām dzēst pieteikumu no ${booking.name}? Šo darbību nevar atsaukt.`)) return;
+            startTransition(async () => {
+              await deleteBooking(booking.id);
+              router.push("/admin");
+            });
+          }}
+          className="text-sm text-red-300 transition-colors hover:text-red-200"
+        >
+          Dzēst pieteikumu
+        </button>
       </div>
     </div>
   );
