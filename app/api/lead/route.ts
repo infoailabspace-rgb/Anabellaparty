@@ -9,6 +9,7 @@ export const runtime = "nodejs";
 // + iekšējais paziņojums + apstiprinājums pieprasītājam.
 
 type LeadPayload = {
+  name?: string;
   company?: string;
   contact_person?: string;
   role?: string;
@@ -51,6 +52,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "Nederīgs pieprasījums." }, { status: 400 });
   }
 
+  const name = str(body.name);
   const company = str(body.company);
   const contactPerson = str(body.contact_person);
   const role = str(body.role);
@@ -63,14 +65,24 @@ export async function POST(req: Request) {
   const institution = str(body.institution);
   const procurementId = str(body.procurement_id);
   const source = str(body.source) || "b2b";
-  const needsBranding = Boolean(body.needs_branding);
+  const isB2c = source === "b2c";
+  const needsBranding = !isB2c && Boolean(body.needs_branding);
   const interests = Array.isArray(body.interests)
     ? body.interests.map((s) => str(s)).filter(Boolean).slice(0, 20)
     : [];
 
+  // Privātpersonai company/kontaktpersona = vārds (leads.company/contact_person
+  // ir NOT NULL). B2B — kā ievadīts.
+  const companyF = isB2c ? name : company;
+  const contactF = isB2c ? name : contactPerson;
+
   // 1. Servera validācija (neuzticas klientam).
-  if (!company) return NextResponse.json({ ok: false, error: "Trūkst uzņēmuma/iestādes." }, { status: 400 });
-  if (!contactPerson) return NextResponse.json({ ok: false, error: "Trūkst kontaktpersonas." }, { status: 400 });
+  if (isB2c) {
+    if (name.length < 2) return NextResponse.json({ ok: false, error: "Trūkst vārda." }, { status: 400 });
+  } else {
+    if (!company) return NextResponse.json({ ok: false, error: "Trūkst uzņēmuma/iestādes." }, { status: 400 });
+    if (!contactPerson) return NextResponse.json({ ok: false, error: "Trūkst kontaktpersonas." }, { status: 400 });
+  }
   if (!EMAIL_RE.test(email)) return NextResponse.json({ ok: false, error: "Nederīgs e-pasts." }, { status: 400 });
   if (phone.length < 5) return NextResponse.json({ ok: false, error: "Trūkst tālruņa." }, { status: 400 });
 
@@ -95,8 +107,8 @@ export async function POST(req: Request) {
   // 3. Ieraksts leads tabulā (nav fatāls, ja neizdodas — e-pasts tomēr aiziet).
   if (supabase) {
     const { error } = await supabase.from("leads").insert({
-      company,
-      contact_person: contactPerson,
+      company: companyF,
+      contact_person: contactF,
       role: role || null,
       email,
       phone,
@@ -128,8 +140,8 @@ export async function POST(req: Request) {
   const resend = new Resend(resendKey);
   const interestsLine = interests.length ? interests.join(", ") : "—";
   const rows = [
-    ["Uzņēmums / iestāde", company],
-    ["Kontaktpersona", contactPerson],
+    isB2c ? ["Vārds", name] : ["Uzņēmums / iestāde", company],
+    isB2c ? ["", ""] : ["Kontaktpersona", contactPerson],
     ["Amats", role],
     ["E-pasts", email],
     ["Tālrunis", phone],
@@ -152,9 +164,9 @@ export async function POST(req: Request) {
       from,
       to: notify,
       replyTo: email,
-      subject: `B2B pieprasījums — ${company}`,
+      subject: `${isB2c ? "Privātpersonas pieprasījums" : "B2B pieprasījums"} — ${companyF}`,
       html: `<meta charset="utf-8"><div style="font-family:Arial,sans-serif;color:#1A3A4A;">
-        <p>Jauns <b>B2B pieprasījums</b> no anabellaparty.lv anketas:</p>
+        <p>Jauns pieprasījums no anabellaparty.lv anketas${isB2c ? " (privātpersona)" : " (uzņēmums/iestāde)"}:</p>
         ${rows}
         ${description ? `<p style="margin-top:8px"><b>Apraksts:</b><br>${esc(description).replace(/\n/g, "<br>")}</p>` : ""}
       </div>`,
@@ -169,7 +181,7 @@ export async function POST(req: Request) {
       replyTo: notify,
       subject: "Saņēmām jūsu pieprasījumu — Anabella Party",
       html: `<meta charset="utf-8"><div style="font-family:Arial,sans-serif;color:#1A3A4A;line-height:1.6;">
-        <p>Sveiki, ${esc(contactPerson)}!</p>
+        <p>Sveiki, ${esc(contactF)}!</p>
         <p>Paldies par pieprasījumu — saņēmām to un sagatavosim piedāvājumu. <b>Atbildēsim 1 darba dienas laikā.</b></p>
         <p>Ja vēlaties precizēt ātrāk, zvaniet <b>+371 29222761</b> vai rakstiet uz info@anabellaparty.lv.</p>
         <p style="color:#777">Anabella Party — SIA "AR DIMANTI", PVN maksātājs. Strādājam ar līgumu un rēķinu.</p>

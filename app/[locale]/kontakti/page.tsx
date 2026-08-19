@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations, getLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
-import ContactForm from "@/components/contact-form";
 import B2bEnquiryForm from "@/components/b2b-enquiry-form";
 import Reveal from "@/components/reveal";
 import { getContent } from "@/lib/site-content";
@@ -49,7 +48,7 @@ export default async function KontaktiPage() {
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid gap-12 lg:grid-cols-2">
-          {/* Kontaktinfo */}
+          {/* Kontaktinfo (rekvizīti tikai kājenē, ne šeit) */}
           <Reveal className="space-y-8">
             <div>
               <h2 className="font-display text-xl font-semibold text-gold">
@@ -57,43 +56,21 @@ export default async function KontaktiPage() {
               </h2>
               <ul className="mt-4 space-y-3 text-text/85">
                 <li>
-                  <a
-                    href={`tel:${COMPANY.contact.phone}`}
-                    className="transition-colors hover:text-gold"
-                  >
+                  <a href={`tel:${COMPANY.contact.phone}`} className="transition-colors hover:text-gold">
                     📞 {COMPANY.contact.phoneDisplay}
                   </a>
                 </li>
                 <li>
-                  <a
-                    href={COMPANY.contact.whatsapp}
-                    className="transition-colors hover:text-gold"
-                  >
+                  <a href={COMPANY.contact.whatsapp} className="transition-colors hover:text-gold">
                     💬 WhatsApp: {COMPANY.contact.phoneDisplay}
                   </a>
                 </li>
                 <li>
-                  <a
-                    href={`mailto:${COMPANY.contact.email}`}
-                    className="transition-colors hover:text-gold"
-                  >
+                  <a href={`mailto:${COMPANY.contact.email}`} className="transition-colors hover:text-gold">
                     ✉️ {COMPANY.contact.email}
                   </a>
                 </li>
                 <li>📍 {fullAddress}</li>
-              </ul>
-            </div>
-
-            {/* Rekvizīti */}
-            <div>
-              <h3 className="font-display text-sm font-semibold text-text">
-                {ts("cRequisites")}
-              </h3>
-              <ul className="mt-3 space-y-1 text-sm text-text/70">
-                <li>{COMPANY.legalName}</li>
-                <li>{ts("cRegNr")} {COMPANY.regNr}</li>
-                <li>{ts("cVatNr")} {COMPANY.vatNr}</li>
-                <li>{ts("cLegalAddr")}: {fullAddress}</li>
               </ul>
             </div>
 
@@ -122,37 +99,22 @@ export default async function KontaktiPage() {
             </div>
           </Reveal>
 
-          {/* Forma */}
+          {/* Apvienotā anketa (B2B / privātpersona) — enkurs #pieprasijums */}
           <Reveal delay={0.1}>
-            <div className="rounded-2xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-8">
-              <h2 className="font-display text-xl font-semibold">
-                {ts("cWriteUs")}
-              </h2>
-              <p className="mt-2 text-sm text-text/60">{ts("cFormHint")}</p>
+            <div
+              id="pieprasijums"
+              className="scroll-mt-28 rounded-2xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-8"
+            >
+              <h2 className="font-display text-2xl font-bold">{tb("formTitle")}</h2>
+              <p className="mt-2 text-sm text-text/60">{tb("formSubline")}</p>
               <div className="mt-6">
-                <ContactForm />
+                <Suspense fallback={null}>
+                  <B2bEnquiryForm />
+                </Suspense>
               </div>
             </div>
           </Reveal>
         </div>
-
-        {/* B2B pieprasījuma anketa (§6) — enkurs #pieprasijums */}
-        <section
-          id="pieprasijums"
-          className="mt-16 scroll-mt-28 rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10"
-        >
-          <Reveal>
-            <h2 className="font-display text-2xl font-bold sm:text-3xl">
-              {tb("sectionTitle")}
-            </h2>
-            <p className="mt-3 max-w-2xl text-text/80">{tb("sectionIntro")}</p>
-            <div className="mt-8 max-w-3xl">
-              <Suspense fallback={null}>
-                <B2bEnquiryForm />
-              </Suspense>
-            </div>
-          </Reveal>
-        </section>
       </div>
     </>
   );

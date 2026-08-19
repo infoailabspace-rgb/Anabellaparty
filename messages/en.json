@@ -429,6 +429,13 @@
     "cta": "Request an offer for a price survey"
   },
   "b2bForm": {
+    "formTitle": "Tell us about your event",
+    "formSubline": "We will prepare an offer within 1 business day.",
+    "tabBusiness": "Company or institution",
+    "tabPrivate": "Private person",
+    "name": "Name",
+    "errName": "Enter your name",
+    "question": "Question / description",
     "sectionTitle": "Enquiry for companies and institutions",
     "sectionIntro": "Describe your event — we will prepare an offer with a detailed breakdown. We work with a contract and VAT invoice and reply within 1 business day.",
     "company": "Company / institution",

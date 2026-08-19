@@ -128,7 +128,7 @@
     "faqTitle": "Biežāk uzdotie jautājumi",
     "faqTagline": "Atbildes uz to, ko klienti jautā visbiežāk. Neatradi savu jautājumu? Sazinies ar mums.",
     "kontaktiTitle": "Kontakti",
-    "kontaktiTagline": "Pastāsti par savu pasākumu — atbildēsim ātri un ieteiksim labāko risinājumu.",
+    "kontaktiTagline": "Pastāstiet par savu pasākumu — atbildēsim ātri un ieteiksim labāko risinājumu.",
     "fotoKasteTitle": "Foto kastes noma — Spogulis, Ozols, Instagram",
     "fotoKasteTagline": "Foto kastes pasākumiem un korporatīvajiem vakariem — izdrukas ar uzņēmuma logo, asistents visā pasākumā, PVN rēķins ar pēcapmaksu. Piegāde visā Latvijā.",
     "aiFotoTitle": "AI foto kaste pasākumam",
@@ -429,6 +429,13 @@
     "cta": "Pieprasīt piedāvājumu cenu aptaujai"
   },
   "b2bForm": {
+    "formTitle": "Pastāstiet par savu pasākumu",
+    "formSubline": "Sagatavosim piedāvājumu 1 darba dienas laikā.",
+    "tabBusiness": "Uzņēmums vai iestāde",
+    "tabPrivate": "Privātpersona",
+    "name": "Vārds",
+    "errName": "Norādiet vārdu",
+    "question": "Jautājums / apraksts",
     "sectionTitle": "Pieprasījums uzņēmumiem un iestādēm",
     "sectionIntro": "Aprakstiet pasākumu — sagatavosim piedāvājumu ar detalizētu pozīciju sadalījumu. Strādājam ar līgumu un PVN rēķinu, atbildam 1 darba dienas laikā.",
     "company": "Uzņēmums / iestāde",
