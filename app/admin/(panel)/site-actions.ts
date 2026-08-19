@@ -34,6 +34,10 @@ export async function saveContent(key: string, value: ML) {
 /* ── Lapas attēli (valodneitrāli {url}, glabāti site_content) ── */
 const PAGE_IMAGE_KEYS = [
   "about.photo",
+  "team.aiva",
+  "team.roberts",
+  "team.matiss",
+  "team.solvita",
   "og.fallback",
   "category.foto-kaste",
   "category.ai-foto",

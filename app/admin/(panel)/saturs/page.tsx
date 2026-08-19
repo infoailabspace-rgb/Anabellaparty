@@ -72,6 +72,10 @@ export default async function SatursPage() {
     (map.get(k)?.value as { url?: string } | undefined)?.url ?? null;
   const pageImages: Record<string, string | null> = {
     "about.photo": imgUrl("about.photo"),
+    "team.aiva": imgUrl("team.aiva"),
+    "team.roberts": imgUrl("team.roberts"),
+    "team.matiss": imgUrl("team.matiss"),
+    "team.solvita": imgUrl("team.solvita"),
     "og.fallback": imgUrl("og.fallback"),
     "category.foto-kaste": imgUrl("category.foto-kaste"),
     "category.ai-foto": imgUrl("category.ai-foto"),

@@ -117,9 +117,33 @@ export default function PageImagesAdmin({
   const slots: Slot[] = [
     {
       key: "about.photo",
-      label: "Par mums — foto",
-      help: "Aivas un Roberta foto sadaļā “Par mums”. Ieteicams portrets 4:5. Tukšs → noklusējuma foto.",
-      fallback: "/images/about/komanda.png",
+      label: "Par mums — lielais attēls",
+      help: "Sadaļas “Par mums” augšējais attēls. Ieteicams KOMANDAS kopbilde vai pasākuma kadrs (NE atsevišķu personu foto — tie ir komandas kartītēs zemāk). Portrets 4:5. Tukšs → gradienta placeholder.",
+      fallback: null,
+    },
+    {
+      key: "team.aiva",
+      label: "Komanda — Aiva Dimante",
+      help: "Kartītes foto (4:5). Tukšs → iniciāļu aplis.",
+      fallback: null,
+    },
+    {
+      key: "team.roberts",
+      label: "Komanda — Roberts Dimants",
+      help: "Kartītes foto (4:5). Tukšs → iniciāļu aplis.",
+      fallback: null,
+    },
+    {
+      key: "team.matiss",
+      label: "Komanda — Matīss Zeimulis",
+      help: "Kartītes foto (4:5). Tukšs → iniciāļu aplis.",
+      fallback: null,
+    },
+    {
+      key: "team.solvita",
+      label: "Komanda — Solvita Katiņa",
+      help: "Kartītes foto (4:5). Tukšs → iniciāļu aplis.",
+      fallback: null,
     },
     {
       key: "og.fallback",
