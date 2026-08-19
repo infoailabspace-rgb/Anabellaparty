@@ -15,7 +15,6 @@ import DeliveryNote from "@/components/delivery-note";
 import CtaSection from "@/components/cta-section";
 import EventGallery from "@/components/event-gallery";
 import TrustBar from "@/components/home/trust-bar";
-import ClientsMarquee from "@/components/clients-marquee";
 import FotoKasteB2b from "@/components/foto-kaste-b2b";
 import { getGallery, getClients } from "@/lib/site-data";
 import { getSiteImage } from "@/lib/site-content";
@@ -78,9 +77,8 @@ export default async function FotoKastePage() {
         video="/videos/herovideo1.mp4"
       />
 
-      {/* Uzticamības josla + klientu logo (§5) — zem H1 */}
-      <TrustBar />
-      <ClientsMarquee clients={clients} />
+      {/* Uzticamības josla (skaitļi + "Mums uzticas" + logo) — viens bloks (§5) */}
+      <TrustBar clients={clients} />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         {/* AI funkcija */}

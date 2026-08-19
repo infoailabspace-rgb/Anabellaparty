@@ -4,7 +4,6 @@ import Steps from "@/components/home/steps";
 import About from "@/components/home/about";
 import ForBusiness from "@/components/home/for-business";
 import ForMunicipal from "@/components/home/for-municipal";
-import ClientsMarquee from "@/components/clients-marquee";
 import Testimonials from "@/components/home/testimonials";
 import CategoryCard from "@/components/category-card";
 import CtaSection from "@/components/cta-section";
@@ -63,15 +62,13 @@ export default async function Home() {
         )}
       />
 
-      {/* Uzticamības josla (skaitļi + "Mums uzticas") — tūlīt zem hero (§4.2) */}
+      {/* Uzticamības josla (skaitļi + "Mums uzticas" + logo) — viens bloks (§4.2) */}
       <TrustBar
         statsEvents={g("about.stats.events", "500")}
         statsUnits={g("about.stats.units", "40")}
         statsSince={g("about.stats.since", "2022")}
+        clients={clients}
       />
-
-      {/* Klientu logo lente — pārcelta augšup, uzreiz aiz uzticamības joslas */}
-      <ClientsMarquee clients={clients} />
 
       {/* Kā tas notiek — bg */}
       <Steps />
