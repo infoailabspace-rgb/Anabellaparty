@@ -21,7 +21,11 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
   const [notesSaved, setNotesSaved] = useState(true);
   const [paidSum, setPaidSum] = useState(booking.paid_sum ?? 0);
   const [deferred, setDeferred] = useState(Boolean(booking.payment_deferred));
-  const [, startTransition] = useTransition();
+  const [payMsg, setPayMsg] = useState("");
+  const [avansModal, setAvansModal] = useState(false);
+  const [avansInput, setAvansInput] = useState("");
+  const [avansError, setAvansError] = useState("");
+  const [pending, startTransition] = useTransition();
   const notesTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const amount = bookingAmount(booking);
 
@@ -50,21 +54,42 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
     startTransition(() => setStatus(booking.id, v));
   }
 
+  // "Daļēji (avanss)" → atver modāli (nevis pārlūka prompt). Pārējie stāvokļi
+  // tiek piemēroti uzreiz.
   function onPayment(next: PaymentState) {
-    let avans: number | undefined;
     if (next === "partial") {
-      const input = window.prompt("Avansa summa (€)?", "");
-      if (input == null) return;
-      avans = Number(input.replace(",", "."));
-      if (!avans || avans <= 0) {
-        alert("Nederīga summa.");
-        return;
-      }
+      setAvansInput("");
+      setAvansError("");
+      setAvansModal(true);
+      return;
     }
+    applyPayment(next);
+  }
+
+  function confirmAvans() {
+    const a = Number(avansInput.replace(",", "."));
+    if (!a || a <= 0) {
+      setAvansError("Nederīga summa.");
+      return;
+    }
+    setAvansModal(false);
+    applyPayment("partial", a);
+  }
+
+  // Piemēro apmaksas stāvokli: optimistiski + GAIDA servera rezultātu. Kļūdu
+  // parāda (agrāk `void` to klusi ignorēja → "summa nesaglabājās"). Veiksmē
+  // pārlādē datus, lai attēls vienmēr sakrīt ar DB.
+  function applyPayment(next: PaymentState, avans?: number) {
+    setPayMsg("");
     setPaidSum(next === "paid" ? amount : next === "partial" ? (avans as number) : 0);
     setDeferred(next === "deferred");
-    startTransition(() => {
-      void setPaymentState(booking.id, next, avans);
+    startTransition(async () => {
+      const res = await setPaymentState(booking.id, next, avans);
+      if (res?.error) {
+        setPayMsg(res.error);
+        return;
+      }
+      router.refresh();
     });
   }
 
@@ -121,6 +146,11 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
             </option>
           ))}
         </select>
+        {payMsg && (
+          <p className="mt-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-xs text-red-300">
+            {payMsg}
+          </p>
+        )}
       </div>
 
       <div>
@@ -152,6 +182,63 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
           Dzēst pieteikumu
         </button>
       </div>
+
+      {/* Avansa summas modālis — sistēmas dizains (navy fons, zelta akcenti) */}
+      {avansModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          onClick={() => setAvansModal(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-gold/30 bg-navy p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.7)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-display text-lg font-bold text-gold">
+              Avansa summa
+            </h3>
+            <p className="mt-1 text-sm text-text/60">
+              Norādi saņemto avansa summu (€) šai rezervācijai.
+            </p>
+            <input
+              type="number"
+              inputMode="decimal"
+              min={0}
+              autoFocus
+              value={avansInput}
+              onChange={(e) => {
+                setAvansInput(e.target.value);
+                setAvansError("");
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") confirmAvans();
+                if (e.key === "Escape") setAvansModal(false);
+              }}
+              placeholder="0"
+              className={`mt-4 w-full ${field}`}
+            />
+            {avansError && (
+              <p className="mt-2 text-xs text-red-300">{avansError}</p>
+            )}
+            <div className="mt-5 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setAvansModal(false)}
+                className="rounded-full border border-gold/40 px-4 py-2 text-sm text-text/80 hover:border-gold"
+              >
+                Atcelt
+              </button>
+              <button
+                type="button"
+                onClick={confirmAvans}
+                disabled={pending}
+                className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black disabled:opacity-60"
+              >
+                Apstiprināt
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

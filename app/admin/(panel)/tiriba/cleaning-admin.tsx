@@ -7,22 +7,32 @@ import {
   type CleaningStatus,
 } from "./actions";
 
+export type CleaningGroup =
+  | "atrakcijas"
+  | "bumbu-somas"
+  | "dzirkstelu-ierices"
+  | "burbulu-ierices";
+
 export type CRow = {
   id: string;
   name: string;
-  category: string;
+  group: CleaningGroup;
   cleaning_status: CleaningStatus;
   cleaning_notes: string;
 };
 
-const CATEGORY_LABEL: Record<string, string> = {
-  "foto-kaste": "Foto kastes",
+// Fiksēta grupu secība + virsraksti (ne jaukti).
+const GROUP_ORDER: CleaningGroup[] = [
+  "atrakcijas",
+  "bumbu-somas",
+  "dzirkstelu-ierices",
+  "burbulu-ierices",
+];
+const GROUP_LABEL: Record<CleaningGroup, string> = {
   atrakcijas: "Atrakcijas",
-  "audio-video": "Audio/video",
-  specefekti: "Specefekti / dzirksteļu ierīces",
-  deco: "Deco / mēbeles",
-  kubli: "Kubli / pirts",
-  cits: "Citi",
+  "bumbu-somas": "Bumbu somas",
+  "dzirkstelu-ierices": "Dzirksteļu ierīces",
+  "burbulu-ierices": "Burbuļu ierīces",
 };
 
 const STATUS_BTN: { id: Exclude<CleaningStatus, null>; label: string; on: string }[] =
@@ -111,15 +121,13 @@ export default function CleaningAdmin({ rows }: { rows: CRow[] }) {
     return s;
   }, [list]);
 
-  const groups = useMemo(() => {
-    const m = new Map<string, CRow[]>();
-    for (const r of list) {
-      const arr = m.get(r.category) ?? [];
-      arr.push(r);
-      m.set(r.category, arr);
-    }
-    return [...m.entries()];
-  }, [list]);
+  const groups = useMemo(
+    () =>
+      GROUP_ORDER.map(
+        (g) => [g, list.filter((r) => r.group === g)] as const,
+      ).filter(([, items]) => items.length > 0),
+    [list],
+  );
 
   const setStatusLocal = (id: string, s: CleaningStatus) =>
     setList((l) => l.map((x) => (x.id === id ? { ...x, cleaning_status: s } : x)));
@@ -139,10 +147,13 @@ export default function CleaningAdmin({ rows }: { rows: CRow[] }) {
       </div>
 
       <div className="space-y-6">
-        {groups.map(([cat, items]) => (
-          <section key={cat}>
+        {groups.map(([grp, items]) => (
+          <section key={grp}>
             <h2 className="mb-2 font-display text-lg font-semibold text-gold">
-              {CATEGORY_LABEL[cat] ?? cat}
+              {GROUP_LABEL[grp]}{" "}
+              <span className="text-sm font-normal text-text/50">
+                ({items.length})
+              </span>
             </h2>
             <div className="space-y-2">
               {items.map((row) => (

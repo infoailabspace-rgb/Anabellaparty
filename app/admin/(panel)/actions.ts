@@ -431,16 +431,18 @@ export async function setPaymentState(
     .filter((p) => p.status === "completed" && p.method !== "manual-admin")
     .reduce((s, p) => s + Number(p.amount), 0);
 
-  // Noņem esošo manuālo ierakstu — pārrēķinām no jauna.
-  await supabase
+  // Noņem esošo manuālo ierakstu — pārrēķinām no jauna. Kļūdu PĀRBAUDA (agrāk
+  // klusi ignorēja → summa "nesaglabājās" bez brīdinājuma).
+  const { error: delErr } = await supabase
     .from("payments")
     .delete()
     .eq("booking_request_id", id)
     .eq("method", "manual-admin");
+  if (delErr) return { error: delErr.message };
 
   async function insertManual(amt: number, type: "advance" | "full") {
-    if (amt <= 0) return;
-    await supabase.from("payments").insert({
+    if (amt <= 0) return null;
+    const { error } = await supabase.from("payments").insert({
       booking_request_id: id,
       invoice_id: null,
       amount: amt,
@@ -449,19 +451,22 @@ export async function setPaymentState(
       status: "completed",
       paid_at: new Date().toISOString(),
     });
+    return error;
   }
 
   let deferred = false;
+  let insErr: { message: string } | null = null;
   if (state === "paid") {
-    await insertManual(Math.max(0, amount - realPaid), "full");
+    insErr = await insertManual(Math.max(0, amount - realPaid), "full");
   } else if (state === "partial") {
     const a = Number(avans) || 0;
     if (a <= 0) return { error: "Norādi avansa summu (€)." };
-    await insertManual(a, "advance");
+    insErr = await insertManual(a, "advance");
   } else if (state === "deferred") {
     deferred = true;
   }
   // "unpaid" → tikai manuālais ieraksts noņemts, deferred=false.
+  if (insErr) return { error: insErr.message };
 
   const { error } = await supabase
     .from("booking_requests")
