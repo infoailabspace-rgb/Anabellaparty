@@ -35,6 +35,7 @@ export const COMPANY = {
   social: {
     instagram: "https://www.instagram.com/anabella_svetku_inventars/",
     facebook: "https://www.facebook.com/anabellaparty.lv",
+    tiktok: "https://www.tiktok.com/@anabellaparty.lv",
   },
 
   // Bankas rekvizīti (rēķiniem)

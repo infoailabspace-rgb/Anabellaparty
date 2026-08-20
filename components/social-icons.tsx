@@ -12,6 +12,11 @@ export const SOCIALS = [
     Icon: FacebookIcon,
   },
   {
+    label: "TikTok",
+    href: "https://www.tiktok.com/@anabellaparty.lv",
+    Icon: TikTokIcon,
+  },
+  {
     label: "WhatsApp",
     href: "https://wa.me/37129222761",
     Icon: WhatsAppIcon,
@@ -55,6 +60,14 @@ export function FacebookIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
       <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.52 1.5-3.91 3.78-3.91 1.1 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94Z" />
+    </svg>
+  );
+}
+
+export function TikTokIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
+      <path d="M16.5 3c.32 2.36 1.64 3.77 3.94 3.92v2.66c-1.33.13-2.5-.3-3.86-1.12v4.96c0 6.3-6.87 8.27-9.63 3.75-1.77-2.91-.68-8.02 5.03-8.22v2.8c-.44.07-.9.18-1.33.33-1.28.43-2 1.24-1.8 2.67.38 2.74 5.41 3.55 4.99-1.82V3h2.66Z" />
     </svg>
   );
 }

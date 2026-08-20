@@ -44,8 +44,10 @@ export function localBusinessNode() {
     sameAs: [
       COMPANY.social.instagram,
       COMPANY.social.facebook,
+      COMPANY.social.tiktok,
       "https://ligavam.lv/kazam/kazu-inventara-noma/svetku-inventars-anabella",
       "https://ligavam.lv/en/wedding/wedding-equipment-rental/festive-inventory-anabella",
+      "https://www.precos.lv/kazu-pakalpojumi/kazu-inventara-noma/anabella-1",
     ],
   };
 }
