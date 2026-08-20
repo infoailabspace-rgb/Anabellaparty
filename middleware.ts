@@ -54,6 +54,18 @@ async function adminMiddleware(request: NextRequest) {
 }
 
 export async function middleware(request: NextRequest) {
+  // Kanoniskā domēna 308: production vercel.app aliasi (stabilais, git-main, hash)
+  // → https://www.anabellaparty.lv, lai Google neindeksē dublikātus. Preview deploy
+  // strādā ar VERCEL_ENV="preview" → netiek skarts un paliek testējams.
+  const host = request.headers.get("host") ?? "";
+  if (process.env.VERCEL_ENV === "production" && host.endsWith(".vercel.app")) {
+    const url = new URL(
+      request.nextUrl.pathname + request.nextUrl.search,
+      "https://www.anabellaparty.lv",
+    );
+    return NextResponse.redirect(url, 308);
+  }
+
   if (request.nextUrl.pathname.startsWith("/admin")) {
     return adminMiddleware(request);
   }
