@@ -31,7 +31,11 @@ export function localBusinessNode() {
       addressCountry: COMPANY.address.country,
     },
     areaServed: { "@type": "Country", name: "Latvija" },
-    // TODO(geo): pievienot GeoCoordinates, kad apstiprinātas Ķekavas bāzes koordinātas.
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: "56.810939",
+      longitude: "24.208242",
+    },
     // TODO(sameAs): papildināt ar līgavām.lv u.c. platformu profilu URL, kad pieejami.
     sameAs: [COMPANY.social.instagram, COMPANY.social.facebook],
   };
