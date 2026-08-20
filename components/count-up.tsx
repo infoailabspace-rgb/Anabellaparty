@@ -24,14 +24,22 @@ export default function CountUp({
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const reduce = useReducedMotion();
-  const [value, setValue] = useState(0);
+  // AEO KRITISKI: sākuma vērtība = GALA skaitlis, lai serverī renderētajā HTML
+  // (crawler, no-JS, prefers-reduced-motion) ir reālais skaitlis, ne 0.
+  // Animācija ir tikai progresīvs uzlabojums — nomet uz 0 un saskaita atpakaļ
+  // TIKAI tad, kad JS reāli izpildās klienta pusē un elements nonāk skatā.
+  const [value, setValue] = useState(to);
+  const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
-    if (!inView) return;
+    if (animated || !inView) return;
     if (reduce) {
       setValue(to);
+      setAnimated(true);
       return;
     }
+    setAnimated(true);
+    setValue(0);
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
@@ -41,10 +49,10 @@ export default function CountUp({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [inView, reduce, to, duration]);
+  }, [inView, reduce, to, duration, animated]);
 
   return (
-    <span ref={ref} className={className}>
+    <span ref={ref} className={className} aria-label={`${prefix}${to}${suffix}`}>
       {prefix}
       {value}
       {suffix}
