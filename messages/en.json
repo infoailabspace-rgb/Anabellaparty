@@ -336,6 +336,13 @@
     "mdEmptyIntro": "We work with trusted partners in the events industry. The list of our friends will be here soon.",
     "mdEmptyInvite": "Would you like to become our partner? Write to —"
   },
+  "fkAeo": {
+    "def": "Anabella Party is an event-equipment rental company in Latvia that provides photo booth rental for corporate events, weddings and municipal celebrations. The range includes three photo booths — SPOGULIS, OZOLS and INSTAGRAM — with instant printing, an assistant throughout the event and the option to add an AI photo feature. Anabella Party photo booth rental starts from €220 (excl. VAT) for 2 hours, and the service is available across Latvia, based in Ķekava.",
+    "priceQTitle": "How much does photo booth rental cost?",
+    "priceQAnswer": "Anabella Party photo booth rental costs from €220 (excl. VAT) for 2 hours — OZOLS and INSTAGRAM from €220, SPOGULIS from €260. Each additional hour +€100 (SPOGULIS +€110). AI photo feature +€100. Operator-free rental for 12 hours — €350. The price includes delivery across Latvia, setup and teardown, an assistant throughout the event, unlimited prints, branded design with the company logo and a digital gallery after the event.",
+    "chooseQTitle": "Which photo booth should you choose?",
+    "chooseQAnswer": "SPOGULIS suits representative corporate events and conferences — full-length photos and an elegant visual presence. OZOLS suits weddings and celebrations where a warmer, more natural aesthetic matters. INSTAGRAM suits budget events and self-service mode — together with OZOLS it is also available as 12-hour operator-free rental for €350."
+  },
   "fkB2b": {
     "techTitle": "Technical requirements",
     "techIntro": "The parameters apply to all three photo booths — SPOGULIS, OZOLS and INSTAGRAM.",

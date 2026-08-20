@@ -1,4 +1,4 @@
-import { COMPANY, fullAddress } from "@/lib/company";
+import { COMPANY } from "@/lib/company";
 import { SITE_URL, localizedPath } from "@/lib/seo";
 import type { Product } from "@/lib/products";
 import type { FaqItem } from "@/lib/faq";
@@ -18,6 +18,10 @@ export function localBusinessNode() {
     email: COMPANY.contact.email,
     url: SITE_URL,
     image: abs("/logo/logo-full.png"),
+    priceRange: "€€",
+    currenciesAccepted: "EUR",
+    paymentAccepted: "Bankas pārskaitījums, PVN rēķins ar pēcapmaksu",
+    foundingDate: "2022",
     address: {
       "@type": "PostalAddress",
       streetAddress: COMPANY.address.street,
@@ -26,14 +30,25 @@ export function localBusinessNode() {
       postalCode: COMPANY.address.postalCode,
       addressCountry: COMPANY.address.country,
     },
-    areaServed: fullAddress,
+    areaServed: { "@type": "Country", name: "Latvija" },
+    // TODO(geo): pievienot GeoCoordinates, kad apstiprinātas Ķekavas bāzes koordinātas.
+    // TODO(sameAs): papildināt ar līgavām.lv u.c. platformu profilu URL, kad pieejami.
     sameAs: [COMPANY.social.instagram, COMPANY.social.facebook],
   };
 }
 
+// Bāzes tarifa ilgums → schema.org referenceQuantity (2h → 2 HUR, diena → 1 DAY).
+function refQuantity(duration: string) {
+  const h = duration.match(/^(\d+)\s*h/i);
+  if (h) return { "@type": "QuantitativeValue", value: h[1], unitCode: "HUR" };
+  if (/dien|day|день/i.test(duration))
+    return { "@type": "QuantitativeValue", value: "1", unitCode: "DAY" };
+  return null;
+}
+
 // Product — cena bez PVN (zemākais tarifs); contactOnly bez Offer.
 export function productNode(p: Product, locale: string, pagePath: string) {
-  const priced = p.tiers.filter((t) => t.price > 0).map((t) => t.price);
+  const pricedTiers = p.tiers.filter((t) => t.price > 0);
   const pageUrl = `${SITE_URL}${localizedPath(locale, pagePath)}`;
   const node: Record<string, unknown> = {
     "@type": "Product",
@@ -47,14 +62,29 @@ export function productNode(p: Product, locale: string, pagePath: string) {
     node.image = p.coverImage.startsWith("http")
       ? p.coverImage
       : abs(p.coverImage);
-  if (priced.length) {
+  if (pricedTiers.length) {
+    // Bāzes tarifs = zemākā cena; offers.price un priceSpecification.price sakrīt.
+    const base = pricedTiers.reduce(
+      (m, t) => (t.price < m.price ? t : m),
+      pricedTiers[0],
+    );
+    const ref = refQuantity(base.duration);
     node.offers = {
       "@type": "Offer",
-      price: Math.min(...priced),
+      price: base.price,
       priceCurrency: "EUR",
+      priceValidUntil: "2026-12-31",
       availability: "https://schema.org/InStock",
       url: pageUrl,
       seller: { "@id": `${SITE_URL}/#business` },
+      // Cenas ir BEZ PVN → valueAddedTaxIncluded: false.
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: base.price,
+        priceCurrency: "EUR",
+        valueAddedTaxIncluded: false,
+        ...(ref ? { referenceQuantity: ref } : {}),
+      },
       // Noma ar neatgriežamu avansu → atgriešana nav atļauta (atbilst noteikumiem).
       hasMerchantReturnPolicy: {
         "@type": "MerchantReturnPolicy",

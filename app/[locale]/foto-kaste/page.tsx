@@ -33,12 +33,13 @@ export async function generateMetadata({
 export const revalidate = 300;
 
 export default async function FotoKastePage() {
-  const [products, t, ts, tfk, locale, gallery, framesImage, clients] =
+  const [products, t, ts, tfk, taeo, locale, gallery, framesImage, clients] =
     await Promise.all([
       getAllProducts(),
       getTranslations("pages"),
       getTranslations("sec"),
       getTranslations("fkB2b"),
+      getTranslations("fkAeo"),
       getLocale(),
       getGallery("foto-kaste"),
       getSiteImage("foto-kaste.frames"),
@@ -81,6 +82,13 @@ export default async function FotoKastePage() {
       <TrustBar clients={clients} />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
+        {/* Zīmola definīcijas rindkopa (AEO C1) — server-rendered teksts */}
+        <Reveal>
+          <p className="mb-12 max-w-3xl text-text/80 leading-relaxed">
+            {taeo("def")}
+          </p>
+        </Reveal>
+
         {/* AI funkcija */}
         <Reveal>
           <div className="mb-12 flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-gold/30 bg-navy/30 p-6">

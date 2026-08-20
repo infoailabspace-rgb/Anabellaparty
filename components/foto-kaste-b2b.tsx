@@ -6,6 +6,7 @@ import Reveal from "@/components/reveal";
 // brendēšana, dokumenti/norēķini, cenu orientieris, BUJ, CTA uz anketu.
 export default async function FotoKasteB2b() {
   const t = await getTranslations("fkB2b");
+  const taeo = await getTranslations("fkAeo");
   const included = [
     t("inc1"), t("inc2"), t("inc3"), t("inc4"), t("inc5"), t("inc6"), t("inc7"),
   ];
@@ -85,6 +86,24 @@ export default async function FotoKasteB2b() {
           </div>
         </Reveal>
       </div>
+
+      {/* Atbildes formas sadaļas (AEO C4) — pirmais teikums = pilna atbilde */}
+      <Reveal>
+        <div>
+          <h2 className="font-display text-2xl font-bold">{taeo("priceQTitle")}</h2>
+          <p className="mt-3 max-w-3xl leading-relaxed text-text/80">
+            {taeo("priceQAnswer")}
+          </p>
+        </div>
+      </Reveal>
+      <Reveal>
+        <div>
+          <h2 className="font-display text-2xl font-bold">{taeo("chooseQTitle")}</h2>
+          <p className="mt-3 max-w-3xl leading-relaxed text-text/80">
+            {taeo("chooseQAnswer")}
+          </p>
+        </div>
+      </Reveal>
 
       {/* Tehniskās prasības */}
       <Reveal>
