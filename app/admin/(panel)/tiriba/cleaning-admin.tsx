@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
   setCleaningStatus,
   saveCleaningNotes,
@@ -45,6 +45,8 @@ const STATUS_BTN: { id: Exclude<CleaningStatus, null>; label: string; on: string
 const field =
   "w-full rounded-lg border border-gold/25 bg-bg/60 px-3 py-2 text-sm text-text outline-none focus:border-gold";
 
+type SaveState = "idle" | "saving" | "saved" | "error";
+
 function Card({
   row,
   onStatus,
@@ -55,36 +57,87 @@ function Card({
   onNotes: (id: string, notes: string) => void;
 }) {
   const [notes, setNotes] = useState(row.cleaning_notes);
-  const [, start] = useTransition();
+  const [pending, start] = useTransition();
+  const [saveState, setSaveState] = useState<SaveState>("idle");
+  const [errMsg, setErrMsg] = useState("");
   const savedRef = useRef(row.cleaning_notes);
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // "✓ saglabāts" pazūd pēc 2 sek. Notīra taimeri, ja komponents atmontējas.
+  useEffect(() => {
+    return () => {
+      if (savedTimer.current) clearTimeout(savedTimer.current);
+    };
+  }, []);
+
+  function flashSaved() {
+    setSaveState("saved");
+    if (savedTimer.current) clearTimeout(savedTimer.current);
+    savedTimer.current = setTimeout(() => setSaveState("idle"), 2000);
+  }
+
+  // Statuss: optimistiski + GAIDA serveri. Kļūdā atritina + sarkans ziņojums.
+  function onStatusClick(next: CleaningStatus) {
+    const prev = row.cleaning_status;
+    setErrMsg("");
+    setSaveState("saving");
+    onStatus(row.id, next);
+    start(async () => {
+      const res = await setCleaningStatus(row.id, next);
+      if (res?.error) {
+        onStatus(row.id, prev);
+        setSaveState("error");
+        setErrMsg(res.error);
+        return;
+      }
+      flashSaved();
+    });
+  }
 
   function blurNotes() {
     if (notes === savedRef.current) return;
+    const prev = savedRef.current;
     savedRef.current = notes;
     onNotes(row.id, notes);
-    start(() => {
-      void saveCleaningNotes(row.id, notes);
+    setErrMsg("");
+    setSaveState("saving");
+    start(async () => {
+      const res = await saveCleaningNotes(row.id, notes);
+      if (res?.error) {
+        savedRef.current = prev;
+        onNotes(row.id, prev);
+        setNotes(prev);
+        setSaveState("error");
+        setErrMsg(res.error);
+        return;
+      }
+      flashSaved();
     });
   }
 
   return (
     <div className="rounded-xl border border-gold/20 bg-navy/30 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="text-sm font-semibold text-text/90">{row.name}</span>
+        <span className="flex items-center gap-2 text-sm font-semibold text-text/90">
+          {row.name}
+          {saveState === "saving" && (
+            <span className="text-xs font-normal text-text/40">saglabā…</span>
+          )}
+          {saveState === "saved" && (
+            <span className="text-xs font-normal text-green-300">
+              ✓ saglabāts
+            </span>
+          )}
+        </span>
         <div className="flex gap-1.5">
           {STATUS_BTN.map((b) => {
             const active = row.cleaning_status === b.id;
             return (
               <button
                 key={b.id}
-                onClick={() => {
-                  const next = active ? null : b.id;
-                  onStatus(row.id, next);
-                  start(() => {
-                    void setCleaningStatus(row.id, next);
-                  });
-                }}
-                className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${
+                disabled={pending}
+                onClick={() => onStatusClick(active ? null : b.id)}
+                className={`rounded-full border px-2.5 py-1 text-xs transition-colors disabled:opacity-60 ${
                   active
                     ? b.on
                     : "border-gold/20 text-text/50 hover:border-gold/50"
@@ -103,6 +156,11 @@ function Card({
         placeholder="Piezīmes (auto-saglabā)"
         className={`${field} mt-3`}
       />
+      {saveState === "error" && errMsg && (
+        <p className="mt-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-xs text-red-300">
+          {errMsg}
+        </p>
+      )}
     </div>
   );
 }

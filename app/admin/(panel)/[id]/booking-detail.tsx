@@ -22,12 +22,26 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
   const [paidSum, setPaidSum] = useState(booking.paid_sum ?? 0);
   const [deferred, setDeferred] = useState(Boolean(booking.payment_deferred));
   const [payMsg, setPayMsg] = useState("");
+  const [statusMsg, setStatusMsg] = useState("");
   const [avansModal, setAvansModal] = useState(false);
   const [avansInput, setAvansInput] = useState("");
   const [avansError, setAvansError] = useState("");
   const [pending, startTransition] = useTransition();
   const notesTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const amount = bookingAmount(booking);
+
+  // Re-sinhronizē lokālo stāvokli, kad propi mainās (pēc router.refresh() vai
+  // navigācijas). `useState` nolasa propu tikai mount laikā, tāpēc bez šī UI
+  // rādītu novecojušu optimistisko vērtību, kas "atgriežas" tikai pēc remounta.
+  useEffect(() => {
+    setStatusState(booking.status);
+  }, [booking.status]);
+  useEffect(() => {
+    setPaidSum(booking.paid_sum ?? 0);
+  }, [booking.paid_sum]);
+  useEffect(() => {
+    setDeferred(Boolean(booking.payment_deferred));
+  }, [booking.payment_deferred]);
 
   // Piezīmju autosave (debounce)
   useEffect(() => {
@@ -49,9 +63,23 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notes]);
 
+  // Statusa maiņa pēc apmaksas ceļa parauga: optimistiski + GAIDA servera
+  // rezultātu. Kļūdas gadījumā atritina lokālo stāvokli un parāda ziņojumu;
+  // veiksmē pārlādē datus. `disabled={pending}` neļauj dubultklikšķi vai
+  // aiziešanu prom pirms saglabāšanas.
   function onStatus(v: string) {
+    const prev = status;
+    setStatusMsg("");
     setStatusState(v);
-    startTransition(() => setStatus(booking.id, v));
+    startTransition(async () => {
+      const res = await setStatus(booking.id, v);
+      if (res?.error) {
+        setStatusState(prev);
+        setStatusMsg(res.error);
+        return;
+      }
+      router.refresh();
+    });
   }
 
   // "Daļēji (avanss)" → atver modāli (nevis pārlūka prompt). Pārējie stāvokļi
@@ -121,7 +149,8 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
         <select
           value={status}
           onChange={(e) => onStatus(e.target.value)}
-          className={`mt-1 block w-full ${field}`}
+          disabled={pending}
+          className={`mt-1 block w-full ${field} disabled:opacity-60`}
         >
           {STATUSES.map((s) => (
             <option key={s.id} value={s.id}>
@@ -129,6 +158,11 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
             </option>
           ))}
         </select>
+        {statusMsg && (
+          <p className="mt-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-xs text-red-300">
+            {statusMsg}
+          </p>
+        )}
       </div>
 
       <div>

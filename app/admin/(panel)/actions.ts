@@ -252,7 +252,14 @@ type BookingEmailRow = {
 
 export async function setStatus(id: string, status: string) {
   const supabase = await createClient();
-  await supabase.from("booking_requests").update({ status }).eq("id", id);
+  // UPDATE rezultāts JĀPĀRBAUDA — agrāk kļūdu klusi ignorēja (fire-and-forget
+  // klientā), tāpēc neveiksmīgs raksts izskatījās kā saglabāts, bet vēlāk
+  // "atgriezās". Kļūdu atgriežam klientam, kas atritina optimistisko stāvokli.
+  const { error: statusErr } = await supabase
+    .from("booking_requests")
+    .update({ status })
+    .eq("id", id);
+  if (statusErr) return { error: statusErr.message };
 
   // Booking dati (vajadzīgi rezervācijai, tīrībai, e-pastam, kalendāram).
   const { data: b } = await supabase
@@ -361,6 +368,7 @@ export async function setStatus(id: string, status: string) {
   revalidatePath("/admin/arhivs");
   revalidatePath(`/admin/${id}`);
   revalidatePath("/admin/kalendars");
+  return { ok: true };
 }
 
 export async function deleteBooking(id: string) {
