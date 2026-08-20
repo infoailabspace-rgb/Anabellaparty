@@ -11,6 +11,11 @@ export function localBusinessNode() {
     "@type": "LocalBusiness",
     "@id": `${SITE_URL}/#business`,
     name: COMPANY.brandName,
+    alternateName: [
+      "Anabella Svētku inventārs",
+      "Svētku inventārs Anabella",
+      "Anabella",
+    ],
     legalName: COMPANY.legalName,
     vatID: COMPANY.vatNr,
     taxID: COMPANY.regNr,
@@ -36,8 +41,12 @@ export function localBusinessNode() {
       latitude: "56.810939",
       longitude: "24.208242",
     },
-    // TODO(sameAs): papildināt ar līgavām.lv u.c. platformu profilu URL, kad pieejami.
-    sameAs: [COMPANY.social.instagram, COMPANY.social.facebook],
+    sameAs: [
+      COMPANY.social.instagram,
+      COMPANY.social.facebook,
+      "https://ligavam.lv/kazam/kazu-inventara-noma/svetku-inventars-anabella",
+      "https://ligavam.lv/en/wedding/wedding-equipment-rental/festive-inventory-anabella",
+    ],
   };
 }
 
