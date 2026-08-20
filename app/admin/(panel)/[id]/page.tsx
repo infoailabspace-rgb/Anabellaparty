@@ -50,7 +50,9 @@ export default async function BookingPage({
     reserved: number;
     quantity: number;
     available: number;
+    conflicts: { booking_id: string; name: string; event_date: string; qty: number }[];
   };
+  const fmtDM = (d: string) => (d ? `${d.slice(8, 10)}.${d.slice(5, 7)}.` : "");
   const { data: conflictData } = await supabase.rpc(
     "check_booking_availability",
     { p_booking_id: id },
@@ -115,14 +117,31 @@ export default async function BookingPage({
           <p className="text-sm font-semibold text-amber-300">
             ⚠ Aprīkojuma pieejamības konflikts ({b.event_date})
           </p>
-          <ul className="mt-2 space-y-1 text-sm text-amber-200/90">
+          <ul className="mt-2 space-y-2 text-sm text-amber-200/90">
             {conflicts.map((c) => (
               <li key={c.slug}>
                 <span className="font-semibold">
                   {nameBySlug.get(c.slug) ?? c.slug}
-                </span>{" "}
-                — jau rezervēts {c.reserved}/{c.quantity}, pieejams{" "}
-                {c.available}, šis pieprasa {c.requested}.
+                </span>
+                : rezervēts {c.reserved}/{c.quantity} šajā datumā (šis pieprasa{" "}
+                {c.requested}, pieejams {c.available}).
+                {c.conflicts.length > 0 && (
+                  <>
+                    {" "}
+                    Konfliktē ar:{" "}
+                    {c.conflicts.map((x, i) => (
+                      <span key={x.booking_id}>
+                        {i > 0 ? ", " : ""}
+                        <Link
+                          href={`/admin/${x.booking_id}`}
+                          className="font-medium underline decoration-amber-400/50 underline-offset-2 hover:text-amber-100"
+                        >
+                          {x.name} ({fmtDM(x.event_date)})
+                        </Link>
+                      </span>
+                    ))}
+                  </>
+                )}
               </li>
             ))}
           </ul>
