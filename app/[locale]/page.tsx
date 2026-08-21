@@ -70,10 +70,8 @@ export default async function Home() {
         clients={clients}
       />
 
-      {/* Kā tas notiek — bg */}
-      <Steps />
-
-      {/* Piedāvājums / kategorijas — navy ar tekstūru + dziļuma fons */}
+      {/* Mūsu piedāvājums / kategorijas — navy ar tekstūru + dziļuma fons.
+          Pārcelts augšup: produktu rāda pirms procesa skaidrojuma. */}
       <section className="anabella-navy-texture relative overflow-hidden bg-navy/40 py-24 md:py-32">
         <DepthBg />
         <div className="relative z-10 mx-auto max-w-6xl px-6">
@@ -95,8 +93,12 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Pasākums uzņēmumam vai iestādei (§4.3) — pēc piedāvājuma, pirms atsauksmēm */}
+      {/* Pasākums uzņēmumam vai iestādei (§4.3) — pēc piedāvājuma */}
       <ForBusiness />
+
+      {/* Kā tas notiek — pēc produkta: atbild uz jautājumu, kas rodas tikai
+          pēc tam, kad apmeklētājs ir redzējis piedāvājumu. */}
+      <Steps />
 
       {/* Par mums — bg */}
       <About image={aboutImage} />
