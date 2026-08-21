@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Booking } from "@/lib/admin";
-import { bookingBadge, bookingAmount } from "@/lib/booking-status";
+import {
+  statusBadge,
+  paymentBadge,
+  bookingAmount,
+  PAYMENT_DOT,
+} from "@/lib/booking-status";
 
 const WD = ["P", "O", "T", "C", "Pk", "S", "Sv"];
 const MONTHS = [
@@ -104,20 +109,25 @@ export default function Calendar({ bookings }: { bookings: Booking[] }) {
               )}
               <div className="mt-1 space-y-1">
                 {list.slice(0, 3).map((b) => {
-                  const bg = bookingBadge(
-                    b.status,
+                  // Šaurs skats: statuss = uzlīme, apmaksa = mazs krāsains punkts.
+                  const sb = statusBadge(b.status);
+                  const pb = paymentBadge(
                     b.paid_sum ?? 0,
                     bookingAmount(b),
                     b.event_date,
+                    b.payment_deferred ?? false,
                   );
                   return (
                     <Link
                       key={b.id}
                       href={`/admin/${b.id}`}
-                      className={`block truncate rounded border px-1 text-[11px] ${bg.cls}`}
-                      title={`${b.name} — ${b.event_type} · ${bg.label}`}
+                      className={`flex items-center gap-1 truncate rounded border px-1 text-[11px] ${sb.cls}`}
+                      title={`${b.name} — ${b.event_type} · ${sb.label} · ${pb.label}`}
                     >
-                      {b.name}
+                      <span
+                        className={`h-1.5 w-1.5 shrink-0 rounded-full ${PAYMENT_DOT[pb.key] ?? "bg-text/40"}`}
+                      />
+                      <span className="truncate">{b.name}</span>
                     </Link>
                   );
                 })}
@@ -134,11 +144,12 @@ export default function Calendar({ bookings }: { bookings: Booking[] }) {
         Sarkans ietvars = viens inventārs vairākos <b>apstiprinātos</b> pasākumos
         vienā datumā. Pieteikumi (ne-apstiprināti) konfliktu nerada.
       </p>
-      <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-text/50">
-        <span>🔵 Gaida apstiprinājumu</span>
-        <span>🟡 Nav apmaksāts</span>
-        <span>🟠 Daļēji (avanss)</span>
+      <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px] text-text/50">
+        <span className="text-text/40">Uzlīme = statuss · punkts = apmaksa:</span>
         <span>🟢 Apmaksāts</span>
+        <span>🟡 Nav apmaksāts</span>
+        <span>🟠 Daļēji</span>
+        <span>🟣 Maksās pēc</span>
         <span>🔴 Kavēts</span>
       </div>
     </div>

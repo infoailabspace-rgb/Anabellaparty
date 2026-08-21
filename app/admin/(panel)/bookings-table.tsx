@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { computeQuote } from "@/lib/pricing";
 import type { Product } from "@/lib/products";
 import { STATUSES, urgency, type Booking } from "@/lib/admin";
-import { bookingBadge, bookingAmount } from "@/lib/booking-status";
+import { statusBadge, paymentBadge, bookingAmount } from "@/lib/booking-status";
 
 const URGENCY_RING: Record<string, string> = {
   red: "border-l-4 border-l-red-500",
@@ -128,12 +128,12 @@ export default function BookingsTable({
         {filtered.map((b) => {
           const isNew = !b.viewed_at;
           const total = b.final_total ?? b.estimated_total ?? 0;
-          const bg = bookingBadge(
-            b.status,
+          const sb = statusBadge(b.status);
+          const pb = paymentBadge(
             b.paid_sum ?? 0,
             bookingAmount(b),
             b.event_date,
-            b.payment_deferred,
+            b.payment_deferred ?? false,
           );
           return (
             <Link
@@ -165,12 +165,17 @@ export default function BookingsTable({
                   </p>
                 </div>
 
-                {/* Summa + statuss */}
+                {/* Summa + statuss (darbplūsma) + apmaksa — divas atsevišķas uzlīmes */}
                 <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end sm:gap-1.5">
                   <span className="font-mono text-gold">{total} €</span>
-                  <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[11px] ${bg.cls}`}>
-                    {bg.label}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-1.5 sm:justify-end">
+                    <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[11px] ${sb.cls}`}>
+                      {sb.label}
+                    </span>
+                    <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[11px] ${pb.cls}`}>
+                      {pb.label}
+                    </span>
+                  </div>
                 </div>
               </div>
             </Link>

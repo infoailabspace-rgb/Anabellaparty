@@ -3,8 +3,6 @@
 
 export type BookingBadge = { key: string; label: string; cls: string };
 
-const PRE_CONFIRMATION = new Set(["new", "contacted", "quoted"]);
-
 function isPast(eventDate: string): boolean {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -44,24 +42,37 @@ export const PAYMENT_STATE_LABEL: Record<PaymentState, string> = {
   deferred: "Maksās pēc pasākuma",
 };
 
-export function bookingBadge(
-  status: string,
+// ── DARBPLŪSMAS statuss (atsevišķi no apmaksas) ──────────────────────────────
+// Krāsas ATTURĪGAS (pelēks/zils/zaļš) un tikai kontūra (bez bg-pildījuma), lai
+// NEKONKURĒ ar apmaksas uzlīmēm, kuras ir informatīvi svarīgākās (bg-pildījums).
+const STATUS_META: Record<string, { label: string; cls: string }> = {
+  new: { label: "Jauns", cls: "border-text/30 text-text/70" },
+  contacted: { label: "Sazinājos", cls: "border-blue-400/40 text-blue-300/90" },
+  quoted: { label: "Piedāvājums nosūtīts", cls: "border-blue-400/40 text-blue-300/90" },
+  confirmed: { label: "Apstiprināts", cls: "border-green-500/40 text-green-300/90" },
+  completed: { label: "Pabeigts", cls: "border-text/25 bg-text/5 text-text/70" },
+  rejected: { label: "Atteicās", cls: "border-text/20 text-text/45" },
+};
+
+/** Darbplūsmas statuss: Jauns / Sazinājos / Piedāvāts / Apstiprināts / Pabeigts / Atteicās. */
+export function statusBadge(status: string): BookingBadge {
+  const m = STATUS_META[status] ?? {
+    label: status,
+    cls: "border-text/30 text-text/70",
+  };
+  return { key: status, label: m.label, cls: m.cls };
+}
+
+// ── APMAKSAS stāvoklis (atsevišķi no statusa) ────────────────────────────────
+// `deferred` ir OBLIGĀTS arguments (ne optional), lai TypeScript noķer, ja kāds
+// izsaukums to izlaiž (agrāk 3 skati to darīja → nekonsekventa krāsa).
+/** Apmaksa: Apmaksāts / Daļēji / Maksās pēc / Kavēts / Nav apmaksāts. */
+export function paymentBadge(
   paidSum: number,
   amount: number,
   eventDate: string,
-  deferred?: boolean | null,
+  deferred: boolean | null,
 ): BookingBadge {
-  if (status === "rejected")
-    return { key: "rejected", label: "Atteicās", cls: "border-text/30 text-text/50" };
-
-  // 🔵 Pirms-apstiprināšanas — nosūtīts, gaida klienta apstiprinājumu.
-  if (PRE_CONFIRMATION.has(status))
-    return {
-      key: "pending",
-      label: "Gaida apstiprinājumu",
-      cls: "border-blue-400/40 bg-blue-500/10 text-blue-300",
-    };
-
   // 🟢 Pilnībā apmaksāts (arī €0 rezervācijas — nav ko maksāt).
   if (amount <= 0 || paidSum >= amount)
     return {
@@ -94,10 +105,19 @@ export function bookingBadge(
       cls: "border-red-500/50 bg-red-500/10 text-red-300",
     };
 
-  // 🟡 Apstiprināts, nav apmaksāts (gaidāms pasākums).
+  // 🟡 Nav apmaksāts (gaidāms pasākums).
   return {
     key: "unpaid",
     label: "Nav apmaksāts",
     cls: "border-yellow-500/50 bg-yellow-500/10 text-yellow-300",
   };
 }
+
+/** Apmaksas punkta krāsa (šauriem skatiem, piem. kalendārs). */
+export const PAYMENT_DOT: Record<string, string> = {
+  paid: "bg-green-500",
+  partial: "bg-orange-500",
+  deferred: "bg-purple-500",
+  overdue: "bg-red-500",
+  unpaid: "bg-yellow-500",
+};

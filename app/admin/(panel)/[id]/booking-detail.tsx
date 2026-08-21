@@ -4,7 +4,8 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { STATUSES, type Booking } from "@/lib/admin";
 import {
-  bookingBadge,
+  statusBadge,
+  paymentBadge,
   bookingAmount,
   paymentState,
   PAYMENT_STATE_LABEL,
@@ -138,18 +139,12 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
           Statuss
         </label>
         {(() => {
-          const bg = bookingBadge(
-            status,
-            paidSum,
-            amount,
-            booking.event_date,
-            deferred,
-          );
+          const sb = statusBadge(status);
           return (
             <span
-              className={`ml-2 rounded-full border px-2 py-0.5 text-[11px] ${bg.cls}`}
+              className={`ml-2 rounded-full border px-2 py-0.5 text-[11px] ${sb.cls}`}
             >
-              {bg.label}
+              {sb.label}
             </span>
           );
         })()}
@@ -176,6 +171,16 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
         <label className="text-xs uppercase tracking-wide text-text/50">
           Apmaksa
         </label>
+        {(() => {
+          const pb = paymentBadge(paidSum, amount, booking.event_date, deferred);
+          return (
+            <span
+              className={`ml-2 rounded-full border px-2 py-0.5 text-[11px] ${pb.cls}`}
+            >
+              {pb.label}
+            </span>
+          );
+        })()}
         <select
           value={paymentState(paidSum, amount, deferred)}
           onChange={(e) => onPayment(e.target.value as PaymentState)}

@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { upsertCustomer, deleteCustomer } from "./actions";
-import { bookingBadge, bookingAmount } from "@/lib/booking-status";
+import { statusBadge, paymentBadge, bookingAmount } from "@/lib/booking-status";
 import BackButton from "@/components/admin/back-button";
 import type { CustomerRow, BookingLite, Segment, CustomerType } from "./types";
 import { SEGMENTS, SEGMENT_LABEL } from "./types";
@@ -310,21 +310,31 @@ export default function CrmDetail({
                       <span className="text-sm font-semibold text-text/90">
                         {b.event_date}
                       </span>
-                      {(() => {
-                        const bg = bookingBadge(
-                          b.status,
-                          b.paid_sum,
-                          bookingAmount(b),
-                          b.event_date,
-                        );
-                        return (
-                          <span
-                            className={`rounded-full border px-2 py-0.5 text-[11px] ${bg.cls}`}
-                          >
-                            {bg.label}
-                          </span>
-                        );
-                      })()}
+                      <div className="flex flex-wrap items-center justify-end gap-1.5">
+                        {(() => {
+                          const sb = statusBadge(b.status);
+                          const pb = paymentBadge(
+                            b.paid_sum,
+                            bookingAmount(b),
+                            b.event_date,
+                            b.payment_deferred ?? false,
+                          );
+                          return (
+                            <>
+                              <span
+                                className={`rounded-full border px-2 py-0.5 text-[11px] ${sb.cls}`}
+                              >
+                                {sb.label}
+                              </span>
+                              <span
+                                className={`rounded-full border px-2 py-0.5 text-[11px] ${pb.cls}`}
+                              >
+                                {pb.label}
+                              </span>
+                            </>
+                          );
+                        })()}
+                      </div>
                     </div>
                     <div className="mt-1 flex items-center justify-between text-xs text-text/60">
                       <span>{b.event_type}</span>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { bookingBadge } from "@/lib/booking-status";
+import { statusBadge, paymentBadge } from "@/lib/booking-status";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +32,8 @@ type LatestItem = {
   status: string;
   amount: number;
   paid_sum: number;
+  // dashboard_extra RPC šo vēl neatgriež → interim `?? false` (skat. B4 piezīmi).
+  payment_deferred?: boolean;
 };
 type TopItem = { product: string; count: number };
 type Extra = {
@@ -262,16 +264,25 @@ export default async function ParskatsPage() {
           <h3 className="mb-3 font-display text-lg font-semibold">Jaunākās rezervācijas</h3>
           <div className="space-y-2">
             {(e.latest ?? []).map((b) => {
-              const bg = bookingBadge(b.status, b.paid_sum ?? 0, b.amount, b.date);
+              const sb = statusBadge(b.status);
+              const pb = paymentBadge(
+                b.paid_sum ?? 0,
+                b.amount,
+                b.date,
+                b.payment_deferred ?? false,
+              );
               return (
                 <Link key={b.id} href={`/admin/${b.id}`} className="flex items-center justify-between gap-3 rounded-lg border border-gold/10 bg-bg/40 px-3 py-2 hover:border-gold/40">
                   <div className="min-w-0">
                     <div className="truncate text-sm text-text/90">{b.name}</div>
                     <div className="text-xs text-text/50">{b.date}</div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-2">
-                    <span className={`rounded-full border px-2 py-0.5 text-[11px] ${bg.cls}`}>
-                      {bg.label}
+                  <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
+                    <span className={`rounded-full border px-2 py-0.5 text-[11px] ${sb.cls}`}>
+                      {sb.label}
+                    </span>
+                    <span className={`rounded-full border px-2 py-0.5 text-[11px] ${pb.cls}`}>
+                      {pb.label}
                     </span>
                     <span className="font-mono text-sm text-gold">{eur(b.amount)}</span>
                   </div>
