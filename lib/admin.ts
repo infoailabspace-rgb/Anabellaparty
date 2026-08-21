@@ -28,6 +28,7 @@ export type Booking = {
   viewed_at: string | null;
   payment_deferred?: boolean | null; // klients maksās PĒC pasākuma (apzināta vienošanās)
   paid_sum?: number; // summēti completed maksājumi (apmaksas krāsu shēmai)
+  source?: string; // izcelsme: form / manual / import / lead
 };
 
 export const STATUSES: { id: string; label: string }[] = [

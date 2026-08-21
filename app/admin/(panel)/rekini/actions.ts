@@ -95,6 +95,15 @@ export async function addPayment(d: {
   });
   if (error) return { error: error.message };
 
+  // Maksājums pievienots rezervācijai = kāds ar to strādāja → atzīmē redzētu.
+  if (d.booking_request_id) {
+    await supabase
+      .from("booking_requests")
+      .update({ viewed_at: new Date().toISOString() })
+      .eq("id", d.booking_request_id)
+      .is("viewed_at", null);
+  }
+
   // Auto-paid: ja saņemto (completed) maksājumu summa ≥ rēķina kopsumma → 'paid'.
   const { data: inv } = await supabase
     .from("invoices")

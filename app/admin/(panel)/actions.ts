@@ -17,6 +17,20 @@ import {
 } from "@/lib/google-calendar";
 import { bookingAmount, type PaymentState } from "@/lib/booking-status";
 
+// Atzīmē rezervāciju kā redzētu (viewed_at=now), ja tā vēl nav. Jebkura admin
+// darbība ar to (statuss/maksājums/piezīmes/rediģēšana) nozīmē, ka tā apskatīta,
+// tāpēc "neatvērts" (zelts) indikators vairs nedrīkst palikt.
+async function markBookingViewed(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  id: string,
+) {
+  await supabase
+    .from("booking_requests")
+    .update({ viewed_at: new Date().toISOString() })
+    .eq("id", id)
+    .is("viewed_at", null);
+}
+
 export type ManualBookingInput = {
   name: string;
   email: string;
@@ -87,6 +101,10 @@ export async function createManualBooking(
       delivery_cost: d.delivery_cost || null,
       customer_id: customerId,
       status: "new",
+      // Izcelsme: no B2B lead → 'lead', citādi manuāla admin izveide → 'manual'.
+      // Manuāli/lead izveidota rezervācija ir "redzēta" jau tapšanas brīdī.
+      source: leadId ? "lead" : "manual",
+      viewed_at: new Date().toISOString(),
     })
     .select("id")
     .single();
@@ -194,6 +212,9 @@ export async function updateBooking(id: string, d: UpdateBookingInput) {
     .eq("id", id);
   if (error) return { error: error.message };
 
+  // Jebkura rediģēšana = admin strādāja ar rezervāciju → atzīmē redzētu.
+  await markBookingViewed(supabase, id);
+
   // Ja apstiprināts: equipment_bookings pārrēķins (datums/inventārs varēja mainīties).
   if (cur?.status === "confirmed") {
     const slugs = (d.items || [])
@@ -276,6 +297,9 @@ export async function setStatus(id: string, status: string) {
     .update({ status })
     .eq("id", id);
   if (statusErr) return { error: statusErr.message };
+
+  // Statusa maiņa = admin strādāja ar rezervāciju → atzīmē redzētu (ja vēl nav).
+  await markBookingViewed(supabase, id);
 
   // Booking dati (vajadzīgi rezervācijai, tīrībai, e-pastam, kalendāram).
   const { data: b } = await supabase
@@ -428,6 +452,8 @@ export async function saveNotes(id: string, notes: string) {
     .update({ admin_notes: notes })
     .eq("id", id);
   if (error) return { error: error.message };
+  // Piezīmju rakstīšana = admin strādāja → atzīmē redzētu.
+  await markBookingViewed(supabase, id);
   return { ok: true };
 }
 
@@ -513,6 +539,9 @@ export async function setPaymentState(
     .update({ payment_deferred: deferred })
     .eq("id", id);
   if (error) return { error: error.message };
+
+  // Maksājuma darbība = admin strādāja ar rezervāciju → atzīmē redzētu.
+  await markBookingViewed(supabase, id);
 
   revalidatePath("/admin");
   revalidatePath("/admin/rezervacijas");

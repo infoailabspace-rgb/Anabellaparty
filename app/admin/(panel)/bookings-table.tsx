@@ -38,6 +38,7 @@ export default function BookingsTable({
   title: string;
 }) {
   const [statusFilter, setStatusFilter] = useState("all");
+  const [sourceFilter, setSourceFilter] = useState("all");
   const [q, setQ] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -60,6 +61,8 @@ export default function BookingsTable({
       .filter((b) => {
         if (!scope.includes(b.status)) return false;
         if (statusFilter !== "all" && b.status !== statusFilter) return false;
+        if (sourceFilter !== "all" && (b.source ?? "form") !== sourceFilter)
+          return false;
         if (from && b.event_date < from) return false;
         if (to && b.event_date > to) return false;
         if (needle) {
@@ -74,7 +77,7 @@ export default function BookingsTable({
           a.event_date.localeCompare(b.event_date),
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bookings, scope, statusFilter, q, from, to]);
+  }, [bookings, scope, statusFilter, sourceFilter, q, from, to]);
 
   const field =
     "rounded-lg border border-gold/25 bg-navy/40 px-3 py-2 text-sm text-text outline-none focus:border-gold";
@@ -111,6 +114,19 @@ export default function BookingsTable({
               {s.label}
             </option>
           ))}
+        </select>
+        {/* Izcelsmes filtrs (Google Ads statistikai — cik nāk no formas/reklāmas) */}
+        <select
+          value={sourceFilter}
+          onChange={(e) => setSourceFilter(e.target.value)}
+          className={field}
+          title="Izcelsme"
+        >
+          <option value="all">Visi avoti</option>
+          <option value="form">Forma</option>
+          <option value="manual">Manuāli</option>
+          <option value="import">Imports</option>
+          <option value="lead">No B2B</option>
         </select>
         <label className="text-xs text-text/50">
           No
