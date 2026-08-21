@@ -28,14 +28,31 @@ export function trackConversion(
   track(event, { value, currency: "EUR", ...params });
 }
 
+// Fiksētas konversijas vērtības pēc avota (Google Ads Smart Bidding / ROAS).
+// Bez konsekventas value visi pieteikumi šķiet vienlīdzīgi. B2B un pašvaldības =
+// lielāki darījumi → augstāka vērtība; B2C anketa un rezervācija = 150 EUR.
+export const LEAD_VALUE: Record<string, number> = {
+  b2b: 400,
+  pasvaldibam: 400,
+  b2c: 150,
+  reservation: 150,
+};
+
 // B2B anketas iesniegums. Atsevišķs notikums no B2C rezervācijas (booking_submitted),
-// lai kampaņas var optimizēt atsevišķi. Padod aptuveno vērtību + avotu.
+// lai kampaņas var optimizēt atsevišķi. value+currency → Google Ads/Meta ROAS.
 export function generateLead(
   value: number,
   source = "b2b",
   params: Record<string, any> = {},
 ) {
-  track("generate_lead", { value, currency: "EUR", source, ...params });
+  // lead_source = tīra GA4 dimensija; source paturēts esošajam GTM tagam.
+  track("generate_lead", {
+    value,
+    currency: "EUR",
+    source,
+    lead_source: source,
+    ...params,
+  });
   if (typeof window !== "undefined" && typeof window.fbq === "function") {
     window.fbq("track", "Lead", { value, currency: "EUR" });
   }

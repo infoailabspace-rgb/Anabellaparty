@@ -6,11 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { generateLead } from "@/lib/analytics";
-
-// Aptuvenā pieprasījuma vērtība Smart Bidding vajadzībām (§8).
-const VALUE_B2B = 800;
-const VALUE_B2C = 150;
+import { generateLead, LEAD_VALUE } from "@/lib/analytics";
 
 const INTERESTS = [
   "spogulis",
@@ -120,9 +116,9 @@ export default function B2bEnquiryForm() {
         setServerError(data.error ?? t("errSend"));
         return;
       }
-      const base = isB2c ? VALUE_B2C : VALUE_B2B;
-      const value = base + (payload.interests.length - 1) * (isB2c ? 40 : 100);
-      generateLead(Math.max(100, value), source);
+      // Fiksēta vērtība pēc avota (b2b/pašvaldība = 400, b2c = 150) — konsekvents
+      // ROAS signāls Smart Bidding, nevis mainīga aptuvenā summa.
+      generateLead(LEAD_VALUE[source] ?? LEAD_VALUE.b2b, source);
       setDone(true);
     } catch {
       setServerError(t("errSend"));

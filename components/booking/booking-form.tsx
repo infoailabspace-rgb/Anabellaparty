@@ -7,7 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { type Product } from "@/lib/products";
 import { bookingCategories } from "@/lib/categories";
 import { computeQuote, formatEur, type CartItem } from "@/lib/pricing";
-import { track, trackLead, trackConversion } from "@/lib/analytics";
+import { track, trackConversion, generateLead, LEAD_VALUE } from "@/lib/analytics";
 import {
   isValidEmail,
   isValidPhone,
@@ -351,9 +351,11 @@ export default function BookingForm({ products }: { products: Product[] }) {
         return;
       }
       const value = computeQuote(items, products).subtotal + (delivery?.cost || 0);
-      // B2C rezervācija — value+currency (§8), atsevišķs source no B2B anketas.
+      // booking_submitted patur REĀLO groza vērtību (ieņēmumu atskaitēm).
       trackConversion("booking_submitted", value, { source: "b2c" });
-      trackLead(value);
+      // generate_lead konversija (Google Ads + Meta Lead) — fiksēta lead-vērtība
+      // 150 EUR, lai rezervācija skaitās kopā ar pārējiem leadiem konsekventi.
+      generateLead(LEAD_VALUE.reservation, "reservation");
       sessionStorage.removeItem(STORAGE_KEY);
       setSubmitted(true);
     } catch {
