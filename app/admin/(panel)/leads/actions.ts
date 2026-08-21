@@ -13,13 +13,20 @@ export const LEAD_STATUSES: { id: string; label: string }[] = [
 
 export async function setLeadStatus(id: string, status: string) {
   const supabase = await createClient();
-  await supabase.from("leads").update({ status }).eq("id", id);
+  const { error } = await supabase.from("leads").update({ status }).eq("id", id);
+  if (error) return { error: error.message };
   revalidatePath("/admin/leads");
+  return { ok: true };
 }
 
 export async function saveLeadNotes(id: string, notes: string) {
   const supabase = await createClient();
-  await supabase.from("leads").update({ admin_notes: notes }).eq("id", id);
+  const { error } = await supabase
+    .from("leads")
+    .update({ admin_notes: notes })
+    .eq("id", id);
+  if (error) return { error: error.message };
+  return { ok: true };
 }
 
 export async function markLeadViewed(id: string) {

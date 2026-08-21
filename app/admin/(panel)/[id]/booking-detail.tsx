@@ -23,6 +23,7 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
   const [deferred, setDeferred] = useState(Boolean(booking.payment_deferred));
   const [payMsg, setPayMsg] = useState("");
   const [statusMsg, setStatusMsg] = useState("");
+  const [notesMsg, setNotesMsg] = useState("");
   const [avansModal, setAvansModal] = useState(false);
   const [avansInput, setAvansInput] = useState("");
   const [avansError, setAvansError] = useState("");
@@ -51,9 +52,14 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
       return;
     }
     setNotesSaved(false);
+    setNotesMsg("");
     notesTimer.current = setTimeout(() => {
       startTransition(async () => {
-        await saveNotes(booking.id, notes);
+        const res = await saveNotes(booking.id, notes);
+        if (res?.error) {
+          setNotesMsg(res.error);
+          return;
+        }
         setNotesSaved(true);
       });
     }, 800);
@@ -198,6 +204,11 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
           onChange={(e) => setNotes(e.target.value)}
           className={`mt-1 block w-full ${field}`}
         />
+        {notesMsg && (
+          <p className="mt-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-xs text-red-300">
+            {notesMsg}
+          </p>
+        )}
       </div>
 
       {/* Dzēšana — pārcelta no saraksta uz detaļu skatu */}

@@ -106,18 +106,30 @@ function Card({
         {r.id && (
           <button
             onClick={() => {
-              if (confirm("Dzēst?"))
-                start(() => {
-                  deleteFaq(r.id!);
-                  onDelete(r.id!);
-                });
+              if (!confirm("Dzēst šo BUJ ierakstu?")) return;
+              setMsg("");
+              start(async () => {
+                const res = await deleteFaq(r.id!);
+                if (res?.error) {
+                  setMsg(res.error);
+                  return;
+                }
+                onDelete(r.id!);
+              });
             }}
-            className="rounded-full border border-red-500/50 px-3 py-1.5 text-xs text-red-300"
+            disabled={pending}
+            className="rounded-full border border-red-500/50 px-3 py-1.5 text-xs text-red-300 disabled:opacity-60"
           >
             Dzēst
           </button>
         )}
-        {msg && <span className="text-xs text-gold">{msg}</span>}
+        {msg && (
+          <span
+            className={`text-xs ${msg.includes("✓") ? "text-gold" : "text-red-300"}`}
+          >
+            {msg}
+          </span>
+        )}
       </div>
     </div>
   );

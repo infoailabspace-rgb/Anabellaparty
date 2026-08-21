@@ -48,7 +48,6 @@ function fmtDate(s: string) {
 export default function LeadsList({ leads }: { leads: Lead[] }) {
   const [rows, setRows] = useState(leads);
   const [q, setQ] = useState("");
-  const [, start] = useTransition();
 
   const filtered = rows.filter((l) => {
     const needle = q.trim().toLowerCase();
@@ -58,18 +57,12 @@ export default function LeadsList({ leads }: { leads: Lead[] }) {
       .includes(needle);
   });
 
-  function changeStatus(id: string, status: string) {
+  // Tīri lokālie stāvokļa atjauninātāji — servera izsaukumus + kļūdu apstrādi
+  // veic LeadCard (optimistiski + await + atritināšana).
+  const patchStatus = (id: string, status: string) =>
     setRows((r) => r.map((l) => (l.id === id ? { ...l, status } : l)));
-    start(() => setLeadStatus(id, status));
-  }
-
-  function remove(l: Lead) {
-    if (!confirm(`Dzēst pieprasījumu no ${l.company}?`)) return;
-    setRows((r) => r.filter((x) => x.id !== l.id));
-    start(() => {
-      void deleteLead(l.id);
-    });
-  }
+  const removeRow = (id: string) =>
+    setRows((r) => r.filter((x) => x.id !== id));
 
   const field =
     "rounded-lg border border-gold/25 bg-navy/40 px-3 py-2 text-sm text-text outline-none focus:border-gold";
@@ -98,7 +91,7 @@ export default function LeadsList({ leads }: { leads: Lead[] }) {
       ) : (
         <div className="space-y-4">
           {filtered.map((l) => (
-            <LeadCard key={l.id} lead={l} onStatus={changeStatus} onRemove={remove} />
+            <LeadCard key={l.id} lead={l} onStatus={patchStatus} onRemove={removeRow} />
           ))}
         </div>
       )}
@@ -113,14 +106,56 @@ function LeadCard({
 }: {
   lead: Lead;
   onStatus: (id: string, status: string) => void;
-  onRemove: (l: Lead) => void;
+  onRemove: (id: string) => void;
 }) {
   const [notes, setNotes] = useState(l.admin_notes ?? "");
   const [saved, setSaved] = useState(true);
+  const [pending, start] = useTransition();
+  const [msg, setMsg] = useState("");
 
+  // Statuss: optimistiski + GAIDA serveri; kļūdā atritina + sarkans ziņojums.
+  function changeStatus(next: string) {
+    const prev = l.status;
+    setMsg("");
+    onStatus(l.id, next);
+    start(async () => {
+      const res = await setLeadStatus(l.id, next);
+      if (res?.error) {
+        onStatus(l.id, prev);
+        setMsg(res.error);
+      }
+    });
+  }
+
+  // Dzēšana: izņem no saraksta TIKAI pēc veiksmes (ja neizdodas — rinda paliek
+  // + kļūda), nevis optimistiski.
+  function remove() {
+    if (!confirm(`Dzēst pieprasījumu no ${l.company}? Šo nevar atsaukt.`)) return;
+    setMsg("");
+    start(async () => {
+      const res = await deleteLead(l.id);
+      if (res?.error) {
+        setMsg(res.error);
+        return;
+      }
+      onRemove(l.id);
+    });
+  }
+
+  // Piezīmes: "saglabāts" TIKAI pēc veiksmes (agrāk .then() to uzstādīja pat
+  // pie {error} → maldinoši). Kļūdā sarkans ziņojums.
   function onNotesBlur() {
     if (notes === (l.admin_notes ?? "")) return;
-    saveLeadNotes(l.id, notes).then(() => setSaved(true));
+    setMsg("");
+    start(async () => {
+      const res = await saveLeadNotes(l.id, notes);
+      if (res?.error) {
+        setSaved(false);
+        setMsg(res.error);
+        return;
+      }
+      setSaved(true);
+    });
   }
 
   const Row = ({ label, value }: { label: string; value?: string | null }) =>
@@ -150,8 +185,9 @@ function LeadCard({
           </span>
           <select
             value={l.status}
-            onChange={(e) => onStatus(l.id, e.target.value)}
-            className="rounded-lg border border-gold/25 bg-navy/40 px-2 py-1 text-xs text-text outline-none focus:border-gold"
+            onChange={(e) => changeStatus(e.target.value)}
+            disabled={pending}
+            className="rounded-lg border border-gold/25 bg-navy/40 px-2 py-1 text-xs text-text outline-none focus:border-gold disabled:opacity-60"
           >
             {LEAD_STATUSES.map((s) => (
               <option key={s.id} value={s.id}>
@@ -160,13 +196,20 @@ function LeadCard({
             ))}
           </select>
           <button
-            onClick={() => onRemove(l)}
-            className="rounded-lg border border-red-500/40 px-2 py-1 text-xs text-red-300 hover:bg-red-500/10"
+            onClick={remove}
+            disabled={pending}
+            className="rounded-lg border border-red-500/40 px-2 py-1 text-xs text-red-300 hover:bg-red-500/10 disabled:opacity-60"
           >
             Dzēst
           </button>
         </div>
       </div>
+
+      {msg && (
+        <p className="mt-3 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-xs text-red-300">
+          {msg}
+        </p>
+      )}
 
       <div className="mt-4 flex flex-wrap gap-3">
         <a href={`tel:${l.phone}`} className="rounded-full bg-gold px-4 py-1.5 text-sm font-semibold text-black">
@@ -201,7 +244,9 @@ function LeadCard({
       <div className="mt-4">
         <label className="text-xs uppercase tracking-wide text-text/50">
           Iekšējās piezīmes{" "}
-          <span className="text-text/30">{saved ? "· saglabāts" : ""}</span>
+          <span className="text-text/30">
+            {pending ? "· saglabā…" : saved ? "· saglabāts" : ""}
+          </span>
         </label>
         <textarea
           rows={2}

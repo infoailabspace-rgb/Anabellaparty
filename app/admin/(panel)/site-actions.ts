@@ -136,9 +136,11 @@ export async function upsertTestimonial(
 }
 export async function deleteTestimonial(id: string) {
   const supabase = await createClient();
-  await supabase.from("site_testimonials").delete().eq("id", id);
+  const { error } = await supabase.from("site_testimonials").delete().eq("id", id);
+  if (error) return { error: error.message };
   await audit("delete", "testimonial", id, null);
   revalidatePath("/", "layout");
+  return { ok: true };
 }
 
 /* ── Klienti ── */
@@ -164,9 +166,11 @@ export async function upsertClient(
 }
 export async function deleteClient(id: string) {
   const supabase = await createClient();
-  await supabase.from("site_clients").delete().eq("id", id);
+  const { error } = await supabase.from("site_clients").delete().eq("id", id);
+  if (error) return { error: error.message };
   await audit("delete", "client", id, null);
   revalidatePath("/", "layout");
+  return { ok: true };
 }
 
 /* ── Lapu teksti (DB pārraksti; site_content categories./pages./sec.) ── */
@@ -213,9 +217,11 @@ export async function upsertPartner(
 }
 export async function deletePartner(id: string) {
   const supabase = await createClient();
-  await supabase.from("site_partners").delete().eq("id", id);
+  const { error } = await supabase.from("site_partners").delete().eq("id", id);
+  if (error) return { error: error.message };
   await audit("delete", "partner", id, null);
   revalidatePath("/", "layout");
+  return { ok: true };
 }
 
 /* ── Galerija (pasākumu bildes) ── */
@@ -426,9 +432,11 @@ export async function upsertFaq(
 }
 export async function deleteFaq(id: string) {
   const supabase = await createClient();
-  await supabase.from("site_faqs").delete().eq("id", id);
+  const { error } = await supabase.from("site_faqs").delete().eq("id", id);
+  if (error) return { error: error.message };
   await audit("delete", "faq", id, null);
   revalidatePath("/", "layout");
+  return { ok: true };
 }
 
 /* ── Hero mediji ── */

@@ -157,10 +157,15 @@ export async function saveProduct(id: string | null, data: ProductInput) {
 
 export async function toggleActive(id: string, active: boolean, category: string) {
   const supabase = await createClient();
-  await supabase.from("products").update({ is_active: active }).eq("id", id);
+  const { error } = await supabase
+    .from("products")
+    .update({ is_active: active })
+    .eq("id", id);
+  if (error) return { error: error.message };
   await audit("update", id, { is_active: active });
   revalidateAll(category);
   revalidatePath("/admin/inventars");
+  return { ok: true };
 }
 
 export async function deleteProduct(id: string, slug: string, category: string) {

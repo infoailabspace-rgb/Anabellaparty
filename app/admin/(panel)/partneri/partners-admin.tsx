@@ -108,8 +108,16 @@ function Card({
         }} disabled={pending} className="rounded-full bg-gold px-4 py-1.5 text-xs font-semibold text-black disabled:opacity-60">
           {pending ? "Saglabā…" : "Saglabāt"}
         </button>
-        {row.id && <button onClick={() => { if (confirm("Dzēst partneri?")) start(() => { deletePartner(row.id!); onDelete(row.id!); }); }} className="rounded-full border border-red-500/50 px-3 py-1.5 text-xs text-red-300">Dzēst</button>}
-        {msg && <span className="text-xs text-gold">{msg}</span>}
+        {row.id && <button onClick={() => {
+          if (!confirm("Dzēst partneri?")) return;
+          setMsg("");
+          start(async () => {
+            const res = await deletePartner(row.id!);
+            if (res?.error) { setMsg(res.error); return; }
+            onDelete(row.id!);
+          });
+        }} disabled={pending} className="rounded-full border border-red-500/50 px-3 py-1.5 text-xs text-red-300 disabled:opacity-60">Dzēst</button>}
+        {msg && <span className={`text-xs ${msg.includes("✓") ? "text-gold" : "text-red-300"}`}>{msg}</span>}
       </div>
     </div>
   );

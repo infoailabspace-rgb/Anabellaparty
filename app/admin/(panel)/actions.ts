@@ -393,10 +393,12 @@ export async function deleteBooking(id: string) {
 
 export async function saveNotes(id: string, notes: string) {
   const supabase = await createClient();
-  await supabase
+  const { error } = await supabase
     .from("booking_requests")
     .update({ admin_notes: notes })
     .eq("id", id);
+  if (error) return { error: error.message };
+  return { ok: true };
 }
 
 export async function setFinalTotal(id: string, final: number | null) {

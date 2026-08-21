@@ -82,8 +82,16 @@ function Card({
       <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={row.is_active} onChange={(e) => set({ is_active: e.target.checked })} className="accent-[#D4A960]" /> Aktīvs</label>
       <input type="number" value={row.sort_order} onChange={(e) => set({ sort_order: Number(e.target.value) })} className={`${field} w-16`} />
       <button onClick={() => start(async () => { const res = await upsertClient(row.id, row); setMsg(res?.error ?? "✓"); })} disabled={pending} className="rounded-full bg-gold px-4 py-1.5 text-xs font-semibold text-black">Saglabāt</button>
-      {row.id && <button onClick={() => { if (confirm("Dzēst?")) start(() => { deleteClient(row.id!); onDelete(row.id!); }); }} className="rounded-full border border-red-500/50 px-3 py-1.5 text-xs text-red-300">Dzēst</button>}
-      {msg && <span className="text-xs text-gold">{msg}</span>}
+      {row.id && <button onClick={() => {
+        if (!confirm("Dzēst šo klienta logo?")) return;
+        setMsg("");
+        start(async () => {
+          const res = await deleteClient(row.id!);
+          if (res?.error) { setMsg(res.error); return; }
+          onDelete(row.id!);
+        });
+      }} disabled={pending} className="rounded-full border border-red-500/50 px-3 py-1.5 text-xs text-red-300 disabled:opacity-60">Dzēst</button>}
+      {msg && <span className={`text-xs ${msg.includes("✓") ? "text-gold" : "text-red-300"}`}>{msg}</span>}
     </div>
   );
 }

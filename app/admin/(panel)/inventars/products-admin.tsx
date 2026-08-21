@@ -21,7 +21,8 @@ export default function ProductsAdmin({ rows }: { rows: AdminProductRow[] }) {
   const [list, setList] = useState(rows);
   const [cat, setCat] = useState("all");
   const [q, setQ] = useState("");
-  const [, start] = useTransition();
+  const [pending, start] = useTransition();
+  const [err, setErr] = useState("");
 
   const filtered = useMemo(() => {
     const n = q.trim().toLowerCase();
@@ -32,10 +33,20 @@ export default function ProductsAdmin({ rows }: { rows: AdminProductRow[] }) {
     );
   }, [list, cat, q]);
 
+  // Optimistiski + GAIDA serveri; kļūdā atritina slēdzi + parāda ziņojumu.
   function toggle(p: AdminProductRow) {
     const next = !p.is_active;
+    setErr("");
     setList((l) => l.map((x) => (x.id === p.id ? { ...x, is_active: next } : x)));
-    start(() => toggleActive(p.id, next, p.category));
+    start(async () => {
+      const res = await toggleActive(p.id, next, p.category);
+      if (res?.error) {
+        setList((l) =>
+          l.map((x) => (x.id === p.id ? { ...x, is_active: !next } : x)),
+        );
+        setErr(res.error);
+      }
+    });
   }
 
   const field =
@@ -56,6 +67,12 @@ export default function ProductsAdmin({ rows }: { rows: AdminProductRow[] }) {
           + Jauns produkts
         </Link>
       </div>
+
+      {err && (
+        <p className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-300">
+          {err}
+        </p>
+      )}
 
       <div className="overflow-x-auto rounded-xl border border-gold/20">
         <table className="w-full text-sm">
@@ -82,7 +99,8 @@ export default function ProductsAdmin({ rows }: { rows: AdminProductRow[] }) {
                 <td className="p-3 align-middle">
                   <button
                     onClick={() => toggle(p)}
-                    className={`relative h-6 w-11 rounded-full transition-colors ${p.is_active ? "bg-gold" : "bg-text/20"}`}
+                    disabled={pending}
+                    className={`relative h-6 w-11 rounded-full transition-colors disabled:opacity-60 ${p.is_active ? "bg-gold" : "bg-text/20"}`}
                     aria-pressed={p.is_active}
                     aria-label="Aktīvs"
                   >
