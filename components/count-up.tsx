@@ -24,22 +24,29 @@ export default function CountUp({
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const reduce = useReducedMotion();
-  // AEO KRITISKI: sākuma vērtība = GALA skaitlis, lai serverī renderētajā HTML
-  // (crawler, no-JS, prefers-reduced-motion) ir reālais skaitlis, ne 0.
-  // Animācija ir tikai progresīvs uzlabojums — nomet uz 0 un saskaita atpakaļ
-  // TIKAI tad, kad JS reāli izpildās klienta pusē un elements nonāk skatā.
+  // DROŠĪBA (publiskā lapa NEDRĪKST rādīt 0): sākotnējā vērtība = GALA skaitlis.
+  // SSR, no-JS, crawler, prefers-reduced-motion, useInView-nenostrāde, rAF-trūkums
+  // vai jebkura animācijas neizdošanās → rāda REĀLO skaitli, nekad 0.
   const [value, setValue] = useState(to);
-  const [animated, setAnimated] = useState(false);
+  // Vienreizes karodziņš kā ref (NE state) — mainot to, efekts NEPĀRSTARTĒJAS,
+  // tāpēc cleanup neatceļ tikko ieplānoto rAF. (Agrāk `animated` bija state UN
+  // efekta atkarībās → efekts restartējās, cleanup atcēla animāciju uzreiz pēc
+  // setValue(0), un skaitītājs iesala uz 0. Regresija no 7e9be0f.)
+  const startedRef = useRef(false);
 
   useEffect(() => {
-    if (animated || !inView) return;
+    if (startedRef.current || !inView) return;
+    startedRef.current = true;
+
+    // Reduced motion — animācija nav vēlama; vērtība jau ir `to`.
     if (reduce) {
       setValue(to);
-      setAnimated(true);
       return;
     }
-    setAnimated(true);
-    setValue(0);
+
+    // Animē no 0 uz `to`. Skaitli iestata TIKAI animācijas kadri; nav atsevišķa
+    // setValue(0), ko varētu atstāt iesaldētu. rAF ķēde iet līdz galam, jo
+    // efekts vairs nepārstartējas (karodziņš ir ref).
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
@@ -49,7 +56,7 @@ export default function CountUp({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [inView, reduce, to, duration, animated]);
+  }, [inView, reduce, to, duration]);
 
   return (
     <span ref={ref} className={className} aria-label={`${prefix}${to}${suffix}`}>
