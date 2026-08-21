@@ -52,9 +52,11 @@ function isActive(pathname: string, href: string): boolean {
 
 export default function AdminShell({
   email,
+  newCount = 0,
   children,
 }: {
   email: string | undefined;
+  newCount?: number;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -85,7 +87,12 @@ export default function AdminShell({
                     <span className="w-5 shrink-0 text-center text-base">
                       {it.icon}
                     </span>
-                    {it.label}
+                    <span>{it.label}</span>
+                    {it.href === "/admin" && newCount > 0 && (
+                      <span className="ml-auto shrink-0 rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">
+                        {newCount}
+                      </span>
+                    )}
                   </Link>
                 </li>
               );

@@ -47,5 +47,23 @@ export default async function PanelLayout({
     );
   }
 
-  return <AdminShell email={user.email}>{children}</AdminShell>;
+  // Jauno (status='new') ienākošo skaits navigācijas nozīmītei — rezervācijas
+  // + B2B leadi kopā (vienotais /admin inbox).
+  const [{ count: nb }, { count: nl }] = await Promise.all([
+    supabase
+      .from("booking_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "new"),
+    supabase
+      .from("leads")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "new"),
+  ]);
+  const newCount = (nb ?? 0) + (nl ?? 0);
+
+  return (
+    <AdminShell email={user.email} newCount={newCount}>
+      {children}
+    </AdminShell>
+  );
 }
