@@ -37,7 +37,10 @@ export type ManualBookingInput = {
   status: "new" | "confirmed";
 };
 
-export async function createManualBooking(d: ManualBookingInput) {
+export async function createManualBooking(
+  d: ManualBookingInput,
+  leadId?: string,
+) {
   const name = d.name.trim();
   if (!name) return { error: "Vārds/nosaukums ir obligāts" };
   if (!d.event_date) return { error: "Pasākuma datums ir obligāts" };
@@ -93,6 +96,19 @@ export async function createManualBooking(d: ManualBookingInput) {
   // Ja admin izvēlas 'confirmed' — izmanto setStatus (equipment_bookings +
   // apstiprinājuma e-pasts) konsekvencei.
   if (d.status === "confirmed") await setStatus(id, "confirmed");
+
+  // Konvertēšana no B2B lead: atzīmē lead kā "won" un saglabā saiti uz izveidoto
+  // rezervāciju. Lead NETIEK dzēsts — vēsture paliek. Nav fatāls, ja neizdodas.
+  if (leadId) {
+    const { error: leadErr } = await supabase
+      .from("leads")
+      .update({ status: "won", converted_booking_id: id })
+      .eq("id", leadId);
+    if (leadErr)
+      console.error("[createManualBooking] lead atzīmēšana neizdevās:", leadErr.message);
+    revalidatePath("/admin/leads");
+    revalidatePath(`/admin/leads/${leadId}`);
+  }
 
   revalidatePath("/admin");
   revalidatePath("/admin/rezervacijas");

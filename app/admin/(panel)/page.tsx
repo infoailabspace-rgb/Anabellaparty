@@ -61,7 +61,7 @@ export default async function AdminInboxPage() {
     meta: [SOURCE_LABEL[r.source] ?? r.source, fmtDM(r.event_date)]
       .filter(Boolean)
       .join(" · "),
-    href: "/admin/leads",
+    href: `/admin/leads/${r.id}`,
     amount: null,
   }));
 

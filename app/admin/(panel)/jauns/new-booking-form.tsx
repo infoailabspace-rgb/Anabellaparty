@@ -15,33 +15,48 @@ const field =
 const label = "block text-xs uppercase tracking-wide text-text/50";
 const eur = (n: number) => `${Number(n || 0).toFixed(0)} €`;
 
+export type Prefill = {
+  leadId: string;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  eventDate: string;
+  dateHint: string;
+  guestCount: string;
+  location: string;
+  description: string;
+};
+
 export default function NewBookingForm({
   products,
   customers,
+  prefill,
 }: {
   products: Product[];
   customers: Cust[];
+  prefill?: Prefill;
 }) {
   const router = useRouter();
 
-  // Kontakts
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [company, setCompany] = useState("");
+  // Kontakts (aizpildīts no B2B lead, ja konvertē)
+  const [name, setName] = useState(prefill?.name ?? "");
+  const [email, setEmail] = useState(prefill?.email ?? "");
+  const [phone, setPhone] = useState(prefill?.phone ?? "");
+  const [company, setCompany] = useState(prefill?.company ?? "");
   const [regNr, setRegNr] = useState("");
   const [custQuery, setCustQuery] = useState("");
   const [showCust, setShowCust] = useState(false);
 
   // Pasākums
-  const [eventDate, setEventDate] = useState("");
+  const [eventDate, setEventDate] = useState(prefill?.eventDate ?? "");
   const [eventTime, setEventTime] = useState("");
   const [duration, setDuration] = useState("");
   const [eventType, setEventType] = useState("");
-  const [guestCount, setGuestCount] = useState("");
-  const [location, setLocation] = useState("");
+  const [guestCount, setGuestCount] = useState(prefill?.guestCount ?? "");
+  const [location, setLocation] = useState(prefill?.location ?? "");
   const [indoorOutdoor, setIndoorOutdoor] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(prefill?.description ?? "");
 
   // Produkti + cena
   const [lines, setLines] = useState<Line[]>([]);
@@ -139,7 +154,7 @@ export default function NewBookingForm({
         delivery_cost: Number(deliveryCost) || 0,
         final_total: finalTotal.trim() ? Number(finalTotal) : null,
         status,
-      });
+      }, prefill?.leadId);
       if (res?.error) {
         setMsg(res.error);
         return;
@@ -151,11 +166,19 @@ export default function NewBookingForm({
   return (
     <div className="max-w-3xl">
       <BackButton fallback="/admin" />
-      <h1 className="mt-3 font-display text-2xl font-bold">Jauns pieteikums</h1>
+      <h1 className="mt-3 font-display text-2xl font-bold">
+        {prefill ? "Rezervācija no B2B pieprasījuma" : "Jauns pieteikums"}
+      </h1>
       <p className="mb-4 mt-1 text-xs text-text/50">
         Manuāla rezervācija (telefona/WhatsApp sarunām). Klientu meklē vai ievadi
         jaunu; cena aprēķinās automātiski, bet vari to pārrakstīt.
       </p>
+      {prefill && (
+        <p className="mb-4 rounded-lg border border-gold/30 bg-gold/5 p-3 text-sm text-gold">
+          Aizpildīts no B2B pieprasījuma. Pārbaudi laukus un pievieno produktus —
+          pēc saglabāšanas pieprasījums tiks atzīmēts kā “Iegūts”.
+        </p>
+      )}
 
       {/* Klients */}
       <section className="mb-4 rounded-2xl border border-gold/25 bg-navy/30 p-6">
@@ -226,6 +249,11 @@ export default function NewBookingForm({
           <div>
             <label className={label}>Datums *</label>
             <input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} className={`${field} mt-1`} />
+            {prefill?.dateHint && (
+              <p className="mt-1 text-xs text-amber-300">
+                Klients norādīja: {prefill.dateHint}
+              </p>
+            )}
           </div>
           <div>
             <label className={label}>Laiks</label>
