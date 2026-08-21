@@ -24,14 +24,14 @@ export default async function AdminInboxPage() {
     supabase
       .from("booking_requests")
       .select(
-        "id, name, phone, email, event_date, event_type, status, created_at, estimated_total, final_total, delivery_cost",
+        "id, name, phone, email, event_date, event_type, status, created_at, viewed_at, estimated_total, final_total, delivery_cost",
       )
       .in("status", SCOPE)
       .order("created_at", { ascending: false }),
     supabase
       .from("leads")
       .select(
-        "id, company, contact_person, email, phone, source, status, created_at, event_date",
+        "id, company, contact_person, email, phone, source, status, created_at, viewed_at, event_date",
       )
       .in("status", SCOPE)
       .order("created_at", { ascending: false }),
@@ -49,6 +49,7 @@ export default async function AdminInboxPage() {
     meta: [fmtDM(r.event_date), r.event_type].filter(Boolean).join(" · "),
     href: `/admin/${r.id}`,
     amount: r.final_total ?? r.estimated_total ?? 0,
+    unopened: !r.viewed_at,
   }));
 
   const leads: InboxItem[] = (lData ?? []).map((r: any) => ({
@@ -63,6 +64,7 @@ export default async function AdminInboxPage() {
       .join(" · "),
     href: `/admin/leads/${r.id}`,
     amount: null,
+    unopened: !r.viewed_at,
   }));
 
   // Apvieno + sakārto pēc created_at desc (neatkarīgi no tabulas).

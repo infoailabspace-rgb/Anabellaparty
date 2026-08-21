@@ -122,6 +122,14 @@ export default function BookingsTable({
         </label>
       </div>
 
+      {/* Neatvērto (viewed_at IS NULL) leģenda — diskrēta, tikai ja ir tādi. */}
+      {filtered.some((b) => !b.viewed_at) && (
+        <p className="mb-3 flex items-center gap-1.5 text-xs text-text/40">
+          <span className="h-2 w-2 rounded-full bg-gold" aria-hidden="true" />
+          Neatvērtās rezervācijas iezīmētas ar zeltu
+        </p>
+      )}
+
       {/* Kartīšu saraksts — visa rinda klikšķināma, bez horizontālās ritināšanas.
           Statusu/apmaksu maina detaļu skatā; sarakstā tikai badge. */}
       <div className="space-y-2">
@@ -144,9 +152,18 @@ export default function BookingsTable({
               <div className="flex flex-col gap-3 sm:grid sm:grid-cols-[1.6fr_1.4fr_auto] sm:items-center sm:gap-4">
                 {/* Klients */}
                 <div className="min-w-0">
-                  <p className={`truncate font-semibold ${isNew ? "text-gold" : "text-text"}`}>
-                    {b.name}
-                    {b.company ? ` · ${b.company}` : ""}
+                  <p className={`flex items-center gap-1.5 font-semibold ${isNew ? "text-gold" : "text-text"}`}>
+                    {isNew && (
+                      <span
+                        className="h-2 w-2 shrink-0 rounded-full bg-gold"
+                        title="Neatvērta rezervācija"
+                        aria-label="Neatvērta"
+                      />
+                    )}
+                    <span className="truncate">
+                      {b.name}
+                      {b.company ? ` · ${b.company}` : ""}
+                    </span>
                   </p>
                   <p className="truncate text-xs text-text/50">
                     {b.phone}

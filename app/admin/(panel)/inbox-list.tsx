@@ -15,6 +15,7 @@ export type InboxItem = {
   meta: string;
   href: string;
   amount: number | null;
+  unopened: boolean; // viewed_at IS NULL — vēl nav atvērts
 };
 
 const KIND: Record<InboxItem["kind"], { icon: string; label: string }> = {
@@ -100,10 +101,19 @@ export default function InboxList({ items }: { items: InboxItem[] }) {
         <Tab k="lead" label="🏢 B2B" />
       </div>
 
+      {/* Neatvērto (viewed_at IS NULL) leģenda — diskrēta, tikai ja ir tādi. */}
+      {filtered.some((i) => i.unopened) && (
+        <p className="mb-3 flex items-center gap-1.5 text-xs text-text/40">
+          <span className="h-2 w-2 rounded-full bg-gold" aria-hidden="true" />
+          Neatvērtie ieraksti iezīmēti ar zeltu
+        </p>
+      )}
+
       <div className="space-y-2">
         {filtered.map((i) => {
           const k = KIND[i.kind];
-          const isNew = i.status === "new";
+          const unopened = i.unopened; // vēl nav atvērts (viewed_at IS NULL)
+          const statusNew = i.status === "new";
           return (
             <Link
               key={`${i.kind}-${i.id}`}
@@ -122,11 +132,18 @@ export default function InboxList({ items }: { items: InboxItem[] }) {
                 {/* Klients */}
                 <div className="min-w-0">
                   <p
-                    className={`truncate font-semibold ${
-                      isNew ? "text-gold" : "text-text"
+                    className={`flex items-center gap-1.5 font-semibold ${
+                      unopened ? "text-gold" : "text-text"
                     }`}
                   >
-                    {i.title}
+                    {unopened && (
+                      <span
+                        className="h-2 w-2 shrink-0 rounded-full bg-gold"
+                        title="Neatvērts"
+                        aria-label="Neatvērts"
+                      />
+                    )}
+                    <span className="truncate">{i.title}</span>
                   </p>
                   <p className="truncate text-xs text-text/50">{i.subtitle}</p>
                 </div>
@@ -146,7 +163,7 @@ export default function InboxList({ items }: { items: InboxItem[] }) {
                   )}
                   <span
                     className={`shrink-0 rounded-full border px-2 py-0.5 text-[11px] ${
-                      isNew
+                      statusNew
                         ? "border-gold/50 bg-gold/10 text-gold"
                         : "border-text/25 text-text/60"
                     }`}
