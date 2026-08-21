@@ -24,6 +24,7 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
   const [payMsg, setPayMsg] = useState("");
   const [statusMsg, setStatusMsg] = useState("");
   const [notesMsg, setNotesMsg] = useState("");
+  const [delMsg, setDelMsg] = useState("");
   const [avansModal, setAvansModal] = useState(false);
   const [avansInput, setAvansInput] = useState("");
   const [avansError, setAvansError] = useState("");
@@ -215,17 +216,39 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
       <div className="border-t border-gold/15 pt-4">
         <button
           type="button"
+          disabled={pending}
           onClick={() => {
-            if (!confirm(`Vai tiešām dzēst pieteikumu no ${booking.name}? Šo darbību nevar atsaukt.`)) return;
+            const eqCount =
+              booking.status === "confirmed" ? booking.items?.length ?? 0 : 0;
+            const eqLine =
+              eqCount > 0
+                ? ` Tiks dzēstas arī ${eqCount} aprīkojuma rezerves.`
+                : "";
+            if (
+              !confirm(
+                `Dzēst rezervāciju ${booking.name}, ${booking.event_date}?${eqLine} Šo nevar atsaukt.`,
+              )
+            )
+              return;
+            setDelMsg("");
             startTransition(async () => {
-              await deleteBooking(booking.id);
+              const res = await deleteBooking(booking.id);
+              if (res?.error) {
+                setDelMsg(res.error);
+                return;
+              }
               router.push("/admin");
             });
           }}
-          className="text-sm text-red-300 transition-colors hover:text-red-200"
+          className="text-sm text-red-300 transition-colors hover:text-red-200 disabled:opacity-60"
         >
           Dzēst pieteikumu
         </button>
+        {delMsg && (
+          <p className="mt-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-xs text-red-300">
+            {delMsg}
+          </p>
+        )}
       </div>
 
       {/* Avansa summas modālis — sistēmas dizains (navy fons, zelta akcenti) */}

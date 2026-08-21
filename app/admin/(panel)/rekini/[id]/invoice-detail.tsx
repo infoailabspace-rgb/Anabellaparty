@@ -127,7 +127,12 @@ export default function InvoiceDetail({
   }
 
   function remove() {
-    if (!confirm("Dzēst rēķinu?")) return;
+    if (
+      !confirm(
+        `Dzēst rēķinu ${inv.invoice_number} (${eur(inv.amount_total)})? Šo nevar atsaukt.`,
+      )
+    )
+      return;
     start(async () => {
       const res = await deleteInvoice(inv.id);
       if (res?.error) {
@@ -350,12 +355,24 @@ export default function InvoiceDetail({
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-text/90">{eur(p.amount)}</span>
                   <button
-                    onClick={() =>
+                    onClick={() => {
+                      const when = (p.paid_at ?? p.created_at)?.slice(0, 10) ?? "";
+                      if (
+                        !confirm(
+                          `Dzēst maksājumu ${eur(p.amount)}${when ? ` (${when})` : ""}? Šo nevar atsaukt.`,
+                        )
+                      )
+                        return;
+                      setMsg("");
                       start(async () => {
-                        await deletePayment(p.id, inv.id);
+                        const res = await deletePayment(p.id, inv.id);
+                        if (res?.error) {
+                          setMsg(res.error);
+                          return;
+                        }
                         router.refresh();
-                      })
-                    }
+                      });
+                    }}
                     className="text-[11px] text-red-300 hover:text-red-200"
                   >
                     Dzēst

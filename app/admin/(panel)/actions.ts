@@ -381,6 +381,20 @@ export async function deleteBooking(id: string) {
   const { data: isAdmin } = await supabase.rpc("is_admin");
   if (!isAdmin) return { error: "Nav piekļuves." };
 
+  // AIZSARGS: nedzēst rezervāciju, kurai ir maksājumi — citādi tie paliktu DB
+  // ar booking_request_id=NULL (nesekojama nauda; FK ir SET NULL). Vispirms
+  // maksājumi jādzēš vai jāpārsaista. Tāda pati loģika kā deleteProduct.
+  const { data: pays } = await supabase
+    .from("payments")
+    .select("amount")
+    .eq("booking_request_id", id);
+  if ((pays?.length ?? 0) > 0) {
+    const total = (pays ?? []).reduce((s, p) => s + Number(p.amount), 0);
+    return {
+      error: `Šai rezervācijai ir ${pays!.length} maksājumi (kopā ${total.toFixed(2)} EUR). Vispirms dzēs vai pārsaisti maksājumus.`,
+    };
+  }
+
   const { error } = await supabase
     .from("booking_requests")
     .delete()
