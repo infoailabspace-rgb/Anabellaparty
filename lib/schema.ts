@@ -61,6 +61,12 @@ function refQuantity(duration: string) {
   return null;
 }
 
+// Cenu spēkā-esamības logs Offer shēmai (GSC prasa validFrom). Product tips
+// nesatur created_at/updated_at (statisks katalogs + DB pārraksti), tāpēc
+// validFrom ir fiksēts datums, no kura pašreizējās cenas ir spēkā.
+const PRICE_VALID_FROM = "2026-01-01";
+const PRICE_VALID_UNTIL = "2026-12-31";
+
 // Product — cena bez PVN (zemākais tarifs); contactOnly bez Offer.
 export function productNode(p: Product, locale: string, pagePath: string) {
   const pricedTiers = p.tiers.filter((t) => t.price > 0);
@@ -88,7 +94,8 @@ export function productNode(p: Product, locale: string, pagePath: string) {
       "@type": "Offer",
       price: base.price,
       priceCurrency: "EUR",
-      priceValidUntil: "2026-12-31",
+      validFrom: PRICE_VALID_FROM,
+      priceValidUntil: PRICE_VALID_UNTIL,
       availability: "https://schema.org/InStock",
       url: pageUrl,
       seller: { "@id": `${SITE_URL}/#business` },
