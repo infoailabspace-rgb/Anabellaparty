@@ -32,7 +32,7 @@ type LatestItem = {
   status: string;
   amount: number;
   paid_sum: number;
-  // dashboard_extra RPC šo vēl neatgriež → interim `?? false` (skat. B4 piezīmi).
+  // dashboard_extra RPC to atgriež (migrācija: dashboard_extra_add_payment_deferred_to_latest).
   payment_deferred?: boolean;
 };
 type TopItem = { product: string; count: number };
