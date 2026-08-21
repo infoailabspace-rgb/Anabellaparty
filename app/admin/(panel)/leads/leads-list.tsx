@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { LEAD_STATUSES } from "./actions";
+import { LEAD_STATUSES } from "./constants";
 
 export type Lead = {
   id: string;

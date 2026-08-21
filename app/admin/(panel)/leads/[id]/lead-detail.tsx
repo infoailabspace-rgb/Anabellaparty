@@ -4,12 +4,12 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  LEAD_STATUSES,
   updateLead,
   setLeadStatus,
   saveLeadNotes,
   deleteLead,
 } from "../actions";
+import { LEAD_STATUSES } from "../constants";
 
 export type LeadRow = {
   id: string;

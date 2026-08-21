@@ -3,13 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
-export const LEAD_STATUSES: { id: string; label: string }[] = [
-  { id: "new", label: "Jauns" },
-  { id: "contacted", label: "Sazinājos" },
-  { id: "quoted", label: "Piedāvājums nosūtīts" },
-  { id: "won", label: "Iegūts" },
-  { id: "lost", label: "Zaudēts" },
-];
+// LEAD_STATUSES pārcelts uz ./constants — konstanti nedrīkst eksportēt no
+// "use server" faila (klientā tā salūst par action-referenci).
 
 export async function setLeadStatus(id: string, status: string) {
   const supabase = await createClient();
