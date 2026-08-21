@@ -22,7 +22,7 @@
   },
   "footer": {
     "tagline": "Neaizmirstamas ballītes sākas šeit.",
-    "description": "Pasākumu inventāra noma Latvijā. Foto kastes, piepūšamās atrakcijas, specefekti un audio grāmata.",
+    "description": "Pasākumu inventāra noma Latvijā. Foto kastes, AI foto, specefekti un piepūšamās atrakcijas.",
     "informacija": "Informācija",
     "navigacija": "Navigācija",
     "inventars": "Inventārs",
@@ -52,7 +52,7 @@
   },
   "home": {
     "offerTitle": "Mūsu piedāvājums",
-    "offerSubtitle": "No foto kastēm līdz kubliem — viss Tavam pasākumam vienuviet.",
+    "offerSubtitle": "Foto kastes, AI foto un svētku inventārs — viss vienuviet.",
     "viewInventory": "Apskatīt inventāru",
     "b2bCta": "Pasākums uzņēmumam"
   },
@@ -115,6 +115,38 @@
     "subtitle": "Iedvesmojies no reāliem pasākumiem, kur bijis mūsu inventārs.",
     "showMore": "Rādīt vairāk",
     "viewAll": "Skatīt visu inventāru"
+  },
+  "testimonials": {
+    "heading": "Ko saka klienti",
+    "prev": "Iepriekšējā atsauksme",
+    "next": "Nākamā atsauksme",
+    "starsAria": "{n} no 5 zvaigznēm",
+    "items": [
+      {
+        "text": "Korporatīvajam pasākumam pasūtījām foto kasti un audio grāmatu — abi bija tieši mērķī. Iesakām!",
+        "author": "SIA „Rīgas nams”",
+        "event": "Korporatīvais pasākums",
+        "rating": 5
+      },
+      {
+        "text": "Foto kaste bija mūsu kāzu ballītes highlight! Viesi to nemaz negribēja atstāt, un izdrukas sanāca lieliskas.",
+        "author": "Laura & Jānis",
+        "event": "Kāzas",
+        "rating": 5
+      },
+      {
+        "text": "Profesionāla komanda, viss laikā un skaisti. Bērni bija sajūsmā par piepūšamo pili.",
+        "author": "Kristīne",
+        "event": "Bērnu ballīte",
+        "rating": 5
+      },
+      {
+        "text": "Aukstās dzirksteles radīja neaizmirstamu momentu pirmajai dejai. Noteikti rezervēsim atkal!",
+        "author": "Artūrs",
+        "event": "Kāzas",
+        "rating": 5
+      }
+    ]
   },
   "cta": {
     "title": "Plānojat pasākumu?",

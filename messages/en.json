@@ -22,7 +22,7 @@
   },
   "footer": {
     "tagline": "Unforgettable parties start here.",
-    "description": "Event equipment rental in Latvia. Photo booths, inflatables, special effects and an audio guest book.",
+    "description": "Event equipment rental in Latvia. Photo booths, AI photo, special effects and inflatables.",
     "informacija": "Information",
     "navigacija": "Navigation",
     "inventars": "Inventory",
@@ -52,7 +52,7 @@
   },
   "home": {
     "offerTitle": "Our offering",
-    "offerSubtitle": "From photo booths to hot tubs — everything for your event in one place.",
+    "offerSubtitle": "Photo booths, AI photo and event equipment — all in one place.",
     "viewInventory": "Browse inventory",
     "b2bCta": "An event for your company"
   },
@@ -115,6 +115,38 @@
     "subtitle": "Get inspired by real events where our equipment has been.",
     "showMore": "Show more",
     "viewAll": "See all equipment"
+  },
+  "testimonials": {
+    "heading": "What clients say",
+    "prev": "Previous testimonial",
+    "next": "Next testimonial",
+    "starsAria": "{n} out of 5 stars",
+    "items": [
+      {
+        "text": "For our corporate event we ordered a photo booth and an audio guest book — both were right on target. Highly recommend!",
+        "author": "SIA „Rīgas nams”",
+        "event": "Corporate event",
+        "rating": 5
+      },
+      {
+        "text": "The photo booth was the highlight of our wedding! Guests didn't want to leave it, and the prints came out great.",
+        "author": "Laura & Jānis",
+        "event": "Wedding",
+        "rating": 5
+      },
+      {
+        "text": "A professional team, everything on time and beautiful. The kids were thrilled with the bouncy castle.",
+        "author": "Kristīne",
+        "event": "Kids' party",
+        "rating": 5
+      },
+      {
+        "text": "The cold sparklers created an unforgettable moment for the first dance. We'll definitely book again!",
+        "author": "Artūrs",
+        "event": "Wedding",
+        "rating": 5
+      }
+    ]
   },
   "cta": {
     "title": "Planning an event?",

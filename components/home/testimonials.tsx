@@ -2,16 +2,17 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
-import type { PublicTestimonial } from "@/lib/site-data";
+import { useTranslations } from "next-intl";
 import Reveal from "@/components/reveal";
 
-function Stars({ n }: { n: number }) {
+// Atsauksmes nāk no tulkojumu failiem (messages/*.json → "testimonials"), lai
+// LV/EN/RU teksti, autori un pasākumu veidi ir īstajā valodā. Kārtība masīvā =
+// korporatīvās/pašvaldību pirmās (B2B spec §4.4).
+type Item = { text: string; author: string; event: string; rating: number };
+
+function Stars({ n, label }: { n: number; label: string }) {
   return (
-    <div
-      className="flex gap-1 text-gold"
-      role="img"
-      aria-label={`${n} no 5 zvaigznēm`}
-    >
+    <div className="flex gap-1 text-gold" role="img" aria-label={label}>
       {Array.from({ length: 5 }, (_, i) => (
         <span key={i} aria-hidden="true">
           {i < n ? "★" : "☆"}
@@ -21,17 +22,15 @@ function Stars({ n }: { n: number }) {
   );
 }
 
-export default function Testimonials({
-  testimonials,
-}: {
-  testimonials: PublicTestimonial[];
-}) {
+export default function Testimonials() {
+  const t = useTranslations("testimonials");
+  const items = (t.raw("items") as Item[]) ?? [];
   const reduce = useReducedMotion();
   const [perView, setPerView] = useState(1);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  const maxIndex = Math.max(0, testimonials.length - perView);
+  const maxIndex = Math.max(0, items.length - perView);
 
   // Cik kartītes redzamas — atkarībā no ekrāna platuma.
   useEffect(() => {
@@ -60,12 +59,14 @@ export default function Testimonials({
     return () => clearInterval(id);
   }, [reduce, paused, next]);
 
+  if (!items.length) return null;
+
   return (
     <section className="py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
           <h2 className="text-center font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Ko saka klienti
+            {t("heading")}
           </h2>
         </Reveal>
 
@@ -79,22 +80,22 @@ export default function Testimonials({
               className="flex transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${index * (100 / perView)}%)` }}
             >
-              {testimonials.map((t) => (
+              {items.map((it) => (
                 <figure
-                  key={t.author}
+                  key={it.author}
                   className="shrink-0 px-3"
                   style={{ width: `${100 / perView}%` }}
                 >
                   <div className="flex h-full flex-col rounded-2xl border border-gold/20 bg-navy/30 p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.25)]">
-                    <Stars n={t.rating} />
+                    <Stars n={it.rating} label={t("starsAria", { n: it.rating })} />
                     <blockquote className="mt-4 flex-1 leading-relaxed text-text/80">
-                      “{t.text}”
+                      “{it.text}”
                     </blockquote>
                     <figcaption className="mt-6">
                       <p className="font-display font-semibold text-gold">
-                        {t.author}
+                        {it.author}
                       </p>
-                      <p className="text-sm text-text/50">{t.event}</p>
+                      <p className="text-sm text-text/50">{it.event}</p>
                     </figcaption>
                   </div>
                 </figure>
@@ -106,7 +107,7 @@ export default function Testimonials({
           <button
             type="button"
             onClick={prev}
-            aria-label="Iepriekšējā atsauksme"
+            aria-label={t("prev")}
             className="absolute -left-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gold/40 bg-bg/80 text-xl text-gold transition-colors hover:bg-gold/10 sm:-left-4"
           >
             ‹
@@ -114,7 +115,7 @@ export default function Testimonials({
           <button
             type="button"
             onClick={next}
-            aria-label="Nākamā atsauksme"
+            aria-label={t("next")}
             className="absolute -right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gold/40 bg-bg/80 text-xl text-gold transition-colors hover:bg-gold/10 sm:-right-4"
           >
             ›
