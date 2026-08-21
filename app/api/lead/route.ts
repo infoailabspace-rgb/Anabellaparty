@@ -104,7 +104,10 @@ export async function POST(req: Request) {
     }
   }
 
-  // 3. Ieraksts leads tabulā (nav fatāls, ja neizdodas — e-pasts tomēr aiziet).
+  // 3. Ieraksts leads tabulā — KRITISKI. Ja NEsaglabājas, klientam NESŪTĀM
+  //    maldinošu apstiprinājumu; tā vietā brīdinām adminu (lai atgūst manuāli)
+  //    un atgriežam kļūdu, ko forma parāda lietotājam.
+  let saved = false;
   if (supabase) {
     const { error } = await supabase.from("leads").insert({
       company: companyF,
@@ -122,22 +125,17 @@ export async function POST(req: Request) {
       procurement_id: procurementId || null,
       source,
     });
-    if (error) {
-      console.error("[lead] DB insert neizdevās:", error.message);
-    }
+    if (error) console.error("[lead] DB insert neizdevās:", error.message);
+    else saved = true;
+  } else {
+    console.error("[lead] DB nav konfigurēta — pieprasījums nav saglabāts.");
   }
 
-  // 4. E-pasti caur Resend — iekšējais paziņojums + apstiprinājums pieprasītājam.
+  // Resend konfigurācija + formas datu HTML (vajadzīgs gan paziņojumam, gan
+  // brīdinājumam par nesaglabātu pieprasījumu).
   const resendKey = process.env.RESEND_API_KEY;
   const notify = process.env.BOOKING_NOTIFY_EMAIL || "info@anabellaparty.lv";
   const from = process.env.BOOKING_FROM_EMAIL || "Anabella Party <onboarding@resend.dev>";
-
-  if (!resendKey) {
-    // Ieraksts jau saglabāts; e-pasts nav konfigurēts lokāli — atgriež ok ar brīdinājumu.
-    return NextResponse.json({ ok: true, warning: "email_not_configured" });
-  }
-
-  const resend = new Resend(resendKey);
   const interestsLine = interests.length ? interests.join(", ") : "—";
   const rows = [
     isB2c ? ["Vārds", name] : ["Uzņēmums / iestāde", company],
@@ -157,9 +155,48 @@ export async function POST(req: Request) {
     .filter(([, v]) => v)
     .map(([k, v]) => `<p style="margin:2px 0"><b>${esc(k)}:</b> ${esc(v)}</p>`)
     .join("");
+  const descHtml = description
+    ? `<p style="margin-top:8px"><b>Apraksts:</b><br>${esc(description).replace(/\n/g, "<br>")}</p>`
+    : "";
 
+  // 3a. NESAGLABĀJĀS → brīdini adminu ar visiem datiem (atgūt manuāli), atgriez
+  //     kļūdu klientam un NESŪTI klientam apstiprinājumu (nemaldini).
+  if (!saved) {
+    if (resendKey) {
+      try {
+        await new Resend(resendKey).emails.send({
+          from,
+          to: notify,
+          replyTo: email,
+          subject: `⚠ NESAGLABĀJĀS ${isB2c ? "privātpersonas" : "B2B"} pieprasījums — ${companyF} (atgūt manuāli)`,
+          html: `<meta charset="utf-8"><div style="font-family:Arial,sans-serif;color:#1A3A4A;">
+            <p><b>UZMANĪBU:</b> pieprasījums no anabellaparty.lv anketas <b>NESAGLABĀJĀS datubāzē</b>. Sazinies ar klientu manuāli:</p>
+            ${rows}
+            ${descHtml}
+          </div>`,
+        });
+      } catch (e) {
+        console.error("[lead] brīdinājuma e-pasts neizdevās:", e instanceof Error ? e.message : String(e));
+      }
+    }
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "Kaut kas nogāja greizi un pieprasījums netika saglabāts. Lūdzu, zvaniet +371 29222761 vai rakstiet uz info@anabellaparty.lv.",
+      },
+      { status: 500 },
+    );
+  }
+
+  // 4. SAGLABĀTS. E-pasts nav konfigurēts → ok ar brīdinājumu.
+  if (!resendKey) {
+    return NextResponse.json({ ok: true, warning: "email_not_configured" });
+  }
+
+  // 4a. Iekšējais paziņojums adminam + apstiprinājums pieprasītājam.
+  const resend = new Resend(resendKey);
   try {
-    // Iekšējais paziņojums.
     const internal = await resend.emails.send({
       from,
       to: notify,
@@ -168,13 +205,13 @@ export async function POST(req: Request) {
       html: `<meta charset="utf-8"><div style="font-family:Arial,sans-serif;color:#1A3A4A;">
         <p>Jauns pieprasījums no anabellaparty.lv anketas${isB2c ? " (privātpersona)" : " (uzņēmums/iestāde)"}:</p>
         ${rows}
-        ${description ? `<p style="margin-top:8px"><b>Apraksts:</b><br>${esc(description).replace(/\n/g, "<br>")}</p>` : ""}
+        ${descHtml}
       </div>`,
     });
     if (internal.error) {
       console.error("[lead] Iekšējais e-pasts neizdevās:", JSON.stringify(internal.error));
     }
-    // Apstiprinājums pieprasītājam (ja FROM != pieprasītāja e-pasts).
+    // Apstiprinājums pieprasītājam (tikai tagad — kad DB ieraksts DROŠI ir).
     await resend.emails.send({
       from,
       to: email,
