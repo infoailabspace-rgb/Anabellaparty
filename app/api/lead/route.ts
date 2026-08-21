@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getSupabaseServer } from "@/lib/supabase";
+import {
+  emailShell,
+  ctaButton,
+  infoCard,
+  infoRow,
+  EMAIL_NAVY,
+  EMAIL_GOLD_DARK,
+} from "@/lib/email-layout";
 
 export const runtime = "nodejs";
 
@@ -153,7 +161,7 @@ export async function POST(req: Request) {
     ["Avots", source],
   ]
     .filter(([, v]) => v)
-    .map(([k, v]) => `<p style="margin:2px 0"><b>${esc(k)}:</b> ${esc(v)}</p>`)
+    .map(([k, v]) => infoRow(k, esc(v)))
     .join("");
   const descHtml = description
     ? `<p style="margin-top:8px"><b>Apraksts:</b><br>${esc(description).replace(/\n/g, "<br>")}</p>`
@@ -169,11 +177,13 @@ export async function POST(req: Request) {
           to: notify,
           replyTo: email,
           subject: `⚠ NESAGLABĀJĀS ${isB2c ? "privātpersonas" : "B2B"} pieprasījums — ${companyF} (atgūt manuāli)`,
-          html: `<meta charset="utf-8"><div style="font-family:Arial,sans-serif;color:#1A3A4A;">
-            <p><b>UZMANĪBU:</b> pieprasījums no anabellaparty.lv anketas <b>NESAGLABĀJĀS datubāzē</b>. Sazinies ar klientu manuāli:</p>
-            ${rows}
-            ${descHtml}
-          </div>`,
+          html: emailShell(
+            `<h2 style="margin:0 0 12px;font-size:18px;color:#b00020;">⚠ Pieprasījums NESAGLABĀJĀS</h2>
+             <p style="margin:0 0 12px;">Pieprasījums no anketas <b>nenonāca datubāzē</b>. Sazinies ar klientu manuāli:</p>
+             ${infoCard("", rows)}
+             ${descHtml}`,
+            { footer: "" },
+          ),
         });
       } catch (e) {
         console.error("[lead] brīdinājuma e-pasts neizdevās:", e instanceof Error ? e.message : String(e));
@@ -202,11 +212,13 @@ export async function POST(req: Request) {
       to: notify,
       replyTo: email,
       subject: `${isB2c ? "Privātpersonas pieprasījums" : "B2B pieprasījums"} — ${companyF}`,
-      html: `<meta charset="utf-8"><div style="font-family:Arial,sans-serif;color:#1A3A4A;">
-        <p>Jauns pieprasījums no anabellaparty.lv anketas${isB2c ? " (privātpersona)" : " (uzņēmums/iestāde)"}:</p>
-        ${rows}
-        ${descHtml}
-      </div>`,
+      html: emailShell(
+        `<h2 style="margin:0 0 12px;font-size:18px;color:${EMAIL_NAVY};">Jauns ${isB2c ? "privātpersonas" : "B2B"} pieprasījums</h2>
+         <p style="margin:0 0 12px;">No anabellaparty.lv anketas${isB2c ? " (privātpersona)" : " (uzņēmums / iestāde)"}:</p>
+         ${infoCard("", rows)}
+         ${descHtml}`,
+        { footer: "" },
+      ),
     });
     if (internal.error) {
       console.error("[lead] Iekšējais e-pasts neizdevās:", JSON.stringify(internal.error));
@@ -217,12 +229,16 @@ export async function POST(req: Request) {
       to: email,
       replyTo: notify,
       subject: "Saņēmām jūsu pieprasījumu — Anabella Party",
-      html: `<meta charset="utf-8"><div style="font-family:Arial,sans-serif;color:#1A3A4A;line-height:1.6;">
-        <p>Sveiki, ${esc(contactF)}!</p>
-        <p>Paldies par pieprasījumu — saņēmām to un sagatavosim piedāvājumu. <b>Atbildēsim 1 darba dienas laikā.</b></p>
-        <p>Ja vēlaties precizēt ātrāk, zvaniet <b>+371 29222761</b> vai rakstiet uz info@anabellaparty.lv.</p>
-        <p style="color:#777">Anabella Party — SIA "AR DIMANTI", PVN maksātājs. Strādājam ar līgumu un rēķinu.</p>
-      </div>`,
+      html: emailShell(
+        `<h2 style="margin:0 0 12px;font-size:20px;color:${EMAIL_GOLD_DARK};">Paldies, ${esc(contactF)}! 🎉</h2>
+         <p style="margin:0 0 12px;">Saņēmām jūsu pieprasījumu un jau sagatavojam piedāvājumu. <b>Atbildēsim 1 darba dienas laikā.</b></p>
+         <p style="margin:0 0 12px;">Ja vēlaties precizēt ātrāk, zvaniet <b>+371 29222761</b> vai vienkārši atbildiet uz šo e-pastu.</p>
+         ${ctaButton("https://www.anabellaparty.lv/foto-kaste", "Apskatīt piedāvājumu")}`,
+        {
+          preheader:
+            "Saņēmām jūsu pieprasījumu — sagatavosim piedāvājumu 1 darba dienas laikā.",
+        },
+      ),
     });
   } catch (e) {
     console.error("[lead] E-pasta izņēmums:", e instanceof Error ? e.message : String(e));

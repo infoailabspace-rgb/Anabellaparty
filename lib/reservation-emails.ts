@@ -3,9 +3,8 @@
 import { Resend } from "resend";
 import { computeQuote, type CartItem } from "@/lib/pricing";
 import type { Product } from "@/lib/products";
+import { emailShell } from "@/lib/email-layout";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.anabellaparty.lv";
 const FROM =
   process.env.BOOKING_FROM_EMAIL || "Anabella Party <onboarding@resend.dev>";
 const NOTIFY = process.env.BOOKING_NOTIFY_EMAIL || "info@anabellaparty.lv";
@@ -62,25 +61,10 @@ export function formatDate(d: string): string {
   return m ? `${m[3]}.${m[2]}.${m[1]}` : String(d ?? "");
 }
 
-// Zīmola HTML ietvars (navy galvene + logo, zelta akcents, balta karte).
-// showFooter=false, ja pamatteksts jau satur savu kontaktu rindu.
+// Zīmola HTML ietvars — kopīgais emailShell (viens patiesības avots visiem
+// e-pastiem). showFooter=false, ja pamatteksts jau satur savu kontaktu rindu.
 function wrap(inner: string, showFooter = true): string {
-  const footer = showFooter
-    ? `<p style="font-size:12px;color:#777;margin-top:20px;">Ja rodas jautājumi — atbildi uz šo e-pastu vai zvani +371 29222761.</p>`
-    : "";
-  return `
-  <div style="font-family:Arial,sans-serif;background:#F5F5F0;padding:16px;">
-    <div style="max-width:600px;margin:0 auto;background:#ffffff;border:1px solid #e6e1d6;border-radius:12px;overflow:hidden;">
-      <div style="background:#1A3A4A;padding:24px;text-align:center;">
-        <img src="${SITE_URL}/logo/logo-full.png" width="170" alt="Anabella Party" style="max-width:170px;height:auto;" />
-      </div>
-      <div style="height:4px;background:#D4A960;"></div>
-      <div style="padding:24px;color:#1A3A4A;font-size:15px;line-height:1.6;">
-        ${inner}
-        ${footer}
-      </div>
-    </div>
-  </div>`;
+  return emailShell(inner, showFooter ? {} : { footer: "" });
 }
 
 type BookingLike = {
@@ -147,7 +131,8 @@ export async function sendReservationEmail(opts: {
       to: opts.to,
       ...(opts.bccNotify ? { bcc: NOTIFY } : {}),
       subject: opts.subject,
-      html: `<meta charset="utf-8">${opts.html}`,
+      // emailShell jau iekļauj <meta charset="utf-8"> — nedublējam.
+      html: opts.html,
     });
     if (res.error) return { ok: false, error: JSON.stringify(res.error) };
     return { ok: true };

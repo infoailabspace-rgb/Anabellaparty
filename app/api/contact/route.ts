@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getSupabaseServer } from "@/lib/supabase";
+import { emailShell, infoCard, infoRow, EMAIL_NAVY } from "@/lib/email-layout";
 
 export const runtime = "nodejs";
 
@@ -97,13 +98,19 @@ export async function POST(req: Request) {
       to: notify,
       replyTo: email, // Roberts var atbildēt tieši sūtītājam
       subject: `Jauns ziņojums no kontaktu formas — ${name}`,
-      html: `<meta charset="utf-8"><div style="font-family:Arial,sans-serif;color:#1A3A4A;">
-        <p>Jauns ziņojums no kontaktu formas <b>anabellaparty.lv</b>:</p>
-        <p><b>Vārds:</b> ${esc(name)}</p>
-        <p><b>E-pasts:</b> ${esc(email)}</p>
-        <p><b>Telefons:</b> ${phone ? esc(phone) : "—"}</p>
-        <p><b>Ziņa:</b><br>${esc(message).replace(/\n/g, "<br>")}</p>
-      </div>`,
+      html: emailShell(
+        `<h2 style="margin:0 0 12px;font-size:18px;color:${EMAIL_NAVY};">Jauns ziņojums no kontaktu formas</h2>
+         ${infoCard(
+           "",
+           [
+             infoRow("Vārds", esc(name)),
+             infoRow("E-pasts", esc(email)),
+             infoRow("Telefons", phone ? esc(phone) : "—"),
+           ].join(""),
+         )}
+         <p style="margin:12px 0 0;"><b>Ziņa:</b><br>${esc(message).replace(/\n/g, "<br>")}</p>`,
+        { footer: "" },
+      ),
     });
     // Resend API kļūda nāk `error` laukā (netiek mesta) — logo un atgriež kļūdu.
     if (r.error) {
