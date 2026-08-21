@@ -7,11 +7,14 @@ export default async function CtaSection({
   text,
   buttonLabel,
   href = "/rezervet",
+  secondary = false,
 }: {
   title?: string;
   text?: string;
   buttonLabel?: string;
   href?: string;
+  // secondary=true → rāda arī B2B pogu "Aprakstiet savu pasākumu" (uz anketu).
+  secondary?: boolean;
 }) {
   const t = await getTranslations("cta");
   return (
@@ -28,12 +31,22 @@ export default async function CtaSection({
         <p className="mt-4 text-lg leading-relaxed text-[#0F1419]/80">
           {text ?? t("text")}
         </p>
-        <Link
-          href={href}
-          className="mt-10 inline-block rounded-full bg-bg px-10 py-4 text-lg font-semibold text-gold shadow-[0_20px_60px_-20px_rgba(15,20,25,0.6)] transition-transform hover:scale-[1.03]"
-        >
-          {buttonLabel ?? t("button")}
-        </Link>
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <Link
+            href={href}
+            className="inline-block rounded-full bg-bg px-10 py-4 text-lg font-semibold text-gold shadow-[0_20px_60px_-20px_rgba(15,20,25,0.6)] transition-transform hover:scale-[1.03]"
+          >
+            {buttonLabel ?? t("button")}
+          </Link>
+          {secondary && (
+            <Link
+              href="/kontakti/#pieprasijums"
+              className="inline-block rounded-full border-2 border-[#0F1419]/70 px-10 py-4 text-lg font-semibold text-[#0F1419] transition-colors hover:border-[#0F1419]"
+            >
+              {t("b2bButton")} →
+            </Link>
+          )}
+        </div>
       </Reveal>
     </section>
   );

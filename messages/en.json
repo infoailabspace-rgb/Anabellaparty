@@ -78,11 +78,11 @@
   "steps": {
     "heading": "How it works",
     "s1Title": "Choose",
-    "s1Text": "Browse the inventory and pick what will make your event special.",
-    "s2Title": "Book",
-    "s2Text": "Fill in the booking in a few minutes — we confirm the date.",
+    "s1Text": "Browse the inventory and choose what suits your event.",
+    "s2Title": "Request",
+    "s2Text": "Fill in a booking or send us your event brief — we confirm the date or prepare a quote.",
     "s3Title": "We arrive",
-    "s3Text": "We deliver, set up and collect. All you have to do is celebrate."
+    "s3Text": "We deliver, set up, operate and collect."
   },
   "about": {
     "eyebrow": "About us",
@@ -117,9 +117,10 @@
     "viewAll": "See all equipment"
   },
   "cta": {
-    "title": "Ready to celebrate?",
-    "text": "Book your equipment today and make your event unforgettable.",
-    "button": "Book now"
+    "title": "Planning an event?",
+    "text": "Book equipment or send us your event brief — we'll prepare a quote within 1 business day.",
+    "button": "Book",
+    "b2bButton": "Describe your event"
   },
   "legal": {
     "bindingNote": "This is a translation provided for convenience. The legally binding version is the Latvian one."

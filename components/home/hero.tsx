@@ -11,7 +11,7 @@ export default function Hero({
   media,
   title = "Neaizmirstamas ballītes sākas šeit",
   accent = "ballītes",
-  subtitle = "Foto kastes, piepūšamās atrakcijas un specefekti Tavam pasākumam. Piegāde visā Latvijā.",
+  subtitle = "Foto kastes, AI foto un pasākumu inventārs korporatīvajiem pasākumiem un svinībām. Piegāde visā Latvijā.",
 }: {
   media?: HeroMediaT | null;
   title?: string;
@@ -92,16 +92,10 @@ export default function Hero({
           >
             {tn("rezervet")}
           </Link>
-          <Link
-            href="/svinibu-inventars"
-            className="rounded-full border border-gold px-8 py-3 font-semibold text-gold transition-colors hover:bg-gold/10"
-          >
-            {th("viewInventory")}
-          </Link>
-          {/* B2B sekundārā poga (§4.1) — 80% klientu ieeja, vizuāli neuzkrītoša */}
+          {/* B2B poga (§4.1) — 80% klientu ieeja */}
           <Link
             href="/kontakti/#pieprasijums"
-            className="rounded-full border border-gold/40 px-8 py-3 font-semibold text-text/80 transition-colors hover:border-gold hover:text-gold"
+            className="rounded-full border border-gold px-8 py-3 font-semibold text-gold transition-colors hover:bg-gold/10"
           >
             {th("b2bCta")} →
           </Link>

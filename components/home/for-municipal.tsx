@@ -44,7 +44,7 @@ export default async function ForMunicipal() {
         <Reveal delay={0.15}>
           <div className="mt-10">
             <Link
-              href="/kontakti/#pieprasijums?source=pasvaldibam"
+              href="/kontakti/?source=pasvaldibam#pieprasijums"
               className="inline-block rounded-full bg-gold px-8 py-3 font-semibold text-black transition-transform hover:scale-[1.03]"
             >
               {t("cta")} →

@@ -77,12 +77,12 @@
   },
   "steps": {
     "heading": "Kā tas notiek",
-    "s1Title": "Izvēlies",
-    "s1Text": "Apskati inventāru un izvēlies, kas padarīs Tavu pasākumu īpašu.",
-    "s2Title": "Rezervē",
-    "s2Text": "Aizpildi rezervāciju dažās minūtēs — mēs apstiprinām datumu.",
+    "s1Title": "Izvēlieties",
+    "s1Text": "Apskatiet inventāru un izvēlieties, kas piemērots jūsu pasākumam.",
+    "s2Title": "Pieprasiet",
+    "s2Text": "Aizpildiet rezervāciju vai atsūtiet pasākuma aprakstu — apstiprinām datumu vai sagatavojam piedāvājumu.",
     "s3Title": "Mēs atbraucam",
-    "s3Text": "Piegādājam, uzstādām un savācam. Tev atliek tikai svinēt."
+    "s3Text": "Piegādājam, uzstādām, apkalpojam un savācam."
   },
   "about": {
     "eyebrow": "Par mums",
@@ -117,9 +117,10 @@
     "viewAll": "Skatīt visu inventāru"
   },
   "cta": {
-    "title": "Gatavs svinēt?",
-    "text": "Rezervē inventāru jau šodien un padari savu pasākumu neaizmirstamu.",
-    "button": "Rezervēt tagad"
+    "title": "Plānojat pasākumu?",
+    "text": "Rezervējiet inventāru vai atsūtiet pasākuma aprakstu — sagatavosim piedāvājumu 1 darba dienas laikā.",
+    "button": "Rezervēt",
+    "b2bButton": "Aprakstiet savu pasākumu"
   },
   "legal": {
     "bindingNote": "Saistošā ir šī — latviešu valodas versija."

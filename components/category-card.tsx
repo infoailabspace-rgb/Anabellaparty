@@ -54,8 +54,8 @@ export default async function CategoryCard({
               aria-hidden="true"
               className="-z-10 object-cover"
             />
-            <div className="absolute inset-0 -z-10 bg-bg/45" />
-            <div className="absolute inset-0 -z-10 bg-gradient-to-t from-bg/90 via-bg/35 to-transparent" />
+            <div className="absolute inset-0 -z-10 bg-black/40" />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
           </>
         ) : (
           <>
@@ -101,10 +101,11 @@ export default async function CategoryCard({
             aria-hidden="true"
             className="-z-10 object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          {/* 1. Viegls vienmērīgs tumšinājums — attēls paliek gaišs; hover vēl gaišāks */}
-          <div className="absolute inset-0 -z-10 bg-bg/45 transition-colors duration-500 group-hover:bg-bg/25" />
-          {/* 2. Gradients: kontrasts TIKAI apakšā, kur teksts; augšā caurspīdīgs → attēls redzams */}
-          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-bg/90 via-bg/35 to-transparent" />
+          {/* Konsekvents tumšinājums neatkarīgi no attēla gaišuma (melns, ne navy),
+              lai gaišie attēli (piem. baltā pils) neizceltos no pārējām kartītēm:
+              1. vienmērīga bāze, 2. gradients caurspīdīgs→tumšs apakšā (teksta zona). */}
+          <div className="absolute inset-0 -z-10 bg-black/40" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         </>
       )}
       <Shimmer delay={index * 0.6} />

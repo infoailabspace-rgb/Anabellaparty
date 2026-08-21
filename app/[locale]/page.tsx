@@ -58,7 +58,7 @@ export default async function Home() {
         accent={g("home.hero.accent", "ballītes")}
         subtitle={g(
           "home.hero.subtitle",
-          "Foto kastes, piepūšamās atrakcijas un specefekti Tavam pasākumam. Piegāde visā Latvijā.",
+          "Foto kastes, AI foto un pasākumu inventārs korporatīvajiem pasākumiem un svinībām. Piegāde visā Latvijā.",
         )}
       />
 
@@ -114,8 +114,8 @@ export default async function Home() {
       {/* Pašvaldībām un valsts iestādēm (§4.6) — pirms noslēdzošā CTA */}
       <ForMunicipal />
 
-      {/* CTA — zelta gradients */}
-      <CtaSection />
+      {/* CTA — zelta gradients; secondary = B2B poga (80% klientu) */}
+      <CtaSection secondary />
     </>
   );
 }
