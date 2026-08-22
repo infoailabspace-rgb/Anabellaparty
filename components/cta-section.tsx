@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import Reveal from "@/components/reveal";
+import CallButton from "@/components/call-button";
 
 export default async function CtaSection({
   title,
@@ -46,6 +47,8 @@ export default async function CtaSection({
               {t("b2bButton")} →
             </Link>
           )}
+          {/* Trešā iespēja — zvanīt (uz zelta fona tumša outline). */}
+          <CallButton source="cta" variant="dark" size="lg" />
         </div>
       </Reveal>
     </section>

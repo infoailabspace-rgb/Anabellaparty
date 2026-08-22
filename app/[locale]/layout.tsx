@@ -8,6 +8,7 @@ import CookieConsent from "@/components/cookie-consent";
 import AnalyticsListener from "@/components/analytics-listener";
 import ScrollToTopOnNav from "@/components/scroll-to-top-on-nav";
 import BackToTop from "@/components/back-to-top";
+import StickyCall from "@/components/sticky-call";
 import SiteFrame from "@/components/site-frame";
 import SiteTexture from "@/components/site-texture";
 
@@ -36,6 +37,7 @@ export default async function LocaleLayout({
         {children}
       </SiteFrame>
       <BackToTop />
+      <StickyCall />
       <CookieConsent />
       <AnalyticsListener />
     </NextIntlClientProvider>

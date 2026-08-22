@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { EASE, word, wordStagger } from "@/lib/motion";
 import HeroMedia from "@/components/hero-media";
+import CallButton from "@/components/call-button";
 import type { HeroMedia as HeroMediaT } from "@/lib/hero-media";
 
 export default function Hero({
@@ -92,13 +93,15 @@ export default function Hero({
           >
             {tn("rezervet")}
           </Link>
-          {/* B2B poga (§4.1) — 80% klientu ieeja */}
+          {/* B2B poga (§4.1) — TIKAI desktopā (mobilajā rāda Rezervēt + Zvanīt) */}
           <Link
             href="/kontakti/#pieprasijums"
-            className="rounded-full border border-gold px-8 py-3 font-semibold text-gold transition-colors hover:bg-gold/10"
+            className="hidden rounded-full border border-gold px-8 py-3 font-semibold text-gold transition-colors hover:bg-gold/10 sm:inline-flex"
           >
             {th("b2bCta")} →
           </Link>
+          {/* Zvanīšana — sekundāra (outline), vienmēr redzama */}
+          <CallButton source="hero" variant="outline" />
         </motion.div>
       </div>
 

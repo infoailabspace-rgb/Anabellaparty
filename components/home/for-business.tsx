@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import Reveal from "@/components/reveal";
+import CallButton from "@/components/call-button";
 
 // "Pasākums uzņēmumam vai iestādei" (B2B spec §4.3) — 4 kartītes + CTA uz anketu.
 // Enkurs #uznemumiem (hero sekundārā poga ved šeit).
@@ -38,13 +39,14 @@ export default async function ForBusiness() {
           ))}
         </div>
         <Reveal delay={0.1}>
-          <div className="mt-10">
+          <div className="mt-10 flex flex-wrap gap-4">
             <Link
               href="/kontakti/#pieprasijums"
-              className="inline-block rounded-full bg-gold px-8 py-3 font-semibold text-black transition-transform hover:scale-[1.03]"
+              className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-black transition-transform hover:scale-[1.03]"
             >
               {t("cta")} →
             </Link>
+            <CallButton source="uznemumiem" variant="outline" />
           </div>
         </Reveal>
       </div>

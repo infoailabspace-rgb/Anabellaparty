@@ -4,6 +4,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import B2bEnquiryForm from "@/components/b2b-enquiry-form";
 import Reveal from "@/components/reveal";
+import CallButton from "@/components/call-button";
 import { getContent } from "@/lib/site-content";
 import { COMPANY, fullAddress } from "@/lib/company";
 import { pageMetadata } from "@/lib/seo";
@@ -54,6 +55,9 @@ export default async function KontaktiPage() {
               <h2 className="font-display text-xl font-semibold text-gold">
                 {ts("cReachUs")}
               </h2>
+              <div className="mt-4">
+                <CallButton source="kontakti" variant="primary" />
+              </div>
               <ul className="mt-4 space-y-3 text-text/85">
                 <li>
                   <a href={`tel:${COMPANY.contact.phone}`} className="transition-colors hover:text-gold">

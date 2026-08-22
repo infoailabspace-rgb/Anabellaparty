@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import Reveal from "@/components/reveal";
+import CallButton from "@/components/call-button";
 
 // "Pašvaldībām un valsts iestādēm" (B2B spec §4.6) — vizuāli atdalīta (cits fons),
 // 3 kolonnas + dokumentu pogas + CTA uz anketu ar source=pasvaldibam.
@@ -42,13 +43,14 @@ export default async function ForMunicipal() {
         </div>
 
         <Reveal delay={0.15}>
-          <div className="mt-10">
+          <div className="mt-10 flex flex-wrap gap-4">
             <Link
               href="/kontakti/?source=pasvaldibam#pieprasijums"
-              className="inline-block rounded-full bg-gold px-8 py-3 font-semibold text-black transition-transform hover:scale-[1.03]"
+              className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-black transition-transform hover:scale-[1.03]"
             >
               {t("cta")} →
             </Link>
+            <CallButton source="pasvaldibam" variant="outline" />
           </div>
         </Reveal>
       </div>

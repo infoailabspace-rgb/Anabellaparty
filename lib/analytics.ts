@@ -66,4 +66,10 @@ export function trackContactClick(
 ) {
   track("contact_click", { method, context });
 }
+
+// tel: klikšķis ar lapas slug avotu (Google Ads/GA4). B2B daļa zvana — bez šī
+// notikuma kampaņas izskatās sliktākas, nekā ir.
+export function trackPhoneClick(source: string) {
+  track("phone_click", { lead_source: source });
+}
 /* eslint-enable @typescript-eslint/no-explicit-any */
