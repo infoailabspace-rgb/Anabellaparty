@@ -8,7 +8,7 @@ export default async function FotoKasteB2b() {
   const t = await getTranslations("fkB2b");
   const taeo = await getTranslations("fkAeo");
   const included = [
-    t("inc1"), t("inc2"), t("inc3"), t("inc4"), t("inc5"), t("inc6"), t("inc7"),
+    t("inc1"), t("inc2"), t("inc3"), t("inc4"), t("inc5"), t("inc6"),
   ];
   const faq = [
     { q: t("q1"), a: t("a1") },
@@ -50,6 +50,10 @@ export default async function FotoKasteB2b() {
               </li>
             ))}
           </ul>
+          {/* Piegāde NAV iekļauta cenā (izņemot Ķekavu) — atsevišķa rinda, ne saraksta punkts. */}
+          <p className="mt-6 border-t border-gold/15 pt-6 text-sm leading-relaxed text-text/70">
+            {t("deliveryNote")}
+          </p>
         </div>
       </Reveal>
 

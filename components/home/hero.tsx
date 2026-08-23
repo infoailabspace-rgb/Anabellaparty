@@ -12,7 +12,7 @@ export default function Hero({
   media,
   title = "Neaizmirstamas ballītes sākas šeit",
   accent = "ballītes",
-  subtitle = "Foto kastes, AI foto un pasākumu inventārs korporatīvajiem pasākumiem un svinībām. Piegāde visā Latvijā.",
+  subtitle = "Foto kastes, AI foto un pasākumu inventārs korporatīvajiem pasākumiem un svinībām. Strādājam visā Latvijā.",
 }: {
   media?: HeroMediaT | null;
   title?: string;
