@@ -116,6 +116,7 @@ export async function saveAifotoGallery(images: string[]) {
 export type AiPartyBannerData = {
   is_active: boolean;
   url: string;
+  image: string; // fona attēls (storage URL); tukšs → publiski nerādās
   badge: ML;
   title: ML;
   text: ML;
@@ -126,6 +127,7 @@ export async function saveAiPartyBanner(d: AiPartyBannerData) {
   const value = {
     is_active: !!d.is_active,
     url: (d.url || "").trim(),
+    image: { url: (d.image || "").trim() || null },
     badge: d.badge,
     title: d.title,
     text: d.text,

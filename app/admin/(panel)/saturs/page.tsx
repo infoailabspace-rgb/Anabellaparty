@@ -81,6 +81,7 @@ export default async function SatursPage() {
   const aiPartyBanner: AiPartyBannerValue = {
     is_active: bannerRaw.is_active === true,
     url: bannerRaw.url ?? "",
+    image: bannerRaw.image?.url ?? "",
     badge: ml(bannerRaw.badge),
     title: ml(bannerRaw.title),
     text: ml(bannerRaw.text),
