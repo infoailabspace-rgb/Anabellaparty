@@ -118,6 +118,43 @@ export function productNode(p: Product, locale: string, pagePath: string) {
   return node;
 }
 
+// AI foto funkcija — NAV atsevišķs produkts, bet piedeva jebkurai foto kastei
+// (+100 €). Modelējam kā Product ar Offer, lai AI/Google redz fiksētu cenu;
+// aprakstā skaidri norādīts, ka tā ir piedeva ("papildus izvēlētās foto kastes
+// cenai"). name/description nāk lokalizēti no lapas (lv/en/ru).
+export function aiFotoProductNode(
+  locale: string,
+  name: string,
+  description: string,
+) {
+  const pageUrl = `${SITE_URL}${localizedPath(locale, "/foto-kaste/ai-foto")}`;
+  return {
+    "@type": "Product",
+    name,
+    description,
+    category: "Foto kastes noma",
+    brand: { "@type": "Brand", name: COMPANY.brandName },
+    url: pageUrl,
+    offers: {
+      "@type": "Offer",
+      price: 100,
+      priceCurrency: "EUR",
+      validFrom: PRICE_VALID_FROM,
+      priceValidUntil: PRICE_VALID_UNTIL,
+      availability: "https://schema.org/InStock",
+      url: pageUrl,
+      seller: { "@id": `${SITE_URL}/#business` },
+      // Piedeva +100 € BEZ PVN.
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: 100,
+        priceCurrency: "EUR",
+        valueAddedTaxIncluded: false,
+      },
+    },
+  };
+}
+
 // FAQPage — no getFaqs() (izvēlētajā valodā).
 export function faqPageNode(faqs: FaqItem[]) {
   return {

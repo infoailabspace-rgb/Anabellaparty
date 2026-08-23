@@ -6,7 +6,12 @@ import ImageGallery from "@/components/image-gallery";
 import Reveal from "@/components/reveal";
 import { pageMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/json-ld";
-import { graph, breadcrumbNode } from "@/lib/schema";
+import {
+  graph,
+  breadcrumbNode,
+  aiFotoProductNode,
+  localBusinessNode,
+} from "@/lib/schema";
 import { getAifoto } from "@/lib/ai-foto";
 import EventGallery from "@/components/event-gallery";
 import { getGallery } from "@/lib/site-data";
@@ -52,10 +57,14 @@ export default async function AiFotoPage() {
   const price = af.price || ts("afPrice");
   const themes = af.themes.length ? af.themes : themeKeys.map((k) => ts(k));
   const gallery = af.gallery.length ? af.gallery : aiGalleryFallback;
+  // JSON-LD apraksts: kas tā ir (intro) + cena/piedeva (price) — lokalizēts.
+  const aiFotoDesc = `${intro} ${price}`.trim();
   return (
     <>
       <JsonLd
         data={graph(
+          localBusinessNode(),
+          aiFotoProductNode(locale, t("aiFotoTitle"), aiFotoDesc),
           breadcrumbNode(locale, [
             { name: t("fotoKasteTitle"), path: "/foto-kaste" },
             { name: t("aiFotoTitle"), path: "/foto-kaste/ai-foto" },

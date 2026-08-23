@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import JsonLd from "@/components/seo/json-ld";
-import { graph, productNode, breadcrumbNode, faqPageNode } from "@/lib/schema";
+import {
+  graph,
+  productNode,
+  breadcrumbNode,
+  faqPageNode,
+  localBusinessNode,
+} from "@/lib/schema";
 import { getAllProducts } from "@/lib/catalog";
 import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
@@ -64,6 +70,7 @@ export default async function FotoKastePage() {
     <>
       <JsonLd
         data={graph(
+          localBusinessNode(),
           ...fkProducts.map((p) => productNode(p, locale, "/foto-kaste")),
           faqPageNode(fkFaqs),
           breadcrumbNode(locale, [
