@@ -510,5 +510,12 @@
     "errEmail": "Nederīgs e-pasts",
     "errPhone": "Norādiet tālruni",
     "errSend": "Neizdevās nosūtīt. Mēģiniet vēlreiz vai zvaniet +371 29222761."
+  },
+  "aiParty": {
+    "badge": "Jauns pakalpojums",
+    "title": "AI Party — izklaides punkts",
+    "text": "AI foto kabīne un personalizētas viktorīnas jūsu pasākumam. Jebkurš ekrāns kļūst par izklaides punktu — viesi skenē QR, fotografējas ar AI tēliem vai spēlē viktorīnu.",
+    "cta": "Uzzināt vairāk",
+    "soon": "Drīzumā"
   }
 }

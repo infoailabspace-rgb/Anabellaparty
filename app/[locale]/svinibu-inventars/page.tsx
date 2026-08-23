@@ -4,6 +4,7 @@ import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
 import SectionHero from "@/components/section-hero";
 import CategoryCard from "@/components/category-card";
+import AiPartyBanner from "@/components/ai-party-banner";
 import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
 import DepthBg from "@/components/depth-bg";
@@ -48,6 +49,10 @@ export default async function SvinibuInventarsPage() {
               </Reveal>
             ))}
           </div>
+          {/* AI Party banneris — pilnā platumā zem kategoriju režģa (cits produkts). */}
+          <Reveal className="mt-8">
+            <AiPartyBanner />
+          </Reveal>
         </div>
       </section>
       <CtaSection />

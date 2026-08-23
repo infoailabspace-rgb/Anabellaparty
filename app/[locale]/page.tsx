@@ -6,6 +6,7 @@ import ForBusiness from "@/components/home/for-business";
 import ForMunicipal from "@/components/home/for-municipal";
 import Testimonials from "@/components/home/testimonials";
 import CategoryCard from "@/components/category-card";
+import AiPartyBanner from "@/components/ai-party-banner";
 import CtaSection from "@/components/cta-section";
 import Reveal from "@/components/reveal";
 import DepthBg from "@/components/depth-bg";
@@ -89,6 +90,10 @@ export default async function Home() {
               </Reveal>
             ))}
           </div>
+          {/* AI Party banneris — pilnā platumā zem kategoriju režģa (cits produkts). */}
+          <Reveal className="mt-8">
+            <AiPartyBanner />
+          </Reveal>
         </div>
       </section>
 
