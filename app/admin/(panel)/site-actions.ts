@@ -112,6 +112,28 @@ export async function saveAifotoGallery(images: string[]) {
   return upsertContent("aifoto.gallery", { images }, "json");
 }
 
+/* ── AI Party banneris (site_content 'aiparty.banner', salikts jsonb) ── */
+export type AiPartyBannerData = {
+  is_active: boolean;
+  url: string;
+  badge: ML;
+  title: ML;
+  text: ML;
+  cta: ML;
+};
+
+export async function saveAiPartyBanner(d: AiPartyBannerData) {
+  const value = {
+    is_active: !!d.is_active,
+    url: (d.url || "").trim(),
+    badge: d.badge,
+    title: d.title,
+    text: d.text,
+    cta: d.cta,
+  };
+  return upsertContent("aiparty.banner", value, "json");
+}
+
 /* ── Atsauksmes ── */
 export async function upsertTestimonial(
   id: string | null,

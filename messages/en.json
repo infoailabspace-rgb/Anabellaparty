@@ -512,9 +512,6 @@
     "errSend": "Could not send. Try again or call +371 29222761."
   },
   "aiParty": {
-    "badge": "New service",
-    "title": "AI Party — the entertainment spot",
-    "text": "An AI photo booth and personalised quizzes for your event. Any screen becomes an entertainment spot — guests scan a QR code, take photos with AI characters or play a quiz.",
     "cta": "Learn more",
     "soon": "Coming soon"
   }

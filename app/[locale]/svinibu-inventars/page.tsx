@@ -49,10 +49,9 @@ export default async function SvinibuInventarsPage() {
               </Reveal>
             ))}
           </div>
-          {/* AI Party banneris — pilnā platumā zem kategoriju režģa (cits produkts). */}
-          <Reveal className="mt-8">
-            <AiPartyBanner />
-          </Reveal>
+          {/* AI Party banneris — pilnā platumā zem kategoriju režģa (cits produkts).
+              Saturs+slēdzis no DB (site_content); izslēgts → nerādās (bez atstarpes). */}
+          <AiPartyBanner />
         </div>
       </section>
       <CtaSection />

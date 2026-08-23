@@ -2,6 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import ContentEditor from "./content-editor";
 import HeroMediaAdmin, { type HeroPage } from "./hero-media-admin";
 import PageImagesAdmin from "./page-images-admin";
+import AiPartyBannerAdmin, {
+  type AiPartyBannerValue,
+} from "./ai-party-banner-admin";
 import {
   HERO_VIDEO_PAGES,
   HERO_IMAGE_PAGES,
@@ -68,6 +71,22 @@ export default async function SatursPage() {
     };
   });
 
+  // AI Party banneris (salikts jsonb; tukšs → noklusējuma tukšas ML).
+  const bannerRaw: any = map.get("aiparty.banner")?.value ?? {};
+  const ml = (v: any): { lv: string; en: string; ru: string } => ({
+    lv: v?.lv ?? "",
+    en: v?.en ?? "",
+    ru: v?.ru ?? "",
+  });
+  const aiPartyBanner: AiPartyBannerValue = {
+    is_active: bannerRaw.is_active === true,
+    url: bannerRaw.url ?? "",
+    badge: ml(bannerRaw.badge),
+    title: ml(bannerRaw.title),
+    text: ml(bannerRaw.text),
+    cta: ml(bannerRaw.cta),
+  };
+
   const imgUrl = (k: string) =>
     (map.get(k)?.value as { url?: string } | undefined)?.url ?? null;
   const pageImages: Record<string, string | null> = {
@@ -90,6 +109,7 @@ export default async function SatursPage() {
   return (
     <>
       <ContentEditor items={items} />
+      <AiPartyBannerAdmin banner={aiPartyBanner} />
       <PageImagesAdmin values={pageImages} />
       <HeroMediaAdmin pages={heroPages} />
     </>
