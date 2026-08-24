@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import Reveal from "@/components/reveal";
+import Shimmer from "@/components/shimmer";
 import { getAiPartyBanner } from "@/lib/ai-party-banner";
 
 // AI Party — jauns pakalpojums, reklāmas banneris zem kategoriju režģa. Stils =
@@ -33,6 +34,10 @@ export default async function AiPartyBanner() {
             gradients apakšā, kur teksts). */}
         <div className="absolute inset-0 -z-10 bg-black/40" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+
+        {/* Zelta mirdzums — TIEŠI tas pats slānis, kas kategoriju kartēm
+            (anabella-shimmer, pārslīd pāri), lai vizuāli saskan. */}
+        <Shimmer />
 
         {/* Teksts apakšējā daļā (kā kartēs) + poga */}
         <div className="flex h-full flex-col justify-end p-6 sm:p-8">
