@@ -108,6 +108,12 @@ export default async function BookingPage({
   );
   const mailSubject = encodeURIComponent(`Anabella Party — pieteikums ${b.event_date}`);
 
+  // Waze navigācijas adrese: ģeokodētā (precīzākā) → klienta ievadītā → norises vieta.
+  // Pogu nerāda, ja rezultāts tukšs, "-", vai īsāks par 3 rakstzīmēm.
+  const wazeAddress = [b.delivery_geocoded, b.delivery_address, b.location]
+    .map((s) => (s ?? "").trim())
+    .find((s) => s.length >= 3 && s !== "-");
+
   return (
     <div>
       <BackButton fallback="/admin" />
@@ -179,6 +185,16 @@ export default async function BookingPage({
               >
                 ✉ {b.email}
               </a>
+              {wazeAddress && (
+                <a
+                  href={`https://waze.com/ul?q=${encodeURIComponent(wazeAddress)}&navigate=yes`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-gold px-5 py-2 text-sm font-semibold text-gold"
+                >
+                  🚗 Waze
+                </a>
+              )}
             </div>
           </section>
 
