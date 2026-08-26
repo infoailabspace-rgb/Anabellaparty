@@ -68,20 +68,37 @@ export default async function MusuDraugiPage() {
                       pusē pilnā kartītes augstumā (object-cover, bez izstiepšanas) */}
                   {p.logoUrl && (
                     <div className="relative aspect-[4/3] w-full md:aspect-auto md:min-h-[15rem]">
-                      <Image
-                        src={p.logoUrl}
-                        alt={p.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 40vw"
-                        className="object-cover"
-                      />
+                      {p.url ? (
+                        <a
+                          href={p.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="absolute inset-0"
+                        >
+                          <Image
+                            src={p.logoUrl}
+                            alt={p.name}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 40vw"
+                            className="object-cover"
+                          />
+                        </a>
+                      ) : (
+                        <Image
+                          src={p.logoUrl}
+                          alt={p.name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 40vw"
+                          className="object-cover"
+                        />
+                      )}
                     </div>
                   )}
                   <div className="flex flex-col p-6 sm:p-8">
                     <h2 className="font-display text-xl font-semibold text-gold">
                       {p.name}
                     </h2>
-                    <p className="mt-3 flex-1 text-sm leading-relaxed text-text/75">
+                    <p className="mt-3 flex-1 whitespace-pre-line text-sm leading-relaxed text-text/75">
                       {p.description}
                     </p>
                     {p.url && (
