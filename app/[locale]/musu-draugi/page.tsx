@@ -57,41 +57,27 @@ export default async function MusuDraugiPage() {
           </Reveal>
         ) : (
           <div className="mx-auto max-w-4xl space-y-6">
-            {partners.map((p, i) => (
-              <Reveal key={p.id ?? p.name} delay={i * 0.08}>
+            {partners.map((p, i) => {
+              // Visa kartīte ir klikšķināma, ja url aizpildīts. Lai neveidotos
+              // ligzdota saite (<a> iekš <a>), attēls nav atsevišķa saite un
+              // "Apmeklēt →" ir <span> (vizuāla norāde), nevis otra <a>.
+              const card = (
                 <div
-                  className={`grid overflow-hidden rounded-2xl border-2 border-gold/25 bg-navy/25 ${
-                    p.logoUrl ? "md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]" : ""
-                  }`}
+                  className={`grid overflow-hidden rounded-2xl border-2 border-gold/25 bg-navy/25 transition ${
+                    p.url ? "hover:border-gold/60 hover:bg-navy/40" : ""
+                  } ${p.logoUrl ? "md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]" : ""}`}
                 >
                   {/* Attēls: mobilajā virs teksta (aspect 4:3), desktopā kreisajā
                       pusē pilnā kartītes augstumā (object-cover, bez izstiepšanas) */}
                   {p.logoUrl && (
                     <div className="relative aspect-[4/3] w-full md:aspect-auto md:min-h-[15rem]">
-                      {p.url ? (
-                        <a
-                          href={p.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="absolute inset-0"
-                        >
-                          <Image
-                            src={p.logoUrl}
-                            alt={p.name}
-                            fill
-                            sizes="(max-width: 768px) 100vw, 40vw"
-                            className="object-cover"
-                          />
-                        </a>
-                      ) : (
-                        <Image
-                          src={p.logoUrl}
-                          alt={p.name}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 40vw"
-                          className="object-cover"
-                        />
-                      )}
+                      <Image
+                        src={p.logoUrl}
+                        alt={p.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 40vw"
+                        className="object-cover"
+                      />
                     </div>
                   )}
                   <div className="flex flex-col p-6 sm:p-8">
@@ -102,19 +88,30 @@ export default async function MusuDraugiPage() {
                       {p.description}
                     </p>
                     {p.url && (
-                      <a
-                        href={p.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-4 inline-block text-sm font-semibold text-gold hover:underline"
-                      >
+                      <span className="mt-4 inline-block text-sm font-semibold text-gold group-hover:underline">
                         {t("visitLink")}
-                      </a>
+                      </span>
                     )}
                   </div>
                 </div>
-              </Reveal>
-            ))}
+              );
+              return (
+                <Reveal key={p.id ?? p.name} delay={i * 0.08}>
+                  {p.url ? (
+                    <a
+                      href={p.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block"
+                    >
+                      {card}
+                    </a>
+                  ) : (
+                    card
+                  )}
+                </Reveal>
+              );
+            })}
           </div>
         )}
       </div>
