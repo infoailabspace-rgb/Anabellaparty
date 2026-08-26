@@ -64,14 +64,22 @@ function Card({
 
   return (
     <div className="rounded-2xl border border-gold/25 bg-navy/30 p-4">
-      <div className="flex items-center gap-2">
-        <div className="flex flex-col text-xs leading-none">
+      <div className="flex items-start gap-2">
+        <div className="flex flex-col pt-7 text-xs leading-none">
           <button onClick={() => onMove(index, -1)} disabled={index === 0} className="text-text/40 hover:text-gold disabled:opacity-30">▲</button>
           <button onClick={() => onMove(index, 1)} disabled={index === count - 1} className="text-text/40 hover:text-gold disabled:opacity-30">▼</button>
         </div>
-        <input placeholder="Nosaukums (īpašvārds)" value={row.name} onChange={(e) => set({ name: e.target.value })} className={`${field} flex-1`} />
-        <input placeholder="Saite (URL, neobligāta)" value={row.url} onChange={(e) => set({ url: e.target.value })} className={`${field} w-64`} />
-        <label className="flex shrink-0 items-center gap-1 text-xs"><input type="checkbox" checked={row.is_active} onChange={(e) => set({ is_active: e.target.checked })} className="accent-[#D4A960]" /> Aktīvs</label>
+        <div className="flex-1 space-y-2">
+          <div>
+            <label className="mb-1 block text-xs text-text/50">Nosaukums</label>
+            <input placeholder="Nosaukums (īpašvārds)" value={row.name} onChange={(e) => set({ name: e.target.value })} className={field} />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-text/50">Mājaslapa</label>
+            <input placeholder="Saite (URL, neobligāta)" value={row.url} onChange={(e) => set({ url: e.target.value })} className={field} />
+          </div>
+        </div>
+        <label className="flex shrink-0 items-center gap-1 pt-7 text-xs"><input type="checkbox" checked={row.is_active} onChange={(e) => set({ is_active: e.target.checked })} className="accent-[#D4A960]" /> Aktīvs</label>
       </div>
       <div className="mt-3 flex items-center gap-3">
         <div className="relative flex h-20 w-32 shrink-0 items-center justify-center overflow-hidden rounded border border-gold/20 bg-navy">
