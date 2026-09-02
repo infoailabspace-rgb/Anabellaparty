@@ -96,8 +96,7 @@ export default function NewBookingForm({
   }, [items, products]);
 
   const grandTotal =
-    (finalTotal.trim() ? Number(finalTotal) : quote.subtotal) +
-    (Number(deliveryCost) || 0);
+    finalTotal.trim() ? Number(finalTotal) : quote.subtotal + (Number(deliveryCost) || 0);
 
   const custMatches = useMemo(() => {
     const q = custQuery.trim().toLowerCase();

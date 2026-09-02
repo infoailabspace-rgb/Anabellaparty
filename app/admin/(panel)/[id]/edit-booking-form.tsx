@@ -132,8 +132,7 @@ export default function EditBookingForm({
     }
   }, [items, products]);
   const grandTotal =
-    (finalTotal.trim() ? Number(finalTotal) : quote.subtotal) +
-    (Number(deliveryCost) || 0);
+    finalTotal.trim() ? Number(finalTotal) : quote.subtotal + (Number(deliveryCost) || 0);
 
   const addLine = () =>
     setLines((l) => [
