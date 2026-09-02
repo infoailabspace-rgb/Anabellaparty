@@ -36,7 +36,7 @@ export default function CookieConsent() {
   if (!ready || !visible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[60] p-4">
+    <div className="fixed inset-x-0 bottom-0 z-[75] p-4">
       <div className="mx-auto max-w-3xl rounded-2xl border-2 border-gold/40 bg-navy/95 p-6 shadow-2xl backdrop-blur">
         <h2 className="font-display text-lg font-semibold text-gold">
           Mēs izmantojam sīkdatnes
