@@ -25,6 +25,13 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
+  // Kad mobilā izvēlne atvērta, iezīmē <body>, lai peldošās pogas (zvans/čats)
+  // nepārklātu izvēlni. Skat. sticky-call.tsx / chat-widget.tsx.
+  useEffect(() => {
+    document.body.toggleAttribute("data-menu-open", open);
+    return () => document.body.removeAttribute("data-menu-open");
+  }, [open]);
+
   // Dropdown: JS kontrole ar aizvēršanas aizturi (150ms), lai neaizvērtos,
   // ejot no pogas uz izvēlni. Tikai viena izvēlne atvērta vienlaikus.
   const [openMenu, setOpenMenu] = useState<string | null>(null);

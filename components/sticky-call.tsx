@@ -23,7 +23,7 @@ export default function StickyCall() {
       href={`tel:${COMPANY.contact.phone}`}
       onClick={() => trackPhoneClick(`sticky:${slugFromPath(pathname)}`)}
       aria-label={`Zvanīt ${COMPANY.contact.phoneDisplay}`}
-      className="fixed bottom-5 left-5 z-[60] flex items-center gap-2 rounded-full bg-gold px-5 py-3 font-semibold text-black shadow-[0_10px_30px_-8px_rgba(212,169,96,0.6)] transition-transform hover:scale-105 md:hidden"
+      className="fixed bottom-5 left-5 z-[60] flex items-center gap-2 rounded-full bg-gold px-5 py-3 font-semibold text-black shadow-[0_10px_30px_-8px_rgba(212,169,96,0.6)] transition-transform hover:scale-105 md:hidden menu-open:hidden"
     >
       <svg
         viewBox="0 0 24 24"

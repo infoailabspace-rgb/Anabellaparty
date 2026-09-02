@@ -159,7 +159,7 @@ export default function ChatWidget() {
           setPulse(false);
         }}
         aria-label={open ? "Aizvērt čatu" : "Atvērt čatu"}
-        className={`fixed bottom-5 right-5 z-[70] flex h-14 w-14 items-center justify-center rounded-full bg-gold text-black shadow-[0_10px_30px_-8px_rgba(212,169,96,0.6)] transition-transform hover:scale-105 ${
+        className={`fixed bottom-5 right-5 z-[70] flex h-14 w-14 items-center justify-center rounded-full bg-gold text-black shadow-[0_10px_30px_-8px_rgba(212,169,96,0.6)] transition-transform hover:scale-105 menu-open:hidden ${
           pulse && !open ? "anabella-chat-pulse" : ""
         }`}
       >
@@ -177,7 +177,7 @@ export default function ChatWidget() {
         <div
           role="dialog"
           aria-label="Anabella Party čats"
-          className="fixed inset-0 z-[69] flex flex-col bg-navy sm:inset-auto sm:bottom-24 sm:right-5 sm:h-[560px] sm:w-[380px] sm:rounded-2xl sm:border sm:border-gold/30 sm:shadow-2xl overflow-hidden"
+          className="fixed inset-0 z-[69] flex flex-col bg-navy sm:inset-auto sm:bottom-24 sm:right-5 sm:h-[560px] sm:w-[380px] sm:rounded-2xl sm:border sm:border-gold/30 sm:shadow-2xl overflow-hidden menu-open:hidden"
         >
           {/* Galvene */}
           <div className="flex items-center justify-between border-b border-gold/25 bg-navy/80 px-4 py-3">

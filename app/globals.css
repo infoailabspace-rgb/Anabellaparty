@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Aktīvs, kad navbar iestata <body data-menu-open> (mobilā izvēlne atvērta).
+   Lieto: menu-open:hidden peldošajām pogām (zvans/čats), lai nepārklāj izvēlni. */
+@custom-variant menu-open (body[data-menu-open] &);
+
 :root {
   --navy: #1a3a4a;
   --gold: #d4a960;
