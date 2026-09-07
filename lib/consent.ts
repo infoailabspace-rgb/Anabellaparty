@@ -5,7 +5,7 @@
 
 export const CONSENT_KEY = "anabella-cookie-consent";
 // Divi GTM konteineri strādā vienlaikus (analītiskā piekrišana).
-export const GTM_IDS = ["GTM-WDQZZ5PG", "GTM-KVGCFPCT"] as const;
+export const GTM_IDS = ["GTM-WDQZZ5PG"] as const;
 export const GA4_ID = "G-717L3W9PNX"; // GA4 patstāvīgi caur gtag.js (analītiskā)
 export const CLARITY_ID = "u9ppb0vish"; // Microsoft Clarity (analītiskā, ne reklāmas)
 export const FB_PIXEL_ID = "896953122077848"; // Meta Pixel (mārketinga)
