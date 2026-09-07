@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { motion, useReducedMotion } from "framer-motion";
 import { Link, usePathname } from "@/i18n/navigation";
 import LocaleSwitcher from "@/components/locale-switcher";
 import {
@@ -21,7 +20,6 @@ const linkBase =
 export default function Navbar() {
   const t = useTranslations("nav");
   const pathname = usePathname();
-  const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
@@ -260,10 +258,7 @@ export default function Navbar() {
             {t("rezervet")}
           </Link>
           <LocaleSwitcher className="ml-6 border-l border-gold/20 pl-6" />
-          <NavSocials
-            reduce={!!reduce}
-            className="ml-4 hidden border-l border-gold/20 pl-4 2xl:flex"
-          />
+          <NavSocials className="ml-4 hidden border-l border-gold/20 pl-4 2xl:flex" />
         </div>
 
         {/* Mobile: valodas pārslēdzējs VIENMĒR redzams + hamburgeris */}
@@ -394,7 +389,7 @@ export default function Navbar() {
             </Link>
             <div className="mt-4 flex flex-col items-center gap-3 border-t border-gold/20 pt-4">
               <LocaleSwitcher variant="inline" />
-              <NavSocials reduce={!!reduce} />
+              <NavSocials />
             </div>
           </div>
         </div>
@@ -404,13 +399,7 @@ export default function Navbar() {
 }
 
 // Sociālās ikonas: Instagram/Facebook statiskas; WhatsApp lēkā ik 4 sekundes.
-function NavSocials({
-  reduce,
-  className = "flex",
-}: {
-  reduce: boolean;
-  className?: string;
-}) {
+function NavSocials({ className = "flex" }: { className?: string }) {
   return (
     <div className={`items-center gap-4 ${className}`}>
       <a
@@ -431,27 +420,15 @@ function NavSocials({
       >
         <FacebookIcon className="h-5 w-5" />
       </a>
-      <motion.a
+      <a
         href="https://wa.me/37129222761"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp"
-        className="text-gold"
-        animate={reduce ? undefined : { y: [0, -6, 0, -3, 0] }}
-        transition={
-          reduce
-            ? undefined
-            : {
-                duration: 0.6,
-                times: [0, 0.25, 0.5, 0.75, 1],
-                repeat: Infinity,
-                repeatDelay: 3.4,
-              }
-        }
-        whileHover={{ scale: 1.15 }}
+        className="text-gold transition-transform hover:scale-[1.15]"
       >
-        <WhatsAppIcon className="h-5 w-5" />
-      </motion.a>
+        <WhatsAppIcon className="anabella-wa-bounce h-5 w-5" />
+      </a>
     </div>
   );
 }

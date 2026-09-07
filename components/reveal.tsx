@@ -1,8 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
-import { EASE, viewportOnce } from "@/lib/motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { useInView } from "@/lib/use-in-view";
 
 export default function Reveal({
   children,
@@ -14,20 +14,22 @@ export default function Reveal({
   delay?: number;
 }) {
   const reduce = useReducedMotion();
+  const { ref, inView } = useInView<HTMLDivElement>({
+    once: true,
+    rootMargin: "-100px",
+  });
 
   if (reduce) {
     return <div className={className}>{children}</div>;
   }
 
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={viewportOnce}
-      transition={{ duration: 0.6, delay, ease: EASE }}
+    <div
+      ref={ref}
+      className={`reveal-up${inView ? " is-visible" : ""}${className ? ` ${className}` : ""}`}
+      style={delay ? { transitionDelay: `${delay}s` } : undefined}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

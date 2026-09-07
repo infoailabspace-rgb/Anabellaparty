@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { useTranslations } from "next-intl";
 import Reveal from "@/components/reveal";
 

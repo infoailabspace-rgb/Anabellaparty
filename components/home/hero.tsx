@@ -1,9 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
-import { EASE, word, wordStagger } from "@/lib/motion";
 import HeroMedia from "@/components/hero-media";
 import CallButton from "@/components/call-button";
 import type { HeroMedia as HeroMediaT } from "@/lib/hero-media";
@@ -19,7 +17,6 @@ export default function Hero({
   accent?: string;
   subtitle?: string;
 }) {
-  const reduce = useReducedMotion();
   const tn = useTranslations("nav");
   const th = useTranslations("home");
   const HEADLINE = title.split(" ");
@@ -51,41 +48,32 @@ export default function Hero({
       )}
 
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
-        <motion.h1
-          className="font-display font-bold leading-[0.95] tracking-tight text-[clamp(2.5rem,7vw,5.5rem)]"
-          variants={reduce ? undefined : wordStagger}
-          initial={reduce ? undefined : "hidden"}
-          animate={reduce ? undefined : "show"}
-        >
+        <h1 className="font-display font-bold leading-[0.95] tracking-tight text-[clamp(2.5rem,7vw,5.5rem)]">
           {HEADLINE.map((w, i) => (
-            <motion.span
+            <span
               key={`${w}-${i}`}
-              variants={reduce ? undefined : word}
-              className={`inline-block ${w === GOLD_WORD ? "text-gold" : ""}`}
+              className={`anabella-word ${w === GOLD_WORD ? "text-gold" : ""}`}
+              style={{ animationDelay: `${i * 0.06}s` }}
             >
               {w}
               {i < HEADLINE.length - 1 ? " " : ""}
-            </motion.span>
+            </span>
           ))}
-        </motion.h1>
+        </h1>
 
         {/* Zelta hairline, kas ievelkas */}
         <div className="mx-auto mt-6 h-px w-20 bg-gold anabella-hairline" />
 
-        <motion.p
-          className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text/80"
-          initial={reduce ? undefined : { opacity: 0, y: 16 }}
-          animate={reduce ? undefined : { opacity: 1, y: 0 }}
-          transition={reduce ? undefined : { duration: 0.6, delay: 0.4, ease: EASE }}
+        <p
+          className="anabella-fade-up mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text/80"
+          style={{ animationDelay: "0.4s" }}
         >
           {subtitle}
-        </motion.p>
+        </p>
 
-        <motion.div
-          className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
-          initial={reduce ? undefined : { opacity: 0, y: 16 }}
-          animate={reduce ? undefined : { opacity: 1, y: 0 }}
-          transition={reduce ? undefined : { duration: 0.6, delay: 0.55, ease: EASE }}
+        <div
+          className="anabella-fade-up mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+          style={{ animationDelay: "0.55s" }}
         >
           <Link
             href="/rezervet"
@@ -102,7 +90,7 @@ export default function Hero({
           </Link>
           {/* Zvanīšana — sekundāra (outline), vienmēr redzama */}
           <CallButton source="hero" variant="outline" />
-        </motion.div>
+        </div>
       </div>
 
       {/* Scroll indikators */}
