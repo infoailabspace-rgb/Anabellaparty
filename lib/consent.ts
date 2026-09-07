@@ -127,15 +127,6 @@ export function initConsentDefaults() {
   window.gtag?.("set", "url_passthrough", true);
 }
 
-// "Advanced" bootstrap: iestata noklusējumus UN vienmēr ielādē gtag.js (GA4),
-// neatkarīgi no piekrišanas (izsaukts layout'ā pirms piekrišanas UI). GA4 ievēro
-// Consent Mode noklusējumus (denied), līdz applyConsent() izsauc "update".
-export function initConsentMode() {
-  if (typeof window === "undefined") return;
-  initConsentDefaults();
-  loadGtagBase();
-}
-
 function loadGtm() {
   if (window.__anabellaGtmLoaded) return;
   window.__anabellaGtmLoaded = true;
@@ -149,26 +140,9 @@ function loadGtm() {
   }
 }
 
-// GA4 patstāvīgi caur gtag.js — VIENMĒR ielādēts (advanced Consent Mode), nevis
-// aiz piekrišanas. Consent Mode noklusējumi (denied) jau iestatīti; config ievēro
-// tos, līdz "update" tos atļauj. Idempotents — gtag NETIEK atkārtoti injektēts.
-function loadGtagBase() {
-  if (window.__anabellaGa4Loaded) return;
-  window.__anabellaGa4Loaded = true;
-  const s = document.createElement("script");
-  s.async = true;
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`;
-  document.head.appendChild(s);
-  window.dataLayer = window.dataLayer || [];
-  window.gtag =
-    window.gtag ||
-    function gtag() {
-      // eslint-disable-next-line prefer-rest-params
-      window.dataLayer!.push(arguments);
-    };
-  window.gtag("js", new Date());
-  window.gtag("config", GA4_ID);
-}
+// GA4 (gtag.js, G-717L3W9PNX) tiek renderēts SERVER-pusē (components/gtag-scripts.tsx)
+// advanced Consent Mode režīmā — vienmēr klāt sākotnējā HTML, ar noklusējumiem denied.
+// Tāpēc šeit gtag.js NETIEK injektēts; applyConsent tikai izsauc "update".
 
 // Microsoft Clarity — sesiju ieraksti/siltuma kartes (dinamiska injekcija).
 function loadClarity() {

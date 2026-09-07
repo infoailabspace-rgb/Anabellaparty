@@ -4,7 +4,7 @@ import { setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import ConsentInit from "@/components/consent-init";
+import GtagScripts from "@/components/gtag-scripts";
 import CookieConsent from "@/components/cookie-consent";
 import AnalyticsListener from "@/components/analytics-listener";
 import ScrollToTopOnNav from "@/components/scroll-to-top-on-nav";
@@ -32,6 +32,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider>
+      <GtagScripts />
       <SiteTexture />
       <ScrollToTopOnNav />
       <SiteFrame navbar={<Navbar />} footer={<Footer />}>
@@ -39,7 +40,6 @@ export default async function LocaleLayout({
       </SiteFrame>
       <BackToTop />
       <StickyCall />
-      <ConsentInit />
       <CookieConsent />
       <AnalyticsListener />
     </NextIntlClientProvider>
