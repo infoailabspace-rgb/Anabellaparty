@@ -14,6 +14,7 @@ function Logo({ c }: { c: Client }) {
       src={c.logo}
       alt={c.name}
       loading="lazy"
+      decoding="async"
       className="h-14 w-auto object-contain transition-transform duration-300 hover:scale-105"
     />
   );
