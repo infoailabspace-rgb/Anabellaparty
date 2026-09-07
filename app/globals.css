@@ -320,6 +320,96 @@ body {
   animation: anabella-drop-in 180ms ease-out;
 }
 
+/* Scroll-reveal (aizstāj framer whileInView) — fade + slīde uz augšu, kad
+   IntersectionObserver pievieno .is-visible. Aizkavi iestata inline
+   (transition-delay). Lieto: Reveal, EventGallery kartītes. */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-up.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Produktu bloku ieslīdēšana no sāna (SlideReveal). Virziens (--slide-x) un
+   mobilais fallback iestatīts inline; desktopā slīde no sāna + neliels scale. */
+.slide-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (min-width: 768px) {
+  .slide-reveal {
+    transform: translateX(var(--slide-x, 0)) scale(0.94);
+  }
+}
+.slide-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hero virsraksta vārdu (word-by-word) parādīšanās — aizkavi inline. */
+@keyframes anabella-word {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.anabella-word {
+  display: inline-block;
+  opacity: 0;
+  animation: anabella-word 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Hero apakšvirsraksta/pogu parādīšanās uz ielādes (aizkavi inline). */
+@keyframes anabella-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.anabella-fade-up {
+  opacity: 0;
+  animation: anabella-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Navbar WhatsApp ikonas periodiska lēkāšana (~ik 4 s, kā iepriekš framer). */
+@keyframes anabella-wa-bounce {
+  0% {
+    transform: translateY(0);
+  }
+  3.75% {
+    transform: translateY(-6px);
+  }
+  7.5% {
+    transform: translateY(0);
+  }
+  11.25% {
+    transform: translateY(-3px);
+  }
+  15%,
+  100% {
+    transform: translateY(0);
+  }
+}
+.anabella-wa-bounce {
+  animation: anabella-wa-bounce 4s ease-in-out infinite;
+}
+
 /* prefers-reduced-motion — visas animācijas izslēdzas, saturs paliek redzams. */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -333,5 +423,12 @@ body {
 
   .anabella-hairline {
     transform: scaleX(1);
+  }
+
+  /* Reveal/slide elementi paliek pilnībā redzami neatkarīgi no skata. */
+  .reveal-up,
+  .slide-reveal {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

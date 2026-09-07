@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useInView, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { useInView } from "@/lib/use-in-view";
 
 const easeFn = (t: number) => {
   // Mīksts iznāciens (cubic ease-out), saskan ar lapas easing sajūtu.
@@ -21,8 +22,10 @@ export default function CountUp({
   suffix?: string;
   className?: string;
 }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const { ref, inView } = useInView<HTMLSpanElement>({
+    once: true,
+    rootMargin: "-80px",
+  });
   const reduce = useReducedMotion();
   // DROŠĪBA (publiskā lapa NEDRĪKST rādīt 0): sākotnējā vērtība = GALA skaitlis.
   // SSR, no-JS, crawler, prefers-reduced-motion, useInView-nenostrāde, rAF-trūkums

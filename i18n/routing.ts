@@ -9,4 +9,8 @@ export const routing = defineRouting({
   defaultLocale,
   // LV paliek saknē (bez prefiksa), en/ru = /en, /ru.
   localePrefix: "as-needed",
+  // Neizmanto Accept-Language/cookie automātisko valodas noteikšanu: `/` vienmēr
+  // pasniedz LV (noklusējumu), nevis 307-pāradresē uz /en/ (piem., robotiem/
+  // PageSpeed ar Accept-Language: en). Valodu maina tikai skaidri caur /en, /ru.
+  localeDetection: false,
 });

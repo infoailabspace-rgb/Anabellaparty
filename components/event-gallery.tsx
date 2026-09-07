@@ -1,10 +1,57 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useInView } from "@/lib/use-in-view";
 import type { GalleryImage } from "@/lib/gallery";
+
+// Viena kartīte — fade + slīde uz augšu, kad ienāk skatā (IntersectionObserver).
+// Aizkave staggeram (i % 12) atkārto oriģinālo pakāpenisko parādīšanos.
+function GalleryFigure({
+  img,
+  i,
+  onOpen,
+}: {
+  img: GalleryImage;
+  i: number;
+  onOpen: () => void;
+}) {
+  const { ref, inView } = useInView<HTMLElement>({
+    once: true,
+    rootMargin: "-40px",
+  });
+  return (
+    <figure
+      ref={ref}
+      style={{ transitionDelay: `${(i % 12) * 40}ms` }}
+      className={`reveal-up mb-3 break-inside-avoid overflow-hidden rounded-xl border border-gold/15${
+        inView ? " is-visible" : ""
+      }`}
+    >
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={img.alt}
+        className="block w-full"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={img.url}
+          alt={img.alt}
+          loading="lazy"
+          decoding="async"
+          className="w-full cursor-zoom-in transition-transform duration-300 hover:scale-[1.03]"
+        />
+      </button>
+      {img.caption && (
+        <figcaption className="px-2 py-1.5 text-xs text-text/50">
+          {img.caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
 
 export default function EventGallery({
   images,
@@ -54,35 +101,7 @@ export default function EventGallery({
 
         <div className="mt-10 columns-2 gap-3 md:columns-3 lg:columns-4">
           {shown.map((img, i) => (
-            <motion.figure
-              key={img.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.4, delay: (i % 12) * 0.04 }}
-              className="mb-3 break-inside-avoid overflow-hidden rounded-xl border border-gold/15"
-            >
-              <button
-                type="button"
-                onClick={() => setActive(i)}
-                aria-label={img.alt}
-                className="block w-full"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={img.url}
-                  alt={img.alt}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full cursor-zoom-in transition-transform duration-300 hover:scale-[1.03]"
-                />
-              </button>
-              {img.caption && (
-                <figcaption className="px-2 py-1.5 text-xs text-text/50">
-                  {img.caption}
-                </figcaption>
-              )}
-            </motion.figure>
+            <GalleryFigure key={img.id} img={img} i={i} onOpen={() => setActive(i)} />
           ))}
         </div>
 
