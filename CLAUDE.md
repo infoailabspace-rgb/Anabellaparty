@@ -113,7 +113,7 @@ Pilnais katalogs (40+ produkti) — `lib/products.ts`. Šī tabula ir tikai orie
 
 ## TRACKING
 
-- GTM (2 konteineri): `GTM-WDQZZ5PG`, `GTM-KVGCFPCT`
+- GTM: `GTM-WDQZZ5PG`
 - GA4 (patstāvīgi caur gtag.js): `G-717L3W9PNX`
 - Microsoft Clarity: `u9ppb0vish`
 - FB Pixel: `896953122077848`
