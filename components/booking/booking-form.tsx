@@ -16,6 +16,7 @@ import {
   type BookingEvent,
 } from "@/lib/booking";
 import PricePanel from "@/components/booking/price-panel";
+import { isInFreeZone } from "@/lib/delivery";
 
 const STORAGE_KEY = "anabella-booking";
 // Vērtība (v) glabājas LV (konsekvence admin/e-pastos); attēlo (k) tulkoto.
@@ -86,9 +87,10 @@ export default function BookingForm({ products }: { products: Product[] }) {
   const [deliveryStreet, setDeliveryStreet] = useState("");
   const [deliveryCity, setDeliveryCity] = useState("");
   const [delivery, setDelivery] = useState<{
-    km: number;
-    cost: number;
-    geocoded?: string | null;
+    km: number | null;
+    cost: number | null; // null = nezināma, 0 = bezmaksas zona, >0 = maksas
+    geocodedLabel?: string | null;
+    inFreeZone?: boolean;
   } | null>(null);
   const [deliveryStatus, setDeliveryStatus] = useState<
     "idle" | "loading" | "ok" | "error" | "confirm"
@@ -96,9 +98,10 @@ export default function BookingForm({ products }: { products: Product[] }) {
   const [deliveryError, setDeliveryError] = useState("");
   // Neatbilstības apstiprinājums (pilsēta ≠ atrastā vieta) — gaida klienta "Jā".
   const [deliveryConfirm, setDeliveryConfirm] = useState<{
-    km: number;
-    cost: number;
-    geocoded?: string | null;
+    km: number | null;
+    cost: number | null;
+    geocodedLabel?: string | null;
+    inFreeZone?: boolean;
     label: string;
   } | null>(null);
   const [activeCat, setActiveCat] = useState(bookingCategories[0].id);
@@ -202,26 +205,41 @@ export default function BookingForm({ products }: { products: Product[] }) {
       });
       const data = await res.json();
       if (data.ok) {
+        // Bezmaksas zonu atvasina caur isInFreeZone (rezerve, ja serveris to neatgrieza).
+        const inFree =
+          data.inFreeZone ?? isInFreeZone(data.region ?? undefined, data.km ?? 0);
         if (data.cityMismatch) {
           // Pilsēta ≠ atrastā vieta — NEIZMANTO uzreiz, prasa apstiprinājumu.
           setDelivery(null);
           setDeliveryConfirm({
             km: data.km,
             cost: data.cost,
-            geocoded: data.geocoded,
+            geocodedLabel: data.geocoded,
+            inFreeZone: inFree,
             label: data.label ?? address,
           });
           setDeliveryStatus("confirm");
         } else {
-          setDelivery({ km: data.km, cost: data.cost, geocoded: data.geocoded });
+          setDelivery({
+            km: data.km,
+            cost: data.cost,
+            geocodedLabel: data.geocoded,
+            inFreeZone: inFree,
+          });
           setDeliveryStatus("ok");
         }
       } else {
+        // Piegāde NAV aprēķināta → nekad neizmanto 0 €; parādīsim "tiks precizēta".
+        console.error("[delivery] ORS neizdevās aprēķināt piegādi", {
+          address,
+          response: data,
+        });
         setDelivery(null);
         setDeliveryStatus("error");
         setDeliveryError(data.error ?? t("errCalc"));
       }
-    } catch {
+    } catch (err) {
+      console.error("[delivery] Piegādes pieprasījums neizdevās", { address, err });
       setDelivery(null);
       setDeliveryStatus("error");
       setDeliveryError(t("errCalcManual"));
@@ -234,7 +252,8 @@ export default function BookingForm({ products }: { products: Product[] }) {
     setDelivery({
       km: deliveryConfirm.km,
       cost: deliveryConfirm.cost,
-      geocoded: deliveryConfirm.geocoded,
+      geocodedLabel: deliveryConfirm.geocodedLabel,
+      inFreeZone: deliveryConfirm.inFreeZone,
     });
     setDeliveryConfirm(null);
     setDeliveryStatus("ok");
@@ -338,9 +357,12 @@ export default function BookingForm({ products }: { products: Product[] }) {
           consent,
           delivery: {
             address: deliveryFull,
-            km: delivery?.km,
-            cost: delivery?.cost,
-            geocoded: delivery?.geocoded ?? null,
+            km: delivery?.km ?? null,
+            cost: delivery?.cost ?? null,
+            // geocoded = vai ORS atrada adresi (delivery uzstādīts tikai tad).
+            geocoded: delivery != null,
+            geocodedLabel: delivery?.geocodedLabel ?? null,
+            inFreeZone: delivery?.inFreeZone === true,
           },
         }),
       });
@@ -498,6 +520,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
           products={products}
           deliveryCost={delivery?.cost}
           deliveryKm={delivery?.km}
+          deliveryInFreeZone={delivery?.inFreeZone}
           deliveryComputed={deliveryStatus === "ok"}
         />
       </aside>
@@ -743,13 +766,19 @@ function StepEvent({
   deliveryCity: string;
   setDeliveryCity: (v: string) => void;
   computeDelivery: (street: string, city: string) => void;
-  delivery: { km: number; cost: number } | null;
+  delivery: {
+    km: number | null;
+    cost: number | null;
+    geocodedLabel?: string | null;
+    inFreeZone?: boolean;
+  } | null;
   deliveryStatus: "idle" | "loading" | "ok" | "error" | "confirm";
   deliveryError: string;
   deliveryConfirm: {
-    km: number;
-    cost: number;
-    geocoded?: string | null;
+    km: number | null;
+    cost: number | null;
+    geocodedLabel?: string | null;
+    inFreeZone?: boolean;
     label: string;
   } | null;
   onAcceptConfirm: () => void;
@@ -872,11 +901,15 @@ function StepEvent({
           {deliveryStatus === "ok" && delivery && (
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="text-text/75">
-                {t("distanceFrom", { km: delivery.km })}
+                {delivery.km != null ? t("distanceFrom", { km: delivery.km }) : ""}
               </span>
               <span className="font-mono font-semibold text-gold">
                 {t("deliveryLabel")}{" "}
-                {delivery.cost > 0 ? formatEur(delivery.cost) : t("free")}
+                {delivery.cost != null && delivery.cost > 0
+                  ? formatEur(delivery.cost)
+                  : delivery.cost === 0 && delivery.inFreeZone
+                    ? t("free")
+                    : t("deliveryTbd")}
               </span>
             </div>
           )}
@@ -887,12 +920,14 @@ function StepEvent({
               </p>
               <p className="text-text/85">{deliveryConfirm.label}</p>
               <p className="text-text/75">
-                {t("distanceFrom", { km: deliveryConfirm.km })} —{" "}
+                {t("distanceFrom", { km: deliveryConfirm.km ?? 0 })} —{" "}
                 <span className="font-mono font-semibold text-gold">
                   {t("deliveryLabel")}{" "}
-                  {deliveryConfirm.cost > 0
+                  {deliveryConfirm.cost != null && deliveryConfirm.cost > 0
                     ? formatEur(deliveryConfirm.cost)
-                    : t("free")}
+                    : deliveryConfirm.cost === 0 && deliveryConfirm.inFreeZone
+                      ? t("free")
+                      : t("deliveryTbd")}
                 </span>
               </p>
               <div className="flex flex-wrap gap-3">

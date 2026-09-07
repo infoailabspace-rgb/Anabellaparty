@@ -9,6 +9,7 @@ import {
   validateBooking,
   type BookingPayload,
 } from "@/lib/booking";
+import { FREE_FALLBACK_RADIUS_KM } from "@/lib/delivery";
 
 export const runtime = "nodejs";
 
@@ -40,7 +41,7 @@ function summaryHtml(
   payload: BookingPayload,
   products: Product[],
   subtotal: number,
-  deliveryCost: number,
+  deliveryCost: number | null,
   deposit: number,
 ) {
   const quote = computeQuote(payload.items, products);
@@ -57,6 +58,19 @@ function summaryHtml(
   const e = payload.event;
   const d = payload.delivery;
   const totals = computeTotals(subtotal, deliveryCost);
+  // Piegādes rinda: null = nezināma (nekad "bez maksas"), 0 = bezmaksas zona, >0 = eur.
+  const deliveryLine =
+    deliveryCost === null
+      ? "tiks precizēta piedāvājumā (ārpus Ķekavas novada)"
+      : deliveryCost === 0
+        ? "bez maksas (Ķekavas novads)"
+        : eur(deliveryCost);
+  const netLabel =
+    deliveryCost === null ? "Kopā bez PVN (bez piegādes)" : "Kopā bez PVN";
+  const tbdLine =
+    deliveryCost === null
+      ? `<b>Piegādes cena tiks pievienota piedāvājumā</b><br>`
+      : "";
   return `
   <div style="font-family:Arial,sans-serif;background:#F5F5F0;padding:16px;">
     <div style="max-width:600px;margin:0 auto;background:#ffffff;border:1px solid #e6e1d6;border-radius:12px;overflow:hidden;">
@@ -72,8 +86,8 @@ function summaryHtml(
         <p style="margin:0 0 12px;"><b>Inventārs:</b><br>${lines}</p>
         <div style="background:#faf6ec;border-left:3px solid #D4A960;padding:12px 16px;border-radius:4px;">
           <b>Inventārs kopā:</b> ${eur(subtotal)}<br>
-          <b>Piegāde:</b> ${deliveryCost > 0 ? eur(deliveryCost) : "bez maksas"}<br>
-          <b>Kopā bez PVN:</b> ${eur(totals.net)}<br>
+          <b>Piegāde:</b> ${deliveryLine}<br>
+          ${tbdLine}<b>${netLabel}:</b> ${eur(totals.net)}<br>
           <b>PVN 21%:</b> ${eur(totals.vat)}<br>
           <b>Kopā ar PVN (orientējoši):</b> ${eur(totals.gross)}<br>
           <b style="color:#B0842E;">Avanss (50%): ${eur(deposit)}</b>
@@ -128,8 +142,29 @@ export async function POST(req: Request) {
   const products = await getAllProducts();
   const quote = computeQuote(payload.items, products);
   const phone = normalizePhone(payload.contact.phone);
-  const deliveryCost = Math.max(0, Number(payload.delivery?.cost) || 0);
-  const deliveryKm = Number(payload.delivery?.km) || null;
+  const d = payload.delivery;
+  const distanceKm =
+    d?.km != null && Number.isFinite(Number(d.km)) ? Number(d.km) : null;
+
+  // Piegādes cena: number | null. NEZINĀMA → null (NEKAD nekļūst par "bez maksas").
+  // 0 tikai tad, ja ORS to atrada UN tā ir bezmaksas zonā (Ķekavas novads).
+  const rawCost = Number(d?.cost);
+  let deliveryCost: number | null;
+  if (d?.geocoded !== true || d?.cost == null || !Number.isFinite(rawCost)) {
+    deliveryCost = null;
+  } else if (rawCost === 0) {
+    deliveryCost = d?.inFreeZone === true ? 0 : null;
+  } else {
+    deliveryCost = Math.max(0, rawCost);
+  }
+  // Saprāta pārbaude: >15 km un 0 € nav ticami (ārpus bezmaksas rādiusa) → null.
+  if (
+    deliveryCost === 0 &&
+    distanceKm != null &&
+    distanceKm > FREE_FALLBACK_RADIUS_KM
+  ) {
+    deliveryCost = null;
+  }
   const deposit = computeDeposit(quote.subtotal, deliveryCost);
 
   const guestCount =
@@ -180,10 +215,11 @@ export async function POST(req: Request) {
     description: payload.description?.trim() || null,
     items: payload.items,
     estimated_total: quote.subtotal,
-    delivery_address: payload.delivery?.address?.trim() || null,
-    delivery_distance_km: deliveryKm,
-    delivery_cost: deliveryCost || null,
-    delivery_geocoded: payload.delivery?.geocoded?.trim() || null,
+    delivery_address: d?.address?.trim() || null,
+    delivery_distance_km: distanceKm,
+    // null = nezināma, 0 = bezmaksas zona, >0 = maksas (NEsabrūk uz null pie 0).
+    delivery_cost: deliveryCost,
+    delivery_geocoded: d?.geocodedLabel?.trim() || null,
     customer_id: customerId,
     status: "new",
   });
@@ -203,6 +239,11 @@ export async function POST(req: Request) {
   if (resendKey) {
     const resend = new Resend(resendKey);
     const html = summaryHtml(payload, products, quote.subtotal, deliveryCost, deposit);
+    // Admin brīdinājums, ja piegāde nav aprēķināta (ORS neatrada / ārpus zonas).
+    const deliveryWarn =
+      deliveryCost === null
+        ? `<p style="font-family:Arial,sans-serif;color:#B00020;font-weight:bold;">⚠ PIEGĀDE NAV APRĒĶINĀTA — adrese: ${esc(d?.address?.trim() || payload.event.location)}</p>`
+        : "";
     // Brīdinājums, ja FROM == NOTIFY (pašsūtīšana → spam/Sent risks).
     const fromAddr = (from.match(/<([^>]+)>/)?.[1] || from).trim().toLowerCase();
     if (fromAddr === notify.trim().toLowerCase()) {
@@ -217,7 +258,7 @@ export async function POST(req: Request) {
         to: notify,
         replyTo: payload.contact.email.trim(),
         subject: `Jauns pieteikums — ${payload.event.date} — ${payload.contact.name}`,
-        html: `<meta charset="utf-8"><p style="font-family:Arial,sans-serif;">Jauns rezervācijas pieteikums no <b>${esc(payload.contact.name)}</b> (${esc(phone)}, ${esc(payload.contact.email)}).</p>${html}`,
+        html: `<meta charset="utf-8">${deliveryWarn}<p style="font-family:Arial,sans-serif;">Jauns rezervācijas pieteikums no <b>${esc(payload.contact.name)}</b> (${esc(phone)}, ${esc(payload.contact.email)}).</p>${html}`,
       });
       if (rNotify.error)
         console.error(`[booking] Roberta e-pasts NEIZDEVĀS (to=${notify}):`, JSON.stringify(rNotify.error));

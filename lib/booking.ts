@@ -20,9 +20,12 @@ export type BookingEvent = {
 
 export type BookingDelivery = {
   address?: string;
-  km?: number;
-  cost?: number;
-  geocoded?: string | null; // ORS atrastais adreses teksts (mismatch pārbaudei)
+  km?: number | null; // attālums km (viens virziens); null, ja nav aprēķināts
+  // cost: null = NEZINĀMA (nekad "bez maksas"), 0 = bezmaksas zona, >0 = maksas.
+  cost?: number | null;
+  geocoded?: boolean; // vai ORS veiksmīgi atrada adresi (nevis teksts)
+  geocodedLabel?: string | null; // ORS atrastais adreses teksts (DB + mismatch)
+  inFreeZone?: boolean; // vai ORS reģions = Ķekavas novads (isInFreeZone)
 };
 
 export type BookingPayload = {

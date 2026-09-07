@@ -16,16 +16,24 @@ export type Totals = {
 };
 
 // Cenas norādītas bez PVN → PVN uzrēķina virsū. Avanss 50% no summas ar PVN.
-export function computeTotals(subtotal: number, deliveryCost = 0): Totals {
-  const net = subtotal + deliveryCost;
+// deliveryCost null = NEZINĀMA piegāde → izslēdz no summas (nepieskaita 0 vietā),
+// lai avanss/kopsumma neietver neaprēķinātu piegādi.
+export function computeTotals(
+  subtotal: number,
+  deliveryCost: number | null = 0,
+): Totals {
+  const net = subtotal + (deliveryCost ?? 0);
   const vat = PRICES_INCLUDE_VAT ? 0 : Math.round(net * VAT_RATE * 100) / 100;
   const gross = Math.round((net + vat) * 100) / 100;
   const deposit = Math.round(gross * DEPOSIT_RATE * 100) / 100;
   return { net, vat, gross, deposit };
 }
 
-// Avanss 50% no kopsummas ar PVN (inventārs + piegāde).
-export function computeDeposit(subtotal: number, deliveryCost = 0): number {
+// Avanss 50% no kopsummas ar PVN (inventārs + piegāde). null piegāde → izslēgta.
+export function computeDeposit(
+  subtotal: number,
+  deliveryCost: number | null = 0,
+): number {
   return computeTotals(subtotal, deliveryCost).deposit;
 }
 
