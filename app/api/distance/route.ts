@@ -1,27 +1,15 @@
 import { NextResponse } from "next/server";
 import {
   ORIGIN,
-  deliveryPrice,
-  isInFreeZone,
-  FREE_ZONE,
+  resolveDelivery,
+  type Geocoder,
+  type Router,
 } from "@/lib/delivery";
 import { getSupabaseServer } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
 const ORS = "https://api.openrouteservice.org";
-
-// Normalizē LV vietvārdu salīdzināšanai: mazie burti, bez diakritikas, tikai burti.
-function normPlace(s: unknown): string {
-  const map: Record<string, string> = {
-    ā: "a", č: "c", ē: "e", ģ: "g", ī: "i", ķ: "k",
-    ļ: "l", ņ: "n", š: "s", ū: "u", ž: "z",
-  };
-  return String(s ?? "")
-    .toLowerCase()
-    .replace(/[āčēģīķļņšūž]/g, (m) => map[m] || m)
-    .replace(/[^a-z]/g, "");
-}
 
 function clientIp(req: Request): string {
   const fwd = req.headers.get("x-forwarded-for");
@@ -64,88 +52,62 @@ export async function POST(req: Request) {
     });
   }
 
+  // ORS ģeokods (Pelias) — atļauj papildu layers 2. mēģinājumam (localadmin,locality).
+  const geocode: Geocoder = async (text, opts) => {
+    const layers = opts?.layers ? `&layers=${encodeURIComponent(opts.layers)}` : "";
+    const url = `${ORS}/geocode/search?api_key=${key}&text=${encodeURIComponent(
+      text,
+    )}&boundary.country=LV&size=1${layers}`;
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      const j = await res.json();
+      const f = j?.features?.[0];
+      const coords = f?.geometry?.coordinates as [number, number] | undefined;
+      if (!coords) return null;
+      return { coords, props: f.properties ?? {} };
+    } catch {
+      return null;
+    }
+  };
+
+  // ORS braukšanas attālums no noliktavas (viens virziens, km).
+  const route: Router = async ([lng, lat]) => {
+    const url = `${ORS}/v2/directions/driving-car?api_key=${key}&start=${ORIGIN.lng},${ORIGIN.lat}&end=${lng},${lat}`;
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      const j = await res.json();
+      const m = j?.features?.[0]?.properties?.summary?.distance;
+      return typeof m === "number" ? Math.round(m / 1000) : null;
+    } catch {
+      return null;
+    }
+  };
+
   try {
-    // 1. Ģeokodē adresi (ORS/Pelias, ierobežots ar Latviju).
-    const geoRes = await fetch(
-      `${ORS}/geocode/search?api_key=${key}&text=${encodeURIComponent(
-        address,
-      )}&boundary.country=LV&size=1`,
-      { cache: "no-store" },
+    const r = await resolveDelivery(
+      { address, city: enteredCity },
+      { geocode, route, log: (msg, data) => console.error(msg, data) },
     );
-    const geo = await geoRes.json();
-    const feature = geo?.features?.[0];
-    const coords = feature?.geometry?.coordinates as
-      | [number, number]
-      | undefined;
-    if (!coords) {
+    if (!r.ok) {
       return NextResponse.json({
         ok: false,
-        error: "Neizdevās atrast adresi. Piegādes cenu norādīsim manuāli.",
+        error: r.error ?? "Piegādes aprēķins pagaidām nav pieejams. Norādīsim manuāli.",
       });
     }
-    const [destLng, destLat] = coords;
-    // Reģions/novads no ģeokodēšanas (Pelias): county → macrocounty → region.
-    const props = feature?.properties ?? {};
-    const regionName: string | undefined =
-      props.county || props.macrocounty || props.region || undefined;
-    // Ģeokodētais (ORS atrastais) adreses teksts — admin salīdzina ar klienta ievadīto.
-    const geocoded: string | null = props.label ?? null;
-
-    // 2. Braukšanas attālums (ORS directions).
-    const dirRes = await fetch(
-      `${ORS}/v2/directions/driving-car?api_key=${key}&start=${ORIGIN.lng},${ORIGIN.lat}&end=${destLng},${destLat}`,
-      { cache: "no-store" },
-    );
-    const dir = await dirRes.json();
-    const meters = dir?.features?.[0]?.properties?.summary?.distance as
-      | number
-      | undefined;
-    const km = typeof meters === "number" ? Math.round(meters / 1000) : null;
-    const inFreeZone = isInFreeZone(regionName, km ?? 0);
-
-    // Bezmaksas zona (Ķekavas novads) → vienmēr 0 €, arī ja maršruts neizdevās.
-    // Tikai ja NAV bezmaksas UN nav attāluma → norādām manuāli.
-    if (km === null && !inFreeZone) {
-      return NextResponse.json({
-        ok: false,
-        error: "Neizdevās aprēķināt attālumu. Piegādes cenu norādīsim manuāli.",
-      });
-    }
-
-    const cost = deliveryPrice(km ?? 0, inFreeZone);
-
-    // Drošības slānis: vai lietotāja pilsēta atbilst atrastajai vietai?
-    // Salīdzina pret locality/localadmin/region/county — ja nesakrīt nevienam,
-    // atzīmē mismatch (Liepāja/Jelgava tips), lai klients apstiprina.
-    const nCity = normPlace(enteredCity);
-    const placeNames = [
-      props.locality,
-      props.localadmin,
-      props.region,
-      props.county,
-      props.macrocounty,
-    ]
-      .map(normPlace)
-      .filter(Boolean);
-    const cityMismatch = Boolean(
-      nCity &&
-        placeNames.length &&
-        !placeNames.some((p) => p.includes(nCity) || nCity.includes(p)),
-    );
-
     return NextResponse.json({
       ok: true,
-      km: km ?? 0,
-      cost,
-      free: inFreeZone,
-      inFreeZone,
-      region: regionName ?? null,
-      geocoded,
-      label: geocoded,
-      resolvedCity: props.locality || props.localadmin || props.region || null,
-      cityMismatch,
-      freeZone: FREE_ZONE,
-      origin: ORIGIN.label,
+      km: r.km ?? 0,
+      cost: r.cost, // number | null (null = nezināma → "tiks precizēta")
+      free: r.inFreeZone,
+      inFreeZone: r.inFreeZone,
+      approximate: r.approximate,
+      region: r.region,
+      geocoded: r.geocoded, // ORS label vai "locality" (approx)
+      label: r.geocoded,
+      resolvedCity: r.resolvedCity,
+      cityMismatch: r.cityMismatch,
+      freeZone: r.freeZone,
+      origin: r.origin,
     });
   } catch {
     return NextResponse.json({

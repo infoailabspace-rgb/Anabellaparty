@@ -10,6 +10,7 @@ export default function PricePanel({
   deliveryCost,
   deliveryKm,
   deliveryInFreeZone = false,
+  deliveryApproximate = false,
   deliveryComputed = false,
 }: {
   items: CartItem[];
@@ -17,6 +18,7 @@ export default function PricePanel({
   deliveryCost?: number | null; // null = nezināma (nekad "bez maksas")
   deliveryKm?: number | null;
   deliveryInFreeZone?: boolean;
+  deliveryApproximate?: boolean;
   deliveryComputed?: boolean;
 }) {
   const t = useTranslations("pricePanel");
@@ -85,6 +87,9 @@ export default function PricePanel({
                   ? t("free")
                   : t("deliveryTbd")
               : t("deliveryStep2")}
+            {deliveryComputed && deliveryApproximate && deliveryCost != null
+              ? ` ${t("deliveryApprox")}`
+              : ""}
           </span>
         </div>
         {quote.hasContactOnly && (

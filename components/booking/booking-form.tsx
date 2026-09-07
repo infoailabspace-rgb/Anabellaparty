@@ -91,6 +91,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
     cost: number | null; // null = nezināma, 0 = bezmaksas zona, >0 = maksas
     geocodedLabel?: string | null;
     inFreeZone?: boolean;
+    approximate?: boolean;
   } | null>(null);
   const [deliveryStatus, setDeliveryStatus] = useState<
     "idle" | "loading" | "ok" | "error" | "confirm"
@@ -102,6 +103,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
     cost: number | null;
     geocodedLabel?: string | null;
     inFreeZone?: boolean;
+    approximate?: boolean;
     label: string;
   } | null>(null);
   const [activeCat, setActiveCat] = useState(bookingCategories[0].id);
@@ -216,6 +218,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
             cost: data.cost,
             geocodedLabel: data.geocoded,
             inFreeZone: inFree,
+            approximate: data.approximate === true,
             label: data.label ?? address,
           });
           setDeliveryStatus("confirm");
@@ -225,6 +228,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
             cost: data.cost,
             geocodedLabel: data.geocoded,
             inFreeZone: inFree,
+            approximate: data.approximate === true,
           });
           setDeliveryStatus("ok");
         }
@@ -254,6 +258,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
       cost: deliveryConfirm.cost,
       geocodedLabel: deliveryConfirm.geocodedLabel,
       inFreeZone: deliveryConfirm.inFreeZone,
+      approximate: deliveryConfirm.approximate,
     });
     setDeliveryConfirm(null);
     setDeliveryStatus("ok");
@@ -363,6 +368,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
             geocoded: delivery != null,
             geocodedLabel: delivery?.geocodedLabel ?? null,
             inFreeZone: delivery?.inFreeZone === true,
+            approximate: delivery?.approximate === true,
           },
         }),
       });
@@ -521,6 +527,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
           deliveryCost={delivery?.cost}
           deliveryKm={delivery?.km}
           deliveryInFreeZone={delivery?.inFreeZone}
+          deliveryApproximate={delivery?.approximate}
           deliveryComputed={deliveryStatus === "ok"}
         />
       </aside>
@@ -771,6 +778,7 @@ function StepEvent({
     cost: number | null;
     geocodedLabel?: string | null;
     inFreeZone?: boolean;
+    approximate?: boolean;
   } | null;
   deliveryStatus: "idle" | "loading" | "ok" | "error" | "confirm";
   deliveryError: string;
@@ -779,6 +787,7 @@ function StepEvent({
     cost: number | null;
     geocodedLabel?: string | null;
     inFreeZone?: boolean;
+    approximate?: boolean;
     label: string;
   } | null;
   onAcceptConfirm: () => void;
@@ -910,6 +919,9 @@ function StepEvent({
                   : delivery.cost === 0 && delivery.inFreeZone
                     ? t("free")
                     : t("deliveryTbd")}
+                {delivery.approximate && delivery.cost != null
+                  ? ` ${t("deliveryApprox")}`
+                  : ""}
               </span>
             </div>
           )}

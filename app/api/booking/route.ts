@@ -59,12 +59,14 @@ function summaryHtml(
   const d = payload.delivery;
   const totals = computeTotals(subtotal, deliveryCost);
   // Piegādes rinda: null = nezināma (nekad "bez maksas"), 0 = bezmaksas zona, >0 = eur.
+  // approximate → aprēķināts pēc pagasta centroīda → piebilst "(orientējoši, pēc pagasta)".
+  const approx = d?.approximate === true;
   const deliveryLine =
     deliveryCost === null
       ? "tiks precizēta piedāvājumā (ārpus Ķekavas novada)"
-      : deliveryCost === 0
-        ? "bez maksas (Ķekavas novads)"
-        : eur(deliveryCost);
+      : (deliveryCost === 0
+          ? "bez maksas (Ķekavas novads)"
+          : eur(deliveryCost)) + (approx ? " (orientējoši, pēc pagasta)" : "");
   const netLabel =
     deliveryCost === null ? "Kopā bez PVN (bez piegādes)" : "Kopā bez PVN";
   const tbdLine =
