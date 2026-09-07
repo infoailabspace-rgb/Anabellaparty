@@ -113,8 +113,11 @@ Pilnais katalogs (40+ produkti) — `lib/products.ts`. Šī tabula ir tikai orie
 
 ## TRACKING
 
-- GTM: `GTM-WDQZZ5PG`
+- GTM (2 konteineri): `GTM-WDQZZ5PG`, `GTM-KVGCFPCT`
+- GA4 (patstāvīgi caur gtag.js): `G-717L3W9PNX`
+- Microsoft Clarity: `u9ppb0vish`
 - FB Pixel: `896953122077848`
+- Consent Mode v2 **advanced**: gtag.js (GA4) vienmēr ielādēts, consent `denied` pēc noklusējuma; GTM/Clarity/Pixel aiz piekrišanas (`lib/consent.ts`, `components/consent-init.tsx`)
 
 ---
 

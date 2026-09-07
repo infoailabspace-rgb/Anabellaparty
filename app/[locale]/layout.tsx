@@ -4,6 +4,7 @@ import { setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import ConsentInit from "@/components/consent-init";
 import CookieConsent from "@/components/cookie-consent";
 import AnalyticsListener from "@/components/analytics-listener";
 import ScrollToTopOnNav from "@/components/scroll-to-top-on-nav";
@@ -38,6 +39,7 @@ export default async function LocaleLayout({
       </SiteFrame>
       <BackToTop />
       <StickyCall />
+      <ConsentInit />
       <CookieConsent />
       <AnalyticsListener />
     </NextIntlClientProvider>

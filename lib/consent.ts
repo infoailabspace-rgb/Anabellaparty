@@ -104,7 +104,9 @@ export function saveConsent(analytics: boolean, marketing: boolean): Consent {
   return consent;
 }
 
-// Consent Mode v2 noklusējumi — visu "denied", pirms jebkas ielādējas.
+// Consent Mode v2 "advanced" noklusējumi — visu "denied", pirms jebkas ielādējas.
+// wait_for_update dod bannerim laiku atbildēt, pirms tagi izlemj; url_passthrough
+// saglabā gclid/click ID caur URL, kamēr sīkfaili vēl ir denied.
 export function initConsentDefaults() {
   if (typeof window === "undefined" || window.__anabellaConsentInit) return;
   window.__anabellaConsentInit = true;
@@ -120,7 +122,18 @@ export function initConsentDefaults() {
     ad_user_data: "denied",
     ad_personalization: "denied",
     analytics_storage: "denied",
+    wait_for_update: 500,
   });
+  window.gtag?.("set", "url_passthrough", true);
+}
+
+// "Advanced" bootstrap: iestata noklusējumus UN vienmēr ielādē gtag.js (GA4),
+// neatkarīgi no piekrišanas (izsaukts layout'ā pirms piekrišanas UI). GA4 ievēro
+// Consent Mode noklusējumus (denied), līdz applyConsent() izsauc "update".
+export function initConsentMode() {
+  if (typeof window === "undefined") return;
+  initConsentDefaults();
+  loadGtagBase();
 }
 
 function loadGtm() {
@@ -136,9 +149,10 @@ function loadGtm() {
   }
 }
 
-// GA4 patstāvīgi caur gtag.js. Consent Mode noklusējumi (denied) jau iestatīti
-// initConsentDefaults() — config ievēro tos, līdz "update" tos atļauj.
-function loadGa4() {
+// GA4 patstāvīgi caur gtag.js — VIENMĒR ielādēts (advanced Consent Mode), nevis
+// aiz piekrišanas. Consent Mode noklusējumi (denied) jau iestatīti; config ievēro
+// tos, līdz "update" tos atļauj. Idempotents — gtag NETIEK atkārtoti injektēts.
+function loadGtagBase() {
   if (window.__anabellaGa4Loaded) return;
   window.__anabellaGa4Loaded = true;
   const s = document.createElement("script");
@@ -203,6 +217,8 @@ function loadPixel() {
 }
 
 // Piemēro piekrišanu: atjauno Consent Mode un injektē atļautos skriptus.
+// gtag.js (GA4) jau ir ielādēts advanced bootstrap'ā — šeit TIKAI "update",
+// bez atkārtotas gtag injekcijas. GTM/Clarity/Pixel paliek aiz piekrišanas.
 export function applyConsent(consent: Consent) {
   if (typeof window === "undefined") return;
   initConsentDefaults();
@@ -216,7 +232,6 @@ export function applyConsent(consent: Consent) {
 
   if (consent.analytics) {
     loadGtm();
-    loadGa4();
     loadClarity();
   }
   if (consent.marketing) loadPixel();
