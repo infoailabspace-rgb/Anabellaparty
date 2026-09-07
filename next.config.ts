@@ -48,11 +48,6 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   // Mozello URL saglabāšana + konsekventi canonical (/foto-kaste/).
   trailingSlash: true,
-  // Iekļauj maršruta CSS tieši <head> (Next 16) → nav render-bloķējošs 14 KB
-  // stylesheet pieprasījums → ātrāks FCP.
-  experimental: {
-    inlineCss: true,
-  },
   images: {
     // Supabase Storage attēli (admin augšupielādes) caur next/image.
     remotePatterns: [{ protocol: "https", hostname: "*.supabase.co" }],
