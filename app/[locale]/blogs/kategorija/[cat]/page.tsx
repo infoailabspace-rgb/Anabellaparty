@@ -9,7 +9,7 @@ import {
   CATEGORY_LABEL,
   type BlogCategory,
 } from "@/lib/blog";
-import { alternatesFor, ogMetadata } from "@/lib/seo";
+import { alternatesFor, ogMetadata, lvOnlyRobots } from "@/lib/seo";
 import BlogList from "../../blog-list";
 
 export function generateStaticParams() {
@@ -29,6 +29,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: alternatesFor(locale, `/blogs/kategorija/${cat}`),
+    robots: lvOnlyRobots(locale),
     ...(await ogMetadata(locale, `/blogs/kategorija/${cat}`, title, description)),
   };
 }

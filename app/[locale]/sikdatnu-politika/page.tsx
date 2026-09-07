@@ -5,12 +5,22 @@ import Prose from "@/components/prose";
 import LegalBindingNote from "@/components/legal-binding-note";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
+import { alternatesFor, lvOnlyRobots } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Sīkdatņu politika | Anabella Party",
-  description:
-    "Kādas sīkdatnes izmanto Anabella Party mājaslapa, to mērķi un glabāšanas termiņi. Kā pārvaldīt un atteikt sīkdatņu izmantošanu.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: "Sīkdatņu politika | Anabella Party",
+    description:
+      "Kādas sīkdatnes izmanto Anabella Party mājaslapa, to mērķi un glabāšanas termiņi. Kā pārvaldīt un atteikt sīkdatņu izmantošanu.",
+    alternates: alternatesFor(locale, "/sikdatnu-politika"),
+    robots: lvOnlyRobots(locale),
+  };
+}
 
 export default async function SikdatnuPolitikaPage() {
   const [tf, locale] = await Promise.all([

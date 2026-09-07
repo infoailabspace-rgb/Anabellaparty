@@ -6,12 +6,22 @@ import LegalBindingNote from "@/components/legal-binding-note";
 import { COMPANY, fullAddress } from "@/lib/company";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
+import { alternatesFor, lvOnlyRobots } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Nomas noteikumi | Anabella Party",
-  description:
-    "Anabella Party inventāra nomas noteikumi: rezervācija, avanss, atcelšana, piegāde, uzstādīšana, drošība un atbildība. Pasākumu inventāra noma Latvijā.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: "Nomas noteikumi | Anabella Party",
+    description:
+      "Anabella Party inventāra nomas noteikumi: rezervācija, avanss, atcelšana, piegāde, uzstādīšana, drošība un atbildība. Pasākumu inventāra noma Latvijā.",
+    alternates: alternatesFor(locale, "/noteikumi"),
+    robots: lvOnlyRobots(locale),
+  };
+}
 
 export default async function NoteikumiPage() {
   const [tf, locale] = await Promise.all([

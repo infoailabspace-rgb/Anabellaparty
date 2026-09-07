@@ -4,7 +4,7 @@ import SectionHero from "@/components/section-hero";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
 import { getPublishedPosts } from "@/lib/blog";
-import { alternatesFor, ogMetadata } from "@/lib/seo";
+import { alternatesFor, ogMetadata, lvOnlyRobots } from "@/lib/seo";
 import BlogList from "./blog-list";
 
 export async function generateMetadata({
@@ -20,6 +20,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: alternatesFor(locale, "/blogs"),
+    robots: lvOnlyRobots(locale),
     ...(await ogMetadata(locale, "/blogs", title, description)),
   };
 }

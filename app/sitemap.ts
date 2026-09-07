@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
-import { localizedPath, SITE_URL } from "@/lib/seo";
+import { localizedPath, SITE_URL, isLvOnly } from "@/lib/seo";
 import { getPublishedSlugs } from "@/lib/blog";
 
 const base = SITE_URL;
@@ -35,6 +35,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [];
 
   for (const route of routes) {
+    // LV-only ceļi: tikai LV URL, bez hreflang alternatīvām.
+    if (isLvOnly(route)) {
+      entries.push({
+        url: url(routing.defaultLocale, route),
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: route === "" ? 1 : 0.7,
+      });
+      continue;
+    }
+
     const languages: Record<string, string> = {};
     for (const l of routing.locales) languages[l] = url(l, route);
     languages["x-default"] = url(routing.defaultLocale, route);
@@ -50,22 +61,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // Publicētie bloga raksti
+  // Publicētie bloga raksti — LV-only: tikai LV URL, bez hreflang.
   const posts = await getPublishedSlugs();
   for (const post of posts) {
     const route = `/blogs/${post.slug}`;
-    const languages: Record<string, string> = {};
-    for (const l of routing.locales) languages[l] = url(l, route);
-    languages["x-default"] = url(routing.defaultLocale, route);
-    for (const locale of routing.locales) {
-      entries.push({
-        url: url(locale, route),
-        lastModified: new Date(post.updated),
-        changeFrequency: "monthly",
-        priority: 0.6,
-        alternates: { languages },
-      });
-    }
+    entries.push({
+      url: url(routing.defaultLocale, route),
+      lastModified: new Date(post.updated),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    });
   }
 
   return entries;

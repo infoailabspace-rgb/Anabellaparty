@@ -25,9 +25,34 @@ async function ogImages(): Promise<NonNullable<Metadata["openGraph"]>["images"]>
   return [{ url: admin || OG_STATIC_FALLBACK, width: 1200, height: 630 }];
 }
 
+// Ceļi, kas indeksējami tikai LV valodā (saturs nav tulkots en/ru).
+// en/ru versijas → canonical uz LV, bez hreflang, noindex (skat. lvOnlyRobots).
+export const LV_ONLY_PREFIXES = [
+  "/blogs",
+  "/noteikumi",
+  "/privatuma-politika",
+  "/sikdatnu-politika",
+];
+
+// Vai ceļš (t.sk. apakšceļi, piem. /blogs/raksts) ir LV-only.
+export function isLvOnly(path: string): boolean {
+  return LV_ONLY_PREFIXES.some((p) => path === p || path.startsWith(`${p}/`));
+}
+
+// robots bloks LV-only lapām: en/ru → noindex,follow; lv → indexējams (undefined).
+export function lvOnlyRobots(locale: string): Metadata["robots"] | undefined {
+  return locale === routing.defaultLocale
+    ? undefined
+    : { index: false, follow: true };
+}
+
 // alternates bloks generateMetadata vajadzībām (canonical + hreflang).
 // Ceļi relatīvi — metadataBase (root layout) tos padara absolūtus.
+// LV-only ceļiem: tikai canonical uz LV absolūto URL, bez hreflang (visām valodām).
 export function alternatesFor(locale: string, path = "") {
+  if (isLvOnly(path)) {
+    return { canonical: `${SITE_URL}${localizedPath(routing.defaultLocale, path)}` };
+  }
   const languages: Record<string, string> = {};
   for (const l of routing.locales) languages[l] = localizedPath(l, path);
   languages["x-default"] = localizedPath(routing.defaultLocale, path);

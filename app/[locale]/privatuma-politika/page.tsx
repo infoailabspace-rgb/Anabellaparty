@@ -7,12 +7,22 @@ import LegalBindingNote from "@/components/legal-binding-note";
 import { COMPANY, fullAddress } from "@/lib/company";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
+import { alternatesFor, lvOnlyRobots } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Privātuma politika | Anabella Party",
-  description:
-    "Kā Anabella Party apstrādā personas datus saskaņā ar GDPR: kādus datus vācam, kādēļ, cik ilgi glabājam, kam nododam un kādas ir Tavas tiesības.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: "Privātuma politika | Anabella Party",
+    description:
+      "Kā Anabella Party apstrādā personas datus saskaņā ar GDPR: kādus datus vācam, kādēļ, cik ilgi glabājam, kam nododam un kādas ir Tavas tiesības.",
+    alternates: alternatesFor(locale, "/privatuma-politika"),
+    robots: lvOnlyRobots(locale),
+  };
+}
 
 export default async function PrivatumaPolitikaPage() {
   const [tf, locale] = await Promise.all([

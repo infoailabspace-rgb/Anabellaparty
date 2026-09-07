@@ -7,7 +7,7 @@ import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode, articleNode } from "@/lib/schema";
 import { getPostBySlug, getRelatedPosts, CATEGORY_LABEL } from "@/lib/blog";
 import { getProductBySlug } from "@/lib/catalog";
-import { alternatesFor, ogMetadata } from "@/lib/seo";
+import { alternatesFor, ogMetadata, lvOnlyRobots } from "@/lib/seo";
 import ShareButtons from "./share-buttons";
 import ArticleContent from "./article-content";
 
@@ -25,6 +25,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: alternatesFor(locale, `/blogs/${slug}`),
+    robots: lvOnlyRobots(locale),
     ...(await ogMetadata(locale, `/blogs/${slug}`, title, description)),
   };
   if (post.cover) {
