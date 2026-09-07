@@ -8,6 +8,8 @@ import { GA4_ID } from "@/lib/consent";
 // aiz piekrišanas (skat. applyConsent). Renderēts publiskajā layout'ā pirms
 // <CookieConsent /> — NAV /admin lapās.
 export default function GtagScripts() {
+  // Analītiku ielādē TIKAI produkcijā — preview/dev deploy'i nepiesārņo GA4/Ads datus.
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV !== "production") return null;
   return (
     <>
       <script

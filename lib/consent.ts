@@ -204,6 +204,14 @@ export function applyConsent(consent: Consent) {
     ad_personalization: consent.marketing ? "granted" : "denied",
   });
 
+  // Trešo pušu skriptus (GTM/Clarity/FB Pixel) ielādē TIKAI produkcijā, lai
+  // preview/dev deploy'i nepiesārņo GA4/Ads/Pixel datus. Consent Mode "update"
+  // augstāk paliek (nekaitīgs — bez tīkla, ja gtag nav ielādēts).
+  const isProd =
+    process.env.NEXT_PUBLIC_VERCEL_ENV === "production" ||
+    window.location.hostname.endsWith("anabellaparty.lv");
+  if (!isProd) return;
+
   if (consent.analytics) {
     loadGtm();
     loadClarity();
