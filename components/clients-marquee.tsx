@@ -1,7 +1,7 @@
-"use client";
-
-import { useReducedMotion } from "@/lib/use-reduced-motion";
-import { useTranslations } from "next-intl";
+// Servera komponente: marquee ir tīrs CSS (anabella-clients-marquee), un
+// prefers-reduced-motion to aptur caur CSS media query (globals.css) — nav
+// vajadzīgs useReducedMotion/JS. Nav klienta JS.
+import { getTranslations } from "next-intl/server";
 import type { Client } from "@/lib/clients";
 
 const FADE =
@@ -35,23 +35,8 @@ function Logo({ c }: { c: Client }) {
 }
 
 // Tikai logo lente (bez sekcijas/virsraksta/fona) — iegulstama TrustBar sekcijā.
-function MarqueeBody({
-  logos,
-  reduce,
-}: {
-  logos: Client[];
-  reduce: boolean | null;
-}) {
-  // prefers-reduced-motion → statisks centrēts režģis (ritinājums izslēgts).
-  if (reduce) {
-    return (
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-16 gap-y-8 px-6">
-        {logos.map((c, i) => (
-          <Logo key={i} c={c} />
-        ))}
-      </div>
-    );
-  }
+// prefers-reduced-motion aptur animāciju caur CSS (globals.css .anabella-clients-marquee).
+function MarqueeBody({ logos }: { logos: Client[] }) {
   // Dublē masīvu, līdz vismaz 12 elementi vienā pusē → ekrāns pilns arī ar
   // dažiem logo, cilpa nemanāma. Katra puse tiek renderēta divreiz (2×) → -50%.
   const reps = Math.max(1, Math.ceil(12 / logos.length));
@@ -81,30 +66,29 @@ function MarqueeBody({
   );
 }
 
-export default function ClientsMarquee({
+export default async function ClientsMarquee({
   clients,
   embedded = false,
 }: {
   clients: Client[];
   embedded?: boolean;
 }) {
-  const reduce = useReducedMotion();
-  const t = useTranslations("clients");
   const logos = clients.filter((c) => c.logo);
 
   // Bez logo → nekas netiek renderēts.
   if (logos.length === 0) return null;
 
   // Iegultā versija (TrustBar) — tikai lente, bez sava fona/virsraksta.
-  if (embedded) return <MarqueeBody logos={logos} reduce={reduce} />;
+  if (embedded) return <MarqueeBody logos={logos} />;
 
   // Atsevišķā (mantotā) versija — pati sekcija ar virsrakstu.
+  const t = await getTranslations("clients");
   return (
     <section className="border-t border-gold/10 bg-navy/20 py-16">
       <h2 className="mb-10 text-center font-display text-2xl font-bold tracking-tight sm:text-3xl">
         {t("heading")}
       </h2>
-      <MarqueeBody logos={logos} reduce={reduce} />
+      <MarqueeBody logos={logos} />
     </section>
   );
 }
