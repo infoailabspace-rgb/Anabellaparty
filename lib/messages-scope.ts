@@ -1,9 +1,24 @@
-// Klienta puses tulkojumu telpas pa maršrutiem. SERVER komponentes lieto
-// getTranslations (pilnās ziņas no request config), tāpēc te jāuzskaita TIKAI
-// "use client" komponenšu telpas. Nezināms maršruts → null → pilnās ziņas (droši).
+// Klienta puses tulkojumu telpas. SERVER komponentes lieto getTranslations
+// (pilnās ziņas no request config), tāpēc te jāuzskaita TIKAI "use client"
+// komponenšu telpas.
 type Messages = Record<string, unknown>;
 
 const CHROME = ["nav"]; // navbar (visos maršrutos)
+
+// VISU publisko maršrutu klienta telpu apvienojums. Lieto [locale]/layout STATISKI
+// (bez headers()) → publiskās lapas var būt ISR/statiskas, un tomēr klientam sūta
+// tikai ~8 telpas, nevis visu lv.json (30+ telpas). Drošs: sedz katru "use client"
+// komponenti neatkarīgi no maršruta.
+export const CLIENT_NAMESPACES = [
+  "nav",
+  "testimonials",
+  "gallery",
+  "booking",
+  "pricePanel",
+  "contactForm",
+  "b2bForm",
+  "faqCat",
+];
 
 const ROUTE_NAMESPACES: Record<string, string[]> = {
   "/": [...CHROME, "testimonials", "gallery"],

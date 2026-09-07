@@ -12,7 +12,7 @@ import Reveal from "@/components/reveal";
 import DepthBg from "@/components/depth-bg";
 import { homeCategories } from "@/lib/categories";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getContentMap, getSiteImage } from "@/lib/site-content";
 import { getClients, getFeaturedGallery } from "@/lib/site-data";
 import EventGallery from "@/components/event-gallery";
@@ -21,7 +21,7 @@ import { homeMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, localBusinessNode } from "@/lib/schema";
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -32,7 +32,16 @@ export async function generateMetadata({
   return homeMetadata(locale);
 }
 
-export default async function Home() {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  // STATISKAI/ISR renderēšanai — next-intl prasa setRequestLocale KATRĀ lapā/izkārtojumā,
+  // citādi getTranslations lasa locale no headers → maršruts kļūst dinamisks.
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const [c, clients, t, heroMedia, aboutImage, featuredGallery] =
     await Promise.all([
       getContentMap(),

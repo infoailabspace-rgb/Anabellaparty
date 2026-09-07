@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
-import { headers } from "next/headers";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { Analytics } from "@vercel/analytics/next";
 import { routing } from "@/i18n/routing";
-import { namespacesForPath, pickMessages } from "@/lib/messages-scope";
+import { CLIENT_NAMESPACES, pickMessages } from "@/lib/messages-scope";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import GtagScripts from "@/components/gtag-scripts";
@@ -33,17 +32,20 @@ export default async function LocaleLayout({
   }
   setRequestLocale(locale);
 
-  // Klientam sūta TIKAI maršrutam vajadzīgās tulkojumu telpas (nevis visu lv.json).
-  // Server komponentes turpina lietot pilnās ziņas caur getTranslations.
-  const pathname = (await headers()).get("x-pathname") ?? "";
-  const namespaces = namespacesForPath(pathname);
-  const allMessages = await getMessages();
-  const clientMessages = namespaces
-    ? pickMessages(allMessages, namespaces)
-    : allMessages;
+  // Klientam sūta TIKAI klienta komponenšu telpas (statiski, bez headers() → lapa
+  // var būt ISR). Server komponentes turpina lietot pilnās ziņas caur getTranslations.
+  const clientMessages = pickMessages(await getMessages(), CLIENT_NAMESPACES);
 
   return (
     <NextIntlClientProvider locale={locale} messages={clientMessages}>
+      {/* Root <html lang> ir statiski "lv"; en/ru lapām uzstāda pareizo valodu. */}
+      {locale !== "lv" && (
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.lang=${JSON.stringify(locale)}`,
+          }}
+        />
+      )}
       <GtagScripts />
       <SiteTexture />
       <ScrollToTopOnNav />
