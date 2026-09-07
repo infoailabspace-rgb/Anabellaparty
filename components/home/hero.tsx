@@ -1,5 +1,5 @@
-"use client";
-
+// Servera komponente (nav "use client"): tikai useTranslations (server-saderīgs)
+// un CSS animācijas (anabella-word/fade-up). Nav klienta JS → mazāks sākumlapas bundle.
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import HeroMedia from "@/components/hero-media";

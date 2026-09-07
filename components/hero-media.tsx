@@ -83,6 +83,7 @@ export default function HeroMedia({
           fill
           priority
           fetchPriority="high"
+          quality={60}
           sizes="100vw"
           className={`object-cover ${posClass} ${className}`}
           aria-hidden

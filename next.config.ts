@@ -51,6 +51,11 @@ const nextConfig: NextConfig = {
   images: {
     // Supabase Storage attēli (admin augšupielādes) caur next/image.
     remotePatterns: [{ protocol: "https", hostname: "*.supabase.co" }],
+    // Hero posteris ir tikai 848 px plats → ierobežo augšējo kandidātu, lai
+    // DPR≥2 telefoni nesaņem stipri augšuplādēto 1920/2048/3840 variantu.
+    deviceSizes: [640, 750, 828, 1080],
+    // Atļautie next/image quality līmeņi (Next 15+ prasa deklarēt ne-noklusējuma).
+    qualities: [60, 75],
   },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
