@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
+import { JetBrains_Mono } from "next/font/google";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "./actions";
 import AdminShell from "./admin-shell";
+
+// Monospace fonts (tabulas, rēķini, summas) TIKAI admin — nav publiskajā lapā.
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Admin — Anabella Party",
@@ -62,8 +70,10 @@ export default async function PanelLayout({
   const newCount = (nb ?? 0) + (nl ?? 0);
 
   return (
-    <AdminShell email={user.email} newCount={newCount}>
-      {children}
-    </AdminShell>
+    <div className={jetbrainsMono.variable}>
+      <AdminShell email={user.email} newCount={newCount}>
+        {children}
+      </AdminShell>
+    </div>
   );
 }
