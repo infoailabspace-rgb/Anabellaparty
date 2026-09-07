@@ -79,6 +79,13 @@ const nextConfig: NextConfig = {
         statusCode: 301,
       },
       { source: "/og", destination: "/", statusCode: 301 },
+      // Vecās kublsballa /params/* apakšlapas → kategorijas lapa. `:path*` notver
+      // gan bāzi (bez apakšceļa), gan jebkuru apakšceļu; trailingSlash normalizē /.
+      {
+        source: "/svinibu-inventars/kublsballa/params/:path*",
+        destination: "/svinibu-inventars/kublsballa/",
+        statusCode: 301,
+      },
       // Wildcard vecajām /svinibu-inventars apakšlapām → katalogs, BET izņemot
       // reālās kategoriju lapas (citādi tās pārtrauktu strādāt / cilpa). `.+`
       // (ne `.*`) → base /svinibu-inventars/ NEtiek notverts (nav pašcilpas).
