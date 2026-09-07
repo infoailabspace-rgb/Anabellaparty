@@ -26,6 +26,7 @@ export type BookingDelivery = {
   geocoded?: boolean; // vai ORS veiksmīgi atrada adresi (nevis teksts)
   geocodedLabel?: string | null; // ORS atrastais adreses teksts (DB + mismatch)
   inFreeZone?: boolean; // vai ORS reģions = Ķekavas novads (isInFreeZone)
+  approximate?: boolean; // aprēķināts pēc pagasta centroīda (nevis precīzas adreses)
 };
 
 export type BookingPayload = {
