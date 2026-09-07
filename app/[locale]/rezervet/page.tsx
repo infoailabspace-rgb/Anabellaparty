@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, getLocale, setRequestLocale } from "next-intl/server";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
 import SectionHero from "@/components/section-hero";
@@ -8,7 +8,7 @@ import { WhatsAppIcon } from "@/components/social-icons";
 import { getAllProducts } from "@/lib/catalog";
 import { pageMetadata } from "@/lib/seo";
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -40,7 +40,13 @@ const CONTACTS = [
   { labelKey: "rEmail", sub: "info@anabellaparty.lv", href: "mailto:info@anabellaparty.lv", Icon: MailIcon },
 ] as const;
 
-export default async function RezervetPage() {
+export default async function RezervetPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [products, t, ts, locale] = await Promise.all([
     getAllProducts(),
     getTranslations("pages"),

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, getLocale, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import SectionHero from "@/components/section-hero";
 import ImageGallery from "@/components/image-gallery";
@@ -15,6 +15,8 @@ import {
 import { getAifoto } from "@/lib/ai-foto";
 import EventGallery from "@/components/event-gallery";
 import { getGallery } from "@/lib/site-data";
+
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -44,7 +46,13 @@ const themeKeys = [
   "afTheme7",
 ] as const;
 
-export default async function AiFotoPage() {
+export default async function AiFotoPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [t, ts, locale, af, eventGallery] = await Promise.all([
     getTranslations("pages"),
     getTranslations("sec"),

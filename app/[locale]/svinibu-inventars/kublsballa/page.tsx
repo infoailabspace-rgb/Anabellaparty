@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, getLocale, setRequestLocale } from "next-intl/server";
 import { getProductsByCategory } from "@/lib/catalog";
 import { KUBLI_PHONE } from "@/lib/products";
 import JsonLd from "@/components/seo/json-ld";
@@ -21,9 +21,15 @@ export async function generateMetadata({
   return pageMetadata(locale, "kubli", "/svinibu-inventars/kublsballa");
 }
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
-export default async function KublsballaPage() {
+export default async function KublsballaPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [items, t, ts, locale, gallery] = await Promise.all([
     getProductsByCategory("kubli"),
     getTranslations("pages"),

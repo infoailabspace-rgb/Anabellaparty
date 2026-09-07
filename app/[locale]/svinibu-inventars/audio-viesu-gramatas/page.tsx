@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, getLocale, setRequestLocale } from "next-intl/server";
 import { getProductsByCategory } from "@/lib/catalog";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, productNode, breadcrumbNode } from "@/lib/schema";
@@ -31,9 +31,15 @@ const addOns = [
   { nameKey: "avAddOn3", priceKey: "avAddOn3Price" },
 ] as const;
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
-export default async function AudioViesuGramatasPage() {
+export default async function AudioViesuGramatasPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [items, t, ts, locale, gallery] = await Promise.all([
     getProductsByCategory("audio-video"),
     getTranslations("pages"),

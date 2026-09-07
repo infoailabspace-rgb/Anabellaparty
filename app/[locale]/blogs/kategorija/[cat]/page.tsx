@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import SectionHero from "@/components/section-hero";
 import JsonLd from "@/components/seo/json-ld";
@@ -22,6 +23,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; cat: string }>;
 }): Promise<Metadata> {
   const { locale, cat } = await params;
+  setRequestLocale(locale);
   const label = CATEGORY_LABEL[cat] ?? "Blogs";
   const title = `${label} | Anabella Party blogs`;
   const description = `${label} — raksti un padomi no Anabella Party.`;
@@ -34,7 +36,7 @@ export async function generateMetadata({
   };
 }
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
 export default async function CategoryArchivePage({
   params,
@@ -42,6 +44,7 @@ export default async function CategoryArchivePage({
   params: Promise<{ locale: string; cat: string }>;
 }) {
   const { locale, cat } = await params;
+  setRequestLocale(locale);
   if (!BLOG_CATEGORIES.includes(cat as BlogCategory)) notFound();
   const posts = await getPublishedPosts({ category: cat });
   const label = CATEGORY_LABEL[cat];

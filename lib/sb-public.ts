@@ -11,8 +11,13 @@ export function publicClient() {
   return createClient(url, key, {
     auth: { persistSession: false },
     global: {
+      // tags → admin saglabāšana izsauc revalidateTag("public-content") tūlītējai
+      // atsvaidzināšanai (citādi revalidate 1h).
       fetch: (input: RequestInfo | URL, init?: RequestInit) =>
-        fetch(input, { ...init, next: { revalidate: 3600 } }),
+        fetch(input, {
+          ...init,
+          next: { revalidate: 3600, tags: ["public-content"] },
+        }),
     },
   });
 }

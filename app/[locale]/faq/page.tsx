@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, getLocale, setRequestLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import FaqAccordion from "@/components/faq-accordion";
 import CtaSection from "@/components/cta-section";
@@ -8,7 +8,7 @@ import { pageMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, faqPageNode, breadcrumbNode } from "@/lib/schema";
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -19,7 +19,13 @@ export async function generateMetadata({
   return pageMetadata(locale, "faq", "/faq");
 }
 
-export default async function FaqPage() {
+export default async function FaqPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [items, t, ts, locale] = await Promise.all([
     getFaqs(),
     getTranslations("pages"),

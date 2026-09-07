@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, getLocale, setRequestLocale } from "next-intl/server";
 import { getProductsByCategory, getProductBySlug } from "@/lib/catalog";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, productNode, breadcrumbNode } from "@/lib/schema";
@@ -20,9 +20,15 @@ export async function generateMetadata({
   return pageMetadata(locale, "deco", "/svinibu-inventars/decomebeles");
 }
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
-export default async function DecoMebelesPage() {
+export default async function DecoMebelesPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [usb, deco, t, locale, gallery] = await Promise.all([
     getProductBySlug("koka-usb"),
     getProductsByCategory("deco"),

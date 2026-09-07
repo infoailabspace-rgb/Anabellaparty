@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, getLocale, setRequestLocale } from "next-intl/server";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
 import SectionHero from "@/components/section-hero";
@@ -11,6 +11,8 @@ import DepthBg from "@/components/depth-bg";
 import { homeCategories } from "@/lib/categories";
 import { pageMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export async function generateMetadata({
   params,
 }: {
@@ -20,7 +22,13 @@ export async function generateMetadata({
   return pageMetadata(locale, "inventars", "/svinibu-inventars");
 }
 
-export default async function SvinibuInventarsPage() {
+export default async function SvinibuInventarsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [t, locale] = await Promise.all([
     getTranslations("pages"),
     getLocale(),

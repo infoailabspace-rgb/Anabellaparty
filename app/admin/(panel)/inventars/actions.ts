@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 // Slug VIENMĒR ASCII-only (arī manuālai ievadei) — novērš diakritiku URL-os un
@@ -54,6 +54,7 @@ function revalidateAll(category: string) {
   if (CATEGORY_PATH[category]) revalidatePath(CATEGORY_PATH[category]);
   revalidatePath("/rezervet");
   revalidatePath("/svinibu-inventars");
+  updateTag("public-content");
 }
 
 async function audit(

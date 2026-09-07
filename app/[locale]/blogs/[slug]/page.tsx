@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { getLocale } from "next-intl/server";
+import { getLocale, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode, articleNode } from "@/lib/schema";
-import { getPostBySlug, getRelatedPosts, CATEGORY_LABEL } from "@/lib/blog";
+import {
+  getPostBySlug,
+  getRelatedPosts,
+  CATEGORY_LABEL,
+  getPublishedPosts,
+} from "@/lib/blog";
 import { getProductBySlug } from "@/lib/catalog";
+import { routing } from "@/i18n/routing";
 import { alternatesFor, ogMetadata, lvOnlyRobots } from "@/lib/seo";
 import ShareButtons from "./share-buttons";
 import ArticleContent from "./article-content";
@@ -17,6 +23,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
+  setRequestLocale(locale);
   const post = await getPostBySlug(slug);
   if (!post) return { title: "Raksts nav atrasts | Anabella Party" };
   const title = `${post.title} | Anabella Party`;
@@ -37,7 +44,15 @@ export async function generateMetadata({
   return md;
 }
 
-export const revalidate = 300;
+export const revalidate = 3600;
+
+// Priekšrenderē zināmos rakstus (locale × slug); jauni raksti — ISR pēc pieprasījuma.
+export async function generateStaticParams() {
+  const posts = await getPublishedPosts();
+  return routing.locales.flatMap((locale) =>
+    posts.map((p) => ({ locale, slug: p.slug })),
+  );
+}
 
 export default async function ArticlePage({
   params,
@@ -45,6 +60,7 @@ export default async function ArticlePage({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
+  setRequestLocale(locale);
   const post = await getPostBySlug(slug);
   if (!post) notFound();
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, getLocale, setRequestLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import Prose from "@/components/prose";
 import LegalBindingNote from "@/components/legal-binding-note";
@@ -7,6 +7,8 @@ import { COMPANY, fullAddress } from "@/lib/company";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
 import { alternatesFor, lvOnlyRobots } from "@/lib/seo";
+
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -23,7 +25,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function NoteikumiPage() {
+export default async function NoteikumiPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [tf, locale] = await Promise.all([
     getTranslations("footer"),
     getLocale(),
