@@ -61,7 +61,8 @@ export default function EventGallery({
   mode?: "category" | "home";
 }) {
   const t = useTranslations("gallery");
-  const [visible, setVisible] = useState(12);
+  // Sāk ar 6 SSR'otiem (mazāks sākotnējais HTML/flight); pārējos rāda load-more.
+  const [visible, setVisible] = useState(6);
   const [active, setActive] = useState<number | null>(null);
   const touch = useRef<number | null>(null);
 
@@ -86,8 +87,8 @@ export default function EventGallery({
   // Bez bildēm → sadaļa netiek renderēta.
   if (!images.length) return null;
 
-  const shown = mode === "home" ? images.slice(0, 12) : images.slice(0, visible);
-  const hasMore = mode === "category" && visible < images.length;
+  const shown = images.slice(0, visible);
+  const hasMore = visible < images.length;
 
   return (
     <section className="bg-bg py-20">
@@ -106,20 +107,20 @@ export default function EventGallery({
         </div>
 
         <div className="mt-10 text-center">
-          {mode === "home" ? (
+          {hasMore ? (
+            <button
+              onClick={() => setVisible((v) => v + 6)}
+              className="rounded-full border-2 border-gold px-8 py-3 font-semibold text-gold transition-colors hover:bg-gold/10"
+            >
+              {t("showMore")}
+            </button>
+          ) : mode === "home" ? (
             <Link
               href="/svinibu-inventars"
               className="inline-block rounded-full border-2 border-gold px-8 py-3 font-semibold text-gold transition-colors hover:bg-gold/10"
             >
               {t("viewAll")}
             </Link>
-          ) : hasMore ? (
-            <button
-              onClick={() => setVisible((v) => v + 12)}
-              className="rounded-full border-2 border-gold px-8 py-3 font-semibold text-gold transition-colors hover:bg-gold/10"
-            >
-              {t("showMore")}
-            </button>
           ) : null}
         </div>
       </div>

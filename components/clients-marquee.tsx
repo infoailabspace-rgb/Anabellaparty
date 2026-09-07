@@ -7,12 +7,28 @@ import type { Client } from "@/lib/clients";
 const FADE =
   "linear-gradient(to right, transparent, black 8%, black 92%, transparent)";
 
+// Supabase attēlu transformācija: 240 px plats, q70 (mazāks logo fails, viens URL
+// bez srcset). Render endpoint ir ieslēgts; ne-supabase URL paliek nemainīts.
+function logoSrc(url: string): string {
+  if (url.includes("/storage/v1/object/public/")) {
+    const sep = url.includes("?") ? "&" : "?";
+    return (
+      url.replace("/object/public/", "/render/image/public/") +
+      sep +
+      "width=240&quality=70"
+    );
+  }
+  return url;
+}
+
 function Logo({ c }: { c: Client }) {
   const img = (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={c.logo}
+      src={logoSrc(c.logo)}
       alt={c.name}
+      width={140}
+      height={56}
       loading="lazy"
       decoding="async"
       className="h-14 w-auto object-contain transition-transform duration-300 hover:scale-105"
