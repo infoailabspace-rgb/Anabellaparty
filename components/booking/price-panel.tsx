@@ -9,17 +9,20 @@ export default function PricePanel({
   products,
   deliveryCost,
   deliveryKm,
+  deliveryInFreeZone = false,
   deliveryComputed = false,
 }: {
   items: CartItem[];
   products: Product[];
-  deliveryCost?: number;
-  deliveryKm?: number;
+  deliveryCost?: number | null; // null = nezināma (nekad "bez maksas")
+  deliveryKm?: number | null;
+  deliveryInFreeZone?: boolean;
   deliveryComputed?: boolean;
 }) {
   const t = useTranslations("pricePanel");
   const quote = computeQuote(items, products);
-  const delivery = deliveryComputed ? deliveryCost ?? 0 : 0;
+  // Nezināma piegāde (null) → izslēdz no summas (0), līdz to aprēķina piedāvājumā.
+  const delivery = deliveryComputed && deliveryCost != null ? deliveryCost : 0;
   const totals = computeTotals(quote.subtotal, delivery);
 
   return (
@@ -76,9 +79,11 @@ export default function PricePanel({
           </span>
           <span className="font-mono">
             {deliveryComputed
-              ? delivery > 0
-                ? formatEur(delivery)
-                : t("free")
+              ? deliveryCost != null && deliveryCost > 0
+                ? formatEur(deliveryCost)
+                : deliveryCost === 0 && deliveryInFreeZone
+                  ? t("free")
+                  : t("deliveryTbd")
               : t("deliveryStep2")}
           </span>
         </div>

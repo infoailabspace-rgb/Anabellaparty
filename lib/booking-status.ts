@@ -11,14 +11,17 @@ function isPast(eventDate: string): boolean {
   return d.getTime() < today.getTime();
 }
 
-/** Rezervācijas summa: final_total, citādi estimated_total + delivery_cost. */
+/** Rezervācijas summa: final_total, citādi estimated_total + delivery_cost.
+ *  delivery_cost null = NEZINĀMA piegāde → izslēgta (nepieskaita), līdz to
+ *  aprēķina piedāvājumā. 0 = bezmaksas zona (arī nepieskaita). */
 export function bookingAmount(b: {
   final_total?: number | null;
   estimated_total?: number | null;
   delivery_cost?: number | null;
 }): number {
   if (b.final_total != null) return Number(b.final_total);
-  return (Number(b.estimated_total) || 0) + (Number(b.delivery_cost) || 0);
+  const delivery = b.delivery_cost != null ? Number(b.delivery_cost) || 0 : 0;
+  return (Number(b.estimated_total) || 0) + delivery;
 }
 
 /** Apmaksas stāvoklis (dropdown vērtība) no paid_sum + deferred karodziņa. */
