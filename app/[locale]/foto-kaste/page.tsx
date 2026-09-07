@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, getLocale, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import JsonLd from "@/components/seo/json-ld";
 import {
@@ -36,9 +36,15 @@ export async function generateMetadata({
   return pageMetadata(locale, "fotoKaste", "/foto-kaste");
 }
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
-export default async function FotoKastePage() {
+export default async function FotoKastePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [products, t, ts, tfk, taeo, locale, gallery, framesImage, clients] =
     await Promise.all([
       getAllProducts(),

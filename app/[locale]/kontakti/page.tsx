@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, getLocale, setRequestLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import B2bEnquiryForm from "@/components/b2b-enquiry-form";
 import Reveal from "@/components/reveal";
@@ -11,7 +11,7 @@ import { pageMetadata } from "@/lib/seo";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, localBusinessNode, breadcrumbNode } from "@/lib/schema";
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
 const HOURS_FALLBACK =
   "Pirmdiena–Piektdiena: 9:00–20:00\nSestdiena–Svētdiena: 10:00–18:00\nPasākumi tiek apkalpoti arī ārpus darba laika pēc vienošanās.";
@@ -22,10 +22,17 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  setRequestLocale(locale);
   return pageMetadata(locale, "kontakti", "/kontakti");
 }
 
-export default async function KontaktiPage() {
+export default async function KontaktiPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [hours, t, ts, tb, locale] = await Promise.all([
     getContent("contact.hours", HOURS_FALLBACK),
     getTranslations("pages"),

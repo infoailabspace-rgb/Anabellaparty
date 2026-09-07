@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { publicClient } from "@/lib/sb-public";
 import {
   products as staticProducts,
   type Product,
@@ -17,12 +17,9 @@ function mlPick(v: unknown, locale: string): string {
   return pickStr(v, locale);
 }
 
-// Publiskā (anon) lasīšana bez sesijas — ļauj ISR kešošanu.
+// Publiskā (anon) lasīšana — tagots ("public-content") + ISR keš (skat. sb-public).
 function anon() {
-  const url = process.env.NEXT_PUBLIC_SB_URL;
-  const key = process.env.NEXT_PUBLIC_SB_ANON_KEY;
-  if (!url || !key) return null;
-  return createClient(url, key, { auth: { persistSession: false } });
+  return publicClient();
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

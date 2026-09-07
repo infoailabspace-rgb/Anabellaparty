@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getLocale } from "next-intl/server";
+import { getLocale, setRequestLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
@@ -13,6 +13,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  setRequestLocale(locale);
   const title = "Blogs | Anabella Party";
   const description =
     "Stāsti no pasākumiem, praktiski padomi un jaunumi — Anabella Party svētku inventārs Latvijā.";
@@ -25,9 +26,15 @@ export async function generateMetadata({
   };
 }
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
-export default async function BlogsPage() {
+export default async function BlogsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [locale, posts] = await Promise.all([getLocale(), getPublishedPosts()]);
   return (
     <>

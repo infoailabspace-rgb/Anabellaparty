@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 async function audit(action: string, entity: string, entityId: string | null, changes: unknown) {
@@ -27,7 +27,8 @@ export async function saveContent(key: string, value: ML) {
     .eq("key", key);
   if (error) return { error: error.message };
   await audit("update", "content", key, { key });
-  revalidatePath("/", "layout"); // atjauno visas valodas
+  revalidatePath("/", "layout");
+  updateTag("public-content"); // atjauno visas valodas
   return { ok: true };
 }
 
@@ -69,6 +70,7 @@ export async function saveSiteImage(key: string, url: string | null) {
   if (error) return { error: error.message };
   await audit("update", "content", key, { key });
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -95,6 +97,7 @@ async function upsertContent(
   if (error) return { error: error.message };
   await audit("update", "content", key, { key });
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -156,6 +159,7 @@ export async function upsertTestimonial(
   if (error) return { error: error.message };
   await audit(id ? "update" : "create", "testimonial", id, row);
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 export async function deleteTestimonial(id: string) {
@@ -164,6 +168,7 @@ export async function deleteTestimonial(id: string) {
   if (error) return { error: error.message };
   await audit("delete", "testimonial", id, null);
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -186,6 +191,7 @@ export async function upsertClient(
   if (error) return { error: error.message };
   await audit(id ? "update" : "create", "client", id, row);
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 export async function deleteClient(id: string) {
@@ -194,6 +200,7 @@ export async function deleteClient(id: string) {
   if (error) return { error: error.message };
   await audit("delete", "client", id, null);
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -212,6 +219,7 @@ export async function deleteOverride(key: string) {
   if (error) return { error: error.message };
   await audit("delete", "content", key, { key });
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -237,6 +245,7 @@ export async function upsertPartner(
   if (error) return { error: error.message };
   await audit(id ? "update" : "create", "partner", id, row);
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true, id: (data?.id ?? id) as string };
 }
 export async function deletePartner(id: string) {
@@ -245,6 +254,7 @@ export async function deletePartner(id: string) {
   if (error) return { error: error.message };
   await audit("delete", "partner", id, null);
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -272,6 +282,7 @@ export async function insertGalleryImages(
   if (error) return { error: error.message };
   await audit("create", "gallery", null, { count: rows.length });
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true, rows: data };
 }
 
@@ -293,6 +304,7 @@ export async function updateGalleryImage(
   if (error) return { error: error.message };
   await audit("update", "gallery", id, { id });
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -308,6 +320,7 @@ export async function deleteGalleryImage(id: string) {
   await supabase.from("site_gallery").delete().eq("id", id);
   await audit("delete", "gallery", id, null);
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -318,6 +331,7 @@ export async function bulkGalleryCategory(ids: string[], category: string | null
   if (error) return { error: error.message };
   await audit("update", "gallery", null, { bulk: "category", count: ids.length });
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -331,6 +345,7 @@ export async function bulkGalleryActive(ids: string[], active: boolean) {
   if (error) return { error: error.message };
   await audit("update", "gallery", null, { bulk: "active", count: ids.length });
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -348,6 +363,7 @@ export async function bulkGalleryDelete(ids: string[]) {
   await supabase.from("site_gallery").delete().in("id", ids);
   await audit("delete", "gallery", null, { bulk: "delete", count: ids.length });
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -356,6 +372,7 @@ export async function reorderGallery(ids: string[]) {
   for (let i = 0; i < ids.length; i++)
     await supabase.from("site_gallery").update({ sort_order: i }).eq("id", ids[i]);
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -422,6 +439,7 @@ export async function upsertBlogPost(id: string | null, d: BlogInput) {
   if (error) return { error: error.message };
   await audit(id ? "update" : "create", "blog", id, { slug: d.slug });
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true, id: data?.id as string, slug: data?.slug as string };
 }
 
@@ -430,6 +448,7 @@ export async function deleteBlogPost(id: string) {
   await supabase.from("blog_posts").delete().eq("id", id);
   await audit("delete", "blog", id, null);
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -452,6 +471,7 @@ export async function upsertFaq(
   if (error) return { error: error.message };
   await audit(id ? "update" : "create", "faq", id, row);
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 export async function deleteFaq(id: string) {
@@ -460,6 +480,7 @@ export async function deleteFaq(id: string) {
   if (error) return { error: error.message };
   await audit("delete", "faq", id, null);
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }
 
@@ -500,5 +521,6 @@ export async function saveHeroMedia(pageKey: string, media: HeroMediaInput) {
   if (error) return { error: error.message };
   await audit("update", "hero", key, { key });
   revalidatePath("/", "layout");
+  updateTag("public-content");
   return { ok: true };
 }

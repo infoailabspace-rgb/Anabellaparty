@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, getLocale, setRequestLocale } from "next-intl/server";
 import SectionHero from "@/components/section-hero";
 import Reveal from "@/components/reveal";
 import { getPartners } from "@/lib/site-data";
@@ -8,6 +8,8 @@ import JsonLd from "@/components/seo/json-ld";
 import { graph, breadcrumbNode } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 import { COMPANY } from "@/lib/company";
+
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -18,7 +20,13 @@ export async function generateMetadata({
   return pageMetadata(locale, "musuDraugi", "/musu-draugi");
 }
 
-export default async function MusuDraugiPage() {
+export default async function MusuDraugiPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: _locale } = await params;
+  setRequestLocale(_locale);
   const [t, ts, locale, partners] = await Promise.all([
     getTranslations("pages"),
     getTranslations("sec"),
