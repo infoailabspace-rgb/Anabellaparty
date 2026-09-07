@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { Analytics } from "@vercel/analytics/next";
 import { routing } from "@/i18n/routing";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
@@ -42,6 +43,7 @@ export default async function LocaleLayout({
       <StickyCall />
       <CookieConsent />
       <AnalyticsListener />
+      <Analytics />
     </NextIntlClientProvider>
   );
 }

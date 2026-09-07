@@ -21,8 +21,11 @@ const csp = [
   "font-src 'self' data:",
   "media-src 'self' blob: https://*.supabase.co",
   "style-src 'self' 'unsafe-inline'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://connect.facebook.net https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms`,
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.googletagmanager.com https://www.google-analytics.com https://*.analytics.google.com https://connect.facebook.net https://www.facebook.com https://www.clarity.ms https://*.clarity.ms https://c.bing.com https://www.google.com https://google.com https://www.googleadservices.com https://googleadservices.com",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://connect.facebook.net https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://va.vercel-scripts.com`,
+  // Vercel Web Analytics: skripts /_vercel/insights/script.js un bīkonis
+  // /_vercel/insights/* ir tajā pašā izcelsmē ('self' tos sedz); va.vercel-scripts.com
+  // ir CDN rezerve.
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.googletagmanager.com https://www.google-analytics.com https://*.analytics.google.com https://connect.facebook.net https://www.facebook.com https://www.clarity.ms https://*.clarity.ms https://c.bing.com https://www.google.com https://google.com https://www.googleadservices.com https://googleadservices.com https://va.vercel-scripts.com",
   "frame-src 'self' https://www.googletagmanager.com https://www.facebook.com https://td.doubleclick.net https://www.google.com https://maps.google.com https://www.youtube-nocookie.com https://www.youtube.com",
   "upgrade-insecure-requests",
 ].join("; ");
