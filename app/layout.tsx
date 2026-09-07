@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
-import { getLocale } from "next-intl/server";
 import { SITE_URL } from "@/lib/seo";
 import { getSiteImage } from "@/lib/site-content";
 import "./globals.css";
@@ -39,15 +38,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
 // Root layout — <html>/<body>, fonti. Lokalizēto chrome nodrošina [locale]/layout.
 // Admin (/admin/*) renderējas šeit bez publiskā chrome (tam savs izkārtojums).
-export default async function RootLayout({
+// lang="lv" statiski (LV ir noklusējums; en/ru ir noindex sekundārie) — NElieto
+// getLocale(), kas lasa headers un padarītu VISUS maršrutus dinamiskus. Pareizo
+// valodu en/ru lapām uzstāda [locale]/layout ar mazu inline skriptu.
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const locale = await getLocale();
   return (
     <html
-      lang={locale}
+      lang="lv"
+      suppressHydrationWarning
       className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg text-text font-body">
