@@ -69,6 +69,9 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/admin")) {
     return adminMiddleware(request);
   }
+  // Nodod ceļu RSC slānim (x-pathname), lai [locale]/layout var atlasīt tikai
+  // maršrutam vajadzīgās tulkojumu telpas NextIntlClientProvider-am.
+  request.headers.set("x-pathname", request.nextUrl.pathname);
   // Publiskās lapas — next-intl (LV saknē, en/ru prefiksi).
   return intlMiddleware(request);
 }

@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { Analytics } from "@vercel/analytics/next";
 import { routing } from "@/i18n/routing";
+import { namespacesForPath, pickMessages } from "@/lib/messages-scope";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import GtagScripts from "@/components/gtag-scripts";
@@ -31,8 +33,17 @@ export default async function LocaleLayout({
   }
   setRequestLocale(locale);
 
+  // Klientam sūta TIKAI maršrutam vajadzīgās tulkojumu telpas (nevis visu lv.json).
+  // Server komponentes turpina lietot pilnās ziņas caur getTranslations.
+  const pathname = (await headers()).get("x-pathname") ?? "";
+  const namespaces = namespacesForPath(pathname);
+  const allMessages = await getMessages();
+  const clientMessages = namespaces
+    ? pickMessages(allMessages, namespaces)
+    : allMessages;
+
   return (
-    <NextIntlClientProvider>
+    <NextIntlClientProvider locale={locale} messages={clientMessages}>
       <GtagScripts />
       <SiteTexture />
       <ScrollToTopOnNav />
