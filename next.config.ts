@@ -60,55 +60,8 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
-  // Vecās Mozello platformas URL → jaunās struktūras 301 (SEO vērtības saglabāšana).
-  // Piezīme: statusCode:301 (nevis permanent:true, kas dotu 308) — GSC prasa 301.
-  async redirects() {
-    return [
-      { source: "/sakums", destination: "/", statusCode: 301 },
-      // Bojāti mantotie URL (/& un /$) → sākums (encode: %26, %24).
-      { source: "/&", destination: "/", statusCode: 301 },
-      { source: "/%26", destination: "/", statusCode: 301 },
-      { source: "/$", destination: "/", statusCode: 301 },
-      { source: "/%24", destination: "/", statusCode: 301 },
-      {
-        source: "/svetku-inventars",
-        destination: "/svinibu-inventars/",
-        statusCode: 301,
-      },
-      {
-        source: "/specefekti",
-        destination: "/svinibu-inventars/specefekti/",
-        statusCode: 301,
-      },
-      {
-        source: "/audio-viesu-gramatas",
-        destination: "/svinibu-inventars/audio-viesu-gramatas/",
-        statusCode: 301,
-      },
-      {
-        source: "/piepusamas-",
-        destination: "/piepusamas-atrakcijas/",
-        statusCode: 301,
-      },
-      { source: "/og", destination: "/", statusCode: 301 },
-      // Vecās kublsballa /params/* apakšlapas → kategorijas lapa. `:path*` notver
-      // gan bāzi (bez apakšceļa), gan jebkuru apakšceļu; trailingSlash normalizē /.
-      {
-        source: "/svinibu-inventars/kublsballa/params/:path*",
-        destination: "/svinibu-inventars/kublsballa/",
-        statusCode: 301,
-      },
-      // Wildcard vecajām /svinibu-inventars apakšlapām → katalogs, BET izņemot
-      // reālās kategoriju lapas (citādi tās pārtrauktu strādāt / cilpa). `.+`
-      // (ne `.*`) → base /svinibu-inventars/ NEtiek notverts (nav pašcilpas).
-      {
-        source:
-          "/svinibu-inventars/:path((?!audio-viesu-gramatas|decomebeles|kublsballa|specefekti).+)",
-        destination: "/svinibu-inventars/",
-        statusCode: 301,
-      },
-    ];
-  },
+  // Mantotie (Mozello) URL redirekti ir middleware.ts (VIENS 301 — pirms trailingSlash
+  // 308; next.config redirects() vienmēr izpildās PĒC trailingSlash → 308→301 ķēde).
 };
 
 export default withNextIntl(nextConfig);

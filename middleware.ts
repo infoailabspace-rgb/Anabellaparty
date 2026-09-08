@@ -53,6 +53,37 @@ async function adminMiddleware(request: NextRequest) {
   return response;
 }
 
+// Mantotie (Mozello) URL → jaunā struktūra. Middleware izpildās PIRMS trailingSlash
+// 308, tāpēc atgriež VIENU tiešu 301 (ne 308→301 ķēdi). Salīdzina bez beigu slīpsvītras.
+function legacyRedirect(pathname: string): string | null {
+  const p = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
+  const EXACT: Record<string, string> = {
+    "/sakums": "/",
+    "/&": "/",
+    "/%26": "/",
+    "/$": "/",
+    "/%24": "/",
+    "/svetku-inventars": "/svinibu-inventars/",
+    "/specefekti": "/svinibu-inventars/specefekti/",
+    "/audio-viesu-gramatas": "/svinibu-inventars/audio-viesu-gramatas/",
+    "/piepusamas-": "/piepusamas-atrakcijas/",
+    "/og": "/",
+  };
+  if (EXACT[p]) return EXACT[p];
+  // Vecās kublsballa /params/* apakšlapas → kategorija.
+  if (/^\/svinibu-inventars\/kublsballa\/params(\/|$)/.test(p))
+    return "/svinibu-inventars/kublsballa/";
+  // Vecās /svinibu-inventars/<ne-reāla-kategorija> apakšlapas → katalogs (izņemot
+  // reālās kategorijas, citādi cilpa/lapas pārtrauktu strādāt).
+  const m = p.match(/^\/svinibu-inventars\/(.+)$/);
+  if (
+    m &&
+    !/^(audio-viesu-gramatas|decomebeles|kublsballa|specefekti)(\/|$)/.test(m[1])
+  )
+    return "/svinibu-inventars/";
+  return null;
+}
+
 export async function middleware(request: NextRequest) {
   // Kanoniskā domēna 308: production vercel.app aliasi (stabilais, git-main, hash)
   // → https://www.anabellaparty.lv, lai Google neindeksē dublikātus. Preview deploy
@@ -64,6 +95,15 @@ export async function middleware(request: NextRequest) {
       "https://www.anabellaparty.lv",
     );
     return NextResponse.redirect(url, 308);
+  }
+
+  // Mantotie URL → viens tiešs 301 (pirms trailingSlash 308 un pirms admin/intl).
+  const legacyDest = legacyRedirect(request.nextUrl.pathname);
+  if (legacyDest) {
+    const url = request.nextUrl.clone();
+    url.pathname = legacyDest;
+    url.search = "";
+    return NextResponse.redirect(url, 301);
   }
 
   if (request.nextUrl.pathname.startsWith("/admin")) {

@@ -19,7 +19,6 @@ const OG_STATIC_FALLBACK = "/og-image.jpg";
 
 // OG attēls: admin panelī iestatītais (site_content 'og.fallback', Supabase URL),
 // citādi statiskais /og-image.jpg. metadataBase padara relatīvo absolūtu.
-// (Dinamiskais /og route vairs netiek lietots — tas 404 produkcijā.)
 async function ogImages(): Promise<NonNullable<Metadata["openGraph"]>["images"]> {
   const admin = await getSiteImage("og.fallback");
   return [{ url: admin || OG_STATIC_FALLBACK, width: 1200, height: 630 }];
