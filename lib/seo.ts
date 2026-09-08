@@ -58,6 +58,36 @@ export function alternatesFor(locale: string, path = "") {
   return { canonical: localizedPath(locale, path), languages };
 }
 
+// Alternates + robots atkarībā no FAKTISKAJIEM tulkojumiem (blog rakstiem).
+// - Netulkota en/ru versija (locale nav translatedLocales) → canonical uz LV
+//   absolūto URL + noindex,follow (nedublē LV saturu meklētājos).
+// - Tulkota versija → self-canonical + hreflang TIKAI starp tulkotajām valodām
+//   (x-default vienmēr uz LV). LV vienmēr ir translatedLocales → vienmēr indeksējams.
+export function translatedAlternates(
+  locale: string,
+  path: string,
+  translatedLocales: string[],
+): {
+  alternates: NonNullable<Metadata["alternates"]>;
+  robots: Metadata["robots"] | undefined;
+} {
+  if (!translatedLocales.includes(locale)) {
+    return {
+      alternates: {
+        canonical: `${SITE_URL}${localizedPath(routing.defaultLocale, path)}`,
+      },
+      robots: { index: false, follow: true },
+    };
+  }
+  const languages: Record<string, string> = {};
+  for (const l of translatedLocales) languages[l] = localizedPath(l, path);
+  languages["x-default"] = localizedPath(routing.defaultLocale, path);
+  return {
+    alternates: { canonical: localizedPath(locale, path), languages },
+    robots: undefined,
+  };
+}
+
 // OpenGraph + Twitter bloks (kopīgs). Attēls = admin OG vai statiskais fallback.
 export async function ogMetadata(
   locale: string,
