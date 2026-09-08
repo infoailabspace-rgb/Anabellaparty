@@ -258,7 +258,9 @@ export async function POST(req: Request) {
       const rNotify = await resend.emails.send({
         from,
         to: notify,
-        replyTo: payload.contact.email.trim(),
+        // FROM=noreply@ ir nepārraudzīts → atbildes uz pārraudzīto info@ (NOTIFY).
+        // (Klienta e-pasts/telefons ir redzami e-pasta pamattekstā zemāk.)
+        replyTo: notify,
         subject: `Jauns pieteikums — ${payload.event.date} — ${payload.contact.name}`,
         html: `<meta charset="utf-8">${deliveryWarn}<p style="font-family:Arial,sans-serif;">Jauns rezervācijas pieteikums no <b>${esc(payload.contact.name)}</b> (${esc(phone)}, ${esc(payload.contact.email)}).</p>${html}`,
       });
@@ -270,6 +272,8 @@ export async function POST(req: Request) {
       const rClient = await resend.emails.send({
         from,
         to: payload.contact.email.trim(),
+        // FROM=noreply@ ir nepārraudzīts → klienta atbildes uz pārraudzīto info@.
+        replyTo: notify,
         subject: "Tavs pieteikums saņemts — Anabella Party",
         html: `<meta charset="utf-8"><p style="font-family:Arial,sans-serif;">Paldies, ${esc(payload.contact.name)}! Tavs pieteikums saņemts. Atbildēsim 24 stundu laikā ar precīzu piedāvājumu. Ja steidz — zvani +371 29222761.</p>${html}`,
       });
