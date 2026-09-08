@@ -62,10 +62,14 @@ const nextConfig: NextConfig = {
   },
   // Vecās Mozello platformas URL → jaunās struktūras 301 (SEO vērtības saglabāšana).
   // Piezīme: statusCode:301 (nevis permanent:true, kas dotu 308) — GSC prasa 301.
-  // NEredirectē /& un /$ (bojāti URL — 404 tiem ir korekta atbilde).
   async redirects() {
     return [
       { source: "/sakums", destination: "/", statusCode: 301 },
+      // Bojāti mantotie URL (/& un /$) → sākums (encode: %26, %24).
+      { source: "/&", destination: "/", statusCode: 301 },
+      { source: "/%26", destination: "/", statusCode: 301 },
+      { source: "/$", destination: "/", statusCode: 301 },
+      { source: "/%24", destination: "/", statusCode: 301 },
       {
         source: "/svetku-inventars",
         destination: "/svinibu-inventars/",
