@@ -258,9 +258,8 @@ export async function POST(req: Request) {
       const rNotify = await resend.emails.send({
         from,
         to: notify,
-        // FROM=noreply@ ir nepārraudzīts → atbildes uz pārraudzīto info@ (NOTIFY).
-        // (Klienta e-pasts/telefons ir redzami e-pasta pamattekstā zemāk.)
-        replyTo: notify,
+        // Admin brīdinājums → atbilde iet TIEŠI klientam (Roberts atbild uz pieteikumu).
+        replyTo: payload.contact.email.trim(),
         subject: `Jauns pieteikums — ${payload.event.date} — ${payload.contact.name}`,
         html: `<meta charset="utf-8">${deliveryWarn}<p style="font-family:Arial,sans-serif;">Jauns rezervācijas pieteikums no <b>${esc(payload.contact.name)}</b> (${esc(phone)}, ${esc(payload.contact.email)}).</p>${html}`,
       });
