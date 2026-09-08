@@ -48,6 +48,10 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   // Mozello URL saglabāšana + konsekventi canonical (/foto-kaste/).
   trailingSlash: true,
+  // Izslēdz Next automātisko trailingSlash 308 (kas izpildās PIRMS middleware),
+  // lai middleware var atgriezt VIENU tiešu 301 mantotajiem URL. Beigu slīpsvītras
+  // normalizāciju publiskajām lapām veic middleware.ts pati.
+  skipTrailingSlashRedirect: true,
   images: {
     // Supabase Storage attēli (admin augšupielādes) caur next/image.
     remotePatterns: [{ protocol: "https", hostname: "*.supabase.co" }],
