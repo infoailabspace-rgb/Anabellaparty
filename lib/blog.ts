@@ -1,7 +1,8 @@
 import { cache } from "react";
 import { marked } from "marked";
 import { publicClient } from "@/lib/sb-public";
-import { currentLocale, pickStr } from "@/lib/i18n-db";
+import { currentLocale, pickStr, hasStr } from "@/lib/i18n-db";
+import { routing } from "@/i18n/routing";
 
 export const BLOG_CATEGORIES = [
   "kazas",
@@ -38,6 +39,9 @@ export type BlogPostFull = BlogListItem & {
   gallery: string[];
   tags: string[];
   relatedProducts: string[];
+  // Valodas ar reālu tulkojumu (title UN content ne-tukšs). lv vienmēr iekļauts.
+  // Netulkotas en/ru → canonical uz lv + noindex (skat. seo.translatedAlternates).
+  translatedLocales: string[];
 };
 
 // marked KONFIGURĒTS BEZ raw HTML — renderer.html atgriež "", tāpēc jebkurš
@@ -109,6 +113,10 @@ export async function getPostBySlug(slug: string): Promise<BlogPostFull | null> 
       .maybeSingle();
     if (!data) return null;
     const contentMd = pickStr(data.content, locale);
+    // Raksts ir "tulkots" valodai, ja gan title, gan content tai ir ne-tukši.
+    const translatedLocales = routing.locales.filter(
+      (l) => hasStr(data.title, l) && hasStr(data.content, l),
+    );
     return {
       ...toListItem(data, locale),
       contentMd,
@@ -117,6 +125,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPostFull | null> 
       gallery: Array.isArray(data.gallery) ? data.gallery : [],
       tags: Array.isArray(data.tags) ? data.tags : [],
       relatedProducts: Array.isArray(data.related_products) ? data.related_products : [],
+      translatedLocales,
     };
   } catch {
     return null;

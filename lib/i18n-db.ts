@@ -18,6 +18,16 @@ export function pickStr(v: unknown, locale: string): string {
   return "";
 }
 
+// Vai jsonb {lv,en,ru} satur NE-tukšu tulkojumu norādītajai valodai (bez lv fallback).
+// Lieto SEO lēmumiem: netulkota en/ru lapa → canonical uz lv + noindex.
+export function hasStr(v: unknown, locale: string): boolean {
+  if (v && typeof v === "object") {
+    const s = (v as Record<string, unknown>)[locale];
+    return typeof s === "string" && s.trim().length > 0;
+  }
+  return false;
+}
+
 // jsonb {lv,en,ru} ar masīviem → masīvs izvēlētajā valodā; tukšs → lv.
 export function pickArr(v: unknown, locale: string): string[] | undefined {
   if (v && typeof v === "object") {

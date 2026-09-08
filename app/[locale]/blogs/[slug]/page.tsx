@@ -13,7 +13,7 @@ import {
 } from "@/lib/blog";
 import { getProductBySlug } from "@/lib/catalog";
 import { routing } from "@/i18n/routing";
-import { alternatesFor, ogMetadata, lvOnlyRobots } from "@/lib/seo";
+import { translatedAlternates, ogMetadata } from "@/lib/seo";
 import ShareButtons from "./share-buttons";
 import ArticleContent from "./article-content";
 
@@ -28,11 +28,18 @@ export async function generateMetadata({
   if (!post) return { title: "Raksts nav atrasts | Anabella Party" };
   const title = `${post.title} | Anabella Party`;
   const description = post.metaDescription;
+  // en/ru → canonical uz LV + noindex,follow, IZŅEMOT ja rakstam ir reāls
+  // tulkojums (title+content) tajā valodā → tad self-canonical + hreflang.
+  const { alternates, robots } = translatedAlternates(
+    locale,
+    `/blogs/${slug}`,
+    post.translatedLocales,
+  );
   const md: Metadata = {
     title,
     description,
-    alternates: alternatesFor(locale, `/blogs/${slug}`),
-    robots: lvOnlyRobots(locale),
+    alternates,
+    robots,
     ...(await ogMetadata(locale, `/blogs/${slug}`, title, description)),
   };
   if (post.cover) {
