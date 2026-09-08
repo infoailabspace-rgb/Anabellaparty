@@ -129,6 +129,8 @@ export async function sendReservationEmail(opts: {
     const res = await resend.emails.send({
       from: FROM,
       to: opts.to,
+      // FROM=noreply@ ir nepārraudzīts → atbildes uz pārraudzīto info@ (NOTIFY).
+      replyTo: NOTIFY,
       ...(opts.bccNotify ? { bcc: NOTIFY } : {}),
       subject: opts.subject,
       // emailShell jau iekļauj <meta charset="utf-8"> — nedublējam.
