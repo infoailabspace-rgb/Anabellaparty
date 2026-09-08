@@ -98,17 +98,29 @@ export async function middleware(request: NextRequest) {
   }
 
   // Mantotie URL → viens tiešs 301 (pirms trailingSlash 308 un pirms admin/intl).
+  // Lieto standarta URL (NE nextUrl.clone(), kas nogriež galotnes slīpsvītru → cilpa).
   const legacyDest = legacyRedirect(request.nextUrl.pathname);
   if (legacyDest) {
-    const url = request.nextUrl.clone();
-    url.pathname = legacyDest;
-    url.search = "";
-    return NextResponse.redirect(url, 301);
+    return NextResponse.redirect(new URL(legacyDest, request.url), 301);
   }
 
   if (request.nextUrl.pathname.startsWith("/admin")) {
     return adminMiddleware(request);
   }
+
+  // Beigu slīpsvītras normalizācija publiskajām lapām (aizvieto Next auto-308, kas
+  // ar skipTrailingSlashRedirect izslēgts). PĒC mantotajiem redirektiem → tie paliek
+  // viens tiešs 301. matcher jau izslēdz api/_next/_vercel un failus ar punktu.
+  if (!request.nextUrl.pathname.endsWith("/")) {
+    return NextResponse.redirect(
+      new URL(
+        `${request.nextUrl.pathname}/${request.nextUrl.search}`,
+        request.url,
+      ),
+      308,
+    );
+  }
+
   // Publiskās lapas — next-intl (LV saknē, en/ru prefiksi).
   return intlMiddleware(request);
 }
