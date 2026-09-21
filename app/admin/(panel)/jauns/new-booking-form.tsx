@@ -8,7 +8,13 @@ import { createManualBooking } from "../actions";
 import BackButton from "@/components/admin/back-button";
 
 type Cust = { id: string; name: string; email: string; phone: string };
-type Line = { slug: string; tierIndex: number; qty: number };
+type Line = {
+  slug: string;
+  tierIndex: number;
+  qty: number;
+  extraHours: number;
+  addOns: Record<string, number>;
+};
 
 const field =
   "w-full rounded-lg border border-gold/25 bg-navy/40 px-3 py-2 text-sm text-text outline-none focus:border-gold";
@@ -79,8 +85,8 @@ export default function NewBookingForm({
           ? Array.from({ length: Math.max(1, l.qty) }, () => ({
               slug: l.slug,
               tierIndex: l.tierIndex,
-              extraHours: 0,
-              addOns: {},
+              extraHours: l.extraHours,
+              addOns: l.addOns,
             }))
           : [],
       ),
@@ -118,11 +124,23 @@ export default function NewBookingForm({
   }
 
   const addLine = () =>
-    setLines((l) => [...l, { slug: "", tierIndex: 0, qty: 1 }]);
+    setLines((l) => [
+      ...l,
+      { slug: "", tierIndex: 0, qty: 1, extraHours: 0, addOns: {} },
+    ]);
   const setLine = (i: number, patch: Partial<Line>) =>
     setLines((l) => l.map((x, j) => (j === i ? { ...x, ...patch } : x)));
   const removeLine = (i: number) =>
     setLines((l) => l.filter((_, j) => j !== i));
+  // Papildinājuma iestatīšana (tas pats avots ko publiskā forma — products.ts)
+  const setLineAddOn = (i: number, name: string, qty: number) =>
+    setLines((l) =>
+      l.map((x, j) =>
+        j === i
+          ? { ...x, addOns: { ...x.addOns, [name]: Math.max(0, qty) } }
+          : x,
+      ),
+    );
 
   function save() {
     if (!name.trim()) {
@@ -298,21 +316,67 @@ export default function NewBookingForm({
         <div className="space-y-2">
           {lines.map((l, i) => {
             const p = bySlug.get(l.slug);
+            const hasExtras =
+              !!p && (typeof p.hourlyExtra === "number" || !!p.addOns?.length);
             return (
-              <div key={i} className="flex flex-wrap items-center gap-2">
-                <select value={l.slug} onChange={(e) => setLine(i, { slug: e.target.value, tierIndex: 0 })} className={`${field} flex-1`}>
-                  <option value="">— izvēlies produktu —</option>
-                  {products.map((pr) => (
-                    <option key={pr.slug} value={pr.slug}>{pr.name}</option>
-                  ))}
-                </select>
-                <select value={l.tierIndex} onChange={(e) => setLine(i, { tierIndex: Number(e.target.value) })} disabled={!p} className={`${field} w-48`}>
-                  {(p?.tiers ?? []).map((t, ti) => (
-                    <option key={ti} value={ti}>{t.duration} — {t.price ? `${t.price} €` : "vienojoties"}</option>
-                  ))}
-                </select>
-                <input type="number" min={1} value={l.qty} onChange={(e) => setLine(i, { qty: Math.max(1, Number(e.target.value)) })} className={`${field} w-20`} />
-                <button type="button" onClick={() => removeLine(i)} className="rounded-lg border border-red-500/40 px-2 py-1.5 text-xs text-red-300">✕</button>
+              <div key={i} className="rounded-lg border border-gold/15 bg-bg/20 p-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <select value={l.slug} onChange={(e) => setLine(i, { slug: e.target.value, tierIndex: 0, extraHours: 0, addOns: {} })} className={`${field} flex-1`}>
+                    <option value="">— izvēlies produktu —</option>
+                    {products.map((pr) => (
+                      <option key={pr.slug} value={pr.slug}>{pr.name}</option>
+                    ))}
+                  </select>
+                  <select value={l.tierIndex} onChange={(e) => setLine(i, { tierIndex: Number(e.target.value) })} disabled={!p} className={`${field} w-48`}>
+                    {(p?.tiers ?? []).map((t, ti) => (
+                      <option key={ti} value={ti}>{t.duration} — {t.price ? `${t.price} €` : "vienojoties"}</option>
+                    ))}
+                  </select>
+                  <input type="number" min={1} value={l.qty} onChange={(e) => setLine(i, { qty: Math.max(1, Number(e.target.value)) })} className={`${field} w-20`} />
+                  <button type="button" onClick={() => removeLine(i)} className="rounded-lg border border-red-500/40 px-2 py-1.5 text-xs text-red-300">✕</button>
+                </div>
+
+                {/* Papildu stundas + papildinājumi (AI foto u.c.) — tas pats avots ko publiskā forma */}
+                {hasExtras && (
+                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-gold/10 pt-2 pl-1">
+                    {typeof p!.hourlyExtra === "number" && (
+                      <label className="flex items-center gap-2 text-xs text-text/70">
+                        <span>Papildu stundas ({p!.hourlyExtra} €/h)</span>
+                        <input
+                          type="number"
+                          min={0}
+                          value={l.extraHours}
+                          onChange={(e) => setLine(i, { extraHours: Math.max(0, Number(e.target.value)) })}
+                          className={`${field} w-16`}
+                        />
+                      </label>
+                    )}
+                    {p!.addOns?.map((a) =>
+                      a.single ? (
+                        <label key={a.name} className="flex items-center gap-2 text-xs text-text/70">
+                          <input
+                            type="checkbox"
+                            checked={(l.addOns[a.name] ?? 0) > 0}
+                            onChange={(e) => setLineAddOn(i, a.name, e.target.checked ? 1 : 0)}
+                            className="accent-gold"
+                          />
+                          <span>{a.name} (+{a.price} €)</span>
+                        </label>
+                      ) : (
+                        <label key={a.name} className="flex items-center gap-2 text-xs text-text/70">
+                          <span>{a.name} ({a.price} €{a.unit ? "/" + a.unit : ""})</span>
+                          <input
+                            type="number"
+                            min={0}
+                            value={l.addOns[a.name] ?? 0}
+                            onChange={(e) => setLineAddOn(i, a.name, Math.max(0, Number(e.target.value)))}
+                            className={`${field} w-16`}
+                          />
+                        </label>
+                      ),
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
