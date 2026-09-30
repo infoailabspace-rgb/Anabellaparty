@@ -6,15 +6,24 @@ import { Link } from "@/i18n/navigation";
 import { useInView } from "@/lib/use-in-view";
 import type { GalleryImage } from "@/lib/gallery";
 
+// Kartes platums: zem 768px 2 kolonnas (~50vw), no 768px 3 kolonnas (33vw), bet
+// konteiners apstājas pie max-w-6xl (1104px saturs), tāpēc virs 1152px viewport
+// karte ir fiksēti (1104 - 2*12) / 3 = 360px.
+const CARD_SIZES = "(min-width: 1152px) 360px, (min-width: 768px) 33vw, 50vw";
+
 // Viena kartīte — fade + slīde uz augšu, kad ienāk skatā (IntersectionObserver).
 // Aizkave staggeram (i % 12) atkārto oriģinālo pakāpenisko parādīšanos.
+// Fiksēta proporcija + object-cover: kartes režģī ir vienāda izmēra neatkarīgi
+// no bildes malu attiecības.
 function GalleryFigure({
   img,
   i,
+  aspect,
   onOpen,
 }: {
   img: GalleryImage;
   i: number;
+  aspect: string;
   onOpen: () => void;
 }) {
   const { ref, inView } = useInView<HTMLElement>({
@@ -25,7 +34,7 @@ function GalleryFigure({
     <figure
       ref={ref}
       style={{ transitionDelay: `${(i % 12) * 40}ms` }}
-      className={`reveal-up mb-3 break-inside-avoid overflow-hidden rounded-xl border border-gold/15${
+      className={`reveal-up overflow-hidden rounded-xl border border-gold/15${
         inView ? " is-visible" : ""
       }`}
     >
@@ -41,7 +50,8 @@ function GalleryFigure({
           alt={img.alt}
           loading="lazy"
           decoding="async"
-          className="w-full cursor-zoom-in transition-transform duration-300 hover:scale-[1.03]"
+          sizes={CARD_SIZES}
+          className={`${aspect} w-full cursor-zoom-in object-cover transition-transform duration-300 hover:scale-[1.03]`}
         />
       </button>
       {img.caption && (
@@ -56,9 +66,13 @@ function GalleryFigure({
 export default function EventGallery({
   images,
   mode = "category",
+  // Karšu proporcija. Noklusējums = visām lapām, kas bija līdz šim;
+  // ai-foto lapa padod "aspect-[2/3]" (AI portreti ar rāmjiem).
+  aspect = "aspect-[4/3]",
 }: {
   images: GalleryImage[];
   mode?: "category" | "home";
+  aspect?: string;
 }) {
   const t = useTranslations("gallery");
   // Sāk ar 6 SSR'otiem (mazāks sākotnējais HTML/flight); pārējos rāda load-more.
@@ -100,9 +114,18 @@ export default function EventGallery({
           {t("subtitle")}
         </p>
 
-        <div className="mt-10 columns-2 gap-3 md:columns-3 lg:columns-4">
+        {/* Režģis, ne CSS columns: columns balansēja pēc augstuma, un ar 6
+            kartēm 4 kolonnās sanāca 2+2+2+0 (tukša 4. kolonna, bloks nobīdīts
+            pa kreisi). Režģis vienmēr aizpilda rindu no kreisās. */}
+        <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3">
           {shown.map((img, i) => (
-            <GalleryFigure key={img.id} img={img} i={i} onOpen={() => setActive(i)} />
+            <GalleryFigure
+              key={img.id}
+              img={img}
+              i={i}
+              aspect={aspect}
+              onOpen={() => setActive(i)}
+            />
           ))}
         </div>
 

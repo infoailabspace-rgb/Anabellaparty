@@ -4,16 +4,24 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import ImagePlaceholder from "@/components/image-placeholder";
 
+// Visi izskata propsi ir neobligāti, un noklusējumi atbilst 2 kolonnu režģim
+// (foto-kaste "visu dienu" bloks, product-detail) — tur nekas nemainās.
+// Pilna platuma variantam (ai-foto lapa) padod:
+//   sizes="100vw" aspect="aspect-[3/2]" maxH="max-h-[70vh]" centerThumbs
 export default function ImageGallery({
   images,
   alt,
-  // Noklusējums = galerija 2 kolonnu režģī (foto-kaste, product-detail).
-  // Pilna platuma izkārtojumam padod sizes="100vw".
   sizes = "(max-width: 1024px) 100vw, 50vw",
+  aspect = "aspect-[4/3]",
+  maxH = "",
+  centerThumbs = false,
 }: {
   images: string[];
   alt: string;
   sizes?: string;
+  aspect?: string;
+  maxH?: string;
+  centerThumbs?: boolean;
 }) {
   const [active, setActive] = useState(0);
   const [failed, setFailed] = useState<Record<number, boolean>>({});
@@ -52,7 +60,7 @@ export default function ImageGallery({
         type="button"
         onClick={() => hasImages && !activeFailed && setLightbox(true)}
         aria-label={`${alt} — palielināt`}
-        className="relative aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-xl"
+        className={`relative ${aspect}${maxH ? ` ${maxH}` : ""} w-full cursor-zoom-in overflow-hidden rounded-xl`}
       >
         {activeFailed ? (
           <ImagePlaceholder label={alt} className="h-full w-full" />
@@ -70,7 +78,9 @@ export default function ImageGallery({
 
       {/* Sīktēli */}
       {images.length > 1 && (
-        <div className="flex flex-wrap gap-3">
+        <div
+          className={`flex flex-wrap gap-3${centerThumbs ? " justify-center" : ""}`}
+        >
           {images.map((src, i) => (
             <button
               key={src}

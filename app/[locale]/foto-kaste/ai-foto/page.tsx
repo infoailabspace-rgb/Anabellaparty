@@ -121,13 +121,20 @@ export default async function AiFotoPage({
         {/* Galerija pilnā platumā zem teksta (agrāk bija 2. kolonna un
             aizņēma tikai pusi no max-w-6xl). */}
         <Reveal delay={0.1} className="mt-12">
-          <ImageGallery images={gallery} alt="AI foto kaste" sizes="100vw" />
+          <ImageGallery
+            images={gallery}
+            alt="AI foto kaste"
+            sizes="100vw"
+            aspect="aspect-[3/2]"
+            maxH="max-h-[70vh]"
+            centerThumbs
+          />
         </Reveal>
       </div>
 
       <AiPartySection />
 
-      <EventGallery images={eventGallery} />
+      <EventGallery images={eventGallery} aspect="aspect-[2/3]" />
     </>
   );
 }
