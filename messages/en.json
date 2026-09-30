@@ -517,6 +517,13 @@
   },
   "aiParty": {
     "cta": "Learn more",
-    "soon": "Coming soon"
+    "soon": "Coming soon",
+    "sectionTitle": "The digital alternative - AI Party",
+    "explain": "The AI photo booth is a physical unit with a camera, printing and our assistant on site. AI Party is a digital service - there is nothing to deliver or set up: any screen of yours becomes an entertainment spot, and guests take photos with their own phones. The result appears on the TV, and everyone downloads their own image.",
+    "point1": "No hardware, no setup",
+    "point2": "Guests shoot on their own phone",
+    "point3": "The result on any screen",
+    "point4": "Personalised quizzes too",
+    "price": "Packages from EUR 11 - ai-party.app"
   }
 }

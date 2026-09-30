@@ -517,6 +517,13 @@
   },
   "aiParty": {
     "cta": "Uzzināt vairāk",
-    "soon": "Drīzumā"
+    "soon": "Drīzumā",
+    "sectionTitle": "Digitālā alternatīva - AI Party",
+    "explain": "AI foto kaste ir fiziska iekārta ar kameru, druku un mūsu asistentu uz vietas. AI Party ir digitāls pakalpojums - nekas nav jāpiegādā un jāuzstāda: jebkurš jūsu ekrāns kļūst par izklaides punktu, un viesi fotografējas ar saviem telefoniem. Rezultāts parādās uz TV, un katrs lejupielādē savu attēlu.",
+    "point1": "Bez aparatūras un uzstādīšanas",
+    "point2": "Viesi fotografējas savā telefonā",
+    "point3": "Rezultāts uz jebkura ekrāna",
+    "point4": "Arī personalizētas viktorīnas",
+    "price": "Paketes no 11 EUR - ai-party.app"
   }
 }

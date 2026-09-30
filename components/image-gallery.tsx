@@ -7,9 +7,13 @@ import ImagePlaceholder from "@/components/image-placeholder";
 export default function ImageGallery({
   images,
   alt,
+  // Noklusējums = galerija 2 kolonnu režģī (foto-kaste, product-detail).
+  // Pilna platuma izkārtojumam padod sizes="100vw".
+  sizes = "(max-width: 1024px) 100vw, 50vw",
 }: {
   images: string[];
   alt: string;
+  sizes?: string;
 }) {
   const [active, setActive] = useState(0);
   const [failed, setFailed] = useState<Record<number, boolean>>({});
@@ -57,7 +61,7 @@ export default function ImageGallery({
             src={images[active]}
             alt={alt}
             fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
+            sizes={sizes}
             className="object-cover"
             onError={() => markFailed(active)}
           />

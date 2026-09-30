@@ -14,6 +14,7 @@ import {
 } from "@/lib/schema";
 import { getAifoto } from "@/lib/ai-foto";
 import EventGallery from "@/components/event-gallery";
+import AiPartySection from "@/components/ai-party-section";
 import { getGallery } from "@/lib/site-data";
 
 export const revalidate = 3600;
@@ -82,47 +83,49 @@ export default async function AiFotoPage({
       <SectionHero title={t("aiFotoTitle")} tagline={t("aiFotoTagline")} heroKey="ai-foto" posClass="object-[center_40%]" />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
-        <div className="grid items-center gap-10 lg:grid-cols-2">
-          <Reveal>
-            <p className="text-text/85">{intro}</p>
+        <Reveal>
+          <p className="text-text/85">{intro}</p>
 
-            <h2 className="mt-8 font-display text-lg font-semibold text-gold">
-              {ts("afThemesTitle")}
-            </h2>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {themes.map((theme, i) => (
-                <li
-                  key={i}
-                  className="rounded-full border border-gold/30 px-4 py-1.5 text-sm text-text/85"
-                >
-                  {theme}
-                </li>
-              ))}
-            </ul>
-
-            <p className="mt-8 text-text/85">{price}</p>
-
-            <div className="mt-6 flex flex-col gap-4 sm:flex-row">
-              <a
-                href="tel:+37129222761"
-                className="rounded-full bg-gold px-8 py-3 text-center font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
+          <h2 className="mt-8 font-display text-lg font-semibold text-gold">
+            {ts("afThemesTitle")}
+          </h2>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {themes.map((theme, i) => (
+              <li
+                key={i}
+                className="rounded-full border border-gold/30 px-4 py-1.5 text-sm text-text/85"
               >
-                {ts("afCall")}
-              </a>
-              <Link
-                href="/kontakti"
-                className="rounded-full border-2 border-gold px-8 py-3 text-center font-semibold text-gold transition-colors hover:bg-gold/10"
-              >
-                {ts("afForm")}
-              </Link>
-            </div>
-          </Reveal>
+                {theme}
+              </li>
+            ))}
+          </ul>
 
-          <Reveal delay={0.1}>
-            <ImageGallery images={gallery} alt="AI foto kaste" />
-          </Reveal>
-        </div>
+          <p className="mt-8 text-text/85">{price}</p>
+
+          <div className="mt-6 flex flex-col gap-4 sm:flex-row">
+            <a
+              href="tel:+37129222761"
+              className="rounded-full bg-gold px-8 py-3 text-center font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
+            >
+              {ts("afCall")}
+            </a>
+            <Link
+              href="/kontakti"
+              className="rounded-full border-2 border-gold px-8 py-3 text-center font-semibold text-gold transition-colors hover:bg-gold/10"
+            >
+              {ts("afForm")}
+            </Link>
+          </div>
+        </Reveal>
+
+        {/* Galerija pilnā platumā zem teksta (agrāk bija 2. kolonna un
+            aizņēma tikai pusi no max-w-6xl). */}
+        <Reveal delay={0.1} className="mt-12">
+          <ImageGallery images={gallery} alt="AI foto kaste" sizes="100vw" />
+        </Reveal>
       </div>
+
+      <AiPartySection />
 
       <EventGallery images={eventGallery} />
     </>
