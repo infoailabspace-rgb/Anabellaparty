@@ -1,7 +1,7 @@
 import { getContent } from "@/lib/site-content";
 
 const FALLBACK =
-  "Piegāde Ķekavas novadā — bez maksas. Tālāk 25 € / 100 km (aprēķins turp-atpakaļ). Uzstādīšana un savākšana iekļauta cenā. Visas cenas norādītas bez PVN 21%.";
+  "Piegāde Jūrmalā — bez maksas. Tālāk 25 € / 100 km (aprēķins turp-atpakaļ). Uzstādīšana un savākšana iekļauta cenā. Visas cenas norādītas bez PVN 21%.";
 
 export default async function DeliveryNote() {
   const note = await getContent("delivery.note", FALLBACK);

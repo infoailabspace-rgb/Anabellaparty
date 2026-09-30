@@ -63,9 +63,9 @@ function summaryHtml(
   const approx = d?.approximate === true;
   const deliveryLine =
     deliveryCost === null
-      ? "tiks precizēta piedāvājumā (ārpus Ķekavas novada)"
+      ? "tiks precizēta piedāvājumā (ārpus Jūrmalas)"
       : (deliveryCost === 0
-          ? "bez maksas (Ķekavas novads)"
+          ? "bez maksas (Jūrmala)"
           : eur(deliveryCost)) + (approx ? " (orientējoši, pēc pagasta)" : "");
   const netLabel =
     deliveryCost === null ? "Kopā bez PVN (bez piegādes)" : "Kopā bez PVN";
@@ -149,7 +149,7 @@ export async function POST(req: Request) {
     d?.km != null && Number.isFinite(Number(d.km)) ? Number(d.km) : null;
 
   // Piegādes cena: number | null. NEZINĀMA → null (NEKAD nekļūst par "bez maksas").
-  // 0 tikai tad, ja ORS to atrada UN tā ir bezmaksas zonā (Ķekavas novads).
+  // 0 tikai tad, ja ORS to atrada UN tā ir bezmaksas zonā (Jūrmala).
   const rawCost = Number(d?.cost);
   let deliveryCost: number | null;
   if (d?.geocoded !== true || d?.cost == null || !Number.isFinite(rawCost)) {

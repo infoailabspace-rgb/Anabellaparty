@@ -102,7 +102,9 @@ export default async function KontaktiPage({
             <div className="overflow-hidden rounded-2xl border-2 border-gold/25">
               <iframe
                 title={ts("cMapTitle")}
-                src="https://www.google.com/maps?q=Vecozolu+iela+14,+%C4%B6ekava,+Latvija&output=embed"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(
+                  `${fullAddress}, Latvija`,
+                )}&output=embed`}
                 className="h-64 w-full"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

@@ -26,7 +26,7 @@ test("extractTokens: apcērp beigu komatu, izvelk pagastu/novadu (kartētu)", ()
 });
 
 // ── resolveDelivery ar mock ģeokodu/maršrutu ──
-const KM = { barzi: 40, liepaja: 220, kekava: 2 };
+const KM = { barzi: 40, liepaja: 220, jurmala: 2 };
 
 test("Barži: 1. mēģ. noraidīts (Nīca≠Ogre), 2. mēģ. pieņemts, ja localadmin atbilst pagastam → aptuvens, maksas", async () => {
   const logs: string[] = [];
@@ -108,24 +108,47 @@ test("Liepāja, Kūrmājas prospekts 1: reāls match 1. mēģinājumā (nav appr
   assert.ok(r.cost !== null && r.cost > 0, `cost=${r.cost}`);
 });
 
-test("Ķekava, Gaismas iela 19: bezmaksas zona (cost 0)", async () => {
-  // Reāls ORS Ķekavai novadu atgriež `region` laukā ("Kekavas"), nevis localadmin.
+test("Jūrmala, Mežsargu iela 28: bezmaksas zona (cost 0)", async () => {
+  // Reāls ORS Jūrmalai atgriež region="Jurmala" (BEZ diakritikas) un
+  // locality="Jūrmala" — normLv() abus noved pie "jurmala".
   const geocode: Geocoder = async () => ({
-    coords: [24.23, 56.81],
+    coords: [23.712621, 56.956144],
     props: {
-      label: "19 Gaismas iela, KK, Latvia",
-      locality: "KK",
-      region: "Kekavas",
+      label: "28 Mežsargu iela, Jūrmala, Latvia",
+      locality: "Jūrmala",
+      region: "Jurmala",
     },
   });
-  const route: Router = async () => KM.kekava;
+  const route: Router = async () => KM.jurmala;
   const r = await resolveDelivery(
-    { address: "Ķekava, Gaismas iela 19" },
+    { address: "Jūrmala, Mežsargu iela 28" },
     { geocode, route },
   );
   assert.equal(r.ok, true);
   assert.equal(r.inFreeZone, true);
   assert.equal(r.cost, 0);
+});
+
+test("Via Jurmala Outlet, Piņķi: NAV bezmaksas zona (substring aizsardzība)", async () => {
+  // Nosaukumā ir "Jurmala", bet vieta ir Mārupes novadā — precīzā kopas
+  // pārbaude to nedrīkst pieņemt par bezmaksas zonu.
+  const geocode: Geocoder = async () => ({
+    coords: [23.9161, 56.9394],
+    props: {
+      label: "Via Jurmala Outlet Village, Piņķi, Latvia",
+      name: "Via Jurmala Outlet Village",
+      locality: "Piņķi",
+      region: "Marupes",
+    },
+  });
+  const route: Router = async () => 17;
+  const r = await resolveDelivery(
+    { address: "Via Jurmala Outlet Village, Piņķi" },
+    { geocode, route },
+  );
+  assert.equal(r.ok, true);
+  assert.equal(r.inFreeZone, false);
+  assert.ok(r.cost !== null && r.cost > 0, `cost=${r.cost}`);
 });
 
 test("Atkritumi (nav match, nav pagasta/novada) → cost null", async () => {

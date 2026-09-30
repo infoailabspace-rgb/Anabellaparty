@@ -1,14 +1,21 @@
-// Piegādes aprēķins no noliktavas Ķekavā.
+// Piegādes aprēķins no noliktavas Jūrmalā (Melluži).
+// Koordinātas un adrese nāk no lib/company.ts — viens avots (arī JSON-LD geo).
+import { COMPANY } from "@/lib/company";
+
 export const ORIGIN = {
-  lat: 56.8109713,
-  lng: 24.2082151,
-  label: "Vecozolu iela 14, Ķekava",
+  lat: COMPANY.geo.lat,
+  lng: COMPANY.geo.lng,
+  label: `${COMPANY.address.street}, ${COMPANY.address.region}`,
 };
 
-// Bezmaksas zona ir ADMINISTRATĪVA (Ķekavas novads), ne ģeometriska.
-export const FREE_ZONE = "Ķekavas novads";
-// Rezerve, ja ģeokodēšana neatgriež novadu droši: ~15 km rādiuss ≈ Ķekavas novads.
-export const FREE_FALLBACK_RADIUS_KM = 15;
+// Bezmaksas zona ir ADMINISTRATĪVA (Jūrmalas valstspilsēta), ne ģeometriska.
+export const FREE_ZONE = "Jūrmalas valstspilsēta";
+// Rezerve, ja ģeokodēšana neatgriež pilsētu droši. Braukšanas attālumi (ORS) no
+// Mežsargu 28: Jūrmalā tālākais punkts Ķemeri 16-18 km; tuvākie ĀRPUS Jūrmalas —
+// Piņķi 17 km, Babīte 18 km. Jūrmala ir ~25 km gara strēmele, tāpēc rādiuss to
+// precīzi aprakstīt nespēj: 16 km aptver Jūrmalu līdz Ķemeriem un izslēdz Piņķus.
+// Primārais ceļš tik un tā ir freeZoneStrict (ORS atgriež region=Jurmala).
+export const FREE_FALLBACK_RADIUS_KM = 16;
 // Cena: 25 € par 100 km, aprēķins turp-atpakaļ (= 0,25 €/km no viena virziena).
 export const PRICE_PER_100KM_ROUNDTRIP = 25;
 
@@ -87,7 +94,7 @@ export const NOVADI_2021: Record<string, string> = {
   "dagdas novads": "kraslavas novads",
   // Kuldīgas novads
   "skrundas novads": "kuldigas novads",
-  // Ķekavas novads
+  // Ķekavas novads (tikai ATR kartējums — bezmaksas zonu tas vairs neietekmē)
   "baldones novads": "kekavas novads",
   // Limbažu novads
   "alojas novads": "limbazu novads",
@@ -291,19 +298,21 @@ export function regionAccepted(ex: AddressTokens, props: OrsProps): boolean {
   return localityTargets(ex).some((t) => ors.some((o) => tokenMatch(t, o)));
 }
 
-// Ķekavas novada precīzie (normalizētie) nosaukumi. ORS reāli ievieto novadu gan
-// `region`, gan `localadmin` laukā (piem. region="Kekavas"), tāpēc pārbaudām abus,
-// BET tikai ar PRECĪZU sakritību (kopa) — NEKĀDA substring "kekav" uz patvaļīga
-// reģiona (novēršam viltus pozitīvus).
-const FREE_ZONE_NAMES = new Set(["kekavas novads", "kekavas", "kekava"]);
+// Jūrmalas precīzie (normalizētie) nosaukumi. ORS reāli atgriež region="Jurmala"
+// (bez diakritikas) un locality="Jūrmala", tāpēc pārbaudām abus, BET tikai ar
+// PRECĪZU sakritību (kopa) — NEKĀDA substring "jurmal" uz patvaļīga reģiona
+// (novēršam viltus pozitīvus, piem. "Via Jurmala Outlet Village" Piņķos).
+const FREE_ZONE_NAMES = new Set(["jurmala", "jurmalas valstspilseta"]);
 
 /**
- * Bezmaksas zona (STRIKTI): ja ievadītais novads == "Ķekavas novads" VAI ORS
- * administratīvais lauks (localadmin/region/locality/county) PRECĪZI sakrīt ar
- * Ķekavu/Ķekavas novadu. Precīza kopas pārbaude, ne substring.
+ * Bezmaksas zona (STRIKTI): ja ievadītajā adresē kāds vietas tokens PRECĪZI ir
+ * Jūrmala, VAI ORS administratīvais lauks (localadmin/region/locality/county)
+ * PRECĪZI sakrīt ar Jūrmalu. Precīza kopas pārbaude, ne substring.
+ * Jūrmala ir valstspilsēta, tāpēc tā nekad nenonāk ex.novads (tas prasa tokenu,
+ * kas beidzas ar "novads") — pārbaudām ex.places, kur nonāk visi ne-ielas tokeni.
  */
 export function freeZoneStrict(ex: AddressTokens, props: OrsProps): boolean {
-  if (ex.novads && normLv(ex.novads) === "kekavas novads") return true;
+  if (ex.places.some((p) => FREE_ZONE_NAMES.has(p))) return true;
   return [props.localadmin, props.region, props.locality, props.county]
     .map(normLv)
     .some((v) => FREE_ZONE_NAMES.has(v));
@@ -316,8 +325,7 @@ export function isInFreeZone(
   kmOneWay: number,
 ): boolean {
   if (regionName) {
-    const norm = normLv(regionName);
-    return norm === "kekavas novads" || norm === "kekava";
+    return FREE_ZONE_NAMES.has(normLv(regionName));
   }
   return Number.isFinite(kmOneWay) && kmOneWay > 0 && kmOneWay <= FREE_FALLBACK_RADIUS_KM;
 }

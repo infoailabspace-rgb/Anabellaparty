@@ -11,11 +11,20 @@ export const COMPANY = {
   isVatPayer: true,
 
   address: {
-    street: "Vecozolu iela 14",
-    city: "Ķekava",
-    region: "Ķekavas novads",
-    postalCode: "LV-2123",
+    street: "Mežsargu iela 28",
+    city: "Melluži",
+    region: "Jūrmala",
+    postalCode: "LV-2008",
     country: "LV",
+  },
+
+  // Noliktavas / izbraukšanas punkta koordinātas — VIENS avots diviem
+  // patērētājiem: lib/delivery.ts ORIGIN (ORS maršruta sākums) un lib/schema.ts
+  // geo (JSON-LD GeoCoordinates). Agrāk tās bija hardkodētas abās vietās un
+  // atšķīrās. ORS ģeokods "Mežsargu iela 28, Jūrmala" → layer=address, conf 1.
+  geo: {
+    lat: 56.956144,
+    lng: 23.712621,
   },
 
   contact: {

@@ -113,7 +113,7 @@ export default async function NoteikumiPage({
 
         <h2>6. Piegāde, uzstādīšana un demontāža</h2>
         <p>
-          Piegāde Ķekavas novadā ir bez maksas. Ārpus tā tiek piemērota maksa
+          Piegāde Jūrmalas valstspilsētā ir bez maksas. Ārpus tās tiek piemērota maksa
           25 € par 100 km (aprēķins turp-atpakaļ). Uzstādīšana un demontāža ir
           iekļauta nomas cenā. Nomnieks nodrošina piekļuvi objektam un iepriekš
           saskaņotu uzstādīšanas laiku.

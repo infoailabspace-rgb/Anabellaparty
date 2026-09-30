@@ -42,7 +42,7 @@ export const faqItems: FaqItem[] = [
     category: "piegade",
     question: "Vai piegādājat ārpus Rīgas? Cik tas maksā?",
     answer:
-      "Piegāde Ķekavas novadā ir bez maksas. Tālāk piemērojam 25 € par 100 km (aprēķins turp-atpakaļ). Precīzu piegādes cenu Tavai adresei aprēķinām rezervācijas laikā.",
+      "Piegāde Jūrmalā ir bez maksas. Tālāk piemērojam 25 € par 100 km (aprēķins turp-atpakaļ). Precīzu piegādes cenu Tavai adresei aprēķinām rezervācijas laikā.",
   },
   {
     category: "piegade",

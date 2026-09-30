@@ -50,7 +50,7 @@ export default async function FotoKasteB2b() {
               </li>
             ))}
           </ul>
-          {/* Piegāde NAV iekļauta cenā (izņemot Ķekavu) — atsevišķa rinda, ne saraksta punkts. */}
+          {/* Piegāde NAV iekļauta cenā (izņemot Jūrmalu) — atsevišķa rinda, ne saraksta punkts. */}
           <p className="mt-6 border-t border-gold/15 pt-6 text-sm leading-relaxed text-text/70">
             {t("deliveryNote")}
           </p>

@@ -34,12 +34,12 @@ const IO_OPTIONS = [
   { v: "Vēl nezinu", k: "ioUnknown" },
 ] as const;
 
-// Pilsētu/novadu ieteikumi datalist-am. Sākumā Ķekavas novads (bezmaksas zona) —
-// klienti no ciemiem bieži nezina, vai rakstīt "Ķekava" vai ciema nosaukumu.
+// Pilsētu/novadu ieteikumi datalist-am. Sākumā Jūrmala un tās apkaimes
+// (bezmaksas zona) — klienti bieži nezina, vai rakstīt "Jūrmala" vai apkaimi.
 const LV_CITIES = [
-  "Ķekava", "Baloži", "Daugmale", "Baldone", "Katlakalns", "Rāmava",
-  "Valdlauči", "Odukalns", "Pļavniekkalns",
-  "Rīga", "Jūrmala", "Olaine", "Ogre", "Salaspils", "Ikšķile", "Mārupe",
+  "Jūrmala", "Melluži", "Dubulti", "Majori", "Bulduri", "Lielupe",
+  "Kauguri", "Sloka", "Ķemeri",
+  "Rīga", "Babīte", "Olaine", "Ogre", "Salaspils", "Ikšķile", "Mārupe",
   "Piņķi", "Ādaži", "Saulkrasti", "Sigulda", "Cēsis", "Jelgava", "Ozolnieki",
   "Bauska", "Tukums", "Dobele", "Valmiera", "Limbaži", "Aizkraukle",
   "Liepāja", "Ventspils", "Talsi", "Kuldīga", "Saldus", "Daugavpils",

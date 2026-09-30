@@ -44,7 +44,7 @@ export function buildFaqText(faqs: FaqItem[]): string {
 }
 
 export function buildDeliveryText(): string {
-  return `Piegāde no ${ORIGIN.label}. Bezmaksas ${FREE_ZONE}. Tālāk ${PRICE_PER_100KM_ROUNDTRIP} € par 100 km (aprēķins turp-atpakaļ). Uzstādīšana un demontāža iekļauta. Cenas norādītas bez PVN 21%. Avanss ${Math.round(
+  return `Piegāde no ${ORIGIN.label}. Piegādes zona bez maksas: ${FREE_ZONE}. Tālāk ${PRICE_PER_100KM_ROUNDTRIP} € par 100 km (aprēķins turp-atpakaļ). Uzstādīšana un demontāža iekļauta. Cenas norādītas bez PVN 21%. Avanss ${Math.round(
     DEPOSIT_RATE * 100,
   )}% no kopsummas ar PVN, samaksā ar bankas pārskaitījumu vai skaidrā naudā (tiešsaistes maksājumu nav). Atceļot rezervāciju, avanss netiek atmaksāts.`;
 }

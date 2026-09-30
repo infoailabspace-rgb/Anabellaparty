@@ -38,8 +38,8 @@ export function localBusinessNode() {
     areaServed: { "@type": "Country", name: "Latvija" },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: "56.810939",
-      longitude: "24.208242",
+      latitude: String(COMPANY.geo.lat),
+      longitude: String(COMPANY.geo.lng),
     },
     sameAs: [
       COMPANY.social.instagram,
