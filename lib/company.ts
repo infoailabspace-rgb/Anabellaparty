@@ -34,11 +34,11 @@ export const COMPANY = {
     email: "info@anabellaparty.lv",
   },
 
-  // Kubli/pirts — atsevišķs kontakts, cita atrašanās vieta
+  // Kubli/pirts — apkalpo partneris, atsevišķs kontakts (nav mūsu bāze)
   altContact: {
     phone: "+37128286911",
     phoneDisplay: "+371 28286911",
-    location: "Jūrmala",
+    handledBy: "partneris",
   },
 
   social: {
