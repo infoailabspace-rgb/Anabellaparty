@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -42,16 +43,18 @@ function GalleryFigure({
         type="button"
         onClick={onOpen}
         aria-label={img.alt}
-        className="block w-full"
+        className={`relative block ${aspect} w-full overflow-hidden`}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        {/* next/image: srcset + sizes dod kartes izmēram atbilstošu variantu,
+            nevis pilno augšupielādi. Lightbox atver oriģinālo URL. */}
+        <Image
           src={img.url}
           alt={img.alt}
-          loading="lazy"
-          decoding="async"
+          fill
           sizes={CARD_SIZES}
-          className={`${aspect} w-full cursor-zoom-in object-cover transition-transform duration-300 hover:scale-[1.03]`}
+          loading="lazy"
+          quality={75}
+          className="cursor-zoom-in object-cover transition-transform duration-300 hover:scale-[1.03]"
         />
       </button>
       {img.caption && (
