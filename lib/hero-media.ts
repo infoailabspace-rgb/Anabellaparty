@@ -18,6 +18,7 @@ export const HERO_VIDEO_PAGES = [
   "specefekti",
 ] as const;
 export const HERO_IMAGE_PAGES = [
+  "ai-party",
   "inventars",
   "audio-video",
   "deco",

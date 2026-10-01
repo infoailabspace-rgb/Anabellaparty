@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import ImagePlaceholder from "@/components/image-placeholder";
 
 // Visi izskata propsi ir neobligāti, un noklusējumi atbilst 2 kolonnu režģim
-// (foto-kaste "visu dienu" bloks, product-detail) — tur nekas nemainās.
+// (foto-kaste "visu dienu" bloks, product-detail) - tur nekas nemainās.
 // Pilna platuma variantam (ai-foto lapa) padod:
 //   sizes="100vw" aspect="aspect-[3/2]" maxH="max-h-[70vh]" centerThumbs
 export default function ImageGallery({

@@ -35,7 +35,7 @@ const IO_OPTIONS = [
 ] as const;
 
 // Pilsētu/novadu ieteikumi datalist-am. Sākumā Jūrmala un tās apkaimes
-// (bezmaksas zona) — klienti bieži nezina, vai rakstīt "Jūrmala" vai apkaimi.
+// (bezmaksas zona) - klienti bieži nezina, vai rakstīt "Jūrmala" vai apkaimi.
 const LV_CITIES = [
   "Jūrmala", "Melluži", "Dubulti", "Majori", "Bulduri", "Lielupe",
   "Kauguri", "Sloka", "Ķemeri",

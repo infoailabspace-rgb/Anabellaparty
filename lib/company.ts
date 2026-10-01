@@ -18,7 +18,7 @@ export const COMPANY = {
     country: "LV",
   },
 
-  // Noliktavas / izbraukšanas punkta koordinātas — VIENS avots diviem
+  // Noliktavas / izbraukšanas punkta koordinātas - VIENS avots diviem
   // patērētājiem: lib/delivery.ts ORIGIN (ORS maršruta sākums) un lib/schema.ts
   // geo (JSON-LD GeoCoordinates). Agrāk tās bija hardkodētas abās vietās un
   // atšķīrās. ORS ģeokods "Mežsargu iela 28, Jūrmala" → layer=address, conf 1.
@@ -34,7 +34,7 @@ export const COMPANY = {
     email: "info@anabellaparty.lv",
   },
 
-  // Kubli/pirts — apkalpo partneris, atsevišķs kontakts (nav mūsu bāze)
+  // Kubli/pirts - apkalpo partneris, atsevišķs kontakts (nav mūsu bāze)
   altContact: {
     phone: "+37128286911",
     phoneDisplay: "+371 28286911",

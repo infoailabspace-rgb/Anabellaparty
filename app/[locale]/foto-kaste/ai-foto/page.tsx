@@ -14,7 +14,6 @@ import {
 } from "@/lib/schema";
 import { getAifoto } from "@/lib/ai-foto";
 import EventGallery from "@/components/event-gallery";
-import AiPartySection from "@/components/ai-party-section";
 import { getGallery } from "@/lib/site-data";
 
 export const revalidate = 3600;
@@ -131,8 +130,6 @@ export default async function AiFotoPage({
           />
         </Reveal>
       </div>
-
-      <AiPartySection />
 
       <EventGallery images={eventGallery} aspect="aspect-[2/3]" />
     </>

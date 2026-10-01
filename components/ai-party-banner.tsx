@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import Reveal from "@/components/reveal";
 import Shimmer from "@/components/shimmer";
 import { getAiPartyBanner } from "@/lib/ai-party-banner";
@@ -15,6 +16,12 @@ export default async function AiPartyBanner() {
 
   const t = await getTranslations("aiParty");
   const live = banner.url.length > 0;
+  // DB url var būt gan ārējs ("https://..."), gan iekšējs ceļš
+  // ("/foto-kaste/ai-party"). Iekšējam lietojam next-intl Link, kas pieliek
+  // valodas prefiksu (/en/..., /ru/...) un neatver jaunu cilni.
+  const internal = banner.url.startsWith("/");
+  const btnCls =
+    "inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-black shadow-[0_20px_60px_-20px_rgba(212,169,96,0.5)] transition-transform hover:scale-[1.03]";
 
   return (
     <Reveal className="mt-8">
@@ -60,14 +67,20 @@ export default async function AiPartyBanner() {
 
             <div className="shrink-0">
               {live ? (
-                <a
-                  href={banner.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-black shadow-[0_20px_60px_-20px_rgba(212,169,96,0.5)] transition-transform hover:scale-[1.03]"
-                >
-                  {banner.cta || t("cta")} →
-                </a>
+                internal ? (
+                  <Link href={banner.url} className={btnCls}>
+                    {banner.cta || t("cta")} →
+                  </Link>
+                ) : (
+                  <a
+                    href={banner.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={btnCls}
+                  >
+                    {banner.cta || t("cta")} →
+                  </a>
+                )
               ) : (
                 // Saite tukša → neaktīvs (nav <a>, nav klikšķa). Zeltains, ne
                 // caurspīdīgs — banneris ir reklāma, poga jāizceļas.

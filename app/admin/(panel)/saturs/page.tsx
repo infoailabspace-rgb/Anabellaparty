@@ -30,6 +30,7 @@ const HERO_PATHS: Record<string, string> = {
   deco: "/svinibu-inventars/decomebeles",
   kubli: "/svinibu-inventars/kublsballa",
   "ai-foto": "/foto-kaste/ai-foto",
+  "ai-party": "/foto-kaste/ai-party",
   rezervet: "/rezervet",
   kontakti: "/kontakti",
   faq: "/faq",

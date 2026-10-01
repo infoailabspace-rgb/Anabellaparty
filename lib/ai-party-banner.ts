@@ -54,3 +54,52 @@ export const getAiPartyBanner = cache(async (): Promise<AiPartyBanner | null> =>
     return null;
   }
 });
+
+// AI Party LAPAS (/foto-kaste/ai-party) saturs: tas pats DB ieraksts, BET
+// bez is_active un bez obligātā attēla/virsraksta. Lapa pastāv neatkarīgi no
+// tā, vai banneris sākumlapā ir ieslēgts; is_active kontrolē TIKAI banneri.
+// Tukšos laukus aizpilda izsaucējs (messages.aiParty).
+export type AiPartyContent = {
+  image: string | null;
+  title: string | null;
+  text: string | null;
+  cta: string | null;
+};
+
+export const getAiPartyContent = cache(async (): Promise<AiPartyContent> => {
+  const empty: AiPartyContent = {
+    image: null,
+    title: null,
+    text: null,
+    cta: null,
+  };
+  const sb = publicClient();
+  if (!sb) return empty;
+  try {
+    const locale = await currentLocale();
+    const { data } = await sb
+      .from("site_content")
+      .select("value")
+      .eq("key", "aiparty.banner")
+      .maybeSingle();
+    const v = data?.value as
+      | {
+          image?: { url?: string } | null;
+          title?: unknown;
+          text?: unknown;
+          cta?: unknown;
+        }
+      | null
+      | undefined;
+    if (!v) return empty;
+    const img = typeof v.image?.url === "string" ? v.image.url.trim() : "";
+    return {
+      image: img || null,
+      title: pickStr(v.title, locale).trim() || null,
+      text: pickStr(v.text, locale).trim() || null,
+      cta: pickStr(v.cta, locale).trim() || null,
+    };
+  } catch {
+    return empty;
+  }
+});

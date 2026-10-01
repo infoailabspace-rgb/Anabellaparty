@@ -63,7 +63,7 @@ export const categoryMeta: Record<ProductCategory, CategoryMeta> = {
     name: "Kubli / pirts",
     short: "Kubli / pirts",
     description:
-      "VIP kubli un mobilā pirts — apkalpo mūsu partneris, atsevišķs tālrunis.",
+      "VIP kubli un mobilā pirts - apkalpo mūsu partneris, atsevišķs tālrunis.",
     href: "/svinibu-inventars/kublsballa",
     bgImage: "/images/categories/kubli.jpg",
   },

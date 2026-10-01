@@ -110,7 +110,7 @@ test("Liepāja, Kūrmājas prospekts 1: reāls match 1. mēģinājumā (nav appr
 
 test("Jūrmala, Mežsargu iela 28: bezmaksas zona (cost 0)", async () => {
   // Reāls ORS Jūrmalai atgriež region="Jurmala" (BEZ diakritikas) un
-  // locality="Jūrmala" — normLv() abus noved pie "jurmala".
+  // locality="Jūrmala" - normLv() abus noved pie "jurmala".
   const geocode: Geocoder = async () => ({
     coords: [23.712621, 56.956144],
     props: {
@@ -130,7 +130,7 @@ test("Jūrmala, Mežsargu iela 28: bezmaksas zona (cost 0)", async () => {
 });
 
 test("Via Jurmala Outlet, Piņķi: NAV bezmaksas zona (substring aizsardzība)", async () => {
-  // Nosaukumā ir "Jurmala", bet vieta ir Mārupes novadā — precīzā kopas
+  // Nosaukumā ir "Jurmala", bet vieta ir Mārupes novadā - precīzā kopas
   // pārbaude to nedrīkst pieņemt par bezmaksas zonu.
   const geocode: Geocoder = async () => ({
     coords: [23.9161, 56.9394],

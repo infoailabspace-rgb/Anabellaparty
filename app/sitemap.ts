@@ -9,6 +9,7 @@ const routes = [
   "",
   "/foto-kaste",
   "/foto-kaste/ai-foto",
+  "/foto-kaste/ai-party",
   "/piepusamas-atrakcijas",
   "/svinibu-inventars",
   "/svinibu-inventars/audio-viesu-gramatas",

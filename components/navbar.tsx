@@ -84,6 +84,7 @@ export default function Navbar() {
       children: [
         { href: "/foto-kaste", label: t("fotoKastes") },
         { href: "/foto-kaste/ai-foto", label: t("aiFoto") },
+        { href: "/foto-kaste/ai-party", label: t("aiParty") },
       ],
     },
     { label: t("atrakcijas"), href: "/piepusamas-atrakcijas" },

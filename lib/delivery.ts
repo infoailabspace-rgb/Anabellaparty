@@ -1,5 +1,5 @@
 // Piegādes aprēķins no noliktavas Jūrmalā (Melluži).
-// Koordinātas un adrese nāk no lib/company.ts — viens avots (arī JSON-LD geo).
+// Koordinātas un adrese nāk no lib/company.ts - viens avots (arī JSON-LD geo).
 import { COMPANY } from "@/lib/company";
 
 export const ORIGIN = {
@@ -11,7 +11,7 @@ export const ORIGIN = {
 // Bezmaksas zona ir ADMINISTRATĪVA (Jūrmalas valstspilsēta), ne ģeometriska.
 export const FREE_ZONE = "Jūrmalas valstspilsēta";
 // Rezerve, ja ģeokodēšana neatgriež pilsētu droši. Braukšanas attālumi (ORS) no
-// Mežsargu 28: Jūrmalā tālākais punkts Ķemeri 16-18 km; tuvākie ĀRPUS Jūrmalas —
+// Mežsargu 28: Jūrmalā tālākais punkts Ķemeri 16-18 km; tuvākie ĀRPUS Jūrmalas -
 // Piņķi 17 km, Babīte 18 km. Jūrmala ir ~25 km gara strēmele, tāpēc rādiuss to
 // precīzi aprakstīt nespēj: 16 km aptver Jūrmalu līdz Ķemeriem un izslēdz Piņķus.
 // Primārais ceļš tik un tā ir freeZoneStrict (ORS atgriež region=Jurmala).
@@ -94,7 +94,7 @@ export const NOVADI_2021: Record<string, string> = {
   "dagdas novads": "kraslavas novads",
   // Kuldīgas novads
   "skrundas novads": "kuldigas novads",
-  // Ķekavas novads (tikai ATR kartējums — bezmaksas zonu tas vairs neietekmē)
+  // Ķekavas novads (tikai ATR kartējums - bezmaksas zonu tas vairs neietekmē)
   "baldones novads": "kekavas novads",
   // Limbažu novads
   "alojas novads": "limbazu novads",
@@ -300,7 +300,7 @@ export function regionAccepted(ex: AddressTokens, props: OrsProps): boolean {
 
 // Jūrmalas precīzie (normalizētie) nosaukumi. ORS reāli atgriež region="Jurmala"
 // (bez diakritikas) un locality="Jūrmala", tāpēc pārbaudām abus, BET tikai ar
-// PRECĪZU sakritību (kopa) — NEKĀDA substring "jurmal" uz patvaļīga reģiona
+// PRECĪZU sakritību (kopa) - NEKĀDA substring "jurmal" uz patvaļīga reģiona
 // (novēršam viltus pozitīvus, piem. "Via Jurmala Outlet Village" Piņķos).
 const FREE_ZONE_NAMES = new Set(["jurmala", "jurmalas valstspilseta"]);
 
@@ -309,7 +309,7 @@ const FREE_ZONE_NAMES = new Set(["jurmala", "jurmalas valstspilseta"]);
  * Jūrmala, VAI ORS administratīvais lauks (localadmin/region/locality/county)
  * PRECĪZI sakrīt ar Jūrmalu. Precīza kopas pārbaude, ne substring.
  * Jūrmala ir valstspilsēta, tāpēc tā nekad nenonāk ex.novads (tas prasa tokenu,
- * kas beidzas ar "novads") — pārbaudām ex.places, kur nonāk visi ne-ielas tokeni.
+ * kas beidzas ar "novads") - pārbaudām ex.places, kur nonāk visi ne-ielas tokeni.
  */
 export function freeZoneStrict(ex: AddressTokens, props: OrsProps): boolean {
   if (ex.places.some((p) => FREE_ZONE_NAMES.has(p))) return true;

@@ -37,6 +37,11 @@ export default async function Footer() {
                 {t("aiFoto")}
               </Link>
             </li>
+            <li>
+              <Link href="/foto-kaste/ai-party" className={linkCls}>
+                {t("aiParty")}
+              </Link>
+            </li>
           </ul>
         </div>
 
