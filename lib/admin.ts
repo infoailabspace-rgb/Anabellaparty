@@ -1,4 +1,5 @@
 import type { CartItem } from "@/lib/pricing";
+import { daysUntil } from "@/lib/riga-time";
 
 export type Booking = {
   id: string;
@@ -49,10 +50,7 @@ export function urgency(
   eventDate: string,
   status: string,
 ): "red" | "yellow" | "none" {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const d = new Date(eventDate);
-  const days = Math.ceil((d.getTime() - today.getTime()) / 86400000);
+  const days = daysUntil(eventDate);
   if (days < 0) return "none";
   if (days < 7 && status === "new") return "red";
   if (days < 30 && (status === "new" || status === "contacted")) return "yellow";

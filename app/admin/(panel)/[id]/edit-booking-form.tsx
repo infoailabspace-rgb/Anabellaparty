@@ -2,7 +2,8 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { computeQuote, type CartItem } from "@/lib/pricing";
+import { computeQuote, formatEur, type CartItem } from "@/lib/pricing";
+import { eventTimeForDb } from "@/lib/riga-time";
 import type { Product } from "@/lib/products";
 import type { Booking } from "@/lib/admin";
 import { updateBooking } from "../actions";
@@ -18,7 +19,7 @@ type Line = {
 const field =
   "w-full rounded-lg border border-gold/25 bg-navy/40 px-3 py-2 text-sm text-text outline-none focus:border-gold";
 const label = "block text-xs uppercase tracking-wide text-text/50";
-const eur = (n: number) => `${Number(n || 0).toFixed(0)} €`;
+const eur = (n: number) => formatEur(Math.round((Number(n) || 0) * 100) / 100);
 const clean = (v: string | null | undefined) => (v && v !== "-" ? v : "");
 
 // Normalizē addOns → stabila atslēga (izmet 0-daudzumus, sakārto), lai grupē
@@ -83,7 +84,7 @@ export default function EditBookingForm({
 
   const [eventDate, setEventDate] = useState(booking.event_date ?? "");
   const [eventTime, setEventTime] = useState(
-    booking.event_time ? booking.event_time.slice(0, 5) : "",
+    eventTimeForDb(booking.event_time) ?? "",
   );
   const [duration, setDuration] = useState(booking.duration ?? "");
   const [eventType, setEventType] = useState(booking.event_type ?? "");
@@ -96,7 +97,7 @@ export default function EditBookingForm({
 
   const [lines, setLines] = useState<Line[]>(itemsToLines(booking.items || []));
   const [deliveryCost, setDeliveryCost] = useState(
-    booking.delivery_cost != null ? String(booking.delivery_cost) : "0",
+    booking.delivery_cost != null ? String(booking.delivery_cost) : "",
   );
   const [deliveryKm, setDeliveryKm] = useState(
     booking.delivery_distance_km != null ? String(booking.delivery_distance_km) : "",
@@ -151,7 +152,7 @@ export default function EditBookingForm({
     setCompany(booking.company ?? "");
     setRegNr(booking.reg_nr ?? "");
     setEventDate(booking.event_date ?? "");
-    setEventTime(booking.event_time ? booking.event_time.slice(0, 5) : "");
+    setEventTime(eventTimeForDb(booking.event_time) ?? "");
     setDuration(booking.duration ?? "");
     setEventType(booking.event_type ?? "");
     setGuestCount(booking.guest_count != null ? String(booking.guest_count) : "");
@@ -159,7 +160,7 @@ export default function EditBookingForm({
     setIndoorOutdoor(booking.indoor_outdoor ?? "");
     setDescription(booking.description ?? "");
     setLines(itemsToLines(booking.items || []));
-    setDeliveryCost(booking.delivery_cost != null ? String(booking.delivery_cost) : "0");
+    setDeliveryCost(booking.delivery_cost != null ? String(booking.delivery_cost) : "");
     setDeliveryKm(
       booking.delivery_distance_km != null ? String(booking.delivery_distance_km) : "",
     );
@@ -193,7 +194,7 @@ export default function EditBookingForm({
         description,
         items,
         final_total: finalTotal.trim() ? Number(finalTotal) : null,
-        delivery_cost: Number(deliveryCost) || 0,
+        delivery_cost: deliveryCost.trim() === "" ? null : Number(deliveryCost) || 0,
         delivery_distance_km: deliveryKm.trim() ? Number(deliveryKm) : null,
       });
       if (res?.error) return setMsg(res.error);
@@ -292,7 +293,7 @@ export default function EditBookingForm({
           {isEditing ? (
             <>
               <div><label className={label}>Datums *</label><input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} className={`${field} mt-1`} /></div>
-              <div><label className={label}>Laiks</label><input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className={`${field} mt-1`} /></div>
+              <div><label className={label}>Laiks</label><input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className={`${field} mt-1`} /><span className="mt-1 block text-[11px] text-text/45">Tukšs = laiks nav zināms</span></div>
               <div><label className={label}>Ilgums</label><input value={duration} onChange={(e) => setDuration(e.target.value)} className={`${field} mt-1`} /></div>
               <div><label className={label}>Veids</label><input value={eventType} onChange={(e) => setEventType(e.target.value)} className={`${field} mt-1`} /></div>
               <div><label className={label}>Viesu skaits</label><input type="number" value={guestCount} onChange={(e) => setGuestCount(e.target.value)} className={`${field} mt-1`} /></div>
@@ -303,7 +304,7 @@ export default function EditBookingForm({
           ) : (
             <>
               <ViewRow label="Datums" value={eventDate} />
-              <ViewRow label="Laiks" value={eventTime} />
+              <ViewRow label="Laiks" value={eventTimeForDb(eventTime) ?? "nav norādīts"} />
               <ViewRow label="Ilgums" value={duration} />
               <ViewRow label="Veids" value={eventType} />
               <ViewRow label="Viesu skaits" value={guestCount} />
@@ -376,13 +377,13 @@ export default function EditBookingForm({
 
         {isEditing ? (
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <div><label className={label}>Piegādes maksa (€)</label><input type="number" value={deliveryCost} onChange={(e) => setDeliveryCost(e.target.value)} className={`${field} mt-1`} /></div>
+            <div><label className={label}>Piegādes maksa (€)</label><input type="number" value={deliveryCost} onChange={(e) => setDeliveryCost(e.target.value)} placeholder="Tukšs = tiks precizēta" className={`${field} mt-1`} /></div>
             <div><label className={label}>Piegādes attālums (km)</label><input type="number" value={deliveryKm} onChange={(e) => setDeliveryKm(e.target.value)} className={`${field} mt-1`} /></div>
             <div><label className={label}>Galīgā summa (€)</label><input type="number" value={finalTotal} onChange={(e) => setFinalTotal(e.target.value)} placeholder={`Auto: ${quote.subtotal}`} className={`${field} mt-1`} /></div>
           </div>
         ) : (
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <ViewRow label="Piegādes maksa" value={`${Number(deliveryCost) || 0} €`} />
+            <ViewRow label="Piegādes maksa" value={deliveryCost.trim() === "" ? "tiks precizēta" : eur(Number(deliveryCost))} />
             <ViewRow label="Piegādes attālums" value={deliveryKm.trim() ? `${deliveryKm} km` : "—"} />
             <ViewRow label="Galīgā summa" value={finalTotal.trim() ? `${finalTotal} €` : `Auto: ${quote.subtotal} €`} />
           </div>

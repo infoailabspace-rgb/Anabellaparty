@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     : [];
 
   // Privātpersonai company/kontaktpersona = vārds (leads.company/contact_person
-  // ir NOT NULL). B2B — kā ievadīts.
+  // ir NOT NULL). B2B - kā ievadīts.
   const companyF = isB2c ? name : company;
   const contactF = isB2c ? name : contactPerson;
 
@@ -96,7 +96,7 @@ export async function POST(req: Request) {
 
   const supabase = getSupabaseServer();
 
-  // 2. Rate-limit (5 / IP / 10 min) — tas pats RPC kā booking/contact.
+  // 2. Rate-limit (5 / IP / 10 min) - tas pats RPC kā booking/contact.
   if (supabase) {
     const ip = clientIp(req);
     const { data: rateOk, error: rateErr } = await supabase.rpc("check_booking_rate", {
@@ -112,7 +112,7 @@ export async function POST(req: Request) {
     }
   }
 
-  // 3. Ieraksts leads tabulā — KRITISKI. Ja NEsaglabājas, klientam NESŪTĀM
+  // 3. Ieraksts leads tabulā - KRITISKI. Ja NEsaglabājas, klientam NESŪTĀM
   //    maldinošu apstiprinājumu; tā vietā brīdinām adminu (lai atgūst manuāli)
   //    un atgriežam kļūdu, ko forma parāda lietotājam.
   let saved = false;
@@ -136,7 +136,7 @@ export async function POST(req: Request) {
     if (error) console.error("[lead] DB insert neizdevās:", error.message);
     else saved = true;
   } else {
-    console.error("[lead] DB nav konfigurēta — pieprasījums nav saglabāts.");
+    console.error("[lead] DB nav konfigurēta - pieprasījums nav saglabāts.");
   }
 
   // Resend konfigurācija + formas datu HTML (vajadzīgs gan paziņojumam, gan
@@ -144,7 +144,7 @@ export async function POST(req: Request) {
   const resendKey = process.env.RESEND_API_KEY;
   const notify = process.env.BOOKING_NOTIFY_EMAIL || "info@anabellaparty.lv";
   const from = process.env.BOOKING_FROM_EMAIL || "Anabella Party <onboarding@resend.dev>";
-  const interestsLine = interests.length ? interests.join(", ") : "—";
+  const interestsLine = interests.length ? interests.join(", ") : "-";
   const rows = [
     isB2c ? ["Vārds", name] : ["Uzņēmums / iestāde", company],
     isB2c ? ["", ""] : ["Kontaktpersona", contactPerson],
@@ -176,7 +176,7 @@ export async function POST(req: Request) {
           from,
           to: notify,
           replyTo: email,
-          subject: `⚠ NESAGLABĀJĀS ${isB2c ? "privātpersonas" : "B2B"} pieprasījums — ${companyF} (atgūt manuāli)`,
+          subject: `⚠ NESAGLABĀJĀS ${isB2c ? "privātpersonas" : "B2B"} pieprasījums - ${companyF} (atgūt manuāli)`,
           html: emailShell(
             `<h2 style="margin:0 0 12px;font-size:18px;color:#b00020;">⚠ Pieprasījums NESAGLABĀJĀS</h2>
              <p style="margin:0 0 12px;">Pieprasījums no anketas <b>nenonāca datubāzē</b>. Sazinies ar klientu manuāli:</p>
@@ -211,7 +211,7 @@ export async function POST(req: Request) {
       from,
       to: notify,
       replyTo: email,
-      subject: `${isB2c ? "Privātpersonas pieprasījums" : "B2B pieprasījums"} — ${companyF}`,
+      subject: `${isB2c ? "Privātpersonas pieprasījums" : "B2B pieprasījums"} - ${companyF}`,
       html: emailShell(
         `<h2 style="margin:0 0 12px;font-size:18px;color:${EMAIL_NAVY};">Jauns ${isB2c ? "privātpersonas" : "B2B"} pieprasījums</h2>
          <p style="margin:0 0 12px;">No anabellaparty.lv anketas${isB2c ? " (privātpersona)" : " (uzņēmums / iestāde)"}:</p>
@@ -223,12 +223,12 @@ export async function POST(req: Request) {
     if (internal.error) {
       console.error("[lead] Iekšējais e-pasts neizdevās:", JSON.stringify(internal.error));
     }
-    // Apstiprinājums pieprasītājam (tikai tagad — kad DB ieraksts DROŠI ir).
+    // Apstiprinājums pieprasītājam (tikai tagad - kad DB ieraksts DROŠI ir).
     await resend.emails.send({
       from,
       to: email,
       replyTo: notify,
-      subject: "Saņēmām jūsu pieprasījumu — Anabella Party",
+      subject: "Saņēmām jūsu pieprasījumu - Anabella Party",
       html: emailShell(
         `<h2 style="margin:0 0 12px;font-size:20px;color:${EMAIL_GOLD_DARK};">Paldies, ${esc(contactF)}! 🎉</h2>
          <p style="margin:0 0 12px;">Saņēmām jūsu pieprasījumu un jau sagatavojam piedāvājumu. <b>Atbildēsim 1 darba dienas laikā.</b></p>
@@ -236,13 +236,13 @@ export async function POST(req: Request) {
          ${ctaButton("https://www.anabellaparty.lv/foto-kaste", "Apskatīt piedāvājumu")}`,
         {
           preheader:
-            "Saņēmām jūsu pieprasījumu — sagatavosim piedāvājumu 1 darba dienas laikā.",
+            "Saņēmām jūsu pieprasījumu - sagatavosim piedāvājumu 1 darba dienas laikā.",
         },
       ),
     });
   } catch (e) {
     console.error("[lead] E-pasta izņēmums:", e instanceof Error ? e.message : String(e));
-    // Ieraksts jau saglabāts — neatgriež kļūdu klientam.
+    // Ieraksts jau saglabāts - neatgriež kļūdu klientam.
   }
 
   return NextResponse.json({ ok: true });

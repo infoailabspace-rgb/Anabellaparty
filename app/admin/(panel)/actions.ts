@@ -7,9 +7,13 @@ import { getAllProducts } from "@/lib/catalog";
 import { computeQuote, type CartItem } from "@/lib/pricing";
 import {
   confirmationHtml,
+  confirmationSubject,
   sendReservationEmail,
   itemsDescription,
 } from "@/lib/reservation-emails";
+import { shouldSendConfirmation } from "@/lib/email-triggers";
+import { eventTimeForDb } from "@/lib/riga-time";
+import { completeBookings } from "@/lib/auto-complete";
 import {
   createEventForBooking,
   updateEventForBooking,
@@ -46,9 +50,11 @@ export type ManualBookingInput = {
   indoor_outdoor: string;
   description: string;
   items: CartItem[];
-  delivery_cost: number;
+  delivery_cost: number | null;
   final_total: number | null;
   status: "new" | "confirmed";
+  /** Sūtīt klientam apstiprinājuma e-pastu, ja status=confirmed (default: jā). */
+  send_email?: boolean;
 };
 
 export async function createManualBooking(
@@ -88,7 +94,7 @@ export async function createManualBooking(
       company: d.company.trim() || null,
       reg_nr: d.reg_nr.trim() || null,
       event_date: d.event_date,
-      event_time: d.event_time || null,
+      event_time: eventTimeForDb(d.event_time),
       duration: d.duration.trim() || null,
       event_type: d.event_type.trim() || "Pasākums",
       guest_count: Number.isFinite(guest as number) ? guest : null,
@@ -98,7 +104,7 @@ export async function createManualBooking(
       items: d.items ?? [],
       estimated_total: quote.subtotal,
       final_total: d.final_total,
-      delivery_cost: d.delivery_cost || null,
+      delivery_cost: d.delivery_cost ?? null,
       customer_id: customerId,
       status: "new",
       // Izcelsme: no B2B lead → 'lead', citādi manuāla admin izveide → 'manual'.
@@ -111,12 +117,13 @@ export async function createManualBooking(
   if (error) return { error: error.message };
   const id = inserted.id as string;
 
-  // Ja admin izvēlas 'confirmed' — izmanto setStatus (equipment_bookings +
+  // Ja admin izvēlas 'confirmed' - izmanto setStatus (equipment_bookings +
   // apstiprinājuma e-pasts) konsekvencei.
-  if (d.status === "confirmed") await setStatus(id, "confirmed");
+  if (d.status === "confirmed")
+    await setStatus(id, "confirmed", { sendEmail: d.send_email !== false });
 
   // Konvertēšana no B2B lead: atzīmē lead kā "won" un saglabā saiti uz izveidoto
-  // rezervāciju. Lead NETIEK dzēsts — vēsture paliek. Nav fatāls, ja neizdodas.
+  // rezervāciju. Lead NETIEK dzēsts - vēsture paliek. Nav fatāls, ja neizdodas.
   if (leadId) {
     const { error: leadErr } = await supabase
       .from("leads")
@@ -149,7 +156,7 @@ export type UpdateBookingInput = {
   description: string;
   items: CartItem[];
   final_total: number | null;
-  delivery_cost: number;
+  delivery_cost: number | null;
   delivery_distance_km: number | null;
 };
 
@@ -165,7 +172,7 @@ export async function updateBooking(id: string, d: UpdateBookingInput) {
   // Esošais statuss + kalendāra id (kalendāra sinhronizācijai).
   const { data: cur } = await supabase
     .from("booking_requests")
-    .select("status, google_event_id")
+    .select("status, google_event_id, event_date, event_time")
     .eq("id", id)
     .single();
 
@@ -191,7 +198,7 @@ export async function updateBooking(id: string, d: UpdateBookingInput) {
     company: d.company.trim() || null,
     reg_nr: d.reg_nr.trim() || null,
     event_date: d.event_date,
-    event_time: d.event_time || null,
+    event_time: eventTimeForDb(d.event_time),
     duration: d.duration.trim() || null,
     event_type: d.event_type.trim() || "Pasākums",
     guest_count: Number.isFinite(guest as number) ? guest : null,
@@ -201,10 +208,20 @@ export async function updateBooking(id: string, d: UpdateBookingInput) {
     items: d.items ?? [],
     estimated_total: quote.subtotal,
     final_total: d.final_total,
-    delivery_cost: d.delivery_cost || null,
+    delivery_cost: d.delivery_cost ?? null,
     delivery_distance_km: d.delivery_distance_km,
   };
   if (customerId !== undefined) row.customer_id = customerId;
+  // Datums/laiks mainīts → atgādinājumi jāsūta no jauna jaunajam datumam
+  // (agrāk karodziņi palika true un jaunajam datumam atgādinājums nenāca).
+  if (
+    cur &&
+    (cur.event_date !== d.event_date ||
+      eventTimeForDb(cur.event_time) !== eventTimeForDb(d.event_time))
+  ) {
+    row.reminder_1day_sent = false;
+    row.reminder_dayof_sent = false;
+  }
 
   const { error } = await supabase
     .from("booking_requests")
@@ -239,7 +256,7 @@ export async function updateBooking(id: string, d: UpdateBookingInput) {
         name,
         event_type: d.event_type,
         event_date: d.event_date,
-        event_time: d.event_time,
+        event_time: eventTimeForDb(d.event_time),
         duration: d.duration,
         location: d.location,
         itemsText,
@@ -287,9 +304,21 @@ type BookingEmailRow = {
   google_event_id: string | null;
 };
 
-export async function setStatus(id: string, status: string) {
+export async function setStatus(
+  id: string,
+  status: string,
+  opts: { sendEmail?: boolean } = {},
+) {
   const supabase = await createClient();
-  // UPDATE rezultāts JĀPĀRBAUDA — agrāk kļūdu klusi ignorēja (fire-and-forget
+  // Iepriekšējais statuss - apstiprinājuma e-pasts TIKAI pārejā uz confirmed
+  // (agrāk sūtīja pie katra setStatus("confirmed"), arī pēc pasākuma).
+  const { data: prevRow } = await supabase
+    .from("booking_requests")
+    .select("status")
+    .eq("id", id)
+    .single();
+  const prevStatus = (prevRow?.status as string | undefined) ?? null;
+  // UPDATE rezultāts JĀPĀRBAUDA - agrāk kļūdu klusi ignorēja (fire-and-forget
   // klientā), tāpēc neveiksmīgs raksts izskatījās kā saglabāts, bet vēlāk
   // "atgriezās". Kļūdu atgriežam klientam, kas atritina optimistisko stāvokli.
   const { error: statusErr } = await supabase
@@ -342,8 +371,18 @@ export async function setStatus(id: string, status: string) {
     revalidatePath("/admin/tiriba");
   }
 
-  // TŪLĪTĒJS apstiprinājuma e-pasts klientam (nav fatāls, ja neizdodas).
-  if (status === "confirmed" && booking?.email) {
+  // Apstiprinājuma e-pasts klientam: tikai pārejā uz confirmed, nekad pagājušam
+  // pasākumam, un tikai ja admins nav noņēmis ķeksi (nav fatāls, ja neizdodas).
+  const decision = shouldSendConfirmation({
+    prevStatus,
+    newStatus: status,
+    eventDate: booking?.event_date,
+    email: booking?.email,
+    adminWantsEmail: opts.sendEmail,
+  });
+  if (status === "confirmed" && !decision.send)
+    console.log(`[setStatus] apstiprinājuma e-pasts izlaists (${decision.reason}) id=${id}`);
+  if (decision.send && booking?.email) {
     try {
       const products = await getAllProducts();
       const html = confirmationHtml(
@@ -355,12 +394,17 @@ export async function setStatus(id: string, status: string) {
         },
         products,
       );
-      const res = await sendReservationEmail({
-        to: booking.email,
-        subject: `Rezervācija apstiprināta — ${booking.event_date} · Anabella Party`,
+      await sendReservationEmail({
+        to: booking.email.trim(),
+        subject: confirmationSubject(booking.event_date),
         html,
+        log: {
+          supabase,
+          bookingId: id,
+          template: "confirmation",
+          triggeredBy: "admin:setStatus",
+        },
       });
-      if (!res.ok) console.error("[setStatus] apstiprinājuma e-pasts:", res.error);
     } catch (e) {
       console.error(
         "[setStatus] apstiprinājuma e-pasta izņēmums:",
@@ -389,7 +433,12 @@ export async function setStatus(id: string, status: string) {
           .from("booking_requests")
           .update({ google_event_id: ev.id })
           .eq("id", id);
-    } else if (status !== "confirmed" && booking?.google_event_id) {
+    } else if (
+      status !== "confirmed" &&
+      status !== "completed" &&
+      booking?.google_event_id
+    ) {
+      // Pabeigts pasākums paliek kalendārā kā vēsture; dzēš tikai atcelšanas/atpakaļ gadījumā.
       await deleteEvent(booking.google_event_id);
       await supabase
         .from("booking_requests")
@@ -421,7 +470,7 @@ export async function deleteBooking(id: string) {
   const { data: isAdmin } = await supabase.rpc("is_admin");
   if (!isAdmin) return { error: "Nav piekļuves." };
 
-  // AIZSARGS: nedzēst rezervāciju, kurai ir maksājumi — citādi tie paliktu DB
+  // AIZSARGS: nedzēst rezervāciju, kurai ir maksājumi - citādi tie paliktu DB
   // ar booking_request_id=NULL (nesekojama nauda; FK ir SET NULL). Vispirms
   // maksājumi jādzēš vai jāpārsaista. Tāda pati loģika kā deleteProduct.
   const { data: pays } = await supabase
@@ -497,7 +546,7 @@ export async function setPaymentState(
     .filter((p) => p.status === "completed" && p.method !== "manual-admin")
     .reduce((s, p) => s + Number(p.amount), 0);
 
-  // Noņem esošo manuālo ierakstu — pārrēķinām no jauna. Kļūdu PĀRBAUDA (agrāk
+  // Noņem esošo manuālo ierakstu - pārrēķinām no jauna. Kļūdu PĀRBAUDA (agrāk
   // klusi ignorēja → summa "nesaglabājās" bez brīdinājuma).
   const { error: delErr } = await supabase
     .from("payments")
@@ -557,4 +606,22 @@ export async function markViewed(id: string) {
     .update({ viewed_at: new Date().toISOString() })
     .eq("id", id)
     .is("viewed_at", null);
+}
+
+// Pagājušo apstiprināto rezervāciju slēgšana (confirmed → completed). Admins
+// vispirms redz sarakstu (/admin/atgadinajumi) un apstiprina konkrētos id.
+export async function completePastBookings(ids: string[]) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Nav autorizēts." };
+  const res = await completeBookings(supabase, ids);
+  if (res.error) return { error: res.error };
+  revalidatePath("/admin");
+  revalidatePath("/admin/rezervacijas");
+  revalidatePath("/admin/arhivs");
+  revalidatePath("/admin/atgadinajumi");
+  revalidatePath("/admin/tiriba");
+  return { ok: true, completed: res.completed.length };
 }

@@ -1,15 +1,11 @@
+import { isPastDate } from "@/lib/riga-time";
 // Vienota rezervācijas statusa + apmaksas krāsu shēma (visā CRM konsekventi).
 // Apvieno booking_requests.status UN apmaksas stāvokli (payments summa pret kopējo).
 
 export type BookingBadge = { key: string; label: string; cls: string };
 
-function isPast(eventDate: string): boolean {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const d = new Date(eventDate);
-  d.setHours(0, 0, 0, 0);
-  return d.getTime() < today.getTime();
-}
+// Rīgas kalendārā (new Date('YYYY-MM-DD') = UTC pusnakts → nobīde ap pusnakti).
+const isPast = (eventDate: string): boolean => isPastDate(eventDate);
 
 /** Rezervācijas summa: final_total, citādi estimated_total + delivery_cost.
  *  delivery_cost null = NEZINĀMA piegāde → izslēgta (nepieskaita), līdz to

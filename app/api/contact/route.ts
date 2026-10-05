@@ -18,7 +18,7 @@ function clientIp(req: Request): string {
   return req.headers.get("x-real-ip") || "unknown";
 }
 
-// HTML escaping — lietotāja ievade nedrīkst injicēt HTML e-pasta šablonā.
+// HTML escaping - lietotāja ievade nedrīkst injicēt HTML e-pasta šablonā.
 function esc(s: unknown): string {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
   if (message.length < 2)
     return NextResponse.json({ ok: false, error: "Trūkst ziņas." }, { status: 400 });
 
-  // 2. Rate-limit (5 / IP / 10 min) — pret spamu. Dala grozu ar booking (tas pats RPC).
+  // 2. Rate-limit (5 / IP / 10 min) - pret spamu. Dala grozu ar booking (tas pats RPC).
   const supabase = getSupabaseServer();
   if (supabase) {
     const ip = clientIp(req);
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     }
   }
 
-  // 3. E-pasts caur Resend — TAS PATS klients/atslēga kā /api/booking.
+  // 3. E-pasts caur Resend - TAS PATS klients/atslēga kā /api/booking.
   const resendKey = process.env.RESEND_API_KEY;
   const notify = process.env.BOOKING_NOTIFY_EMAIL || "info@anabellaparty.lv";
   const from = process.env.BOOKING_FROM_EMAIL || "Anabella Party <onboarding@resend.dev>";
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
   const fromAddr = (from.match(/<([^>]+)>/)?.[1] || from).trim().toLowerCase();
   if (fromAddr === notify.trim().toLowerCase()) {
     console.warn(
-      `[contact] BRĪDINĀJUMS: FROM (${fromAddr}) == NOTIFY (${notify}) — pašsūtīšana var nonākt spam. Iestati BOOKING_NOTIFY_EMAIL != BOOKING_FROM_EMAIL.`,
+      `[contact] BRĪDINĀJUMS: FROM (${fromAddr}) == NOTIFY (${notify}) - pašsūtīšana var nonākt spam. Iestati BOOKING_NOTIFY_EMAIL != BOOKING_FROM_EMAIL.`,
     );
   }
 
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
       from,
       to: notify,
       replyTo: email, // Roberts var atbildēt tieši sūtītājam
-      subject: `Jauns ziņojums no kontaktu formas — ${name}`,
+      subject: `Jauns ziņojums no kontaktu formas - ${name}`,
       html: emailShell(
         `<h2 style="margin:0 0 12px;font-size:18px;color:${EMAIL_NAVY};">Jauns ziņojums no kontaktu formas</h2>
          ${infoCard(
@@ -105,14 +105,14 @@ export async function POST(req: Request) {
            [
              infoRow("Vārds", esc(name)),
              infoRow("E-pasts", esc(email)),
-             infoRow("Telefons", phone ? esc(phone) : "—"),
+             infoRow("Telefons", phone ? esc(phone) : "-"),
            ].join(""),
          )}
          <p style="margin:12px 0 0;"><b>Ziņa:</b><br>${esc(message).replace(/\n/g, "<br>")}</p>`,
         { footer: "" },
       ),
     });
-    // Resend API kļūda nāk `error` laukā (netiek mesta) — logo un atgriež kļūdu.
+    // Resend API kļūda nāk `error` laukā (netiek mesta) - logo un atgriež kļūdu.
     if (r.error) {
       console.error(`[contact] E-pasts NEIZDEVĀS (to=${notify}):`, JSON.stringify(r.error));
       return NextResponse.json(

@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { addDays, formatDateLv, rigaToday } from "@/lib/riga-time";
+import { isDeliverableEmail } from "@/lib/email-triggers";
+import CompletePastPanel from "./complete-past-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -13,15 +16,8 @@ type Row = {
   reminder_dayof_sent: boolean;
 };
 
-const fmt = (d: string) => {
-  const m = String(d ?? "").match(/^(\d{4})-(\d{2})-(\d{2})/);
-  return m ? `${m[3]}.${m[2]}.${m[1]}` : String(d ?? "");
-};
-const minus1 = (d: string) => {
-  const x = new Date(d + "T00:00:00");
-  x.setDate(x.getDate() - 1);
-  return x.toLocaleDateString("en-CA");
-};
+const fmt = formatDateLv;
+const minus1 = (d: string) => addDays(d, -1);
 
 function Badge({
   state,
@@ -56,13 +52,16 @@ export default async function AtgadinajumiPage() {
     .order("event_date", { ascending: true });
   const rows = (data ?? []) as Row[];
 
-  const today = new Date().toLocaleDateString("en-CA");
+  // Rīgas kalendārs (serveris ir UTC → agrāk 00:00-03:00 "šodiena" bija vakardiena).
+  const today = rigaToday();
   const isUpcoming = (r: Row) => r.event_date >= today;
   const pending = (r: Row) =>
     isUpcoming(r) && (!r.reminder_1day_sent || !r.reminder_dayof_sent);
 
   const upcoming = rows.filter(pending);
-  const handled = rows.filter((r) => !pending(r));
+  // Pagājuši, bet joprojām "Apstiprināts" → jāpabeidz (nekad vairs nesaņem e-pastus).
+  const pastConfirmed = rows.filter((r) => r.event_date < today);
+  const handled = rows.filter((r) => !pending(r) && r.event_date >= today);
 
   const next = upcoming[0];
 
@@ -71,7 +70,7 @@ export default async function AtgadinajumiPage() {
       <h1 className="mb-1 font-display text-2xl font-bold">Atgādinājumi</h1>
       <p className="mb-6 text-xs text-text/50">
         Automātiskie e-pasti apstiprinātām rezervācijām: 1 dienu iepriekš + pasākuma
-        dienā (cron katru rītu). Šeit — kam jau nosūtīts un kam sūtīs nākamajam.
+        dienā (cron katru rītu). Šeit - kam jau nosūtīts un kam sūtīs nākamajam.
       </p>
 
       {/* Kopsavilkums */}
@@ -129,7 +128,7 @@ export default async function AtgadinajumiPage() {
                   <td className="px-4 py-3">
                     <Badge
                       state={
-                        !r.email
+                        !isDeliverableEmail(r.email)
                           ? "na"
                           : r.reminder_1day_sent
                             ? "sent"
@@ -141,7 +140,7 @@ export default async function AtgadinajumiPage() {
                   <td className="px-4 py-3">
                     <Badge
                       state={
-                        !r.email
+                        !isDeliverableEmail(r.email)
                           ? "na"
                           : r.reminder_dayof_sent
                             ? "sent"
@@ -157,9 +156,17 @@ export default async function AtgadinajumiPage() {
         </div>
       )}
 
+      <CompletePastPanel
+        rows={pastConfirmed.map((r) => ({
+          id: r.id,
+          name: r.name,
+          event_date: r.event_date,
+        }))}
+      />
+
       {/* Apstrādātie */}
       <h2 className="mb-2 font-display text-lg font-semibold text-text/70">
-        Apstrādātie / pagājušie ({handled.length})
+        Jau nosūtītie ({handled.length})
       </h2>
       {handled.length === 0 ? (
         <p className="text-sm text-text/40">Nav ierakstu.</p>

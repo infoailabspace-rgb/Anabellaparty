@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { deleteBlogPost } from "../site-actions";
+import { formatTimestampDateRiga } from "@/lib/riga-time";
 
 export type BlogRow = {
   id: string;
@@ -47,7 +48,7 @@ export default function BlogsList({ rows }: { rows: BlogRow[] }) {
                 <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-[11px] text-red-300">nerediģēts</span>
               )}
               <span className="hidden text-xs text-text/40 sm:inline">
-                {r.published_at ? new Date(r.published_at).toLocaleDateString("lv") : "—"}
+                {r.published_at ? formatTimestampDateRiga(r.published_at) : "—"}
               </span>
               <button
                 onClick={() => {

@@ -10,10 +10,11 @@ import {
   type BookingPayload,
 } from "@/lib/booking";
 import { FREE_FALLBACK_RADIUS_KM } from "@/lib/delivery";
+import { eventDateTimeText, formatDateLv } from "@/lib/riga-time";
 
 export const runtime = "nodejs";
 
-// Logo e-pastiem no kanoniskā domēna (sakrīt ar sūtītāja domēnu — labāk piegādei).
+// Logo e-pastiem no kanoniskā domēna (sakrīt ar sūtītāja domēnu - labāk piegādei).
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.anabellaparty.lv";
 
@@ -27,7 +28,7 @@ function clientIp(req: Request): string {
   return req.headers.get("x-real-ip") || "unknown";
 }
 
-// HTML escaping — lietotāja ievade nedrīkst injicēt HTML e-pasta šablonā.
+// HTML escaping - lietotāja ievade nedrīkst injicēt HTML e-pasta šablonā.
 function esc(s: unknown): string {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
@@ -45,12 +46,12 @@ function summaryHtml(
   deposit: number,
 ) {
   const quote = computeQuote(payload.items, products);
-  // Viegls teksta HTML (bez ārēja attēla, tumša fona un tabulas) — labākai
+  // Viegls teksta HTML (bez ārēja attēla, tumša fona un tabulas) - labākai
   // piegādei (smags HTML ar ārēju <img> nonāca spam/All Mail).
   const lines = quote.lines
     .map(
       (l) =>
-        `${esc(l.name)} (${esc(l.tierLabel)}) — ${
+        `${esc(l.name)} (${esc(l.tierLabel)}) - ${
           l.contactOnly ? "vienojoties" : eur(l.lineTotal)
         }`,
     )
@@ -82,7 +83,7 @@ function summaryHtml(
       <div style="height:4px;background:#D4A960;"></div>
       <div style="padding:24px;color:#1A3A4A;">
         <h2 style="margin:0 0 16px;font-size:18px;color:#1A3A4A;">Pieteikuma kopsavilkums</h2>
-        <p style="margin:0 0 12px;"><b>Datums:</b> ${esc(e.date)}${e.time ? " " + esc(e.time) : ""}<br>
+        <p style="margin:0 0 12px;"><b>Datums:</b> ${esc(eventDateTimeText(e.date, e.time))}<br>
            <b>Veids:</b> ${esc(e.type)}<br>
            <b>Norises un piegādes vieta:</b> ${esc(e.location)}${d?.km ? ` (~${esc(d.km)} km)` : ""}${e.guestCount ? `<br><b>Viesi:</b> ${esc(e.guestCount)}` : ""}</p>
         <p style="margin:0 0 12px;"><b>Inventārs:</b><br>${lines}</p>
@@ -94,8 +95,8 @@ function summaryHtml(
           <b>Kopā ar PVN (orientējoši):</b> ${eur(totals.gross)}<br>
           <b style="color:#B0842E;">Avanss (50%): ${eur(deposit)}</b>
         </div>
-        ${quote.hasContactOnly ? `<p style="font-size:12px;color:#777;margin-top:12px;">* Daži produkti — cena vienojoties, nav iekļauti summā.</p>` : ""}
-        <p style="font-size:12px;color:#777;margin-top:12px;">Cenas norādītas bez PVN 21%. Aprēķins orientējošs — precīzu piedāvājumu nosūtīsim atsevišķi.</p>
+        ${quote.hasContactOnly ? `<p style="font-size:12px;color:#777;margin-top:12px;">* Daži produkti - cena vienojoties, nav iekļauti summā.</p>` : ""}
+        <p style="font-size:12px;color:#777;margin-top:12px;">Cenas norādītas bez PVN 21%. Aprēķins orientējošs - precīzu piedāvājumu nosūtīsim atsevišķi.</p>
       </div>
     </div>
   </div>`;
@@ -175,7 +176,7 @@ export async function POST(req: Request) {
       : null;
 
   // CRM: sasaista pieteikumu ar klientu (find-or-create pēc e-pasta).
-  // SECURITY DEFINER RPC — strādā arī ar anon atslēgu (customers ir admin-only RLS).
+  // SECURITY DEFINER RPC - strādā arī ar anon atslēgu (customers ir admin-only RLS).
   // Nav fatāla: ja sasaiste neizdodas, pieteikums tik un tā tiek saglabāts (customer_id null).
   let customerId: string | null = null;
   try {
@@ -199,7 +200,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // Bez .select() — anon lomai nav SELECT politikas, tāpēc INSERT…RETURNING
+  // Bez .select() - anon lomai nav SELECT politikas, tāpēc INSERT…RETURNING
   // izgāztos. Insert-only (return=minimal) atbilst publiskās formas RLS.
   const { error } = await supabase.from("booking_requests").insert({
     name: payload.contact.name.trim(),
@@ -233,7 +234,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // 4. E-pasti caur Resend (ja konfigurēts — citādi izlaiž bez kļūdas)
+  // 4. E-pasti caur Resend (ja konfigurēts - citādi izlaiž bez kļūdas)
   const resendKey = process.env.RESEND_API_KEY;
   const notify = process.env.BOOKING_NOTIFY_EMAIL || "info@anabellaparty.lv";
   const from = process.env.BOOKING_FROM_EMAIL || "Anabella Party <onboarding@resend.dev>";
@@ -244,23 +245,23 @@ export async function POST(req: Request) {
     // Admin brīdinājums, ja piegāde nav aprēķināta (ORS neatrada / ārpus zonas).
     const deliveryWarn =
       deliveryCost === null
-        ? `<p style="font-family:Arial,sans-serif;color:#B00020;font-weight:bold;">⚠ PIEGĀDE NAV APRĒĶINĀTA — adrese: ${esc(d?.address?.trim() || payload.event.location)}</p>`
+        ? `<p style="font-family:Arial,sans-serif;color:#B00020;font-weight:bold;">⚠ PIEGĀDE NAV APRĒĶINĀTA - adrese: ${esc(d?.address?.trim() || payload.event.location)}</p>`
         : "";
     // Brīdinājums, ja FROM == NOTIFY (pašsūtīšana → spam/Sent risks).
     const fromAddr = (from.match(/<([^>]+)>/)?.[1] || from).trim().toLowerCase();
     if (fromAddr === notify.trim().toLowerCase()) {
       console.warn(
-        `[booking] BRĪDINĀJUMS: FROM (${fromAddr}) == NOTIFY (${notify}) — pašsūtīšana var nonākt spam/Sent. Iestati BOOKING_NOTIFY_EMAIL != BOOKING_FROM_EMAIL.`,
+        `[booking] BRĪDINĀJUMS: FROM (${fromAddr}) == NOTIFY (${notify}) - pašsūtīšana var nonākt spam/Sent. Iestati BOOKING_NOTIFY_EMAIL != BOOKING_FROM_EMAIL.`,
       );
     }
     try {
-      // Robertam — logo Resend atbildi (message ID vai kļūdu).
+      // Robertam - logo Resend atbildi (message ID vai kļūdu).
       const rNotify = await resend.emails.send({
         from,
         to: notify,
         // Admin brīdinājums → atbilde iet TIEŠI klientam (Roberts atbild uz pieteikumu).
         replyTo: payload.contact.email.trim(),
-        subject: `Jauns pieteikums — ${payload.event.date} — ${payload.contact.name}`,
+        subject: `Jauns pieteikums - ${formatDateLv(payload.event.date)} - ${payload.contact.name}`,
         html: `<meta charset="utf-8">${deliveryWarn}<p style="font-family:Arial,sans-serif;">Jauns rezervācijas pieteikums no <b>${esc(payload.contact.name)}</b> (${esc(phone)}, ${esc(payload.contact.email)}).</p>${html}`,
       });
       if (rNotify.error)
@@ -273,14 +274,14 @@ export async function POST(req: Request) {
         to: payload.contact.email.trim(),
         // FROM=noreply@ ir nepārraudzīts → klienta atbildes uz pārraudzīto info@.
         replyTo: notify,
-        subject: "Tavs pieteikums saņemts — Anabella Party",
-        html: `<meta charset="utf-8"><p style="font-family:Arial,sans-serif;">Paldies, ${esc(payload.contact.name)}! Tavs pieteikums saņemts. Atbildēsim 24 stundu laikā ar precīzu piedāvājumu. Ja steidz — zvani +371 29222761.</p>${html}`,
+        subject: "Tavs pieteikums saņemts - Anabella Party",
+        html: `<meta charset="utf-8"><p style="font-family:Arial,sans-serif;">Paldies, ${esc(payload.contact.name)}! Tavs pieteikums saņemts. Atbildēsim 24 stundu laikā ar precīzu piedāvājumu. Ja steidz - zvani +371 29222761.</p>${html}`,
       });
       if (rClient.error)
         console.error(`[booking] Klienta e-pasts NEIZDEVĀS:`, JSON.stringify(rClient.error));
       else console.log(`[booking] Klienta e-pasts nosūtīts id=${rClient.data?.id}`);
     } catch (e) {
-      // Tīkla izņēmums — pieteikums jau saglabāts DB, tāpēc neatgriež kļūdu.
+      // Tīkla izņēmums - pieteikums jau saglabāts DB, tāpēc neatgriež kļūdu.
       console.error("[booking] E-pasta izņēmums:", e instanceof Error ? e.message : String(e));
     }
   }

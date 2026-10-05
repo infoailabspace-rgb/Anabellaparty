@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { computeQuote } from "@/lib/pricing";
+import { computeQuote, formatEur } from "@/lib/pricing";
+import { formatDateLv, formatTimestampRiga } from "@/lib/riga-time";
 import { getAllProducts } from "@/lib/catalog";
 import type { Booking } from "@/lib/admin";
 import BookingDetail from "./booking-detail";
@@ -40,10 +41,29 @@ export default async function BookingPage({
 
   const products = await getAllProducts();
   const quote = computeQuote(b.items || [], products);
-  const delivery = Number(b.delivery_cost) || 0;
+  // null = piegāde nav aprēķināta (NEKAD "bez maksas"/"0 €"); 0 = bezmaksas zona.
+  const deliveryLabel =
+    b.delivery_cost == null
+      ? "piegāde tiks precizēta"
+      : Number(b.delivery_cost) > 0
+        ? formatEur(Number(b.delivery_cost))
+        : "bez maksas";
+
+  // Automātisko vēstuļu žurnāls (kad, kam, kurš šablons).
+  const { data: emailLog } = await supabase
+    .from("email_log")
+    .select("created_at, template, to_email, ok, error, triggered_by")
+    .eq("booking_request_id", id)
+    .order("created_at", { ascending: false })
+    .limit(20);
+  const TEMPLATE_LABEL: Record<string, string> = {
+    confirmation: "Apstiprinājums",
+    reminder_1day: "Atgādinājums (rīt)",
+    reminder_dayof: "Atgādinājums (šodien)",
+  };
 
   // Aprīkojuma pieejamība: konflikti ar citu apstiprinātu bookingu rezervācijām
-  // tajā pašā datumā (advisory — nebloķē statusa maiņu).
+  // tajā pašā datumā (advisory - nebloķē statusa maiņu).
   type Conflict = {
     slug: string;
     requested: number;
@@ -106,7 +126,7 @@ export default async function BookingPage({
       geoStems.size > 0 &&
       ![...custTok].some((w) => geoStems.has(w.slice(0, 4))),
   );
-  const mailSubject = encodeURIComponent(`Anabella Party — pieteikums ${b.event_date}`);
+  const mailSubject = encodeURIComponent(`Anabella Party - pieteikums ${formatDateLv(b.event_date)}`);
 
   // Waze navigācijas adrese: ģeokodētā (precīzākā) → klienta ievadītā → norises vieta.
   // Pogu nerāda, ja rezultāts tukšs, "-", vai īsāks par 3 rakstzīmēm.
@@ -153,7 +173,7 @@ export default async function BookingPage({
           </ul>
           <p className="mt-2 text-xs text-amber-200/60">
             Rezervāciju rēķina no citiem “Apstiprināts” pieteikumiem tajā pašā
-            datumā. Šis brīdinājums nebloķē — pārbaudi manuāli pirms apstiprini.
+            datumā. Šis brīdinājums nebloķē - pārbaudi manuāli pirms apstiprini.
           </p>
         </div>
       )}
@@ -201,7 +221,7 @@ export default async function BookingPage({
           {/* Pilna rediģēšana (visi lauki) */}
           <EditBookingForm booking={b} products={products} />
 
-          {/* Piegādes adrese (ORS ģeokods) — tikai info, ja publiskā forma to sniedza */}
+          {/* Piegādes adrese (ORS ģeokods) - tikai info, ja publiskā forma to sniedza */}
           {b.delivery_address && (
             <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
               <p className="text-sm font-semibold text-gold">Piegādes adrese (ORS)</p>
@@ -212,17 +232,40 @@ export default async function BookingPage({
                 </div>
                 <div className={deliveryMismatch ? "rounded-lg border border-amber-500/60 bg-amber-500/10 p-2" : ""}>
                   <p className="text-xs uppercase tracking-wide text-text/50">
-                    Ģeokodētā{deliveryMismatch ? " — ⚠ neatbilst" : ""}
+                    Ģeokodētā{deliveryMismatch ? " - ⚠ neatbilst" : ""}
                   </p>
-                  <p className="mt-1 text-sm text-text/90">{b.delivery_geocoded ?? "—"}</p>
+                  <p className="mt-1 text-sm text-text/90">{b.delivery_geocoded ?? "-"}</p>
                   <p className="mt-1 font-mono text-sm text-gold">
-                    {b.delivery_distance_km != null ? `~${b.delivery_distance_km} km` : "—"} ·{" "}
-                    {delivery > 0 ? `${delivery} €` : "bez maksas"}
+                    {b.delivery_distance_km != null ? `~${b.delivery_distance_km} km` : "-"} ·{" "}
+                    {deliveryLabel}
                   </p>
                 </div>
               </div>
             </section>
           )}
+
+          <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
+            <h2 className="font-display text-lg font-semibold text-gold">
+              Automātiskie e-pasti klientam
+            </h2>
+            {emailLog && emailLog.length ? (
+              <ul className="mt-3 space-y-1 text-sm">
+                {emailLog.map((e, i) => (
+                  <li key={i} className="flex flex-wrap gap-x-3 text-text/80">
+                    <span className="font-mono text-text/50">{formatTimestampRiga(e.created_at)}</span>
+                    <span>{TEMPLATE_LABEL[e.template] ?? e.template}</span>
+                    <span className="text-text/60">{e.to_email}</span>
+                    <span className={e.ok ? "text-green-300" : "text-red-300"}>
+                      {e.ok ? "nosūtīts" : `kļūda: ${e.error ?? "?"}`}
+                    </span>
+                    <span className="text-text/40">({e.triggered_by})</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-sm text-text/50">Vēl nav reģistrētu sūtījumu (žurnāls darbojas no 05.10.2026).</p>
+            )}
+          </section>
 
           {/* Rēķini un maksājumi */}
           <section className="rounded-2xl border border-gold/25 bg-navy/30 p-6">

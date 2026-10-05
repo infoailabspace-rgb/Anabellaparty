@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { statusBadge, paymentBadge } from "@/lib/booking-status";
+import { RIGA_TZ } from "@/lib/riga-time";
 
 export const dynamic = "force-dynamic";
 
@@ -123,7 +124,7 @@ export default async function ParskatsPage() {
   const s = (sData ?? {}) as Partial<Summary>;
   const e = (eData ?? {}) as Partial<Extra>;
 
-  const today = new Date().toLocaleDateString("lv-LV", { day: "numeric", month: "long", year: "numeric" });
+  const today = new Date().toLocaleDateString("lv-LV", { day: "numeric", month: "long", year: "numeric", timeZone: RIGA_TZ });
 
   const totalAmount = e.total_amount ?? 0;
   const paidAmount = e.paid_amount ?? 0;

@@ -1,4 +1,5 @@
 import { google, type calendar_v3 } from "googleapis";
+import { addDays } from "@/lib/riga-time";
 
 // Service Account credentials no env (viena rinda JSON). Privātā atslēga —
 // aizsargājoši normalizē \n uz reāliem newline (dažādu env quirku dēļ).
@@ -66,16 +67,12 @@ function plusHours(date: string, time: string, hours: number): string {
   let d = date;
   if (eh >= 24) {
     eh -= 24;
-    const x = new Date(date + "T00:00:00");
-    x.setDate(x.getDate() + 1);
-    d = x.toLocaleDateString("en-CA");
+    d = addDays(date, 1);
   }
   return `${d}T${String(eh).padStart(2, "0")}:${mm}:00`;
 }
 function nextDay(date: string): string {
-  const x = new Date(date + "T00:00:00");
-  x.setDate(x.getDate() + 1);
-  return x.toLocaleDateString("en-CA");
+  return addDays(date, 1);
 }
 
 type BookingEvent = {

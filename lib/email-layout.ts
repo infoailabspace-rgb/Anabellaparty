@@ -1,8 +1,8 @@
-// Vienots Anabella zīmola e-pasta ietvars — viens patiesības avots visiem
+// Vienots Anabella zīmola e-pasta ietvars - viens patiesības avots visiem
 // e-pastiem (rezervācijas, B2B pieprasījumi, kontaktforma). Navy galvene ar logo
 // + zelta akcents + balta karte, max-width 600px, TIKAI inline stili (e-pasta
 // klienti nelasa <style>/klases), mobilajam draudzīgs. <meta charset="utf-8">
-// iekļauts — LV diakritika (āčēģīķļņšūž) un kirilica renderējas pareizi.
+// iekļauts - LV diakritika (āčēģīķļņšūž) un kirilica renderējas pareizi.
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.anabellaparty.lv";
@@ -10,7 +10,7 @@ export const EMAIL_NAVY = "#1A3A4A";
 export const EMAIL_GOLD = "#D4A960";
 export const EMAIL_GOLD_DARK = "#B0842E"; // saitēm uz balta fona (kontrasts)
 
-// HTML escaping — lietotāja ievade nedrīkst injicēt HTML.
+// HTML escaping - lietotāja ievade nedrīkst injicēt HTML.
 export function esc(s: unknown): string {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
@@ -21,15 +21,15 @@ export function esc(s: unknown): string {
 }
 
 const DEFAULT_FOOTER = `<p style="font-size:12px;color:#777;margin:24px 0 0;line-height:1.6;">
-  Anabella Party — SIA „AR DIMANTI", PVN maksātājs. Strādājam ar līgumu un rēķinu.<br>
+  Anabella Party - SIA „AR DIMANTI", PVN maksātājs. Strādājam ar līgumu un rēķinu.<br>
   Jautājumi? Atbildi uz šo e-pastu vai zvani
   <a href="tel:+37129222761" style="color:${EMAIL_GOLD_DARK};text-decoration:none;">+371 29222761</a> ·
   <a href="mailto:info@anabellaparty.lv" style="color:${EMAIL_GOLD_DARK};text-decoration:none;">info@anabellaparty.lv</a>
 </p>`;
 
 /**
- * Ietin saturu zīmola ietvarā. `footer` — noklusējuma kontaktu kājene; padod ""
- * lai to noņemtu (piem. iekšējiem admin e-pastiem). `preheader` — īss teksts,
+ * Ietin saturu zīmola ietvarā. `footer` - noklusējuma kontaktu kājene; padod ""
+ * lai to noņemtu (piem. iekšējiem admin e-pastiem). `preheader` - īss teksts,
  * ko rāda iesūtnes priekšskatījumā (slēpts pašā e-pastā).
  */
 export function emailShell(

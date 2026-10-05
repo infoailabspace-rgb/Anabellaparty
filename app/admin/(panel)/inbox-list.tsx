@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { formatTimestampRiga } from "@/lib/riga-time";
 
 // Vienots ienākošo saraksts — apvieno booking_requests un leads vienā skatā
 // (apvienošana notiek servera vaicājumā; šis tikai attēlo + filtrē pēc tipa).
@@ -32,11 +33,7 @@ const STATUS_LABEL: Record<string, string> = {
 function fmtDateTime(s: string): string {
   const d = new Date(s);
   if (Number.isNaN(d.getTime())) return "";
-  return (
-    d.toLocaleDateString("lv-LV", { day: "2-digit", month: "2-digit" }) +
-    " " +
-    d.toLocaleTimeString("lv-LV", { hour: "2-digit", minute: "2-digit" })
-  );
+  return formatTimestampRiga(d, { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 }
 
 type KindFilter = "all" | "booking" | "lead";

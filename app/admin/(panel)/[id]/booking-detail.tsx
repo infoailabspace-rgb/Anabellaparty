@@ -12,6 +12,8 @@ import {
   type PaymentState,
 } from "@/lib/booking-status";
 import { setStatus, saveNotes, setPaymentState, deleteBooking } from "../actions";
+import { isPastDate } from "@/lib/riga-time";
+import { isDeliverableEmail } from "@/lib/email-triggers";
 
 const PAY_STATES: PaymentState[] = ["unpaid", "partial", "paid", "deferred"];
 
@@ -24,6 +26,12 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
   const [deferred, setDeferred] = useState(Boolean(booking.payment_deferred));
   const [payMsg, setPayMsg] = useState("");
   const [statusMsg, setStatusMsg] = useState("");
+  // Apstiprinājuma e-pasts: piedāvā tikai pārejai uz "Apstiprināts" nākotnes
+  // pasākumam ar derīgu e-pastu. Noklusēti ieslēgts tikai tad.
+  const eventPast = isPastDate(booking.event_date);
+  const canEmail =
+    booking.status !== "confirmed" && !eventPast && isDeliverableEmail(booking.email);
+  const [sendEmail, setSendEmail] = useState(canEmail);
   const [notesMsg, setNotesMsg] = useState("");
   const [delMsg, setDelMsg] = useState("");
   const [avansModal, setAvansModal] = useState(false);
@@ -80,7 +88,7 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
     setStatusMsg("");
     setStatusState(v);
     startTransition(async () => {
-      const res = await setStatus(booking.id, v);
+      const res = await setStatus(booking.id, v, { sendEmail: canEmail && sendEmail });
       if (res?.error) {
         setStatusState(prev);
         setStatusMsg(res.error);
@@ -160,6 +168,27 @@ export default function BookingDetail({ booking }: { booking: Booking }) {
             </option>
           ))}
         </select>
+        {booking.status !== "confirmed" && (
+          <label className="mt-2 flex items-start gap-2 text-xs text-text/70">
+            <input
+              type="checkbox"
+              checked={canEmail && sendEmail}
+              disabled={!canEmail || pending}
+              onChange={(e) => setSendEmail(e.target.checked)}
+              className="mt-0.5 accent-[#D4A960]"
+            />
+            <span>
+              Nosūtīt klientam e-pastu, apstiprinot rezervāciju
+              {!canEmail && (
+                <span className="block text-text/45">
+                  {eventPast
+                    ? "Pasākums jau notika - e-pasts netiks sūtīts."
+                    : "Nav derīga klienta e-pasta."}
+                </span>
+              )}
+            </span>
+          </label>
+        )}
         {statusMsg && (
           <p className="mt-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-xs text-red-300">
             {statusMsg}

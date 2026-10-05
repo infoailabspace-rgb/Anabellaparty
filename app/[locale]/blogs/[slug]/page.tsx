@@ -16,6 +16,7 @@ import { routing } from "@/i18n/routing";
 import { translatedAlternates, ogMetadata } from "@/lib/seo";
 import ShareButtons from "./share-buttons";
 import ArticleContent from "./article-content";
+import { formatTimestampDateRiga } from "@/lib/riga-time";
 
 export async function generateMetadata({
   params,
@@ -103,7 +104,7 @@ export default async function ArticlePage({
           {post.title}
         </h1>
         <p className="mt-4 text-sm text-text/50">
-          {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("lv") : ""} ·{" "}
+          {post.publishedAt ? formatTimestampDateRiga(post.publishedAt) : ""} ·{" "}
           {post.readingMin} min lasīšana
         </p>
 

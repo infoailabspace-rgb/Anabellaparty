@@ -1,4 +1,5 @@
 import type { CartItem } from "@/lib/pricing";
+import { isPastDate } from "@/lib/riga-time";
 
 export type BookingContact = {
   name: string;
@@ -67,9 +68,7 @@ export function validateBooking(payload: BookingPayload): string[] {
   if (!isValidEmail(c.email || "")) errors.push("Nederīgs e-pasts.");
   if (!e.date) errors.push("Trūkst pasākuma datuma.");
   else {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (new Date(e.date) < today) errors.push("Datums nedrīkst būt pagātnē.");
+    if (isPastDate(e.date)) errors.push("Datums nedrīkst būt pagātnē.");
   }
   if (!e.type?.trim()) errors.push("Trūkst pasākuma veida.");
   if (!e.location?.trim()) errors.push("Trūkst norises vietas.");

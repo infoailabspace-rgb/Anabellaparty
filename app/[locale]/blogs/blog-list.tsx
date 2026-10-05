@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { BLOG_CATEGORIES, CATEGORY_LABEL, type BlogListItem } from "@/lib/blog";
+import { formatTimestampDateRiga } from "@/lib/riga-time";
 
 function Card({ p }: { p: BlogListItem }) {
   return (
@@ -34,7 +35,7 @@ function Card({ p }: { p: BlogListItem }) {
         </h2>
         <p className="mt-2 flex-1 text-sm text-text/70">{p.excerpt}</p>
         <p className="mt-4 text-xs text-text/40">
-          {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString("lv") : ""} · {p.readingMin} min lasīšana
+          {p.publishedAt ? formatTimestampDateRiga(p.publishedAt) : ""} · {p.readingMin} min lasīšana
         </p>
       </div>
     </Link>

@@ -17,6 +17,7 @@ import {
 } from "@/lib/booking";
 import PricePanel from "@/components/booking/price-panel";
 import { isInFreeZone } from "@/lib/delivery";
+import { rigaToday } from "@/lib/riga-time";
 
 const STORAGE_KEY = "anabella-booking";
 // Vērtība (v) glabājas LV (konsekvence admin/e-pastos); attēlo (k) tulkoto.
@@ -112,7 +113,8 @@ export default function BookingForm({ products }: { products: Product[] }) {
   const [submitted, setSubmitted] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
-  const todayStr = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  // Rīgas datums (toISOString = UTC → 00:00-03:00 ļāva izvēlēties vakardienu).
+  const todayStr = useMemo(() => rigaToday(), []);
 
   // Ielādē no sessionStorage vai deep link (?item=slug).
   useEffect(() => {
@@ -312,7 +314,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
     if (s === 1 && items.length === 0) e.push(t("errPickItem"));
     if (s === 2) {
       if (!event.date) e.push(t("errDate"));
-      else if (new Date(event.date) < new Date(todayStr))
+      else if (event.date < todayStr)
         e.push(t("errDatePast"));
       if (!event.type) e.push(t("errType"));
       if (!deliveryStreet.trim()) e.push(t("errDeliveryStreet"));

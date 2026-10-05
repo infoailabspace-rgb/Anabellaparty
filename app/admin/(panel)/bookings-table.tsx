@@ -6,6 +6,7 @@ import { computeQuote } from "@/lib/pricing";
 import type { Product } from "@/lib/products";
 import { STATUSES, urgency, type Booking } from "@/lib/admin";
 import { statusBadge, paymentBadge, bookingAmount } from "@/lib/booking-status";
+import { rigaToday } from "@/lib/riga-time";
 
 const URGENCY_RING: Record<string, string> = {
   red: "border-l-4 border-l-red-500",
@@ -56,7 +57,7 @@ export default function BookingsTable({
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    const todayStr = new Date().toLocaleDateString("en-CA");
+    const todayStr = rigaToday();
     return bookings
       .filter((b) => {
         if (!scope.includes(b.status)) return false;

@@ -11,12 +11,13 @@ import {
   computeInvoiceAmounts,
   eur,
 } from "../types";
+import { rigaToday } from "@/lib/riga-time";
 
 const field =
   "w-full rounded-lg border border-gold/25 bg-navy/40 px-3 py-2 text-sm text-text outline-none focus:border-gold";
 const label = "block text-xs uppercase tracking-wide text-text/50";
 
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => rigaToday();
 
 export default function InvoiceCreate({
   bookings,

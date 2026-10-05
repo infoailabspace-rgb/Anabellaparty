@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { LEAD_STATUSES } from "./constants";
+import { formatTimestampDateRiga } from "@/lib/riga-time";
 
 export type Lead = {
   id: string;
@@ -33,11 +34,7 @@ const field =
   "rounded-lg border border-gold/25 bg-navy/40 px-3 py-2 text-sm text-text outline-none focus:border-gold";
 
 function fmtDate(s: string) {
-  return new Date(s).toLocaleDateString("lv-LV", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+  return formatTimestampDateRiga(s);
 }
 
 // Klikšķināmas kartītes → detaļu lapa (rediģēšana notiek tur). Meklēšana +

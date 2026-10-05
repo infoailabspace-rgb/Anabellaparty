@@ -2,7 +2,9 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { computeQuote, type CartItem } from "@/lib/pricing";
+import { computeQuote, formatEur, type CartItem } from "@/lib/pricing";
+import { isPastDate } from "@/lib/riga-time";
+import { isDeliverableEmail } from "@/lib/email-triggers";
 import type { Product } from "@/lib/products";
 import { createManualBooking } from "../actions";
 import BackButton from "@/components/admin/back-button";
@@ -19,7 +21,7 @@ type Line = {
 const field =
   "w-full rounded-lg border border-gold/25 bg-navy/40 px-3 py-2 text-sm text-text outline-none focus:border-gold";
 const label = "block text-xs uppercase tracking-wide text-text/50";
-const eur = (n: number) => `${Number(n || 0).toFixed(0)} €`;
+const eur = (n: number) => formatEur(Math.round((Number(n) || 0) * 100) / 100);
 
 export type Prefill = {
   leadId: string;
@@ -66,9 +68,13 @@ export default function NewBookingForm({
 
   // Produkti + cena
   const [lines, setLines] = useState<Line[]>([]);
-  const [deliveryCost, setDeliveryCost] = useState("0");
+  // Tukšs = piegāde vēl nav aprēķināta (null, "tiks precizēta"); 0 = bezmaksas zona.
+  const [deliveryCost, setDeliveryCost] = useState("");
   const [finalTotal, setFinalTotal] = useState("");
   const [status, setStatus] = useState<"new" | "confirmed">("new");
+  const [sendEmail, setSendEmail] = useState(true);
+  const eventPast = eventDate ? isPastDate(eventDate) : false;
+  const canEmail = !eventPast && isDeliverableEmail(email);
 
   const [msg, setMsg] = useState("");
   const [pending, start] = useTransition();
@@ -168,9 +174,10 @@ export default function NewBookingForm({
         indoor_outdoor: indoorOutdoor,
         description,
         items,
-        delivery_cost: Number(deliveryCost) || 0,
+        delivery_cost: deliveryCost.trim() === "" ? null : Number(deliveryCost) || 0,
         final_total: finalTotal.trim() ? Number(finalTotal) : null,
         status,
+        send_email: canEmail && sendEmail,
       }, prefill?.leadId);
       if (res?.error) {
         setMsg(res.error);
@@ -275,6 +282,7 @@ export default function NewBookingForm({
           <div>
             <label className={label}>Laiks</label>
             <input type="time" value={eventTime} onChange={(e) => setEventTime(e.target.value)} className={`${field} mt-1`} />
+            <span className="mt-1 block text-[11px] text-text/45">Atstāj tukšu, ja laiks nav zināms (00:00 = nav laika).</span>
           </div>
           <div>
             <label className={label}>Ilgums</label>
@@ -386,7 +394,7 @@ export default function NewBookingForm({
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
             <label className={label}>Piegādes maksa (€)</label>
-            <input type="number" value={deliveryCost} onChange={(e) => setDeliveryCost(e.target.value)} className={`${field} mt-1`} />
+            <input type="number" value={deliveryCost} onChange={(e) => setDeliveryCost(e.target.value)} placeholder="Tukšs = tiks precizēta" className={`${field} mt-1`} />
           </div>
           <div>
             <label className={label}>Galīgā summa (€) — pārraksta auto</label>
@@ -395,7 +403,7 @@ export default function NewBookingForm({
         </div>
         <div className="mt-3 rounded-lg border border-gold/20 bg-bg/40 p-3 text-sm">
           <div className="flex justify-between"><span className="text-text/60">Inventārs (auto)</span><span className="font-mono">{eur(quote.subtotal)}</span></div>
-          <div className="flex justify-between"><span className="text-text/60">Piegāde</span><span className="font-mono">{eur(Number(deliveryCost) || 0)}</span></div>
+          <div className="flex justify-between"><span className="text-text/60">Piegāde</span><span className="font-mono">{deliveryCost.trim() === "" ? "tiks precizēta" : eur(Number(deliveryCost))}</span></div>
           <div className="mt-1 flex justify-between border-t border-gold/15 pt-1 font-semibold"><span>Kopā{finalTotal.trim() ? " (koriģēts)" : ""}</span><span className="font-mono text-gold">{eur(grandTotal)}</span></div>
         </div>
       </section>
@@ -406,8 +414,19 @@ export default function NewBookingForm({
           <label className={label}>Statuss</label>
           <select value={status} onChange={(e) => setStatus(e.target.value as "new" | "confirmed")} className={`${field} mt-1 w-56`}>
             <option value="new">Jauns pieteikums</option>
-            <option value="confirmed">Apstiprināts (sūta e-pastu klientam)</option>
+            <option value="confirmed">Apstiprināts</option>
           </select>
+          {status === "confirmed" && (
+            <label className="mt-2 flex items-start gap-2 text-xs text-text/70">
+              <input type="checkbox" checked={canEmail && sendEmail} disabled={!canEmail} onChange={(e) => setSendEmail(e.target.checked)} className="mt-0.5 accent-[#D4A960]" />
+              <span>
+                Nosūtīt klientam e-pastu
+                {!canEmail && (
+                  <span className="block text-text/45">{eventPast ? "Pasākums jau notika - e-pasts netiks sūtīts." : "Nav derīga klienta e-pasta."}</span>
+                )}
+              </span>
+            </label>
+          )}
         </div>
         <button onClick={save} disabled={pending} className="mt-5 rounded-full bg-gold px-6 py-2 text-sm font-semibold text-black disabled:opacity-60">
           {pending ? "Saglabā…" : "Izveidot rezervāciju"}

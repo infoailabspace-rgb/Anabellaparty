@@ -10,6 +10,7 @@ import {
   deleteLead,
 } from "../actions";
 import { LEAD_STATUSES } from "../constants";
+import { formatTimestampRiga } from "@/lib/riga-time";
 
 export type LeadRow = {
   id: string;
@@ -182,13 +183,7 @@ export default function LeadDetail({
     });
   }
 
-  const created = new Date(lead.created_at).toLocaleString("lv-LV", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const created = formatTimestampRiga(lead.created_at);
   const fmtDM = (d: string) =>
     d ? `${d.slice(8, 10)}.${d.slice(5, 7)}.${d.slice(0, 4)}` : "";
 
