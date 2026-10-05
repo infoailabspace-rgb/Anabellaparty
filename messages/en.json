@@ -531,5 +531,29 @@
     "point3": "The result on any screen",
     "point4": "Personalised quizzes too",
     "price": "Packages from EUR 11 - ai-party.app"
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "pauseLogos": "Pause logo carousel",
+    "cookieRegion": "Cookie notice",
+    "quickContact": "Quick contact",
+    "call": "Call",
+    "callAria": "Call {phone}",
+    "backToTop": "Back to top",
+    "language": "Language",
+    "categoriesHeading": "Equipment categories"
+  },
+  "cookies": {
+    "title": "We use cookies",
+    "text": "Necessary cookies keep the site working. With your consent we also use analytics and marketing cookies.",
+    "policy": "Cookie policy",
+    "settings": "Settings",
+    "acceptAll": "Accept all",
+    "necessaryOnly": "Necessary only",
+    "save": "Save choice",
+    "necessary": "Necessary (always on)",
+    "analytics": "Analytics (Google Tag Manager, GA4, Microsoft Clarity)",
+    "marketing": "Marketing (Facebook Pixel)",
+    "textShort": "We use cookies."
   }
 }

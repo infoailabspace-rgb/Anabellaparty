@@ -14,7 +14,7 @@ import { graph, localBusinessNode, breadcrumbNode } from "@/lib/schema";
 export const revalidate = 3600;
 
 const HOURS_FALLBACK =
-  "Pirmdiena–Piektdiena: 9:00–20:00\nSestdiena–Svētdiena: 10:00–18:00\nPasākumi tiek apkalpoti arī ārpus darba laika pēc vienošanās.";
+  "Pirmdiena-Piektdiena: 9:00-20:00\nSestdiena-Svētdiena: 10:00-18:00\nPasākumi tiek apkalpoti arī ārpus darba laika pēc vienošanās.";
 
 export async function generateMetadata({
   params,
@@ -65,19 +65,19 @@ export default async function KontaktiPage({
               <div className="mt-4">
                 <CallButton source="kontakti" variant="primary" />
               </div>
-              <ul className="mt-4 space-y-3 text-text/85">
+              <ul className="mt-4 space-y-1 text-text/85">
                 <li>
-                  <a href={`tel:${COMPANY.contact.phone}`} className="transition-colors hover:text-gold">
+                  <a href={`tel:${COMPANY.contact.phone}`} className="inline-flex min-h-11 items-center transition-colors hover:text-gold">
                     📞 {COMPANY.contact.phoneDisplay}
                   </a>
                 </li>
                 <li>
-                  <a href={COMPANY.contact.whatsapp} className="transition-colors hover:text-gold">
+                  <a href={COMPANY.contact.whatsapp} className="inline-flex min-h-11 items-center transition-colors hover:text-gold">
                     💬 WhatsApp: {COMPANY.contact.phoneDisplay}
                   </a>
                 </li>
                 <li>
-                  <a href={`mailto:${COMPANY.contact.email}`} className="transition-colors hover:text-gold">
+                  <a href={`mailto:${COMPANY.contact.email}`} className="inline-flex min-h-11 items-center transition-colors hover:text-gold">
                     ✉️ {COMPANY.contact.email}
                   </a>
                 </li>
@@ -91,7 +91,7 @@ export default async function KontaktiPage({
               </h3>
               <ul className="mt-3 space-y-1 text-sm text-text/70">
                 {hoursLines.map((line, i) => (
-                  <li key={i} className={i === hoursLines.length - 1 ? "text-text/50" : ""}>
+                  <li key={i} className={i === hoursLines.length - 1 ? "text-text-muted" : ""}>
                     {line}
                   </li>
                 ))}
@@ -99,7 +99,7 @@ export default async function KontaktiPage({
             </div>
 
             {/* Karte */}
-            <div className="overflow-hidden rounded-2xl border-2 border-gold/25">
+            <div className="overflow-hidden rounded-card border-2 border-gold/25">
               <iframe
                 title={ts("cMapTitle")}
                 src={`https://www.google.com/maps?q=${encodeURIComponent(
@@ -112,13 +112,13 @@ export default async function KontaktiPage({
             </div>
           </Reveal>
 
-          {/* Apvienotā anketa (B2B / privātpersona) — enkurs #pieprasijums */}
+          {/* Apvienotā anketa (B2B / privātpersona) - enkurs #pieprasijums */}
           <Reveal delay={0.1}>
             <div
               id="pieprasijums"
-              className="scroll-mt-28 rounded-2xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-8"
+              className="scroll-mt-28 rounded-card border-2 border-gold/25 bg-navy/25 p-6 sm:p-8"
             >
-              <h2 className="font-display text-2xl font-bold">{tb("formTitle")}</h2>
+              <h2 className="font-display text-block font-bold">{tb("formTitle")}</h2>
               <p className="mt-2 text-sm text-text/60">{tb("formSubline")}</p>
               <div className="mt-6">
                 <Suspense fallback={null}>

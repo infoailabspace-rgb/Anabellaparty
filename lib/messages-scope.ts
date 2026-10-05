@@ -3,7 +3,7 @@
 // komponenšu telpas.
 type Messages = Record<string, unknown>;
 
-const CHROME = ["nav"]; // navbar (visos maršrutos)
+const CHROME = ["nav", "a11y", "cookies"]; // navbar (visos maršrutos)
 
 // VISU publisko maršrutu klienta telpu apvienojums. Lieto [locale]/layout STATISKI
 // (bez headers()) → publiskās lapas var būt ISR/statiskas, un tomēr klientam sūta
@@ -11,6 +11,8 @@ const CHROME = ["nav"]; // navbar (visos maršrutos)
 // komponenti neatkarīgi no maršruta.
 export const CLIENT_NAMESPACES = [
   "nav",
+  "a11y",
+  "cookies",
   "testimonials",
   "gallery",
   "booking",

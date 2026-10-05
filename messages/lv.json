@@ -531,5 +531,29 @@
     "point3": "Rezultāts uz jebkura ekrāna",
     "point4": "Arī personalizētas viktorīnas",
     "price": "Paketes no 11 EUR - ai-party.app"
+  },
+  "a11y": {
+    "skipToContent": "Pāriet uz saturu",
+    "pauseLogos": "Apturēt logo lenti",
+    "cookieRegion": "Sīkdatņu paziņojums",
+    "quickContact": "Ātrā saziņa",
+    "call": "Zvanīt",
+    "callAria": "Zvanīt {phone}",
+    "backToTop": "Uz lapas sākumu",
+    "language": "Valoda",
+    "categoriesHeading": "Inventāra kategorijas"
+  },
+  "cookies": {
+    "title": "Mēs izmantojam sīkdatnes",
+    "text": "Nepieciešamās sīkdatnes nodrošina lapas darbību. Ar Tavu piekrišanu izmantojam arī analītiskās un mārketinga sīkdatnes.",
+    "policy": "Sīkdatņu politika",
+    "settings": "Iestatījumi",
+    "acceptAll": "Pieņemt visas",
+    "necessaryOnly": "Tikai nepieciešamās",
+    "save": "Saglabāt izvēli",
+    "necessary": "Nepieciešamās (vienmēr aktīvas)",
+    "analytics": "Analītiskās (Google Tag Manager, GA4, Microsoft Clarity)",
+    "marketing": "Mārketinga (Facebook Pixel)",
+    "textShort": "Izmantojam sīkdatnes."
   }
 }

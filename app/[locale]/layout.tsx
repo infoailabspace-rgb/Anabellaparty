@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { Analytics } from "@vercel/analytics/next";
 import { routing } from "@/i18n/routing";
 import { CLIENT_NAMESPACES, pickMessages } from "@/lib/messages-scope";
@@ -35,6 +35,7 @@ export default async function LocaleLayout({
   // Klientam sūta TIKAI klienta komponenšu telpas (statiski, bez headers() → lapa
   // var būt ISR). Server komponentes turpina lietot pilnās ziņas caur getTranslations.
   const clientMessages = pickMessages(await getMessages(), CLIENT_NAMESPACES);
+  const ta = await getTranslations("a11y");
 
   return (
     <NextIntlClientProvider locale={locale} messages={clientMessages}>
@@ -46,6 +47,10 @@ export default async function LocaleLayout({
           }}
         />
       )}
+      {/* WCAG 2.4.1: pirmais fokusējamais elements - pāreja uz galveno saturu */}
+      <a href="#saturs" className="skip-link">
+        {ta("skipToContent")}
+      </a>
       <GtagScripts />
       <SiteTexture />
       <ScrollToTopOnNav />

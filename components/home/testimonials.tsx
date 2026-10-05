@@ -32,7 +32,7 @@ export default function Testimonials() {
 
   const maxIndex = Math.max(0, items.length - perView);
 
-  // Cik kartītes redzamas — atkarībā no ekrāna platuma.
+  // Cik kartītes redzamas - atkarībā no ekrāna platuma.
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
     const apply = () => setPerView(mq.matches ? 3 : 1);
@@ -65,7 +65,7 @@ export default function Testimonials() {
     <section className="py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
-          <h2 className="text-center font-display text-3xl font-bold tracking-tight md:text-4xl">
+          <h2 className="text-center font-display text-section font-bold tracking-tight">
             {t("heading")}
           </h2>
         </Reveal>
@@ -77,7 +77,7 @@ export default function Testimonials() {
         >
           <div className="overflow-hidden">
             <div
-              className="flex transition-transform duration-500 ease-out"
+              className="flex transition-transform duration-(--duration-slow) ease-out"
               style={{ transform: `translateX(-${index * (100 / perView)}%)` }}
             >
               {items.map((it) => (
@@ -86,7 +86,7 @@ export default function Testimonials() {
                   className="shrink-0 px-3"
                   style={{ width: `${100 / perView}%` }}
                 >
-                  <div className="flex h-full flex-col rounded-2xl border border-gold/20 bg-navy/30 p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.25)]">
+                  <div className="flex h-full flex-col rounded-card border border-gold/20 bg-navy/30 p-8 shadow-lift">
                     <Stars n={it.rating} label={t("starsAria", { n: it.rating })} />
                     <blockquote className="mt-4 flex-1 leading-relaxed text-text/80">
                       “{it.text}”
@@ -95,7 +95,7 @@ export default function Testimonials() {
                       <p className="font-display font-semibold text-gold">
                         {it.author}
                       </p>
-                      <p className="text-sm text-text/50">{it.event}</p>
+                      <p className="text-sm text-text-muted">{it.event}</p>
                     </figcaption>
                   </div>
                 </figure>
@@ -108,7 +108,7 @@ export default function Testimonials() {
             type="button"
             onClick={prev}
             aria-label={t("prev")}
-            className="absolute -left-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gold/40 bg-bg/80 text-xl text-gold transition-colors hover:bg-gold/10 sm:-left-4"
+            className="absolute -left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-gold/40 bg-bg/80 text-xl text-gold transition-colors hover:bg-gold/10 sm:-left-4"
           >
             ‹
           </button>
@@ -116,7 +116,7 @@ export default function Testimonials() {
             type="button"
             onClick={next}
             aria-label={t("next")}
-            className="absolute -right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gold/40 bg-bg/80 text-xl text-gold transition-colors hover:bg-gold/10 sm:-right-4"
+            className="absolute -right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-gold/40 bg-bg/80 text-xl text-gold transition-colors hover:bg-gold/10 sm:-right-4"
           >
             ›
           </button>

@@ -531,5 +531,29 @@
     "point3": "Результат на любом экране",
     "point4": "Также персонализированные викторины",
     "price": "Пакеты от 11 EUR - ai-party.app"
+  },
+  "a11y": {
+    "skipToContent": "Перейти к содержанию",
+    "pauseLogos": "Остановить ленту логотипов",
+    "cookieRegion": "Уведомление о cookie",
+    "quickContact": "Быстрая связь",
+    "call": "Позвонить",
+    "callAria": "Позвонить {phone}",
+    "backToTop": "Наверх",
+    "language": "Язык",
+    "categoriesHeading": "Категории инвентаря"
+  },
+  "cookies": {
+    "title": "Мы используем cookie",
+    "text": "Необходимые cookie обеспечивают работу сайта. С вашего согласия мы также используем аналитические и маркетинговые cookie.",
+    "policy": "Политика cookie",
+    "settings": "Настройки",
+    "acceptAll": "Принять все",
+    "necessaryOnly": "Только необходимые",
+    "save": "Сохранить выбор",
+    "necessary": "Необходимые (всегда активны)",
+    "analytics": "Аналитические (Google Tag Manager, GA4, Microsoft Clarity)",
+    "marketing": "Маркетинговые (Facebook Pixel)",
+    "textShort": "Мы используем cookie."
   }
 }

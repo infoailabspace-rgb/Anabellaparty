@@ -6,7 +6,7 @@ export default function ShareButtons() {
   const [copied, setCopied] = useState(false);
   const open = (u: string) => window.open(u, "_blank", "noopener");
   const cls =
-    "rounded-full border border-gold/30 px-4 py-1.5 text-sm text-text/80 transition-colors hover:border-gold hover:text-gold";
+    "inline-flex min-h-11 items-center rounded-full border border-gold/30 px-4 text-sm text-text/80 transition-colors hover:border-gold hover:text-gold";
 
   return (
     <div className="flex flex-wrap items-center gap-3">

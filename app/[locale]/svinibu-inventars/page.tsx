@@ -29,9 +29,10 @@ export default async function SvinibuInventarsPage({
 }) {
   const { locale: _locale } = await params;
   setRequestLocale(_locale);
-  const [t, locale] = await Promise.all([
+  const [t, locale, ta] = await Promise.all([
     getTranslations("pages"),
     getLocale(),
+    getTranslations("a11y"),
   ]);
   return (
     <>
@@ -50,6 +51,8 @@ export default async function SvinibuInventarsPage({
       <section className="anabella-navy-texture relative overflow-hidden bg-navy py-16">
         <DepthBg />
         <div className="relative z-10 mx-auto max-w-6xl px-6">
+          {/* Virsrakstu secība H1 → H2 → H3 (kartītes ir H3); vizuāli slēpts. */}
+          <h2 className="sr-only">{ta("categoriesHeading")}</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {homeCategories.map((category, i) => (
               <Reveal key={category.id} delay={i * 0.06}>
@@ -57,7 +60,7 @@ export default async function SvinibuInventarsPage({
               </Reveal>
             ))}
           </div>
-          {/* AI Party banneris — pilnā platumā zem kategoriju režģa (cits produkts).
+          {/* AI Party banneris - pilnā platumā zem kategoriju režģa (cits produkts).
               Saturs+slēdzis no DB (site_content); izslēgts → nerādās (bez atstarpes). */}
           <AiPartyBanner />
         </div>

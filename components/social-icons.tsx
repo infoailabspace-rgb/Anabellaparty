@@ -31,7 +31,7 @@ export function SocialLinks({
   iconClassName?: string;
 }) {
   return (
-    <div className={`flex items-center gap-4 ${className}`}>
+    <div className={`flex items-center gap-1 ${className}`}>
       {SOCIALS.map(({ label, href, Icon }) => (
         <a
           key={label}
@@ -39,7 +39,7 @@ export function SocialLinks({
           target="_blank"
           rel="noopener noreferrer"
           aria-label={label}
-          className="text-gold transition-colors hover:text-rose-gold"
+          className="inline-flex h-11 w-11 items-center justify-center text-gold transition-colors hover:text-rose-gold"
         >
           <Icon className={iconClassName} />
         </a>

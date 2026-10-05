@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,7 +20,7 @@ const INTERESTS = [
 ] as const;
 
 const field =
-  "w-full rounded-lg border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold";
+  "w-full rounded-control border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold";
 const labelCls = "block text-sm text-text/70";
 
 type Tab = "b2b" | "b2c";
@@ -116,7 +116,7 @@ export default function B2bEnquiryForm() {
         setServerError(data.error ?? t("errSend"));
         return;
       }
-      // Fiksēta vērtība pēc avota (b2b/pašvaldība = 400, b2c = 150) — konsekvents
+      // Fiksēta vērtība pēc avota (b2b/pašvaldība = 400, b2c = 150) - konsekvents
       // ROAS signāls Smart Bidding, nevis mainīga aptuvenā summa.
       generateLead(LEAD_VALUE[source] ?? LEAD_VALUE.b2b, source);
       setDone(true);
@@ -125,13 +125,31 @@ export default function B2bEnquiryForm() {
     }
   }
 
+  // Pieejamība: katram laukam id (label htmlFor), aria-invalid un kļūdas
+  // teksts piesaistīts ar aria-describedby (ekrānlasītājs to nolasa).
+  const uid = useId();
+  const fid = (name: string) => `${uid}-${name}`;
+  const errId = (name: string) => `${uid}-${name}-err`;
+  const a11y = (name: keyof typeof errors, required = false) => ({
+    id: fid(name),
+    "aria-invalid": errors[name] ? true : undefined,
+    "aria-describedby": errors[name] ? errId(name) : undefined,
+    "aria-required": required || undefined,
+  });
+  const Err = ({ name }: { name: keyof typeof errors }) =>
+    errors[name] ? (
+      <p id={errId(name)} className="mt-1 text-xs text-rose-gold">
+        {String(errors[name]?.message ?? "")}
+      </p>
+    ) : null;
+
   if (done) {
     return (
-      <div className="rounded-2xl border border-gold/30 bg-navy/30 p-8 text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold text-2xl text-black">
+      <div role="status" className="rounded-card border border-gold/30 bg-navy/30 p-8 text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold text-2xl text-on-gold">
           ✓
         </div>
-        <h3 className="mt-5 font-display text-xl font-bold">{t("thanksTitle")}</h3>
+        <h3 className="mt-5 font-display text-card font-bold">{t("thanksTitle")}</h3>
         <p className="mt-2 text-text/80">{t("thanksText")}</p>
       </div>
     );
@@ -145,11 +163,11 @@ export default function B2bEnquiryForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
       {/* Pārslēdzējs */}
-      <div className="inline-flex rounded-full border border-gold/30 bg-bg/40 p-1">
-        <button type="button" onClick={() => switchTab("b2b")} className={tabBtn(tab === "b2b")}>
+      <div role="group" aria-label={t("tabBusiness") + " / " + t("tabPrivate")} className="inline-flex rounded-full border border-gold/30 bg-bg/40 p-1">
+        <button type="button" aria-pressed={tab === "b2b"} onClick={() => switchTab("b2b")} className={tabBtn(tab === "b2b")}>
           {t("tabBusiness")}
         </button>
-        <button type="button" onClick={() => switchTab("b2c")} className={tabBtn(tab === "b2c")}>
+        <button type="button" aria-pressed={tab === "b2c"} onClick={() => switchTab("b2c")} className={tabBtn(tab === "b2c")}>
           {t("tabPrivate")}
         </button>
       </div>
@@ -159,49 +177,50 @@ export default function B2bEnquiryForm() {
         {tab === "b2b" ? (
           <>
             <div className="sm:col-span-2">
-              <label className={labelCls}>{t("company")} *</label>
-              <input {...register("company")} className={`mt-1 ${field}`} />
-              {errors.company && <p className="mt-1 text-xs text-rose-gold">{errors.company.message}</p>}
+              <label htmlFor={fid("company")} className={labelCls}>{t("company")} *</label>
+              <input {...register("company")} {...a11y("company", true)} autoComplete="organization" className={`mt-1 ${field}`} />
+              <Err name="company" />
             </div>
             <div>
-              <label className={labelCls}>{t("contactPerson")} *</label>
-              <input {...register("contact_person")} className={`mt-1 ${field}`} />
-              {errors.contact_person && <p className="mt-1 text-xs text-rose-gold">{errors.contact_person.message}</p>}
+              <label htmlFor={fid("contact_person")} className={labelCls}>{t("contactPerson")} *</label>
+              <input {...register("contact_person")} {...a11y("contact_person", true)} autoComplete="name" className={`mt-1 ${field}`} />
+              <Err name="contact_person" />
             </div>
             <div>
-              <label className={labelCls}>{t("role")}</label>
-              <input {...register("role")} className={`mt-1 ${field}`} />
+              <label htmlFor={fid("role")} className={labelCls}>{t("role")}</label>
+              <input {...register("role")} {...a11y("role")} autoComplete="organization-title" className={`mt-1 ${field}`} />
             </div>
           </>
         ) : (
           <div className="sm:col-span-2">
-            <label className={labelCls}>{t("name")} *</label>
-            <input {...register("name")} className={`mt-1 ${field}`} />
-            {errors.name && <p className="mt-1 text-xs text-rose-gold">{errors.name.message}</p>}
+            <label htmlFor={fid("name")} className={labelCls}>{t("name")} *</label>
+            <input {...register("name")} {...a11y("name", true)} autoComplete="name" className={`mt-1 ${field}`} />
+            <Err name="name" />
           </div>
         )}
 
         <div>
-          <label className={labelCls}>{t("email")} *</label>
-          <input type="email" inputMode="email" {...register("email")} className={`mt-1 ${field}`} />
-          {errors.email && <p className="mt-1 text-xs text-rose-gold">{errors.email.message}</p>}
+          <label htmlFor={fid("email")} className={labelCls}>{t("email")} *</label>
+          <input type="email" inputMode="email" autoComplete="email" {...register("email")} {...a11y("email", true)} className={`mt-1 ${field}`} />
+          <Err name="email" />
         </div>
         <div>
-          <label className={labelCls}>{t("phone")} *</label>
-          <input type="tel" inputMode="tel" {...register("phone")} className={`mt-1 ${field}`} />
-          {errors.phone && <p className="mt-1 text-xs text-rose-gold">{errors.phone.message}</p>}
+          <label htmlFor={fid("phone")} className={labelCls}>{t("phone")} *</label>
+          <input type="tel" inputMode="tel" autoComplete="tel" {...register("phone")} {...a11y("phone", true)} className={`mt-1 ${field}`} />
+          <Err name="phone" />
         </div>
 
         <div>
-          <label className={labelCls}>{t("eventDate")}</label>
+          <label htmlFor={fid("event_date")} className={labelCls}>{t("eventDate")}</label>
           <input
+            id={fid("event_date")}
             type="date"
             {...register("event_date")}
             disabled={dateUnknown}
             className={`mt-1 ${field} disabled:opacity-40`}
           />
           <label className="mt-2 flex items-center gap-2 text-xs text-text/60">
-            <input type="checkbox" {...register("date_unknown")} className="accent-[#D4A960]" />
+            <input type="checkbox" {...register("date_unknown")} className="accent-gold" />
             {t("dateUnknown")}
           </label>
         </div>
@@ -209,52 +228,52 @@ export default function B2bEnquiryForm() {
         {tab === "b2b" && (
           <>
             <div>
-              <label className={labelCls}>{t("location")}</label>
-              <input {...register("event_location")} className={`mt-1 ${field}`} />
+              <label htmlFor={fid("event_location")} className={labelCls}>{t("location")}</label>
+              <input id={fid("event_location")} {...register("event_location")} className={`mt-1 ${field}`} />
             </div>
             <div>
-              <label className={labelCls}>{t("guests")}</label>
-              <input inputMode="numeric" {...register("guest_count")} className={`mt-1 ${field}`} />
+              <label htmlFor={fid("guest_count")} className={labelCls}>{t("guests")}</label>
+              <input id={fid("guest_count")} inputMode="numeric" {...register("guest_count")} className={`mt-1 ${field}`} />
             </div>
           </>
         )}
       </div>
 
       {/* Interesē (abām cilnēm) */}
-      <div>
-        <span className={labelCls}>{t("interests")}</span>
+      <fieldset>
+        <legend className={labelCls}>{t("interests")}</legend>
         <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {INTERESTS.map((key) => (
-            <label key={key} className="flex items-center gap-2 text-sm text-text/80">
-              <input type="checkbox" value={key} {...register("interests")} className="accent-[#D4A960]" />
+            <label key={key} className="flex min-h-11 items-center gap-2 text-sm text-text/80">
+              <input type="checkbox" value={key} {...register("interests")} className="accent-gold" />
               {t(`int_${key}` as never)}
             </label>
           ))}
         </div>
-      </div>
+      </fieldset>
 
       {/* Brendēšana (tikai B2B) */}
       {tab === "b2b" && (
         <label className="flex items-center gap-2 text-sm text-text/80">
-          <input type="checkbox" {...register("needs_branding")} className="accent-[#D4A960]" />
+          <input type="checkbox" {...register("needs_branding")} className="accent-gold" />
           {t("needsBranding")}
         </label>
       )}
 
       {/* Apraksts / jautājums */}
       <div>
-        <label className={labelCls}>{tab === "b2b" ? t("description") : t("question")}</label>
-        <textarea rows={5} {...register("description")} placeholder={t("descriptionPh")} className={`mt-1 ${field}`} />
+        <label htmlFor={fid("description")} className={labelCls}>{tab === "b2b" ? t("description") : t("question")}</label>
+        <textarea id={fid("description")} rows={5} {...register("description")} placeholder={t("descriptionPh")} className={`mt-1 ${field}`} />
       </div>
 
       {serverError && (
-        <p className="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-300">{serverError}</p>
+        <p role="alert" className="rounded-control border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-300">{serverError}</p>
       )}
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="inline-flex items-center gap-2 rounded-full bg-gold px-8 py-3 font-semibold text-black transition-transform enabled:hover:scale-[1.03] disabled:opacity-60"
+        className="inline-flex items-center gap-2 rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-transform enabled:hover:scale-[1.03] disabled:opacity-60"
       >
         {isSubmitting && <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />}
         {isSubmitting ? t("sending") : t("submit")}

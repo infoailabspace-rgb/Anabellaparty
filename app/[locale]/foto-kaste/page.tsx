@@ -64,7 +64,7 @@ export default async function FotoKastePage({
     category: "produkti" as const,
   }));
   const fkProducts = products.filter((p) => p.category === "foto-kaste");
-  // Datu-vadīti (bez hardkodētiem slug — nosaukuma/slug maiņa nekad nesalauž):
+  // Datu-vadīti (bez hardkodētiem slug - nosaukuma/slug maiņa nekad nesalauž):
   //  - galvenās kastes = nav "īpašais" un nav "cena vienojoties"
   //  - īpašais piedāvājums = special (is_special karogs)
   //  - contact bloki = contactOnly
@@ -91,11 +91,11 @@ export default async function FotoKastePage({
         video="/videos/herovideo1.mp4"
       />
 
-      {/* Uzticamības josla (skaitļi + "Mums uzticas" + logo) — viens bloks (§5) */}
+      {/* Uzticamības josla (skaitļi + "Mums uzticas" + logo) - viens bloks (§5) */}
       <TrustBar clients={clients} />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
-        {/* Zīmola definīcijas rindkopa (AEO C1) — server-rendered teksts */}
+        {/* Zīmola definīcijas rindkopa (AEO C1) - server-rendered teksts */}
         <Reveal>
           <p className="mb-12 max-w-3xl text-text/80 leading-relaxed">
             {taeo("def")}
@@ -104,11 +104,11 @@ export default async function FotoKastePage({
 
         {/* AI funkcija */}
         <Reveal>
-          <div className="mb-12 flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-gold/30 bg-navy/30 p-6">
+          <div className="mb-12 flex flex-wrap items-center justify-between gap-4 rounded-card border-2 border-gold/30 bg-navy/30 p-6">
             <p className="text-text/85">{ts("fkAiBlurb")}</p>
             <Link
               href="/foto-kaste/ai-foto"
-              className="rounded-full border-2 border-gold px-5 py-2 text-sm font-semibold text-gold transition-colors hover:bg-gold/10"
+              className="inline-flex min-h-11 items-center rounded-full border-2 border-gold px-5 text-sm font-semibold text-gold transition-colors hover:bg-gold/10"
             >
               {ts("fkLearnAi")}
             </Link>
@@ -122,10 +122,10 @@ export default async function FotoKastePage({
           ))}
         </div>
 
-        {/* Foto kaste uz visu dienu — izcelts bloks */}
+        {/* Foto kaste uz visu dienu - izcelts bloks */}
         {visuDienu && (
           <SlideReveal index={3}>
-            <div className="mt-12 rounded-3xl border-2 border-gold bg-gold/10 p-6 sm:p-10">
+            <div className="mt-12 rounded-panel border-2 border-gold bg-gold/10 p-6 sm:p-10">
               <div
                 className={`grid gap-8 ${
                   visuDienu.coverImage ? "lg:grid-cols-2 lg:items-center" : ""
@@ -144,13 +144,13 @@ export default async function FotoKastePage({
                 )}
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-wide text-black">
+                    <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-wide text-on-gold">
                       {ts("fkSpecial")}
                     </span>
-                    <h2 className="font-display text-2xl font-bold sm:text-3xl">
+                    <h2 className="font-display text-block font-bold">
                       {visuDienu.name}
                       {visuDienu.tiers[0]?.price
-                        ? ` — ${visuDienu.tiers[0].price} €`
+                        ? ` - ${visuDienu.tiers[0].price} €`
                         : ""}
                     </h2>
                   </div>
@@ -178,7 +178,7 @@ export default async function FotoKastePage({
         <div className="mt-12 grid gap-6 md:grid-cols-2">
           {contactBlocks.map((product, i) => (
             <SlideReveal key={product.slug} index={4 + i}>
-              <div className="flex h-full flex-col overflow-hidden rounded-2xl border-2 border-gold/25 bg-navy/25">
+              <div className="flex h-full flex-col overflow-hidden rounded-card border-2 border-gold/25 bg-navy/25">
                 {product.coverImage && (
                   <div className="relative aspect-[16/10] w-full">
                     <Image
@@ -191,7 +191,7 @@ export default async function FotoKastePage({
                   </div>
                 )}
                 <div className="flex flex-1 flex-col p-8">
-                  <h3 className="font-display text-xl font-semibold">
+                  <h3 className="font-display text-card font-semibold">
                     {product.name}
                   </h3>
                   <p className="mt-3 flex-1 text-sm text-text/75">
@@ -208,15 +208,15 @@ export default async function FotoKastePage({
 
         {/* Foto rāmīšu dizaini */}
         <SlideReveal index={6}>
-          <div className="mt-12 grid items-center gap-8 rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10 lg:grid-cols-2">
+          <div className="mt-12 grid items-center gap-8 rounded-panel border-2 border-gold/25 bg-navy/25 p-6 sm:p-10 lg:grid-cols-2">
             <div>
-              <h2 className="font-display text-2xl font-bold">
+              <h2 className="font-display text-block font-bold">
                 {ts("fkFramesTitle")}
               </h2>
               <p className="mt-4 text-text/80">{ts("fkFramesText")}</p>
             </div>
             {framesImage ? (
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-gold/15">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-card border border-gold/15">
                 <Image
                   src={framesImage}
                   alt={ts("fkFramesTitle")}
