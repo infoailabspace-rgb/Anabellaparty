@@ -49,7 +49,7 @@ export default async function SikdatnuPolitikaPage({
         tagline="Kādas sīkdatnes izmantojam, kādēļ un kā Tu vari tās pārvaldīt."
       />
       <Prose>
-        <p className="text-sm text-text/50">
+        <p className="text-sm text-text-muted">
           Pēdējoreiz atjaunināts: 2026. gada augusts.
         </p>
         <LegalBindingNote />

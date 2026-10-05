@@ -64,15 +64,15 @@ export default async function PiepusamasAtrakcijasPage({
 
         {/* Baltas bumbas */}
         <Reveal>
-          <div className="mt-12 rounded-2xl border border-gold/25 bg-navy/25 p-6 text-center text-sm text-text/75">
+          <div className="mt-12 rounded-card border border-gold/25 bg-navy/25 p-6 text-center text-sm text-text/75">
             {ts("atrBalls")}
           </div>
         </Reveal>
 
-        {/* Bumbu tīrīšanas ierīce — info */}
+        {/* Bumbu tīrīšanas ierīce - info */}
         <Reveal>
-          <div className="mt-6 rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10">
-            <h2 className="font-display text-2xl font-bold">
+          <div className="mt-6 rounded-panel border-2 border-gold/25 bg-navy/25 p-6 sm:p-10">
+            <h2 className="font-display text-block font-bold">
               {ts("atrCleanTitle")}
             </h2>
             <p className="mt-4 max-w-2xl text-text/80">{ts("atrCleanText")}</p>

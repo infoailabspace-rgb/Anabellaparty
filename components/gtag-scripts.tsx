@@ -1,14 +1,14 @@
 import { GA4_ID } from "@/lib/consent";
 
-// Consent Mode v2 "advanced" — SERVER-renderēti skripti, lai gtag.js (GA4) būtu
+// Consent Mode v2 "advanced" - SERVER-renderēti skripti, lai gtag.js (GA4) būtu
 // klāt jau sākotnējā HTML (pirms piekrišanas), nevis injektēts ar JS pēc hidratācijas.
 // Inline skripts iestata noklusējumus (visu denied + wait_for_update + url_passthrough)
 // un konfigurē GA4, pirms gtag.js ielādējas. Guard karodziņi (__anabellaConsentInit,
 // __anabellaGa4Loaded) neļauj lib/consent.ts to dublēt. GTM/Clarity/Pixel paliek
 // aiz piekrišanas (skat. applyConsent). Renderēts publiskajā layout'ā pirms
-// <CookieConsent /> — NAV /admin lapās.
+// <CookieConsent /> - NAV /admin lapās.
 export default function GtagScripts() {
-  // Analītiku ielādē TIKAI produkcijā — preview/dev deploy'i nepiesārņo GA4/Ads datus.
+  // Analītiku ielādē TIKAI produkcijā - preview/dev deploy'i nepiesārņo GA4/Ads datus.
   if (process.env.NEXT_PUBLIC_VERCEL_ENV !== "production") return null;
   return (
     <>

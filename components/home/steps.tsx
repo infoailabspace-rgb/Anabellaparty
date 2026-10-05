@@ -20,14 +20,14 @@ export default async function Steps() {
     <section className="py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
-          <h2 className="text-center font-display text-3xl font-bold tracking-tight md:text-4xl">
+          <h2 className="text-center font-display text-section font-bold tracking-tight">
             {t("heading")}
           </h2>
         </Reveal>
         <div className="mt-16 grid gap-8 md:grid-cols-3">
           {steps.map((s, i) => (
             <Reveal key={s.n} delay={i * 0.08}>
-              <div className="group relative isolate h-full overflow-hidden rounded-2xl border border-gold/25 bg-navy/30 p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.25)] transition-all duration-300 hover:-translate-y-1.5 hover:border-gold/60 hover:shadow-[0_28px_70px_-24px_rgba(212,169,96,0.35)]">
+              <div className="group relative isolate h-full overflow-hidden rounded-card border border-gold/25 bg-navy/30 p-8 shadow-lift transition-all duration-(--duration-base) hover:-translate-y-1.5 hover:border-gold/60 hover:shadow-hero">
                 <Shimmer delay={i * 0.6} />
                 <div className="flex items-center justify-between">
                   <IconBadge delay={i * 0.4}>
@@ -39,7 +39,7 @@ export default async function Steps() {
                     className="font-mono text-4xl font-bold text-gold/80"
                   />
                 </div>
-                <h3 className="mt-5 font-display text-xl font-semibold">
+                <h3 className="mt-5 font-display text-card font-semibold">
                   {s.title}
                 </h3>
                 <p className="mt-2 leading-relaxed text-text/70">{s.text}</p>

@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation";
 import Reveal from "@/components/reveal";
 import CallButton from "@/components/call-button";
 
-// "Pasākums uzņēmumam vai iestādei" (B2B spec §4.3) — 4 kartītes + CTA uz anketu.
+// "Pasākums uzņēmumam vai iestādei" (B2B spec §4.3) - 4 kartītes + CTA uz anketu.
 // Enkurs #uznemumiem (hero sekundārā poga ved šeit).
 export default async function ForBusiness() {
   const t = await getTranslations("forBusiness");
@@ -17,7 +17,7 @@ export default async function ForBusiness() {
     <section id="uznemumiem" className="scroll-mt-28 py-24 md:py-28">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
-          <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
+          <h2 className="font-display text-section font-bold tracking-tight">
             {t("title")}
           </h2>
           <p className="mt-4 max-w-2xl leading-relaxed text-text/75">
@@ -27,7 +27,7 @@ export default async function ForBusiness() {
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {cards.map((c, i) => (
             <Reveal key={c.title} delay={i * 0.06}>
-              <div className="flex h-full flex-col rounded-2xl border border-gold/25 bg-navy/30 p-6">
+              <div className="flex h-full flex-col rounded-card border border-gold/25 bg-navy/30 p-6">
                 <h3 className="font-display text-lg font-semibold text-gold">
                   {c.title}
                 </h3>
@@ -42,7 +42,7 @@ export default async function ForBusiness() {
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
               href="/kontakti/#pieprasijums"
-              className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-black transition-transform hover:scale-[1.03]"
+              className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-transform hover:scale-[1.03]"
             >
               {t("cta")} →
             </Link>

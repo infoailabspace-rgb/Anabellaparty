@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Fona hero video. Ja padots vairāk par vienu avotu — tie spēlē secīgi,
- * viens pēc otra, un cilpo. Viens avots — parasts loop.
+ * Fona hero video. Ja padots vairāk par vienu avotu - tie spēlē secīgi,
+ * viens pēc otra, un cilpo. Viens avots - parasts loop.
  * autoPlay + muted + playsInline nodrošina autoplay arī mobilajā.
  * poster (kadrs) novērš melnu LCP, kamēr video ielādējas.
- * WebM tiek piedāvāts pirms MP4 (mazāks fails); ja WebM nav — atkāpjas uz MP4.
+ * WebM tiek piedāvāts pirms MP4 (mazāks fails); ja WebM nav - atkāpjas uz MP4.
  */
 export default function HeroVideo({
   sources,

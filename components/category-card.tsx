@@ -9,7 +9,7 @@ import Shimmer from "@/components/shimmer";
 import { getSiteImage } from "@/lib/site-content";
 
 // SOLIS1D: fona attēlu rāda TIKAI, ja fails reāli eksistē public/.
-// Ja nav — kartīte paliek ar tīru navy (kā tagad). Pārbauda būvēšanas laikā.
+// Ja nav - kartīte paliek ar tīru navy (kā tagad). Pārbauda būvēšanas laikā.
 function bgExists(bgImage: string): boolean {
   try {
     return existsSync(join(process.cwd(), "public", bgImage));
@@ -40,7 +40,7 @@ export default async function CategoryCard({
   // klikšķināma un rāda DRĪZUMĀ uzlīmi, nevis "apskatīt →".
   if (category.comingSoon) {
     return (
-      <div className="group relative isolate flex h-full cursor-default flex-col overflow-hidden rounded-2xl border border-gold/30 bg-navy p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.35)]">
+      <div className="group relative isolate flex h-full cursor-default flex-col overflow-hidden rounded-card border border-gold/30 bg-navy p-8 shadow-lift">
         {hasBg ? (
           <>
             {/* Augšupielādētais DB attēls kā fons + tumšinājums (kā aktīvām kartītēm) */}
@@ -61,8 +61,8 @@ export default async function CategoryCard({
           <>
             {/* Fallback: luxury gradients, ja DB attēla nav */}
             <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#1e4257] via-navy to-[#0a1a22]" />
-            <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_-10%,rgba(212,169,96,0.30),transparent_55%)]" />
-            <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_85%_110%,rgba(212,169,96,0.12),transparent_50%)]" />
+            <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_-10%,rgb(var(--gold-rgb)/0.30),transparent_55%)]" />
+            <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_85%_110%,rgb(var(--gold-rgb)/0.12),transparent_50%)]" />
           </>
         )}
         {/* DRĪZUMĀ uzlīme stūrī */}
@@ -73,7 +73,7 @@ export default async function CategoryCard({
         <IconBadge delay={index * 0.3}>
           <Icon className="h-6 w-6" />
         </IconBadge>
-        <h3 className="mt-5 font-display text-xl font-semibold text-text">
+        <h3 className="mt-5 font-display text-card font-semibold text-text">
           {tc(`${category.id}Name`)}
         </h3>
         <p className="mt-3 flex-1 text-sm text-text/70">
@@ -86,11 +86,11 @@ export default async function CategoryCard({
   return (
     <Link
       href={category.href}
-      className="group relative isolate flex h-full flex-col overflow-hidden rounded-2xl border border-gold/25 bg-navy/30 p-8 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.25)] transition-all duration-300 hover:-translate-y-1.5 hover:border-gold/60 hover:shadow-[0_28px_70px_-24px_rgba(212,169,96,0.4)]"
+      className="group relative isolate flex h-full flex-col overflow-hidden rounded-card border border-gold/25 bg-navy/30 p-8 shadow-lift transition-all duration-(--duration-base) hover:-translate-y-1.5 hover:border-gold/60 hover:shadow-hero"
     >
       {hasBg && (
         <>
-          {/* Fona attēls — mazs, izstiepts (bez CSS blur), zema kvalitāte OK */}
+          {/* Fona attēls - mazs, izstiepts (bez CSS blur), zema kvalitāte OK */}
           <Image
             src={bgSrc!}
             alt=""
@@ -99,7 +99,7 @@ export default async function CategoryCard({
             quality={55}
             loading="lazy"
             aria-hidden="true"
-            className="-z-10 object-cover transition-transform duration-500 group-hover:scale-105"
+            className="-z-10 object-cover transition-transform duration-(--duration-slow) group-hover:scale-105"
           />
           {/* Konsekvents tumšinājums neatkarīgi no attēla gaišuma (melns, ne navy),
               lai gaišie attēli (piem. baltā pils) neizceltos no pārējām kartītēm:
@@ -112,7 +112,7 @@ export default async function CategoryCard({
       <IconBadge delay={index * 0.3}>
         <Icon className="h-6 w-6" />
       </IconBadge>
-      <h3 className="mt-5 font-display text-xl font-semibold text-text group-hover:text-gold">
+      <h3 className="mt-5 font-display text-card font-semibold text-text group-hover:text-gold">
         {tc(`${category.id}Name`)}
       </h3>
       <p className="mt-3 flex-1 text-sm text-text/70">

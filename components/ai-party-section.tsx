@@ -40,7 +40,7 @@ export default async function AiPartySection() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-16">
       <Reveal>
-        <div className="overflow-hidden rounded-2xl border-2 border-gold/25 bg-navy/25">
+        <div className="overflow-hidden rounded-card border-2 border-gold/25 bg-navy/25">
           <div className={image ? "grid md:grid-cols-2" : ""}>
             {/* Attēls - tas pats bannera attēls no DB (ja ir) */}
             {image && (
@@ -60,7 +60,7 @@ export default async function AiPartySection() {
 
             {/* Teksts */}
             <div className="p-6 sm:p-8">
-              <h2 className="font-display text-2xl font-bold text-text sm:text-3xl">
+              <h2 className="font-display text-block font-bold text-text">
                 {t("sectionTitle")}
               </h2>
               <p className="mt-2 font-display text-lg font-semibold text-gold">
@@ -88,7 +88,7 @@ export default async function AiPartySection() {
                   href={AI_PARTY_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
+                  className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-shadow hover:shadow-glow"
                 >
                   {cta} →
                 </a>

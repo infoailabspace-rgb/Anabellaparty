@@ -12,7 +12,7 @@ import type { GalleryImage } from "@/lib/gallery";
 // karte ir fiksēti (1104 - 2*12) / 3 = 360px.
 const CARD_SIZES = "(min-width: 1152px) 360px, (min-width: 768px) 33vw, 50vw";
 
-// Viena kartīte — fade + slīde uz augšu, kad ienāk skatā (IntersectionObserver).
+// Viena kartīte - fade + slīde uz augšu, kad ienāk skatā (IntersectionObserver).
 // Aizkave staggeram (i % 12) atkārto oriģinālo pakāpenisko parādīšanos.
 // Fiksēta proporcija + object-cover: kartes režģī ir vienāda izmēra neatkarīgi
 // no bildes malu attiecības.
@@ -35,7 +35,7 @@ function GalleryFigure({
     <figure
       ref={ref}
       style={{ transitionDelay: `${(i % 12) * 40}ms` }}
-      className={`reveal-up overflow-hidden rounded-xl border border-gold/15${
+      className={`reveal-up overflow-hidden rounded-tile border border-gold/15${
         inView ? " is-visible" : ""
       }`}
     >
@@ -54,11 +54,11 @@ function GalleryFigure({
           sizes={CARD_SIZES}
           loading="lazy"
           quality={75}
-          className="cursor-zoom-in object-cover transition-transform duration-300 hover:scale-[1.03]"
+          className="cursor-zoom-in object-cover transition-transform duration-(--duration-base) hover:scale-[1.03]"
         />
       </button>
       {img.caption && (
-        <figcaption className="px-2 py-1.5 text-xs text-text/50">
+        <figcaption className="px-2 py-1.5 text-xs text-text-muted">
           {img.caption}
         </figcaption>
       )}
@@ -110,7 +110,7 @@ export default function EventGallery({
   return (
     <section className="bg-bg py-20">
       <div className="mx-auto max-w-6xl px-6">
-        <h2 className="text-center font-display text-3xl font-bold tracking-tight md:text-4xl">
+        <h2 className="text-center font-display text-section font-bold tracking-tight">
           {t("heading")}
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-center leading-relaxed text-text/70">
@@ -194,7 +194,7 @@ export default function EventGallery({
             <img
               src={images[active].url}
               alt={images[active].alt}
-              className="max-h-[80vh] max-w-full rounded-lg object-contain"
+              className="max-h-[80vh] max-w-full rounded-control object-contain"
             />
             <figcaption className="mt-3 text-center text-sm text-text/70">
               {images[active].caption && <span>{images[active].caption} · </span>}

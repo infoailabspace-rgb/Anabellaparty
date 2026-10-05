@@ -37,7 +37,7 @@ export default async function Home({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  // STATISKAI/ISR renderēšanai — next-intl prasa setRequestLocale KATRĀ lapā/izkārtojumā,
+  // STATISKAI/ISR renderēšanai - next-intl prasa setRequestLocale KATRĀ lapā/izkārtojumā,
   // citādi getTranslations lasa locale no headers → maršruts kļūst dinamisks.
   const { locale } = await params;
   setRequestLocale(locale);
@@ -71,7 +71,7 @@ export default async function Home({
         )}
       />
 
-      {/* Uzticamības josla (skaitļi + "Mums uzticas" + logo) — viens bloks (§4.2) */}
+      {/* Uzticamības josla (skaitļi + "Mums uzticas" + logo) - viens bloks (§4.2) */}
       <TrustBar
         statsEvents={g("about.stats.events", "500")}
         statsUnits={g("about.stats.units", "40")}
@@ -79,13 +79,13 @@ export default async function Home({
         clients={clients}
       />
 
-      {/* Mūsu piedāvājums / kategorijas — navy ar tekstūru + dziļuma fons.
+      {/* Mūsu piedāvājums / kategorijas - navy ar tekstūru + dziļuma fons.
           Pārcelts augšup: produktu rāda pirms procesa skaidrojuma. */}
       <section className="anabella-navy-texture relative overflow-hidden bg-navy/40 py-24 md:py-32">
         <DepthBg />
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           <Reveal>
-            <h2 className="text-center font-display text-3xl font-bold tracking-tight md:text-4xl">
+            <h2 className="text-center font-display text-section font-bold tracking-tight">
               {t("offerTitle")}
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-center leading-relaxed text-text/70">
@@ -99,32 +99,32 @@ export default async function Home({
               </Reveal>
             ))}
           </div>
-          {/* AI Party banneris — pilnā platumā zem kategoriju režģa (cits produkts).
+          {/* AI Party banneris - pilnā platumā zem kategoriju režģa (cits produkts).
               Saturs+slēdzis no DB (site_content); izslēgts → nerādās (bez atstarpes). */}
           <AiPartyBanner />
         </div>
       </section>
 
-      {/* Pasākums uzņēmumam vai iestādei (§4.3) — pēc piedāvājuma */}
+      {/* Pasākums uzņēmumam vai iestādei (§4.3) - pēc piedāvājuma */}
       <ForBusiness />
 
-      {/* Kā tas notiek — pēc produkta: atbild uz jautājumu, kas rodas tikai
+      {/* Kā tas notiek - pēc produkta: atbild uz jautājumu, kas rodas tikai
           pēc tam, kad apmeklētājs ir redzējis piedāvājumu. */}
       <Steps />
 
-      {/* Par mums — bg */}
+      {/* Par mums - bg */}
       <About image={aboutImage} />
 
-      {/* Atsauksmes — no tulkojumu failiem (LV/EN/RU) */}
+      {/* Atsauksmes - no tulkojumu failiem (LV/EN/RU) */}
       <Testimonials />
 
-      {/* No mūsu pasākumiem — featured galerija (tukša → nerādās) */}
+      {/* No mūsu pasākumiem - featured galerija (tukša → nerādās) */}
       <EventGallery images={featuredGallery} mode="home" />
 
-      {/* Pašvaldībām un valsts iestādēm (§4.6) — pirms noslēdzošā CTA */}
+      {/* Pašvaldībām un valsts iestādēm (§4.6) - pirms noslēdzošā CTA */}
       <ForMunicipal />
 
-      {/* CTA — zelta gradients; secondary = B2B poga (80% klientu) */}
+      {/* CTA - zelta gradients; secondary = B2B poga (80% klientu) */}
       <CtaSection secondary />
     </>
   );

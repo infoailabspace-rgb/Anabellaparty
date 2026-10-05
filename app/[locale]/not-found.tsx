@@ -18,7 +18,7 @@ export default async function NotFound() {
 
   return (
     <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-6 text-center">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(212,169,96,0.12),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgb(var(--gold-rgb)/0.12),transparent_60%)]" />
       <div className="relative z-10 mx-auto max-w-xl">
         <Image
           src="/logo/logo-full.png"
@@ -45,7 +45,7 @@ export default async function NotFound() {
         </div>
         <Link
           href="/rezervet"
-          className="mt-8 inline-block rounded-full bg-gold px-8 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
+          className="mt-8 inline-block rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-shadow hover:shadow-glow"
         >
           {tc("rezervet")}
         </Link>

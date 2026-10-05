@@ -78,7 +78,7 @@ export default async function RezervetPage({
               <a
                 key={label}
                 href={c.href}
-                className="flex items-center gap-3 rounded-2xl bg-gold px-5 py-4 font-semibold text-black transition-transform hover:scale-[1.02]"
+                className="flex items-center gap-3 rounded-card bg-gold px-5 py-4 font-semibold text-on-gold transition-transform hover:scale-[1.02]"
               >
                 <c.Icon />
                 <span className="leading-tight">
@@ -96,7 +96,7 @@ export default async function RezervetPage({
           {ts("rOrForm")}
         </div>
 
-        {/* Anketa. Kubli/pirts iet caur partneri (zvans) — ne kalkulatorā. */}
+        {/* Anketa. Kubli/pirts iet caur partneri (zvans) - ne kalkulatorā. */}
         <BookingForm products={products.filter((p) => p.category !== "kubli")} />
       </div>
     </>

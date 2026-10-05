@@ -5,7 +5,7 @@ import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { useInView } from "@/lib/use-in-view";
 
 /**
- * Produktu bloku ieslīdēšana — izteikta: bloks iznirst no ārpus ekrāna
+ * Produktu bloku ieslīdēšana - izteikta: bloks iznirst no ārpus ekrāna
  * (pilns platums) un nostājas vietā.
  *
  * SVARĪGI: novērojam nekustīgu ārējo ietvaru ar IntersectionObserver, nevis pašu
@@ -14,7 +14,7 @@ import { useInView } from "@/lib/use-in-view";
  * ietvaru (kas paliek savā vietā), trigeris strādā vienmēr.
  *
  * Desktopā pamīšus no kreisās/labās (--slide-x), mobilajā tikai fadeUp (nav
- * horizontālas kustības → nav pārplūdes). reduced-motion — statisks.
+ * horizontālas kustības → nav pārplūdes). reduced-motion - statisks.
  */
 export default function SlideReveal({
   children,

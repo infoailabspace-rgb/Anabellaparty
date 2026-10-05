@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-// Luxury glamour fons — fiksēts AIZ visa satura (-z-10), aizvieto plakano navy.
+// Luxury glamour fons - fiksēts AIZ visa satura (-z-10), aizvieto plakano navy.
 // Slāņi: plūstoši zelta/rožu gradienti (CSS) + canvas (peldošas bokeh daļiņas,
 // mirdzošas zvaigznes, smalki disco-lodes silueti) + grain + vinjete.
 // Bez ārējiem attēliem. requestAnimationFrame; pauzē ārpus skata (IntersectionObserver)
@@ -46,7 +46,7 @@ export default function SiteTexture() {
       const g = s.getContext("2d")!;
       const cx = size / 2;
       const rad = size / 2 - 1;
-      // Lodes korpuss — tumšs ar smalku zelta apmali (silueta sajūta)
+      // Lodes korpuss - tumšs ar smalku zelta apmali (silueta sajūta)
       const body = g.createRadialGradient(cx * 0.75, cx * 0.7, rad * 0.1, cx, cx, rad);
       body.addColorStop(0, `rgba(${GOLD},0.10)`);
       body.addColorStop(0.7, `rgba(${GOLD},0.03)`);
@@ -55,7 +55,7 @@ export default function SiteTexture() {
       g.arc(cx, cx, rad, 0, Math.PI * 2);
       g.fillStyle = body;
       g.fill();
-      // Fasetes — režģis, apgriezts lodei
+      // Fasetes - režģis, apgriezts lodei
       g.save();
       g.beginPath();
       g.arc(cx, cx, rad, 0, Math.PI * 2);
@@ -226,13 +226,13 @@ export default function SiteTexture() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-bg" aria-hidden>
       {/* Plūstoši zelta/rožu gradienti (CSS drift, GPU) */}
-      <div className="anabella-tex-a absolute left-[-15%] top-[-18%] h-[80vh] w-[80vw] rounded-full bg-[radial-gradient(circle,rgba(212,169,96,0.20),transparent_60%)] blur-[100px]" />
+      <div className="anabella-tex-a absolute left-[-15%] top-[-18%] h-[80vh] w-[80vw] rounded-full bg-[radial-gradient(circle,rgb(var(--gold-rgb)/0.20),transparent_60%)] blur-[100px]" />
       <div className="anabella-tex-b absolute bottom-[-18%] right-[-15%] h-[72vh] w-[72vw] rounded-full bg-[radial-gradient(circle,rgba(232,168,124,0.15),transparent_62%)] blur-[120px]" />
       {/* Canvas: bokeh + zvaigznes + disco silueti */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
       {/* Grain */}
       <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{ backgroundImage: GRAIN }} />
-      {/* Vinjete — dziļums malās (aiz satura, tāpēc nekaitē lasāmībai) */}
+      {/* Vinjete - dziļums malās (aiz satura, tāpēc nekaitē lasāmībai) */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(15,20,25,0.5))]" />
     </div>
   );

@@ -55,7 +55,7 @@ export default async function KublsballaPage({
       <div className="mx-auto max-w-6xl px-6 py-16">
         {/* Svarīgā atzīme */}
         <Reveal>
-          <div className="mb-12 rounded-2xl border-2 border-gold bg-gold/10 p-6">
+          <div className="mb-12 rounded-card border-2 border-gold bg-gold/10 p-6">
             <p className="text-text/90">
               {ts("kbNotePre")}
               <a

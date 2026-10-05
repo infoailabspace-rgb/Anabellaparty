@@ -65,7 +65,7 @@ export default async function AiFotoPage({
   const price = af.price || ts("afPrice");
   const themes = af.themes.length ? af.themes : themeKeys.map((k) => ts(k));
   const gallery = af.gallery.length ? af.gallery : aiGalleryFallback;
-  // JSON-LD apraksts: kas tā ir (intro) + cena/piedeva (price) — lokalizēts.
+  // JSON-LD apraksts: kas tā ir (intro) + cena/piedeva (price) - lokalizēts.
   const aiFotoDesc = `${intro} ${price}`.trim();
   return (
     <>
@@ -104,7 +104,7 @@ export default async function AiFotoPage({
           <div className="mt-6 flex flex-col gap-4 sm:flex-row">
             <a
               href="tel:+37129222761"
-              className="rounded-full bg-gold px-8 py-3 text-center font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
+              className="rounded-full bg-gold px-8 py-3 text-center font-semibold text-on-gold transition-shadow hover:shadow-glow"
             >
               {ts("afCall")}
             </a>

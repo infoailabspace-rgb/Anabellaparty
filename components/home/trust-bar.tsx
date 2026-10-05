@@ -4,7 +4,7 @@ import CountUp from "@/components/count-up";
 import ClientsMarquee from "@/components/clients-marquee";
 import type { Client } from "@/lib/clients";
 
-// Uzticamības josla tūlīt zem hero (B2B spec §4.2) — VIENS bloks, viens fons:
+// Uzticamības josla tūlīt zem hero (B2B spec §4.2) - VIENS bloks, viens fons:
 // 1) skaitļi (bez virsraksta), 2) "Mums uzticas" + apakšrindiņa, 3) logo lente.
 export default async function TrustBar({
   statsEvents = "500",
@@ -30,7 +30,7 @@ export default async function TrustBar({
     <section className="border-t border-gold/10 bg-navy/20 py-16">
       <div className="mx-auto max-w-5xl px-6">
         <Reveal>
-          {/* 1. Skaitļi — bez virsraksta virs tiem */}
+          {/* 1. Skaitļi - bez virsraksta virs tiem */}
           <div className="grid gap-6 text-center sm:grid-cols-3">
             {stats.map((s) => (
               <div key={s.label || "gads"}>
@@ -50,7 +50,7 @@ export default async function TrustBar({
           </div>
 
           {/* 2. Virsraksts + apakšrindiņa */}
-          <h2 className="mt-12 text-center font-display text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 className="mt-12 text-center font-display text-block font-bold tracking-tight">
             {tc("heading")}
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-center text-sm text-text/60">
@@ -59,7 +59,7 @@ export default async function TrustBar({
         </Reveal>
       </div>
 
-      {/* 3. Logo lente — pilns platums, tajā pašā sekcijā (bez atdalošās līnijas) */}
+      {/* 3. Logo lente - pilns platums, tajā pašā sekcijā (bez atdalošās līnijas) */}
       {hasLogos && (
         <div className="mt-10">
           <ClientsMarquee clients={clients} embedded />

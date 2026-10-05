@@ -4,9 +4,9 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Hero medijs: poster/attēls (next/image ar priority + fetchPriority="high" — tas ir
+ * Hero medijs: poster/attēls (next/image ar priority + fetchPriority="high" - tas ir
  * LCP elements) un neobligāts video VIRSŪ. Video NEsāk pirms lapas `load`, lai
- * nekonkurē ar LCP attēlu; pēc load — requestIdleCallback (rezerve 1500 ms). Video
+ * nekonkurē ar LCP attēlu; pēc load - requestIdleCallback (rezerve 1500 ms). Video
  * bez poster (attēlu jau renderē next/image) un ar preload="none". prefers-reduced-motion
  * → video vispār nemontējas (redzams tikai poster). Video ieslīd (fade) tikai kad gatavs.
  */
@@ -92,7 +92,7 @@ export default function HeroMedia({
       {mp4 && showVideo && (
         <video
           ref={ref}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-(--duration-reveal) ${
             videoReady ? "opacity-100" : "opacity-0"
           } ${posClass} ${className}`}
           autoPlay

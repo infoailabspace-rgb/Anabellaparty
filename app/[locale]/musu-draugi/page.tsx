@@ -50,7 +50,7 @@ export default async function MusuDraugiPage({
       <div className="mx-auto max-w-6xl px-6 py-16">
         {partners.length === 0 ? (
           <Reveal>
-            <div className="mx-auto max-w-2xl rounded-3xl border-2 border-gold/25 bg-navy/25 p-8 text-center sm:p-10">
+            <div className="mx-auto max-w-2xl rounded-panel border-2 border-gold/25 bg-navy/25 p-8 text-center sm:p-10">
               <p className="text-text/80">{ts("mdEmptyIntro")}</p>
               <p className="mt-4 text-text/70">
                 {ts("mdEmptyInvite")}{" "}
@@ -71,7 +71,7 @@ export default async function MusuDraugiPage({
               // "Apmeklēt →" ir <span> (vizuāla norāde), nevis otra <a>.
               const card = (
                 <div
-                  className={`grid overflow-hidden rounded-2xl border-2 border-gold/25 bg-navy/25 transition ${
+                  className={`grid overflow-hidden rounded-card border-2 border-gold/25 bg-navy/25 transition ${
                     p.url ? "hover:border-gold/60 hover:bg-navy/40" : ""
                   } ${p.logoUrl ? "md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]" : ""}`}
                 >

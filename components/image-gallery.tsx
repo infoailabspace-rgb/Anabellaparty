@@ -59,8 +59,8 @@ export default function ImageGallery({
       <button
         type="button"
         onClick={() => hasImages && !activeFailed && setLightbox(true)}
-        aria-label={`${alt} — palielināt`}
-        className={`relative ${aspect}${maxH ? ` ${maxH}` : ""} w-full cursor-zoom-in overflow-hidden rounded-xl`}
+        aria-label={`${alt} - palielināt`}
+        className={`relative ${aspect}${maxH ? ` ${maxH}` : ""} w-full cursor-zoom-in overflow-hidden rounded-tile`}
       >
         {activeFailed ? (
           <ImagePlaceholder label={alt} className="h-full w-full" />
@@ -86,9 +86,9 @@ export default function ImageGallery({
               key={src}
               type="button"
               onClick={() => setActive(i)}
-              aria-label={`${alt} — attēls ${i + 1}`}
+              aria-label={`${alt} - attēls ${i + 1}`}
               aria-current={i === active}
-              className={`relative aspect-square w-20 overflow-hidden rounded-lg border-2 transition-colors ${
+              className={`relative aspect-square w-20 overflow-hidden rounded-control border-2 transition-colors ${
                 i === active ? "border-gold" : "border-gold/20 hover:border-gold/50"
               }`}
             >
@@ -150,7 +150,7 @@ export default function ImageGallery({
               markFailed(active);
               setLightbox(false);
             }}
-            className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain"
+            className="max-h-[85vh] max-w-[90vw] rounded-control object-contain"
           />
 
           {images.length > 1 && (

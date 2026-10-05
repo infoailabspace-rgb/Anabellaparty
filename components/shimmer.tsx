@@ -1,5 +1,5 @@
 /** Zelta mirdzuma pārklājums, kas pārslīd pāri kartītei. Ievieto kartītē ar
- *  `relative overflow-hidden`. `pointer-events-none` — neietekmē klikšķus. */
+ *  `relative overflow-hidden`. `pointer-events-none` - neietekmē klikšķus. */
 export default function Shimmer({ delay = 0 }: { delay?: number }) {
   return (
     <span
