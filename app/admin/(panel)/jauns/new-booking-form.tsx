@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { computeQuote, formatEur, type CartItem } from "@/lib/pricing";
+import { bookingTotals } from "@/lib/booking-status";
 import { isPastDate } from "@/lib/riga-time";
 import { isDeliverableEmail } from "@/lib/email-triggers";
 import type { Product } from "@/lib/products";
@@ -107,8 +108,13 @@ export default function NewBookingForm({
     }
   }, [items, products]);
 
-  const grandTotal =
-    finalTotal.trim() ? Number(finalTotal) : quote.subtotal + (Number(deliveryCost) || 0);
+  // Neto / PVN / bruto - tā pati computeTotals kā publiskajā formā un e-pastā.
+  // Tukša piegāde = nav aprēķināta → izslēgta (nevis 0 €).
+  const totals = bookingTotals({
+    final_total: finalTotal.trim() ? Number(finalTotal) : null,
+    estimated_total: quote.subtotal,
+    delivery_cost: deliveryCost.trim() === "" ? null : Number(deliveryCost) || 0,
+  });
 
   const custMatches = useMemo(() => {
     const q = custQuery.trim().toLowerCase();
@@ -397,14 +403,17 @@ export default function NewBookingForm({
             <input type="number" value={deliveryCost} onChange={(e) => setDeliveryCost(e.target.value)} placeholder="Tukšs = tiks precizēta" className={`${field} mt-1`} />
           </div>
           <div>
-            <label className={label}>Galīgā summa (€) — pārraksta auto</label>
+            <label className={label}>Galīgā summa bez PVN (€) - pārraksta auto</label>
             <input type="number" value={finalTotal} onChange={(e) => setFinalTotal(e.target.value)} placeholder={`Auto: ${quote.subtotal}`} className={`${field} mt-1`} />
           </div>
         </div>
         <div className="mt-3 rounded-lg border border-gold/20 bg-bg/40 p-3 text-sm">
           <div className="flex justify-between"><span className="text-text/60">Inventārs (auto)</span><span className="font-mono">{eur(quote.subtotal)}</span></div>
           <div className="flex justify-between"><span className="text-text/60">Piegāde</span><span className="font-mono">{deliveryCost.trim() === "" ? "tiks precizēta" : eur(Number(deliveryCost))}</span></div>
-          <div className="mt-1 flex justify-between border-t border-gold/15 pt-1 font-semibold"><span>Kopā{finalTotal.trim() ? " (koriģēts)" : ""}</span><span className="font-mono text-gold">{eur(grandTotal)}</span></div>
+          <div className="mt-1 flex justify-between border-t border-gold/15 pt-1"><span className="text-text/60">Neto{finalTotal.trim() ? " (koriģēts)" : ""}{deliveryCost.trim() === "" ? " (bez piegādes)" : ""}</span><span className="font-mono">{eur(totals.net)}</span></div>
+          <div className="flex justify-between"><span className="text-text/60">PVN 21%</span><span className="font-mono">{eur(totals.vat)}</span></div>
+          <div className="flex justify-between font-semibold"><span>Bruto (klients maksā)</span><span className="font-mono text-gold">{eur(totals.gross)}</span></div>
+          <div className="flex justify-between text-xs"><span className="text-text/50">Avanss 50%</span><span className="font-mono text-text/70">{eur(totals.deposit)}</span></div>
         </div>
       </section>
 

@@ -1,4 +1,5 @@
 import { isPastDate } from "@/lib/riga-time";
+import { computeTotals, type Totals } from "@/lib/pricing";
 // Vienota rezervācijas statusa + apmaksas krāsu shēma (visā CRM konsekventi).
 // Apvieno booking_requests.status UN apmaksas stāvokli (payments summa pret kopējo).
 
@@ -7,17 +8,25 @@ export type BookingBadge = { key: string; label: string; cls: string };
 // Rīgas kalendārā (new Date('YYYY-MM-DD') = UTC pusnakts → nobīde ap pusnakti).
 const isPast = (eventDate: string): boolean => isPastDate(eventDate);
 
-/** Rezervācijas summa: final_total, citādi estimated_total + delivery_cost.
- *  delivery_cost null = NEZINĀMA piegāde → izslēgta (nepieskaita), līdz to
- *  aprēķina piedāvājumā. 0 = bezmaksas zona (arī nepieskaita). */
-export function bookingAmount(b: {
+type AmountFields = {
   final_total?: number | null;
   estimated_total?: number | null;
   delivery_cost?: number | null;
-}): number {
-  if (b.final_total != null) return Number(b.final_total);
-  const delivery = b.delivery_cost != null ? Number(b.delivery_cost) || 0 : 0;
-  return (Number(b.estimated_total) || 0) + delivery;
+};
+
+/** Rezervācijas neto/PVN/bruto/avanss. DB glabā NETO: final_total (koriģētā
+ *  neto kopsumma ar piegādi), citādi estimated_total (inventārs) + delivery_cost.
+ *  delivery_cost null = NEZINĀMA piegāde → izslēgta, līdz to aprēķina.
+ *  PVN rēķina TĀ PATI computeTotals, ko publiskā forma un klienta e-pasts. */
+export function bookingTotals(b: AmountFields): Totals {
+  if (b.final_total != null) return computeTotals(Number(b.final_total) || 0, 0);
+  const delivery = b.delivery_cost != null ? Number(b.delivery_cost) || 0 : null;
+  return computeTotals(Number(b.estimated_total) || 0, delivery);
+}
+
+/** Summa, ko klients maksā (BRUTO ar PVN) - pret to salīdzina maksājumus. */
+export function bookingAmount(b: AmountFields): number {
+  return bookingTotals(b).gross;
 }
 
 /** Apmaksas stāvoklis (dropdown vērtība) no paid_sum + deferred karodziņa. */

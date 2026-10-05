@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { statusBadge, paymentBadge } from "@/lib/booking-status";
-import { RIGA_TZ } from "@/lib/riga-time";
+import { RIGA_TZ, rigaToday } from "@/lib/riga-time";
+import { summarizeRevenue, type MoneyTriple, type RevenueBooking } from "@/lib/revenue";
 
 export const dynamic = "force-dynamic";
 
@@ -80,8 +81,8 @@ function Bar({ pct, color = "bg-gold" }: { pct: number; color?: string }) {
   );
 }
 
-function RevenueCard({ title, received, planned }: { title: string; received: number; planned: number }) {
-  const pct = planned > 0 ? Math.min(100, Math.round((received / planned) * 100)) : 0;
+function RevenueCard({ title, received, planned }: { title: string; received: MoneyTriple; planned: MoneyTriple }) {
+  const pct = planned.net > 0 ? Math.min(100, Math.round((received.net / planned.net) * 100)) : 0;
   return (
     <div className="rounded-2xl border border-gold/25 bg-navy/30 p-6">
       <div className="flex items-baseline justify-between">
@@ -89,8 +90,11 @@ function RevenueCard({ title, received, planned }: { title: string; received: nu
         <span className="text-sm text-text/50">{pct}%</span>
       </div>
       <div className="mt-3 flex items-baseline gap-2">
-        <span className="font-display text-2xl font-bold text-gold">{eur(received)}</span>
-        <span className="text-sm text-text/50">/ {eur(planned)}</span>
+        <span className="font-display text-2xl font-bold text-gold">{eur(received.net)}</span>
+        <span className="text-sm text-text/50">/ {eur(planned.net)} neto</span>
+      </div>
+      <div className="mt-1 text-xs text-text/50">
+        PVN {eur(received.vat)} · bruto {eur(received.gross)} (plānots bruto {eur(planned.gross)})
       </div>
       <div className="mt-3">
         <Bar pct={pct} />
@@ -124,10 +128,51 @@ export default async function ParskatsPage() {
   const s = (sData ?? {}) as Partial<Summary>;
   const e = (eData ?? {}) as Partial<Extra>;
 
+  // Naudas rādītāji: TS (lib/revenue.ts) ar to pašu PVN loģiku kā formas/e-pasti.
+  // Ieņēmumi NETO no rezervāciju summām; maksājumi (bruto) tikai statusam.
+  const { data: bData } = await supabase
+    .from("booking_requests")
+    .select(
+      "id, name, event_date, status, description, final_total, estimated_total, delivery_cost, payments(amount, status)",
+    )
+    .neq("status", "rejected");
+  type BRow = RevenueBooking & {
+    name: string;
+    description: string | null;
+    payments?: { amount: number; status: string }[];
+  };
+  const bookings: BRow[] = ((bData ?? []) as BRow[])
+    .filter((b) => !(b.description ?? "").toLowerCase().includes("[dzēsts vecajā sistēmā]"))
+    .map((b) => ({
+      ...b,
+      paid_sum: (b.payments ?? [])
+        .filter((p) => p.status === "completed")
+        .reduce((acc, p) => acc + Number(p.amount), 0),
+    }));
+  const rev = summarizeRevenue(bookings, rigaToday());
+  const productOf = (d: string | null) =>
+    (d ?? "").match(/Aprīkojums: ([^\n+;]+)/)?.[1]?.trim() || null;
+  const toItem = (b: BRow, amount: number): ListItem => ({
+    id: b.id,
+    name: b.name,
+    product: productOf(b.description),
+    date: b.event_date,
+    amount,
+  });
+  const byDateDesc = (a: BRow, b: BRow) => (a.event_date < b.event_date ? 1 : -1);
+  const waitingList = bookings
+    .filter((b) => !rev.byId.get(b.id)?.paid)
+    .sort(byDateDesc)
+    .map((b) => toItem(b, rev.byId.get(b.id)?.outstanding.net ?? 0));
+  const paidList = bookings
+    .filter((b) => rev.byId.get(b.id)?.paid)
+    .sort(byDateDesc)
+    .map((b) => toItem(b, rev.byId.get(b.id)?.net ?? 0));
+
   const today = new Date().toLocaleDateString("lv-LV", { day: "numeric", month: "long", year: "numeric", timeZone: RIGA_TZ });
 
-  const totalAmount = e.total_amount ?? 0;
-  const paidAmount = e.paid_amount ?? 0;
+  const totalAmount = rev.all.total.net;
+  const paidAmount = rev.all.received.net;
   const paidPct = totalAmount > 0 ? Math.min(100, Math.round((paidAmount / totalAmount) * 100)) : 0;
 
   const top = e.top_products ?? [];
@@ -159,51 +204,52 @@ export default async function ParskatsPage() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Kpi label="Aktīvās rezervācijas" value={String(s.active_reservations ?? 0)} sub="Apstiprinātas, gaidāmas" icon="📅" />
         <Kpi label="Pieejami produkti (katalogā)" value={`${s.available_equipment ?? 0} / ${s.active_products ?? 0}`} sub="Brīvs šodien" icon="📦" />
-        <Kpi label="Gaida maksājumu" value={String(s.awaiting_payment ?? 0)} sub="gaidāmie pasākumi bez apmaksas" icon="⏳" />
+        <Kpi label="Gaida maksājumu" value={String(rev.awaitingCount)} sub="gaidāmie pasākumi bez apmaksas" icon="⏳" />
       </div>
 
       {/* 3. Ieņēmumu progress */}
       <div className="grid gap-4 md:grid-cols-2">
-        <RevenueCard title="Šī mēneša ieņēmumi" received={s.month_received ?? 0} planned={s.month_planned ?? 0} />
-        <RevenueCard title="Šī gada ieņēmumi" received={s.year_received ?? 0} planned={s.year_planned ?? 0} />
+        <RevenueCard title="Šī mēneša ieņēmumi (neto)" received={rev.month.received} planned={rev.month.planned} />
+        <RevenueCard title="Šī gada ieņēmumi (neto)" received={rev.year.received} planned={rev.year.planned} />
       </div>
 
       {/* 4. Maksājumu kopsavilkums */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-gold/25 bg-navy/30 p-5">
-          <span className="text-xs uppercase tracking-wide text-text/50">Samaksāts</span>
+          <span className="text-xs uppercase tracking-wide text-text/50">Samaksāts (neto)</span>
           <div className="mt-2 font-display text-2xl font-bold text-green-300">{eur(paidAmount)}</div>
+          <div className="mt-1 text-xs text-text/50">PVN {eur(rev.all.received.vat)} · bruto {eur(rev.all.received.gross)}</div>
           <div className="mt-2"><Bar pct={paidPct} color="bg-green-500" /></div>
           <div className="mt-1 text-xs text-text/50">{paidPct}% no kopējā</div>
         </div>
         <div className="rounded-2xl border border-gold/25 bg-navy/30 p-5">
-          <span className="text-xs uppercase tracking-wide text-text/50">Gaida apmaksu</span>
-          <div className="mt-2 font-display text-2xl font-bold text-amber-300">{eur(e.waiting_amount ?? 0)}</div>
-          <div className="mt-1 text-xs text-text/50">{e.waiting_count ?? 0} neapmaksātas</div>
+          <span className="text-xs uppercase tracking-wide text-text/50">Gaida apmaksu (neto)</span>
+          <div className="mt-2 font-display text-2xl font-bold text-amber-300">{eur(rev.all.outstanding.net)}</div>
+          <div className="mt-1 text-xs text-text/50">{rev.all.waitingCount} neapmaksātas · bruto {eur(rev.all.outstanding.gross)}</div>
         </div>
         <div className="rounded-2xl border border-gold/25 bg-navy/30 p-5">
-          <span className="text-xs uppercase tracking-wide text-text/50">Kopējā summa</span>
+          <span className="text-xs uppercase tracking-wide text-text/50">Kopējā summa (neto)</span>
           <div className="mt-2 font-display text-2xl font-bold text-gold">{eur(totalAmount)}</div>
-          <div className="mt-1 text-xs text-text/50">{e.total_count ?? 0} rezervācijas</div>
+          <div className="mt-1 text-xs text-text/50">{rev.all.count} rezervācijas · PVN {eur(rev.all.total.vat)} · bruto {eur(rev.all.total.gross)}</div>
         </div>
       </div>
 
       {/* 5. Divi saraksti */}
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-2xl border border-gold/25 bg-navy/30 p-5">
-          <h3 className="mb-3 font-display text-lg font-semibold">Kopā jāsaņem (visas nesamaksātās) <span className="text-sm text-text/40">({(e.waiting_list ?? []).length})</span></h3>
+          <h3 className="mb-3 font-display text-lg font-semibold">Kopā jāsaņem (visas nesamaksātās) <span className="text-sm text-text/40">({waitingList.length})</span></h3>
           <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
-            {(e.waiting_list ?? []).length === 0 && <p className="text-sm text-text/40">Nav ierakstu.</p>}
-            {(e.waiting_list ?? []).map((b) => (
+            {waitingList.length === 0 && <p className="text-sm text-text/40">Nav ierakstu.</p>}
+            {waitingList.map((b) => (
               <BookingRow key={b.id} href={`/admin/${b.id}`} left={b.name} sub={`${b.product ?? "—"} · ${b.date}`} right={eur(b.amount)} />
             ))}
           </div>
         </div>
         <div className="rounded-2xl border border-gold/25 bg-navy/30 p-5">
-          <h3 className="mb-3 font-display text-lg font-semibold">Pabeigto rezervāciju ieņēmumi <span className="text-sm text-text/40">({(e.paid_list ?? []).length})</span></h3>
+          <h3 className="mb-3 font-display text-lg font-semibold">Pabeigto rezervāciju ieņēmumi <span className="text-sm text-text/40">({paidList.length})</span></h3>
           <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
-            {(e.paid_list ?? []).length === 0 && <p className="text-sm text-text/40">Nav ierakstu.</p>}
-            {(e.paid_list ?? []).map((b) => (
+            {paidList.length === 0 && <p className="text-sm text-text/40">Nav ierakstu.</p>}
+            {paidList.map((b) => (
               <BookingRow key={b.id} href={`/admin/${b.id}`} left={b.name} sub={`${b.product ?? "—"} · ${b.date}`} right={eur(b.amount)} />
             ))}
           </div>
@@ -268,7 +314,7 @@ export default async function ParskatsPage() {
               const sb = statusBadge(b.status);
               const pb = paymentBadge(
                 b.paid_sum ?? 0,
-                b.amount,
+                rev.byId.get(b.id)?.gross ?? b.amount,
                 b.date,
                 b.payment_deferred ?? false,
               );
