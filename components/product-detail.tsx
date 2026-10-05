@@ -22,7 +22,7 @@ export default async function ProductDetail({
     <SlideReveal index={index}>
       <article
         id={product.slug}
-        className="scroll-mt-24 rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10"
+        className="scroll-mt-24 rounded-panel border-2 border-gold/25 bg-navy/25 p-6 sm:p-10"
       >
         <div className="grid gap-10 lg:grid-cols-2">
           {/* Galerija */}
@@ -30,7 +30,7 @@ export default async function ProductDetail({
 
           {/* Info */}
           <div className="flex flex-col">
-            <h2 className="font-display text-2xl font-bold sm:text-3xl">
+            <h2 className="font-display text-block font-bold">
               {product.name}
             </h2>
             <p className="mt-2 text-gold">{product.tagline}</p>
@@ -40,7 +40,7 @@ export default async function ProductDetail({
               <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
                 {product.specs.map((s) => (
                   <div key={s.label}>
-                    <dt className="text-xs uppercase tracking-wide text-text/50">
+                    <dt className="text-xs uppercase tracking-wide text-text-muted">
                       {s.label}
                     </dt>
                     <dd className="text-sm text-text/90">{s.value}</dd>
@@ -70,14 +70,15 @@ export default async function ProductDetail({
               {product.altPhone ? (
                 <a
                   href={`tel:+371${product.altPhone}`}
-                  className="rounded-full bg-gold px-7 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
+                  className="inline-flex min-h-12 items-center rounded-full bg-gold px-7 font-semibold text-on-gold transition-shadow hover:shadow-glow"
                 >
                   {t("call", { phone: `+371 ${product.altPhone}` })}
                 </a>
               ) : (
+                // Produkts jau priekšizvēlēts rezervācijas formā (?item=slug) - par vienu soli mazāk.
                 <Link
-                  href="/rezervet"
-                  className="rounded-full bg-gold px-7 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)]"
+                  href={{ pathname: "/rezervet", query: { item: product.slug } }}
+                  className="inline-flex min-h-12 items-center rounded-full bg-gold px-7 font-semibold text-on-gold transition-shadow hover:shadow-glow"
                 >
                   {t("book")}
                 </Link>
