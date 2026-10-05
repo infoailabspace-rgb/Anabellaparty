@@ -4,21 +4,27 @@ import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { BLOG_CATEGORIES, CATEGORY_LABEL, type BlogListItem } from "@/lib/blog";
 import { formatTimestampDateRiga } from "@/lib/riga-time";
+import { sbImage } from "@/lib/sb-image";
 
 function Card({ p }: { p: BlogListItem }) {
   return (
     <Link
       href={`/blogs/${p.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-gold/20 bg-navy/25 transition-colors hover:border-gold/50"
+      className="group flex flex-col overflow-hidden rounded-card border border-gold/20 bg-navy/25 transition-colors hover:border-gold/50"
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-navy">
         {p.cover ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={p.cover}
+            src={sbImage(p.cover, 640)}
+            srcSet={`${sbImage(p.cover, 640)} 640w, ${sbImage(p.cover, 960)} 960w`}
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            width={640}
+            height={400}
             alt={p.coverAlt}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            decoding="async"
+            className="h-full w-full object-cover transition-transform duration-(--duration-slow) group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-gold/30">Anabella</div>
@@ -34,7 +40,7 @@ function Card({ p }: { p: BlogListItem }) {
           {p.title}
         </h2>
         <p className="mt-2 flex-1 text-sm text-text/70">{p.excerpt}</p>
-        <p className="mt-4 text-xs text-text/40">
+        <p className="mt-4 text-xs text-text-muted">
           {p.publishedAt ? formatTimestampDateRiga(p.publishedAt) : ""} · {p.readingMin} min lasīšana
         </p>
       </div>
@@ -46,7 +52,7 @@ function Tab({ id, label, cat, onClick }: { id: string; label: string; cat: stri
   return (
     <button
       onClick={() => onClick(id)}
-      className={`rounded-full px-4 py-1.5 text-sm font-semibold ${
+      className={`inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold ${
         cat === id ? "bg-gold text-black" : "border border-gold/30 text-text/60 hover:text-gold"
       }`}
     >

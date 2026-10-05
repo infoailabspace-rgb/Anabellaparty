@@ -21,6 +21,22 @@ const inter = Inter({
   display: "swap",
 });
 
+// RU lapām: kirilicas Inter kā otrā saime (body font-family rezerve). preload:false
+// + unicode-range → fails ielādējas TIKAI, ja lapā ir kirilicas zīmes (LV/EN - 0 baitu).
+// Space Grotesk kirilicu neatbalsta → RU virsraksti krīt uz šo Inter.
+const interCyrillic = Inter({
+  subsets: ["cyrillic"],
+  variable: "--font-inter-cyrillic",
+  display: "swap",
+  preload: false,
+});
+
+// Reveal animācijas tikai ar JS (progressive enhancement, skat. globals.css .js-reveal).
+// Ja hidratācija 3 s laikā nenotiek (lēns tīkls/JS kļūda), klasi noņem → saturs redzams.
+const REVEAL_SCRIPT =
+  "(function(){var d=document.documentElement;d.classList.add('js-reveal');" +
+  "setTimeout(function(){if(!window.__revealReady)d.classList.remove('js-reveal')},3000)})()";
+
 // Rezerves OG attēls (og.fallback) — ja admin to iestatījis, kļūst par
 // noklusējuma OG. Per-lapas metadata (ogMetadata) to pārraksta ar dinamisko /og.
 export async function generateMetadata(): Promise<Metadata> {
@@ -50,8 +66,11 @@ export default function RootLayout({
     <html
       lang="lv"
       suppressHydrationWarning
-      className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${inter.variable} ${interCyrillic.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: REVEAL_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col bg-bg text-text font-body">
         {children}
       </body>

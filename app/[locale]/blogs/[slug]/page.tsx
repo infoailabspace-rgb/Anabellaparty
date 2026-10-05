@@ -17,6 +17,7 @@ import { translatedAlternates, ogMetadata } from "@/lib/seo";
 import ShareButtons from "./share-buttons";
 import ArticleContent from "./article-content";
 import { formatTimestampDateRiga } from "@/lib/riga-time";
+import { sbImage } from "@/lib/sb-image";
 
 export async function generateMetadata({
   params,
@@ -54,7 +55,7 @@ export async function generateMetadata({
 
 export const revalidate = 3600;
 
-// Priekšrenderē zināmos rakstus (locale × slug); jauni raksti — ISR pēc pieprasījuma.
+// Priekšrenderē zināmos rakstus (locale × slug); jauni raksti - ISR pēc pieprasījuma.
 export async function generateStaticParams() {
   const posts = await getPublishedPosts();
   return routing.locales.flatMap((locale) =>
@@ -95,7 +96,7 @@ export default async function ArticlePage({
         {post.category && (
           <Link
             href={`/blogs`}
-            className="text-xs font-semibold uppercase tracking-wide text-gold hover:underline"
+            className="inline-flex min-h-11 items-center text-xs font-semibold uppercase tracking-wide text-gold hover:underline"
           >
             {CATEGORY_LABEL[post.category] ?? post.category}
           </Link>
@@ -103,13 +104,13 @@ export default async function ArticlePage({
         <h1 className="mt-3 font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl">
           {post.title}
         </h1>
-        <p className="mt-4 text-sm text-text/50">
+        <p className="mt-4 text-sm text-text-muted">
           {post.publishedAt ? formatTimestampDateRiga(post.publishedAt) : ""} ·{" "}
           {post.readingMin} min lasīšana
         </p>
 
         {post.cover && (
-          <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-2xl border border-gold/20">
+          <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-card border border-gold/20">
             <Image
               src={post.cover}
               alt={post.coverAlt}
@@ -125,7 +126,7 @@ export default async function ArticlePage({
 
         {/* Saistītie produkti */}
         {related.length > 0 && (
-          <div className="mt-14 rounded-2xl border border-gold/25 bg-navy/25 p-6">
+          <div className="mt-14 rounded-card border border-gold/25 bg-navy/25 p-6">
             <h2 className="font-display text-xl font-bold">Izmantotais inventārs</h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               {related.map((p) => {
@@ -136,7 +137,7 @@ export default async function ArticlePage({
                 return (
                   <div
                     key={p.slug}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-gold/20 bg-bg/40 p-4"
+                    className="flex items-center justify-between gap-3 rounded-tile border border-gold/20 bg-bg/40 p-4"
                   >
                     <div>
                       <p className="font-display font-semibold text-text">{p.name}</p>
@@ -144,7 +145,7 @@ export default async function ArticlePage({
                     </div>
                     <Link
                       href={`/rezervet?item=${p.slug}`}
-                      className="shrink-0 rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black transition-transform hover:scale-[1.03]"
+                      className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-gold px-5 text-sm font-semibold text-on-gold transition-transform hover:scale-[1.03]"
                     >
                       Rezervēt
                     </Link>
@@ -169,17 +170,17 @@ export default async function ArticlePage({
                 <Link
                   key={rp.slug}
                   href={`/blogs/${rp.slug}`}
-                  className="group flex flex-col overflow-hidden rounded-xl border border-gold/20 bg-navy/25 transition-colors hover:border-gold/50"
+                  className="group flex flex-col overflow-hidden rounded-tile border border-gold/20 bg-navy/25 transition-colors hover:border-gold/50"
                 >
                   {rp.cover && (
                     <div className="aspect-[16/10] overflow-hidden bg-navy">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={rp.cover} alt={rp.coverAlt} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <img src={sbImage(rp.cover, 640)} width={640} height={400} alt={rp.coverAlt} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-(--duration-slow) group-hover:scale-105" />
                     </div>
                   )}
                   <div className="p-4">
                     <p className="font-display text-sm font-semibold text-text group-hover:text-gold">{rp.title}</p>
-                    <p className="mt-1 text-xs text-text/40">{rp.readingMin} min</p>
+                    <p className="mt-1 text-xs text-text-muted">{rp.readingMin} min</p>
                   </div>
                 </Link>
               ))}
