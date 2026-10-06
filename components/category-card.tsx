@@ -5,7 +5,6 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import type { CategoryMeta } from "@/lib/categories";
 import { categoryIcons, IconBadge } from "@/components/icons";
-import Shimmer from "@/components/shimmer";
 import { getSiteImage } from "@/lib/site-content";
 
 // SOLIS1D: fona attēlu rāda TIKAI, ja fails reāli eksistē public/.
@@ -69,7 +68,6 @@ export default async function CategoryCard({
         <span className="absolute right-4 top-4 z-10 rounded-full border border-gold/40 bg-gold/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-gold">
           {tc("comingSoonBadge")}
         </span>
-        <Shimmer delay={index * 0.6} />
         <IconBadge delay={index * 0.3}>
           <Icon className="h-6 w-6" />
         </IconBadge>
@@ -99,7 +97,7 @@ export default async function CategoryCard({
             quality={55}
             loading="lazy"
             aria-hidden="true"
-            className="-z-10 object-cover transition-transform duration-(--duration-slow) group-hover:scale-105"
+            className="-z-10 object-cover transition-colors duration-(--duration-slow)"
           />
           {/* Konsekvents tumšinājums neatkarīgi no attēla gaišuma (melns, ne navy),
               lai gaišie attēli (piem. baltā pils) neizceltos no pārējām kartītēm:
@@ -108,7 +106,6 @@ export default async function CategoryCard({
           <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         </>
       )}
-      <Shimmer delay={index * 0.6} />
       <IconBadge delay={index * 0.3}>
         <Icon className="h-6 w-6" />
       </IconBadge>

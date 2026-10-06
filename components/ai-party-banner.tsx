@@ -2,7 +2,6 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import Reveal from "@/components/reveal";
-import Shimmer from "@/components/shimmer";
 import { getAiPartyBanner } from "@/lib/ai-party-banner";
 
 // AI Party - jauns pakalpojums, reklāmas banneris zem kategoriju režģa. Stils =
@@ -21,7 +20,7 @@ export default async function AiPartyBanner() {
   // valodas prefiksu (/en/..., /ru/...) un neatver jaunu cilni.
   const internal = banner.url.startsWith("/");
   const btnCls =
-    "inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-black shadow-cta transition-transform hover:scale-[1.03]";
+    "inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-black shadow-cta transition-colors";
 
   return (
     <Reveal className="mt-8">
@@ -35,7 +34,7 @@ export default async function AiPartyBanner() {
           quality={60}
           loading="lazy"
           aria-hidden="true"
-          className="-z-10 object-cover transition-transform duration-(--duration-slow) group-hover:scale-105"
+          className="-z-10 object-cover transition-colors duration-(--duration-slow)"
         />
         {/* Tie paši pārklājumi, kas kategoriju kartēm (konsekvents tumšinājums +
             gradients apakšā, kur teksts). */}
@@ -44,7 +43,6 @@ export default async function AiPartyBanner() {
 
         {/* Zelta mirdzums - TIEŠI tas pats slānis, kas kategoriju kartēm
             (anabella-shimmer, pārslīd pāri), lai vizuāli saskan. */}
-        <Shimmer />
 
         {/* Teksts apakšējā daļā (kā kartēs) + poga */}
         <div className="flex h-full flex-col justify-end p-6 sm:p-8">
@@ -55,7 +53,7 @@ export default async function AiPartyBanner() {
                   {banner.badge}
                 </span>
               )}
-              <h3 className="mt-3 font-display text-2xl font-bold text-text sm:text-3xl">
+              <h3 className="mt-3 font-display text-2xl font-semibold text-text sm:text-3xl">
                 {banner.title}
               </h3>
               {banner.text && (

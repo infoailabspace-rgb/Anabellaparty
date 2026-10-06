@@ -139,10 +139,10 @@ export function IconBadge({
 }) {
   return (
     <span
-      className={`inline-flex h-12 w-12 items-center justify-center rounded-full border border-gold/30 bg-gold/10 text-gold transition-all duration-(--duration-base) group-hover:scale-110 group-hover:border-gold/70 group-hover:bg-gold/20 ${className}`}
+      className={`inline-flex h-12 w-12 items-center justify-center rounded-full border border-gold/30 bg-gold/10 text-gold transition-all duration-(--duration-base) group-hover:border-gold/70 group-hover:bg-gold/20 ${className}`}
     >
       <span
-        className="anabella-float inline-flex"
+        className="inline-flex"
         style={{ animationDelay: `${delay}s` }}
       >
         {children}

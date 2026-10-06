@@ -47,7 +47,6 @@ function linkify(text: string): ReactNode[] {
 export default function ChatWidget() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [pulse, setPulse] = useState(true);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
@@ -67,8 +66,6 @@ export default function ChatWidget() {
     } catch {
       /* ignore */
     }
-    const t = setTimeout(() => setPulse(false), 3000);
-    return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
@@ -156,12 +153,9 @@ export default function ChatWidget() {
             if (!v) track("chat_opened");
             return !v;
           });
-          setPulse(false);
         }}
         aria-label={open ? "Aizvērt čatu" : "Atvērt čatu"}
-        className={`fixed bottom-5 right-5 z-[70] flex h-14 w-14 items-center justify-center rounded-full bg-gold text-black shadow-cta-sm transition-transform hover:scale-105 menu-open:hidden cookie-open:hidden ${
-          pulse && !open ? "anabella-chat-pulse" : ""
-        }`}
+        className="fixed bottom-5 right-5 z-[70] flex h-14 w-14 items-center justify-center rounded-full bg-gold text-on-gold shadow-cta-sm transition-colors hover:bg-gold/90 menu-open:hidden cookie-open:hidden"
       >
         {open ? (
           <span className="text-2xl">✕</span>
@@ -252,7 +246,7 @@ export default function ChatWidget() {
               type="submit"
               disabled={streaming || !input.trim()}
               aria-label="Sūtīt"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-gold text-on-gold transition-transform hover:scale-105 disabled:opacity-50"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-gold text-on-gold transition-colors disabled:opacity-50 hover:bg-gold/90"
             >
               ↑
             </button>
