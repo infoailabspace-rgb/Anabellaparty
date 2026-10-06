@@ -14,7 +14,6 @@ import SectionHero from "@/components/section-hero";
 import ProductDetail from "@/components/product-detail";
 import ImageGallery from "@/components/image-gallery";
 import Image from "next/image";
-import SlideReveal from "@/components/slide-reveal";
 import PriceBlock from "@/components/price-block";
 import ImagePlaceholder from "@/components/image-placeholder";
 import DeliveryNote from "@/components/delivery-note";
@@ -94,7 +93,7 @@ export default async function FotoKastePage({
       {/* Uzticamības josla (skaitļi + "Mums uzticas" + logo) - viens bloks (§5) */}
       <TrustBar clients={clients} />
 
-      <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="container-site py-16">
         {/* Zīmola definīcijas rindkopa (AEO C1) - server-rendered teksts */}
         <Reveal>
           <p className="mb-12 max-w-3xl text-text/80 leading-relaxed">
@@ -124,7 +123,7 @@ export default async function FotoKastePage({
 
         {/* Foto kaste uz visu dienu - izcelts bloks */}
         {visuDienu && (
-          <SlideReveal index={3}>
+          <Reveal>
             <div className="mt-12 rounded-panel border-2 border-gold bg-gold/10 p-6 sm:p-10">
               <div
                 className={`grid gap-8 ${
@@ -144,10 +143,10 @@ export default async function FotoKastePage({
                 )}
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-wide text-on-gold">
+                    <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-wide text-on-gold hover:bg-gold/90">
                       {ts("fkSpecial")}
                     </span>
-                    <h2 className="font-display text-block font-bold">
+                    <h2 className="font-display text-block font-semibold">
                       {visuDienu.name}
                       {visuDienu.tiers[0]?.price
                         ? ` - ${visuDienu.tiers[0].price} €`
@@ -171,13 +170,13 @@ export default async function FotoKastePage({
                 </div>
               </div>
             </div>
-          </SlideReveal>
+          </Reveal>
         )}
 
         {/* Uz periodu + masu pasākumiem */}
         <div className="mt-12 grid gap-6 md:grid-cols-2">
           {contactBlocks.map((product, i) => (
-            <SlideReveal key={product.slug} index={4 + i}>
+            <Reveal key={product.slug}>
               <div className="flex h-full flex-col overflow-hidden rounded-card border-2 border-gold/25 bg-navy/25">
                 {product.coverImage && (
                   <div className="relative aspect-[16/10] w-full">
@@ -202,15 +201,15 @@ export default async function FotoKastePage({
                   </div>
                 </div>
               </div>
-            </SlideReveal>
+            </Reveal>
           ))}
         </div>
 
         {/* Foto rāmīšu dizaini */}
-        <SlideReveal index={6}>
+        <Reveal>
           <div className="mt-12 grid items-center gap-8 rounded-panel border-2 border-gold/25 bg-navy/25 p-6 sm:p-10 lg:grid-cols-2">
             <div>
-              <h2 className="font-display text-block font-bold">
+              <h2 className="font-display text-block font-semibold">
                 {ts("fkFramesTitle")}
               </h2>
               <p className="mt-4 text-text/80">{ts("fkFramesText")}</p>
@@ -232,7 +231,7 @@ export default async function FotoKastePage({
               />
             )}
           </div>
-        </SlideReveal>
+        </Reveal>
 
         {/* B2B sekcijas (§5): iekļauts, brendēšana, dokumenti, cena, BUJ, CTA */}
         <FotoKasteB2b />

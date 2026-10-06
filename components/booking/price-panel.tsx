@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { computeQuote, computeTotals, formatEur, type CartItem } from "@/lib/pricing";
 import type { Product } from "@/lib/products";
+import { displayName } from "@/lib/product-display";
 
 export default function PricePanel({
   items,
@@ -41,7 +42,7 @@ export default function PricePanel({
             <li key={l.slug}>
               <div className="flex justify-between gap-3">
                 <span className="text-text/85">
-                  {l.name} <span className="text-text-muted">({l.tierLabel})</span>
+                  {displayName(l.name)} <span className="text-text-muted">({l.tierLabel})</span>
                 </span>
                 <span className="font-mono text-gold">
                   {l.contactOnly ? t("agree") : `${l.lineTotal} €`}

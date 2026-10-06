@@ -18,6 +18,7 @@ import {
 import PricePanel from "@/components/booking/price-panel";
 import { isInFreeZone } from "@/lib/delivery";
 import { rigaToday } from "@/lib/riga-time";
+import { displayName } from "@/lib/product-display";
 
 const STORAGE_KEY = "anabella-booking";
 // Vērtība (v) glabājas LV (konsekvence admin/e-pastos); attēlo (k) tulkoto.
@@ -432,7 +433,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
           {[1, 2, 3, 4].map((n) => (
             <li key={n} className="flex-1" aria-current={n === step ? "step" : undefined}>
               <div
-                className={`h-1.5 rounded-full transition-colors ${
+                className={`h-1.5 rounded-full transition-transform ${
                   n <= step ? "bg-gold" : "bg-text/15"
                 }`}
               />
@@ -529,7 +530,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
             <button
               type="button"
               onClick={next}
-              className="inline-flex min-h-11 items-center rounded-full bg-gold px-8 font-semibold text-on-gold transition-transform hover:scale-[1.03]"
+              className="inline-flex min-h-11 items-center rounded-full bg-gold px-8 font-semibold text-on-gold transition-colors hover:bg-gold/90"
             >
               {t("next")}
             </button>
@@ -538,7 +539,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
               type="button"
               onClick={submit}
               disabled={submitting}
-              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-gold px-8 font-semibold text-on-gold transition-transform enabled:hover:scale-[1.03] disabled:opacity-60"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-gold px-8 font-semibold text-on-gold transition-colors disabled:opacity-60 hover:bg-gold/90"
             >
               {submitting && (
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
@@ -598,7 +599,7 @@ function StepInventory({
   const list = byCategory(activeCat);
   return (
     <div>
-      <h2 className="font-display text-block font-bold">{t("invTitle")}</h2>
+      <h2 className="font-display text-block font-semibold">{t("invTitle")}</h2>
       <p className="mt-1 text-sm text-text/60">{t("invSubtitle")}</p>
 
       {/* Kategoriju cilnes */}
@@ -608,7 +609,7 @@ function StepInventory({
             key={c.id}
             type="button"
             onClick={() => setActiveCat(c.id as Product["category"])}
-            className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold transition-colors ${
+            className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold transition-transform ${
               activeCat === c.id
                 ? "border-gold bg-gold text-black"
                 : "border-gold/30 text-text/80 hover:border-gold/60"
@@ -628,13 +629,13 @@ function StepInventory({
           return (
             <div
               key={p.slug}
-              className={`rounded-card border bg-navy/30 p-5 transition-colors ${
+              className={`rounded-card border bg-navy/30 p-5 transition-transform ${
                 selected ? "border-gold" : "border-gold/20"
               }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h3 className="font-display font-semibold">{p.name}</h3>
+                  <h3 className="font-display font-semibold">{displayName(p.name)}</h3>
                   <p className="mt-1 font-mono text-sm text-gold">
                     {p.contactOnly
                       ? t("priceAgree")
@@ -645,7 +646,7 @@ function StepInventory({
                   type="button"
                   onClick={() => toggle(p)}
                   aria-pressed={selected}
-                  className={`inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition-colors ${
+                  className={`inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition-transform ${
                     selected
                       ? "bg-gold text-black"
                       : "border border-gold/40 text-gold hover:bg-gold/10"
@@ -669,7 +670,7 @@ function StepInventory({
                             key={tr.duration + ti}
                             type="button"
                             onClick={() => patch(p.slug, { tierIndex: ti })}
-                            className={`rounded-control border px-3 py-1 text-xs transition-colors ${
+                            className={`rounded-control border px-3 py-1 text-xs transition-transform ${
                               item.tierIndex === ti
                                 ? "border-gold bg-gold/15 text-gold"
                                 : "border-gold/25 text-text/70 hover:border-gold/50"
@@ -829,7 +830,7 @@ function StepEvent({
     "w-full rounded-control border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold";
   return (
     <div>
-      <h2 className="font-display text-block font-bold">{t("evTitle")}</h2>
+      <h2 className="font-display text-block font-semibold">{t("evTitle")}</h2>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="text-sm text-text/70">{t("evDate")}</span>
@@ -976,7 +977,7 @@ function StepEvent({
                 <button
                   type="button"
                   onClick={onAcceptConfirm}
-                  className="inline-flex min-h-11 items-center rounded-full bg-gold px-5 text-sm font-semibold text-on-gold transition-transform hover:scale-[1.03]"
+                  className="inline-flex min-h-11 items-center rounded-full bg-gold px-5 text-sm font-semibold text-on-gold transition-colors hover:bg-gold/90"
                 >
                   {t("confirmYes")}
                 </button>
@@ -1021,7 +1022,7 @@ function StepContact({
     "w-full rounded-control border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold";
   return (
     <div>
-      <h2 className="font-display text-block font-bold">{t("cTitle")}</h2>
+      <h2 className="font-display text-block font-semibold">{t("cTitle")}</h2>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <label className="block sm:col-span-2">
           <span className="text-sm text-text/70">{t("cName")}</span>
@@ -1101,7 +1102,7 @@ function StepReview({
   const t = useTranslations("booking");
   return (
     <div>
-      <h2 className="font-display text-block font-bold">{t("rTitle")}</h2>
+      <h2 className="font-display text-block font-semibold">{t("rTitle")}</h2>
 
       <label className="mt-6 block">
         <span className="text-sm text-text/70">{t("rDescLabel")}</span>
@@ -1159,17 +1160,17 @@ function SuccessScreen({ name }: { name: string }) {
   }, []);
   return (
     <div role="status" className="mx-auto max-w-xl rounded-panel border border-gold/30 bg-navy/30 p-10 text-center">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold text-3xl text-on-gold">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold text-3xl text-on-gold hover:bg-gold/90">
         ✓
       </div>
-      <h2 ref={headRef} tabIndex={-1} className="mt-6 font-display text-block font-bold outline-none">
+      <h2 ref={headRef} tabIndex={-1} className="mt-6 font-display text-block font-semibold outline-none">
         {t("sThanks", { name: name ? `, ${name}` : "" })}
       </h2>
       <p className="mt-3 text-text/80">{t("sReceived")}</p>
       <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
         <a
           href="tel:+37129222761"
-          className="inline-flex min-h-12 items-center justify-center rounded-full bg-gold px-7 font-semibold text-on-gold"
+          className="inline-flex min-h-12 items-center justify-center rounded-full bg-gold px-7 font-semibold text-on-gold hover:bg-gold/90"
         >
           {t("sCall")}
         </a>
