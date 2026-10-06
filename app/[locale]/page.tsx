@@ -1,20 +1,18 @@
 import Hero from "@/components/home/hero";
 import TrustBar from "@/components/home/trust-bar";
-import Steps from "@/components/home/steps";
 import About from "@/components/home/about";
 import ForBusiness from "@/components/home/for-business";
 import ForMunicipal from "@/components/home/for-municipal";
 import Testimonials from "@/components/home/testimonials";
-import CategoryCard from "@/components/category-card";
+import FeaturedProducts from "@/components/home/featured-products";
+import HomeFaq from "@/components/home/home-faq";
+import { getAllProducts } from "@/lib/catalog";
 import AiPartyBanner from "@/components/ai-party-banner";
 import CtaSection from "@/components/cta-section";
-import Reveal from "@/components/reveal";
-import DepthBg from "@/components/depth-bg";
-import { homeCategories } from "@/lib/categories";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getContentMap, getSiteImage } from "@/lib/site-content";
-import { getClients, getFeaturedGallery } from "@/lib/site-data";
+import { getClients, getFaqs, getFeaturedGallery } from "@/lib/site-data";
 import EventGallery from "@/components/event-gallery";
 import { getHeroMedia } from "@/lib/hero-media";
 import { homeMetadata } from "@/lib/seo";
@@ -42,27 +40,24 @@ export default async function Home({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [c, clients, t, heroMedia, aboutImage, featuredGallery] =
+  const [c, clients, heroMedia, aboutImage, featuredGallery, products, faqs] =
     await Promise.all([
       getContentMap(),
       getClients(),
-      getTranslations("home"),
       getHeroMedia("home"),
       getSiteImage("about.photo"),
       getFeaturedGallery(),
+      getAllProducts(),
+      getFaqs(),
     ]);
   const g = (k: string, f: string) => (c[k]?.trim() ? c[k] : f);
-  // Fallback: ja admin nav iestatījis hero mediju → publiskais video + poster.
-  const hero =
-    heroMedia ??
-    { mp4: "/videos/herovideo1.mp4", poster: "/videos/herovideo1.jpg" };
 
   return (
     <>
       <JsonLd data={graph(localBusinessNode())} />
       {/* Hero medijs (video/attēls no site_content vai fallback) */}
       <Hero
-        media={hero}
+        media={heroMedia}
         title={g("home.hero.title", "Neaizmirstamas ballītes sākas šeit")}
         accent={g("home.hero.accent", "ballītes")}
         subtitle={g(
@@ -79,50 +74,31 @@ export default async function Home({
         clients={clients}
       />
 
-      {/* Mūsu piedāvājums / kategorijas - navy ar tekstūru + dziļuma fons.
-          Pārcelts augšup: produktu rāda pirms procesa skaidrojuma. */}
-      <section className="anabella-navy-texture relative overflow-hidden bg-navy/40 py-24 md:py-32">
-        <DepthBg />
-        <div className="relative z-10 mx-auto max-w-6xl px-6">
-          <Reveal>
-            <h2 className="text-center font-display text-section font-bold tracking-tight">
-              {t("offerTitle")}
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-center leading-relaxed text-text/70">
-              {t("offerSubtitle")}
-            </p>
-          </Reveal>
-          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {homeCategories.map((category, i) => (
-              <Reveal key={category.id} delay={i * 0.06}>
-                <CategoryCard category={category} index={i} />
-              </Reveal>
-            ))}
-          </div>
-          {/* AI Party banneris - pilnā platumā zem kategoriju režģa (cits produkts).
-              Saturs+slēdzis no DB (site_content); izslēgts → nerādās (bez atstarpes). */}
-          <AiPartyBanner />
-        </div>
-      </section>
+      {/* Galvenie produkti: foto kastes (cena + PVN, priekšrocības, ?item= CTA) */}
+      <FeaturedProducts products={products} />
 
-      {/* Pasākums uzņēmumam vai iestādei (§4.3) - pēc piedāvājuma */}
+      {/* AI Party banneris (DB vadīts; izslēgts → nerādās) */}
+      <div className="container-site">
+        <AiPartyBanner />
+      </div>
+
+      {/* Uzņēmumiem: sadarbības process + B2B priekšrocības */}
       <ForBusiness />
 
-      {/* Kā tas notiek - pēc produkta: atbild uz jautājumu, kas rodas tikai
-          pēc tam, kad apmeklētājs ir redzējis piedāvājumu. */}
-      <Steps />
+      {/* Pašvaldībām un valsts iestādēm - B2B bloka turpinājums */}
+      <ForMunicipal />
 
-      {/* Par mums - bg */}
-      <About image={aboutImage} />
-
-      {/* Atsauksmes - no tulkojumu failiem (LV/EN/RU) */}
-      <Testimonials />
-
-      {/* No mūsu pasākumiem - featured galerija (tukša → nerādās) */}
+      {/* Galerija - reāli pasākumi */}
       <EventGallery images={featuredGallery} mode="home" />
 
-      {/* Pašvaldībām un valsts iestādēm (§4.6) - pirms noslēdzošā CTA */}
-      <ForMunicipal />
+      {/* Atsauksmes */}
+      <Testimonials />
+
+      {/* Par mums (stāsts + komanda; AEO/GEO teksts saglabāts) */}
+      <About image={aboutImage} />
+
+      {/* Biežāk uzdotie jautājumi (bez JSON-LD; FAQPage paliek /faq) */}
+      <HomeFaq items={faqs} />
 
       {/* CTA - zelta gradients; secondary = B2B poga (80% klientu) */}
       <CtaSection secondary />

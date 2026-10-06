@@ -27,21 +27,21 @@ export default async function TrustBar({
   const hasLogos = clients.some((c) => c.logo);
 
   return (
-    <section className="border-t border-gold/10 bg-navy/20 py-16">
-      <div className="mx-auto max-w-5xl px-6">
+    <section className="border-b border-gold/15 py-14 sm:py-16">
+      <div className="container-site">
         <Reveal>
           {/* 1. Skaitļi - bez virsraksta virs tiem */}
-          <div className="grid gap-6 text-center sm:grid-cols-3">
+          <div className="grid grid-cols-3 gap-4 text-center">
             {stats.map((s) => (
               <div key={s.label || "gads"}>
                 <CountUp
                   to={s.to}
                   prefix={s.prefix}
                   suffix={s.suffix}
-                  className="font-mono text-3xl font-bold text-gold md:text-4xl"
+                  className="font-display text-2xl font-semibold text-gold sm:text-4xl"
                 />
                 {s.label && (
-                  <p className="mt-2 text-sm uppercase tracking-wide text-text/60">
+                  <p className="mt-2 text-xs uppercase tracking-[0.12em] text-text-muted sm:text-sm">
                     {s.label}
                   </p>
                 )}
@@ -50,10 +50,10 @@ export default async function TrustBar({
           </div>
 
           {/* 2. Virsraksts + apakšrindiņa */}
-          <h2 className="mt-12 text-center font-display text-block font-bold tracking-tight">
+          <h2 className="mt-12 text-center font-display text-block font-semibold tracking-tight">
             {tc("heading")}
           </h2>
-          <p className="mx-auto mt-2 max-w-xl text-center text-sm text-text/60">
+          <p className="mx-auto mt-2 max-w-xl text-center text-sm text-text-muted">
             {tc("subline")}
           </p>
         </Reveal>

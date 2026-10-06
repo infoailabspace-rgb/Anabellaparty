@@ -3,6 +3,8 @@ import { Link } from "@/i18n/navigation";
 import Reveal from "@/components/reveal";
 import CallButton from "@/components/call-button";
 
+// Noslēguma CTA (redizains): tumšs panelis ar zelta līniju - zelts tikai kā akcents
+// (viena zelta poga), nevis pilns zelta fons. Viens primārais CTA + sekundārie.
 export default async function CtaSection({
   title,
   text,
@@ -14,43 +16,38 @@ export default async function CtaSection({
   text?: string;
   buttonLabel?: string;
   href?: string;
-  // secondary=true → rāda arī B2B pogu "Aprakstiet savu pasākumu" (uz anketu).
+  // secondary=true → rāda arī B2B saiti "Aprakstiet savu pasākumu" (uz anketu).
   secondary?: boolean;
 }) {
   const t = await getTranslations("cta");
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#E8C079] via-gold to-[#C79A4E] py-24 md:py-32">
-      {/* Lēna zelta gaismas pulsācija */}
-      <div
-        className="absolute left-1/2 top-1/2 h-[120%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.35),transparent_60%)] anabella-glow-pulse"
-        aria-hidden
-      />
-      <Reveal className="relative z-10 mx-auto max-w-2xl px-6 text-center">
-        <h2 className="font-display text-4xl font-bold tracking-tight text-bg md:text-5xl">
-          {title ?? t("title")}
-        </h2>
-        <p className="mt-4 text-lg leading-relaxed text-bg/80">
-          {text ?? t("text")}
-        </p>
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link
-            href={href}
-            className="inline-flex min-h-14 items-center rounded-full bg-bg px-10 text-lg font-semibold text-gold shadow-depth transition-transform hover:scale-[1.03]"
-          >
-            {buttonLabel ?? t("button")}
-          </Link>
-          {secondary && (
+    <section className="section-y">
+      <div className="container-site">
+        <Reveal className="relative overflow-hidden rounded-panel border border-gold/30 bg-navy/40 px-6 py-14 text-center sm:px-12 sm:py-20">
+          <div aria-hidden className="mx-auto mb-8 h-px w-16 bg-gold" />
+          <h2 className="mx-auto max-w-2xl font-display text-section font-semibold tracking-tight text-text">
+            {title ?? t("title")}
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-lead text-text/80">{text ?? t("text")}</p>
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
             <Link
-              href="/kontakti/#pieprasijums"
-              className="inline-flex min-h-14 items-center rounded-full border-2 border-bg/70 px-10 text-lg font-semibold text-bg transition-colors hover:border-bg"
+              href={href}
+              className="inline-flex min-h-12 items-center rounded-full bg-gold px-9 font-semibold text-on-gold transition-colors hover:bg-gold/90"
             >
-              {t("b2bButton")} →
+              {buttonLabel ?? t("button")}
             </Link>
-          )}
-          {/* Trešā iespēja - zvanīt (uz zelta fona tumša outline). */}
-          <CallButton source="cta" variant="dark" size="lg" />
-        </div>
-      </Reveal>
+            {secondary && (
+              <Link
+                href="/kontakti/#pieprasijums"
+                className="inline-flex min-h-12 items-center rounded-full border border-gold/60 px-8 font-semibold text-gold transition-colors hover:border-gold hover:bg-gold/10"
+              >
+                {t("b2bButton")} →
+              </Link>
+            )}
+            <CallButton source="cta" variant="ghost" />
+          </div>
+        </Reveal>
+      </div>
     </section>
   );
 }

@@ -21,7 +21,7 @@ function Logo({ c, hidden = false }: { c: Client; hidden?: boolean }) {
       height={56}
       loading="lazy"
       decoding="async"
-      className="h-14 w-auto object-contain transition-transform duration-(--duration-base) hover:scale-105"
+      className="h-14 w-auto object-contain transition-colors duration-(--duration-base)"
     />
   );
   if (c.url) {
@@ -59,8 +59,9 @@ function MarqueeBody({
   // WCAG 2.2.2: kustīgam saturam > 5 s vajag pauzi. Bez klienta JS - fokusējams
   // checkbox (atstarpe pārslēdz) + CSS animation-play-state (globals.css).
   return (
-    <div className="anabella-marquee-wrap relative w-full">
-      <label className="absolute -top-12 right-4 z-10 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-gold/30 text-gold transition-colors hover:border-gold has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-gold sm:right-6">
+    <div className="anabella-marquee-wrap relative flex w-full flex-col">
+      {/* Pauzes slēdzis normālā plūsmā zem lentes (nepārklāj tekstu). */}
+      <label className="order-last ml-auto mr-4 mt-4 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-gold/30 text-gold transition-colors hover:border-gold has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-gold sm:mr-6">
         <input type="checkbox" className="anabella-marquee-toggle sr-only" aria-label={pauseLabel} />
         <svg viewBox="0 0 24 24" className="anabella-marquee-pause h-4 w-4" fill="currentColor" aria-hidden="true">
           <rect x="6" y="5" width="4" height="14" rx="1" />
@@ -114,7 +115,7 @@ export default async function ClientsMarquee({
   const t = await getTranslations("clients");
   return (
     <section className="border-t border-gold/10 bg-navy/20 py-16">
-      <h2 className="mb-10 text-center font-display text-block font-bold tracking-tight">
+      <h2 className="mb-10 text-center font-display text-block font-semibold tracking-tight">
         {t("heading")}
       </h2>
       <MarqueeBody logos={logos} pauseLabel={ta("pauseLogos")} />
