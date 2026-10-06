@@ -263,7 +263,7 @@ export default function Navbar() {
           })}
           <Link
             href="/rezervet"
-            className="ml-6 whitespace-nowrap rounded-full bg-gold px-5 py-2 text-[13px] font-semibold text-on-gold transition-transform hover:scale-[1.04] hover:shadow-glow xl:text-sm"
+            className="ml-6 whitespace-nowrap rounded-full bg-gold px-5 py-2 text-[13px] font-semibold text-on-gold transition-colors xl:text-sm hover:bg-gold/90"
           >
             {t("rezervet")}
           </Link>
@@ -395,7 +395,7 @@ export default function Navbar() {
             <Link
               href="/rezervet"
               onClick={close}
-              className="mt-3 rounded-full bg-gold px-5 py-2 text-center font-semibold text-on-gold"
+              className="mt-3 rounded-full bg-gold px-5 py-2 text-center font-semibold text-on-gold hover:bg-gold/90"
             >
               {t("rezervet")}
             </Link>
@@ -437,9 +437,9 @@ function NavSocials({ className = "flex" }: { className?: string }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp"
-        className="text-gold transition-transform hover:scale-[1.15]"
+        className="text-gold transition-colors"
       >
-        <WhatsAppIcon className="anabella-wa-bounce h-5 w-5" />
+        <WhatsAppIcon className="h-5 w-5" />
       </a>
     </div>
   );

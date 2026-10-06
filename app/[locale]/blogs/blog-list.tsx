@@ -24,7 +24,7 @@ function Card({ p }: { p: BlogListItem }) {
             alt={p.coverAlt}
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-cover transition-transform duration-(--duration-slow) group-hover:scale-105"
+            className="h-full w-full object-cover transition-colors duration-(--duration-slow)"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-gold/30">Anabella</div>

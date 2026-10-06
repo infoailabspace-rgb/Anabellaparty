@@ -13,7 +13,6 @@ import ScrollToTopOnNav from "@/components/scroll-to-top-on-nav";
 import BackToTop from "@/components/back-to-top";
 import StickyCall from "@/components/sticky-call";
 import SiteFrame from "@/components/site-frame";
-import SiteTexture from "@/components/site-texture";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -47,12 +46,14 @@ export default async function LocaleLayout({
           }}
         />
       )}
+      {/* Publiskās lapas virsrakstu fonts (admin paliek Space Grotesk). Kirilicas
+          saime pirmā: unicode-range → latīņu zīmes iet uz Playfair latin. */}
+      <style>{":root{--font-heading:var(--font-playfair-cyrillic),var(--font-playfair),Georgia,serif}"}</style>
       {/* WCAG 2.4.1: pirmais fokusējamais elements - pāreja uz galveno saturu */}
       <a href="#saturs" className="skip-link">
         {ta("skipToContent")}
       </a>
       <GtagScripts />
-      <SiteTexture />
       <ScrollToTopOnNav />
       <SiteFrame navbar={<Navbar />} footer={<Footer />}>
         {children}

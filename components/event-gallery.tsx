@@ -54,7 +54,7 @@ function GalleryFigure({
           sizes={CARD_SIZES}
           loading="lazy"
           quality={75}
-          className="cursor-zoom-in object-cover transition-transform duration-(--duration-base) hover:scale-[1.03]"
+          className="cursor-zoom-in object-cover transition-colors duration-(--duration-base)"
         />
       </button>
       {img.caption && (
@@ -109,8 +109,8 @@ export default function EventGallery({
 
   return (
     <section className="bg-bg py-20">
-      <div className="mx-auto max-w-6xl px-6">
-        <h2 className="text-center font-display text-section font-bold tracking-tight">
+      <div className="container-site">
+        <h2 className="text-center font-display text-section font-semibold tracking-tight">
           {t("heading")}
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-center leading-relaxed text-text/70">

@@ -52,7 +52,7 @@ export default async function KublsballaPage({
       />
       <SectionHero title={t("kubliTitle")} tagline={t("kubliTagline")} heroKey="kubli" />
 
-      <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="container-site py-16">
         {/* Svarīgā atzīme */}
         <Reveal>
           <div className="mb-12 rounded-card border-2 border-gold bg-gold/10 p-6">

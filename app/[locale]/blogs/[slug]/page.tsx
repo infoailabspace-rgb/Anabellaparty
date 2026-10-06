@@ -101,7 +101,7 @@ export default async function ArticlePage({
             {CATEGORY_LABEL[post.category] ?? post.category}
           </Link>
         )}
-        <h1 className="mt-3 font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl">
+        <h1 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
           {post.title}
         </h1>
         <p className="mt-4 text-sm text-text-muted">
@@ -127,7 +127,7 @@ export default async function ArticlePage({
         {/* Saistītie produkti */}
         {related.length > 0 && (
           <div className="mt-14 rounded-card border border-gold/25 bg-navy/25 p-6">
-            <h2 className="font-display text-xl font-bold">Izmantotais inventārs</h2>
+            <h2 className="font-display text-xl font-semibold">Izmantotais inventārs</h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               {related.map((p) => {
                 const priced = p.tiers.filter((t) => t.price > 0).map((t) => t.price);
@@ -145,7 +145,7 @@ export default async function ArticlePage({
                     </div>
                     <Link
                       href={`/rezervet?item=${p.slug}`}
-                      className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-gold px-5 text-sm font-semibold text-on-gold transition-transform hover:scale-[1.03]"
+                      className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-gold px-5 text-sm font-semibold text-on-gold transition-colors hover:bg-gold/90"
                     >
                       Rezervēt
                     </Link>
@@ -164,7 +164,7 @@ export default async function ArticlePage({
         {/* Saistītie raksti */}
         {relatedPosts.length > 0 && (
           <div className="mt-14">
-            <h2 className="font-display text-xl font-bold">Lasi arī</h2>
+            <h2 className="font-display text-xl font-semibold">Lasi arī</h2>
             <div className="mt-5 grid gap-5 sm:grid-cols-3">
               {relatedPosts.map((rp) => (
                 <Link
@@ -175,7 +175,7 @@ export default async function ArticlePage({
                   {rp.cover && (
                     <div className="aspect-[16/10] overflow-hidden bg-navy">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={sbImage(rp.cover, 640)} width={640} height={400} alt={rp.coverAlt} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-(--duration-slow) group-hover:scale-105" />
+                      <img src={sbImage(rp.cover, 640)} width={640} height={400} alt={rp.coverAlt} loading="lazy" decoding="async" className="h-full w-full object-cover transition-colors duration-(--duration-slow)" />
                     </div>
                   )}
                   <div className="p-4">

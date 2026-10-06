@@ -38,7 +38,7 @@ export default async function AiPartySection() {
   const points = [t("point1"), t("point2"), t("point3"), t("point4")];
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
+    <section className="container-site py-16">
       <Reveal>
         <div className="overflow-hidden rounded-card border-2 border-gold/25 bg-navy/25">
           <div className={image ? "grid md:grid-cols-2" : ""}>
@@ -60,7 +60,7 @@ export default async function AiPartySection() {
 
             {/* Teksts */}
             <div className="p-6 sm:p-8">
-              <h2 className="font-display text-block font-bold text-text">
+              <h2 className="font-display text-block font-semibold text-text">
                 {t("sectionTitle")}
               </h2>
               <p className="mt-2 font-display text-lg font-semibold text-gold">
@@ -88,7 +88,7 @@ export default async function AiPartySection() {
                   href={AI_PARTY_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-shadow hover:shadow-glow"
+                  className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-shadow hover:bg-gold/90"
                 >
                   {cta} →
                 </a>

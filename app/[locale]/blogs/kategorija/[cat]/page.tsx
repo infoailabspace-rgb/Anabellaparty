@@ -64,7 +64,7 @@ export default async function CategoryArchivePage({
         tagline={`Raksti kategorijā “${label}”.`}
         heroKey="blog"
       />
-      <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="container-site py-16">
         <BlogList posts={posts} />
       </div>
     </>

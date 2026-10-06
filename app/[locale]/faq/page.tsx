@@ -41,7 +41,7 @@ export default async function FaqPage({
         )}
       />
       <SectionHero title={t("faqTitle")} tagline={t("faqTagline")} heroKey="faq" />
-      <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="container-site py-16">
         <FaqAccordion items={items} />
       </div>
       <CtaSection

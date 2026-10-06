@@ -34,7 +34,7 @@ export default async function About({ image }: { image?: string | null }) {
       <p className="font-mono text-sm uppercase tracking-[0.2em] text-gold">
         {t("eyebrow")}
       </p>
-      <h2 className="mt-3 font-display text-section font-bold tracking-tight">
+      <h2 className="mt-3 font-display text-section font-semibold tracking-tight">
         {t("heading")}
       </h2>
       <div className="mt-6 space-y-4 leading-relaxed text-text/80">
@@ -61,8 +61,8 @@ export default async function About({ image }: { image?: string | null }) {
   );
 
   return (
-    <section className="py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-6">
+    <section className="section-y">
+      <div className="container-site">
         {photo ? (
           <div className="grid items-center gap-12 lg:grid-cols-2">
             {/* Pasākuma kadrs */}
@@ -107,7 +107,7 @@ export default async function About({ image }: { image?: string | null }) {
                         className="object-cover"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center rounded-full border border-gold/40 bg-gold/10 font-display text-xl font-bold text-gold">
+                      <div className="flex h-full w-full items-center justify-center rounded-full border border-gold/40 bg-gold/10 font-display text-xl font-semibold text-gold">
                         {m.initials}
                       </div>
                     )}

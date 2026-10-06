@@ -28,7 +28,7 @@ export default async function NotFound() {
           className="mx-auto h-24 w-auto"
         />
         <p className="mt-6 font-mono text-6xl font-bold text-gold">404</p>
-        <h1 className="mt-4 font-display text-3xl font-bold tracking-tight">
+        <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight">
           {ts("nfTitle")}
         </h1>
         <p className="mt-3 text-text/75">{ts("nfText")}</p>
@@ -45,7 +45,7 @@ export default async function NotFound() {
         </div>
         <Link
           href="/rezervet"
-          className="mt-8 inline-block rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-shadow hover:shadow-glow"
+          className="mt-8 inline-block rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-shadow hover:bg-gold/90"
         >
           {tc("rezervet")}
         </Link>

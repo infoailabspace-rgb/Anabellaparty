@@ -55,7 +55,7 @@ export default async function PiepusamasAtrakcijasPage({
         video="/videos/herovideo2.mp4"
       />
 
-      <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="container-site py-16">
         <div className="space-y-12">
           {items.map((product, i) => (
             <ProductDetail key={product.slug} product={product} index={i} />
@@ -72,7 +72,7 @@ export default async function PiepusamasAtrakcijasPage({
         {/* Bumbu tīrīšanas ierīce - info */}
         <Reveal>
           <div className="mt-6 rounded-panel border-2 border-gold/25 bg-navy/25 p-6 sm:p-10">
-            <h2 className="font-display text-block font-bold">
+            <h2 className="font-display text-block font-semibold">
               {ts("atrCleanTitle")}
             </h2>
             <p className="mt-4 max-w-2xl text-text/80">{ts("atrCleanText")}</p>

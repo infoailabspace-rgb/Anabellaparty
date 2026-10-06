@@ -146,17 +146,17 @@ export default function B2bEnquiryForm() {
   if (done) {
     return (
       <div role="status" className="rounded-card border border-gold/30 bg-navy/30 p-8 text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold text-2xl text-on-gold">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold text-2xl text-on-gold hover:bg-gold/90">
           ✓
         </div>
-        <h3 className="mt-5 font-display text-card font-bold">{t("thanksTitle")}</h3>
+        <h3 className="mt-5 font-display text-card font-semibold">{t("thanksTitle")}</h3>
         <p className="mt-2 text-text/80">{t("thanksText")}</p>
       </div>
     );
   }
 
   const tabBtn = (active: boolean) =>
-    `rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
+    `rounded-full px-5 py-2 text-sm font-semibold transition-transform ${
       active ? "bg-gold text-black" : "text-text/70 hover:text-gold"
     }`;
 
@@ -273,7 +273,7 @@ export default function B2bEnquiryForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="inline-flex items-center gap-2 rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-transform enabled:hover:scale-[1.03] disabled:opacity-60"
+        className="inline-flex items-center gap-2 rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-colors disabled:opacity-60 hover:bg-gold/90"
       >
         {isSubmitting && <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />}
         {isSubmitting ? t("sending") : t("submit")}

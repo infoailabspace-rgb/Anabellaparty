@@ -81,7 +81,7 @@ export default async function AiFotoPage({
       />
       <SectionHero title={t("aiFotoTitle")} tagline={t("aiFotoTagline")} heroKey="ai-foto" posClass="object-[center_40%]" />
 
-      <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="container-site py-16">
         <Reveal>
           <p className="text-text/85">{intro}</p>
 
@@ -104,7 +104,7 @@ export default async function AiFotoPage({
           <div className="mt-6 flex flex-col gap-4 sm:flex-row">
             <a
               href="tel:+37129222761"
-              className="rounded-full bg-gold px-8 py-3 text-center font-semibold text-on-gold transition-shadow hover:shadow-glow"
+              className="rounded-full bg-gold px-8 py-3 text-center font-semibold text-on-gold transition-shadow hover:bg-gold/90"
             >
               {ts("afCall")}
             </a>

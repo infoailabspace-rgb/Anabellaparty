@@ -52,7 +52,7 @@ export default async function DecoMebelesPage({
       />
       <SectionHero title={t("decoTitle")} tagline={t("decoTagline")} heroKey="deco" />
 
-      <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="container-site py-16">
         <div className="space-y-12">
           {items.map((product, i) => (
             <ProductDetail key={product.slug} product={product} index={i} />

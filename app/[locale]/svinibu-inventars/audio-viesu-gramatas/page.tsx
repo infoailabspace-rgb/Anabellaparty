@@ -66,7 +66,7 @@ export default async function AudioViesuGramatasPage({
         heroKey="audio-video"
       />
 
-      <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="container-site py-16">
         <Reveal>
           <p className="mb-10 rounded-card border border-gold/25 bg-navy/25 p-5 text-center text-sm text-text/75">
             {ts("avRetention")}
@@ -82,7 +82,7 @@ export default async function AudioViesuGramatasPage({
         {/* Papildinājumi */}
         <Reveal>
           <div className="mt-12 rounded-panel border-2 border-gold/25 bg-navy/25 p-6 sm:p-10">
-            <h2 className="font-display text-block font-bold">
+            <h2 className="font-display text-block font-semibold">
               {ts("avAddOnsTitle")}
             </h2>
             <ul className="mt-5 space-y-3">
@@ -104,7 +104,7 @@ export default async function AudioViesuGramatasPage({
         {/* Video pamācība */}
         <Reveal>
           <div className="mt-6 overflow-hidden rounded-panel border-2 border-gold/25 bg-navy/25 p-6 sm:p-10">
-            <h2 className="font-display text-block font-bold">
+            <h2 className="font-display text-block font-semibold">
               {ts("avTutorial")}
             </h2>
             <div className="mt-5 aspect-video w-full overflow-hidden rounded-tile">

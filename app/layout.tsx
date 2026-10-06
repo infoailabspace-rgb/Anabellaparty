@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Inter } from "next/font/google";
+import { Space_Grotesk, Inter, Playfair_Display } from "next/font/google";
 import { SITE_URL } from "@/lib/seo";
 import { getSiteImage } from "@/lib/site-content";
 import "./globals.css";
@@ -9,10 +9,29 @@ import "./globals.css";
 // (500/700 virsrakstiem, 400/600 tekstam). Skaidri norādīti svari ģenerētu atsevišķus
 // statiskos failus katram svaram → vairāk woff2. JetBrains Mono ielādējas TIKAI admin
 // izkārtojumā (skat. app/admin/(panel)/layout.tsx). Kopā publiskajā lapā = 4 woff2.
+// Space Grotesk paliek TIKAI admin panelim (noklusējuma --font-heading). Publiskā
+// lapa to nelieto → preload:false (fails ielādējas tikai adminā).
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "latin-ext"],
   variable: "--font-space-grotesk",
   display: "swap",
+  preload: false,
+});
+
+// Publiskās lapas display fonts (redizains): Playfair Display - elegants, svinīgs
+// serifs virsrakstiem. Mainīgais fonts → viens woff2 visiem svariem. Kirilica -
+// atsevišķa saime bez preload (tikai RU lapām), tāpat kā Inter.
+const playfair = Playfair_Display({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+const playfairCyrillic = Playfair_Display({
+  subsets: ["cyrillic"],
+  variable: "--font-playfair-cyrillic",
+  display: "swap",
+  preload: false,
+  adjustFontFallback: false,
 });
 
 const inter = Inter({
@@ -66,7 +85,7 @@ export default function RootLayout({
     <html
       lang="lv"
       suppressHydrationWarning
-      className={`${spaceGrotesk.variable} ${inter.variable} ${interCyrillic.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${playfair.variable} ${playfairCyrillic.variable} ${inter.variable} ${interCyrillic.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: REVEAL_SCRIPT }} />

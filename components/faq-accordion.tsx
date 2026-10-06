@@ -89,7 +89,7 @@ function FilterButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex min-h-11 items-center rounded-full border-2 px-4 text-sm font-semibold transition-colors ${
+      className={`inline-flex min-h-11 items-center rounded-full border-2 px-4 text-sm font-semibold transition-transform ${
         active
           ? "border-gold bg-gold text-black"
           : "border-gold/30 text-text/80 hover:border-gold/60"

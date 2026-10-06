@@ -54,7 +54,7 @@ export default async function KontaktiPage({
       />
       <SectionHero title={t("kontaktiTitle")} tagline={t("kontaktiTagline")} heroKey="kontakti" />
 
-      <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="container-site py-16">
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Kontaktinfo (rekvizīti tikai kājenē, ne šeit) */}
           <Reveal className="space-y-8">
@@ -118,7 +118,7 @@ export default async function KontaktiPage({
               id="pieprasijums"
               className="scroll-mt-28 rounded-card border-2 border-gold/25 bg-navy/25 p-6 sm:p-8"
             >
-              <h2 className="font-display text-block font-bold">{tb("formTitle")}</h2>
+              <h2 className="font-display text-block font-semibold">{tb("formTitle")}</h2>
               <p className="mt-2 text-sm text-text/60">{tb("formSubline")}</p>
               <div className="mt-6">
                 <Suspense fallback={null}>

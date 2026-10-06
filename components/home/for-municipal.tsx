@@ -15,11 +15,11 @@ export default async function ForMunicipal() {
   return (
     <section
       id="pasvaldibam"
-      className="scroll-mt-28 border-y border-gold/10 bg-navy/40 py-24 md:py-28"
+      className="scroll-mt-28 border-y border-gold/10 bg-navy/40 section-y"
     >
-      <div className="mx-auto max-w-6xl px-6">
+      <div className="container-site">
         <Reveal>
-          <h2 className="font-display text-section font-bold tracking-tight">
+          <h2 className="font-display text-section font-semibold tracking-tight">
             {t("title")}
           </h2>
           <p className="mt-4 max-w-2xl leading-relaxed text-text/75">
@@ -46,7 +46,7 @@ export default async function ForMunicipal() {
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
               href="/kontakti/?source=pasvaldibam#pieprasijums"
-              className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-transform hover:scale-[1.03]"
+              className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-colors hover:bg-gold/90"
             >
               {t("cta")} →
             </Link>

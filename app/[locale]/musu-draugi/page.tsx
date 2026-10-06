@@ -47,7 +47,7 @@ export default async function MusuDraugiPage({
         tagline={t("musuDraugiTagline")}
         heroKey="musu-draugi"
       />
-      <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="container-site py-16">
         {partners.length === 0 ? (
           <Reveal>
             <div className="mx-auto max-w-2xl rounded-panel border-2 border-gold/25 bg-navy/25 p-8 text-center sm:p-10">
