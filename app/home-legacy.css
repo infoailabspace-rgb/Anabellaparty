@@ -135,3 +135,27 @@
   }
 }
 
+
+/*
+ * Sīkdatņu josla mobilajā (pilnā platumā apakšā, ~88px) nedrīkst aizsegt hero
+ * zvana pogu (piem. 360x640). Kamēr josla redzama (body[data-cookie-open]),
+ * hero aizņem tikai redzamo laukumu starp navbar (80px + 1px apmale) un joslu,
+ * saturs tajā centrēts ar nedaudz mazākām atstarpēm; dekoratīvais scroll
+ * indikators (tāpat zem joslas) paslēpts. Bez joslas izskats nemainīts.
+ */
+@media (max-width: 639.98px) {
+  body[data-cookie-open] .anabella-home-hero {
+    min-height: calc(100svh - 81px - 88px);
+    padding-block: 0.75rem;
+  }
+  body[data-cookie-open] .anabella-home-hairline,
+  body[data-cookie-open] .anabella-home-sub {
+    margin-top: 1rem;
+  }
+  body[data-cookie-open] .anabella-home-cta {
+    margin-top: 1.5rem;
+  }
+  body[data-cookie-open] .anabella-home-scroll {
+    display: none;
+  }
+}

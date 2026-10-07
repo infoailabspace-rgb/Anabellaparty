@@ -23,7 +23,7 @@ export default function Hero({
   const GOLD_WORD = accent;
 
   return (
-    <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden">
+    <section className="anabella-home-hero relative flex min-h-[92vh] items-center justify-center overflow-hidden">
       {/* Fons — hero medijs (video/attēls), citādi premium gradients + zelta glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-navy via-bg to-black" />
       {media && (media.mp4 || media.image) ? (
@@ -62,17 +62,17 @@ export default function Hero({
         </h1>
 
         {/* Zelta hairline, kas ievelkas */}
-        <div className="mx-auto mt-6 h-px w-20 bg-gold anabella-hairline" />
+        <div className="anabella-home-hairline mx-auto mt-6 h-px w-20 bg-gold anabella-hairline" />
 
         <p
-          className="anabella-fade-up mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text/80"
+          className="anabella-home-sub anabella-fade-up mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text/80"
           style={{ animationDelay: "0.4s" }}
         >
           {subtitle}
         </p>
 
         <div
-          className="anabella-fade-up mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+          className="anabella-home-cta anabella-fade-up mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
           style={{ animationDelay: "0.55s" }}
         >
           <Link
@@ -95,7 +95,7 @@ export default function Hero({
 
       {/* Scroll indikators */}
       <div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 anabella-scroll-hint"
+        className="anabella-home-scroll absolute bottom-8 left-1/2 -translate-x-1/2 anabella-scroll-hint"
         aria-hidden
       >
         <svg
