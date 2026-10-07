@@ -31,7 +31,7 @@ export default function CountUp({
   // SSR, no-JS, crawler, prefers-reduced-motion, useInView-nenostrāde, rAF-trūkums
   // vai jebkura animācijas neizdošanās → rāda REĀLO skaitli, nekad 0.
   const [value, setValue] = useState(to);
-  // Vienreizes karodziņš kā ref (NE state) — mainot to, efekts NEPĀRSTARTĒJAS,
+  // Vienreizes karodziņš kā ref (NE state) - mainot to, efekts NEPĀRSTARTĒJAS,
   // tāpēc cleanup neatceļ tikko ieplānoto rAF. (Agrāk `animated` bija state UN
   // efekta atkarībās → efekts restartējās, cleanup atcēla animāciju uzreiz pēc
   // setValue(0), un skaitītājs iesala uz 0. Regresija no 7e9be0f.)
@@ -41,7 +41,7 @@ export default function CountUp({
     if (startedRef.current || !inView) return;
     startedRef.current = true;
 
-    // Reduced motion — animācija nav vēlama; vērtība jau ir `to`.
+    // Reduced motion - animācija nav vēlama; vērtība jau ir `to`.
     if (reduce) {
       setValue(to);
       return;

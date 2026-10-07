@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { computeQuote, computeTotals, formatEur, type CartItem } from "@/lib/pricing";
 import type { Product } from "@/lib/products";
+import { displayName } from "@/lib/product-display";
 
 export default function PricePanel({
   items,
@@ -28,27 +29,27 @@ export default function PricePanel({
   const totals = computeTotals(quote.subtotal, delivery);
 
   return (
-    <div className="rounded-2xl border border-gold/25 bg-navy/40 p-6">
+    <div className="rounded-card border border-gold/25 bg-navy/40 p-6">
       <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-gold">
         {t("selected")}
       </h3>
 
       {quote.lines.length === 0 ? (
-        <p className="mt-4 text-sm text-text/50">{t("empty")}</p>
+        <p className="mt-4 text-sm text-text-muted">{t("empty")}</p>
       ) : (
         <ul className="mt-4 space-y-2 text-sm">
           {quote.lines.map((l) => (
             <li key={l.slug}>
               <div className="flex justify-between gap-3">
                 <span className="text-text/85">
-                  {l.name} <span className="text-text/40">({l.tierLabel})</span>
+                  {displayName(l.name)} <span className="text-text-muted">({l.tierLabel})</span>
                 </span>
                 <span className="font-mono text-gold">
                   {l.contactOnly ? t("agree") : `${l.lineTotal} €`}
                 </span>
               </div>
               {l.extraHours > 0 && (
-                <div className="flex justify-between gap-3 pl-3 text-xs text-text/50">
+                <div className="flex justify-between gap-3 pl-3 text-xs text-text-muted">
                   <span>{t("extraHoursLine", { n: l.extraHours })}</span>
                   <span className="font-mono">{l.extraHoursTotal} €</span>
                 </div>
@@ -56,7 +57,7 @@ export default function PricePanel({
               {l.addOns.map((a) => (
                 <div
                   key={a.name}
-                  className="flex justify-between gap-3 pl-3 text-xs text-text/50"
+                  className="flex justify-between gap-3 pl-3 text-xs text-text-muted"
                 >
                   <span>
                     + {a.name} × {a.qty}
@@ -120,7 +121,7 @@ export default function PricePanel({
         </div>
       </div>
 
-      <p className="mt-4 rounded-lg border border-gold/25 bg-navy/40 p-3 text-sm leading-relaxed text-text/80">
+      <p className="mt-4 rounded-control border border-gold/25 bg-navy/40 p-3 text-sm leading-relaxed text-text/80">
         {t("note")}
       </p>
     </div>

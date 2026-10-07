@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   applyConsent,
   initConsentDefaults,
@@ -9,7 +10,12 @@ import {
   saveConsent,
 } from "@/lib/consent";
 
+// Sīkdatņu paziņojums: kompakta josla ekrāna apakšā (mobilajā ~120 px), lai
+// neaizsedz hero CTA. Kamēr redzams, <body data-cookie-open> paslēpj peldošās
+// pogas (zvans/čats/uz augšu), lai tās nepārklājas ar joslu.
 export default function CookieConsent() {
+  const t = useTranslations("cookies");
+  const ta = useTranslations("a11y");
   const [ready, setReady] = useState(false);
   const [visible, setVisible] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -18,13 +24,18 @@ export default function CookieConsent() {
 
   useEffect(() => {
     initConsentDefaults();
-    // localStorage atslēga (anabella-cookie-consent) ir kopīga visām valodām —
+    // localStorage atslēga (anabella-cookie-consent) ir kopīga visām valodām -
     // piekrišana /en/ vai /ru/ derīga arī saknē. Nerenderē, kamēr nezinām.
     const existing = readConsent();
     if (existing) applyConsent(existing);
     setVisible(!existing);
     setReady(true);
   }, []);
+
+  useEffect(() => {
+    document.body.toggleAttribute("data-cookie-open", ready && visible);
+    return () => document.body.removeAttribute("data-cookie-open");
+  }, [ready, visible]);
 
   function commit(a: boolean, m: boolean) {
     const consent = saveConsent(a, m);
@@ -35,72 +46,66 @@ export default function CookieConsent() {
 
   if (!ready || !visible) return null;
 
+  // Abām izvēlēm IDENTISKS vizuālais svars (stils + izmērs) - pieņemšana netiek
+  // izcelta (godīga izvēle, bez "dark pattern").
+  const btn =
+    "inline-flex min-h-11 items-center justify-center rounded-full border-2 border-gold/60 px-3 text-xs font-semibold text-text sm:px-5 sm:text-sm transition-colors duration-(--duration-fast) hover:border-gold hover:bg-gold/10";
+
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[75] p-4">
-      <div className="mx-auto max-w-3xl rounded-2xl border-2 border-gold/40 bg-navy/95 p-6 shadow-2xl backdrop-blur">
-        <h2 className="font-display text-lg font-semibold text-gold">
-          Mēs izmantojam sīkdatnes
-        </h2>
-        <p className="mt-2 text-sm text-text/80">
-          Nepieciešamās sīkdatnes nodrošina lapas darbību. Ar Tavu piekrišanu
-          izmantojam arī analītiskās un mārketinga sīkdatnes. Vairāk —{" "}
-          <Link href="/sikdatnu-politika" className="text-gold underline">
-            sīkdatņu politikā
-          </Link>
-          .
-        </p>
+    <section
+      aria-label={ta("cookieRegion")}
+      className="fixed inset-x-0 bottom-0 z-[75] border-t-2 border-gold/40 bg-navy/95 shadow-depth backdrop-blur sm:inset-x-4 sm:bottom-4 sm:rounded-card sm:border-2"
+    >
+      {/* Mobilajā ~84 px (1 teksta rinda + pogu rinda), lai neaizsedz hero CTA. */}
+      <div className="mx-auto max-w-5xl px-4 py-2 sm:flex sm:items-center sm:gap-6 sm:px-6 sm:py-4">
+        <div className="min-w-0 flex-1">
+          <h2 className="sr-only sm:not-sr-only sm:font-display sm:text-base sm:font-semibold sm:text-gold">
+            {t("title")}
+          </h2>
+          <p className="text-xs leading-snug text-text/85 sm:mt-1 sm:text-sm">
+            <span className="sm:hidden">{t("textShort")}</span>
+            <span className="hidden sm:inline">{t("text")}</span>{" "}
+            <Link href="/sikdatnu-politika" className="text-gold underline underline-offset-2">
+              {t("policy")}
+            </Link>
+            {" · "}
+            <button
+              type="button"
+              aria-expanded={settingsOpen}
+              onClick={() => setSettingsOpen((v) => !v)}
+              className="text-gold underline underline-offset-2"
+            >
+              {t("settings")}
+            </button>
+          </p>
 
-        {settingsOpen && (
-          <div className="mt-4 space-y-3 border-t border-gold/15 pt-4">
-            <Toggle checked disabled label="Nepieciešamās (vienmēr aktīvas)" onChange={() => {}} />
-            <Toggle
-              checked={analytics}
-              label="Analītiskās (Google Tag Manager, GA4, Microsoft Clarity)"
-              onChange={setAnalytics}
-            />
-            <Toggle
-              checked={marketing}
-              label="Mārketinga (Facebook Pixel)"
-              onChange={setMarketing}
-            />
-          </div>
-        )}
+          {settingsOpen && (
+            <div className="mt-3 space-y-1 border-t border-gold/15 pt-2">
+              <Toggle checked disabled label={t("necessary")} onChange={() => {}} />
+              <Toggle checked={analytics} label={t("analytics")} onChange={setAnalytics} />
+              <Toggle checked={marketing} label={t("marketing")} onChange={setMarketing} />
+            </div>
+          )}
+        </div>
 
-        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <div className="mt-2 grid grid-cols-2 gap-2 sm:mt-0 sm:flex sm:shrink-0">
+          <button
+            type="button"
+            onClick={() => (settingsOpen ? commit(analytics, marketing) : commit(false, false))}
+            className={btn}
+          >
+            {settingsOpen ? t("save") : t("necessaryOnly")}
+          </button>
           <button
             type="button"
             onClick={() => commit(true, true)}
-            className="rounded-full bg-gold px-6 py-2.5 text-sm font-semibold text-black transition-shadow hover:shadow-[0_0_20px_rgba(212,169,96,0.5)]"
+            className={btn}
           >
-            Pieņemt visas
+            {t("acceptAll")}
           </button>
-          <button
-            type="button"
-            onClick={() => commit(false, false)}
-            className="rounded-full border-2 border-gold/50 px-6 py-2.5 text-sm font-semibold text-text transition-colors hover:border-gold"
-          >
-            Tikai nepieciešamās
-          </button>
-          {settingsOpen ? (
-            <button
-              type="button"
-              onClick={() => commit(analytics, marketing)}
-              className="rounded-full border-2 border-gold px-6 py-2.5 text-sm font-semibold text-gold transition-colors hover:bg-gold/10"
-            >
-              Saglabāt izvēli
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setSettingsOpen(true)}
-              className="rounded-full border-2 border-gold/30 px-6 py-2.5 text-sm font-semibold text-text/80 transition-colors hover:border-gold/60"
-            >
-              Iestatījumi
-            </button>
-          )}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -117,8 +122,8 @@ function Toggle({
 }) {
   return (
     <label
-      className={`flex items-center justify-between gap-4 text-sm ${
-        disabled ? "text-text/50" : "text-text/90 cursor-pointer"
+      className={`flex min-h-11 items-center justify-between gap-4 text-xs sm:text-sm ${
+        disabled ? "text-text-muted" : "cursor-pointer text-text/90"
       }`}
     >
       <span>{label}</span>
@@ -126,9 +131,10 @@ function Toggle({
         type="button"
         role="switch"
         aria-checked={checked}
+        aria-label={label}
         disabled={disabled}
         onClick={() => !disabled && onChange(!checked)}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+        className={`relative h-6 w-11 shrink-0 rounded-full transition-transform ${
           checked ? "bg-gold" : "bg-text/20"
         } ${disabled ? "opacity-60" : ""}`}
       >

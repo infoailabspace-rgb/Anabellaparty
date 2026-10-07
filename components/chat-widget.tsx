@@ -8,7 +8,7 @@ type Msg = { role: "user" | "assistant"; content: string };
 
 const STORAGE = "anabella-chat";
 const GREETING =
-  "Sveiki! Es palīdzēšu ar Anabella Party inventāru — cenas, izmēri, piegāde. Kā varu palīdzēt?";
+  "Sveiki! Es palīdzēšu ar Anabella Party inventāru - cenas, izmēri, piegāde. Kā varu palīdzēt?";
 const SUGGESTIONS = [
   "Kādas foto kastes jums ir?",
   "Cik maksā atrakcija bērnu ballītei?",
@@ -47,7 +47,6 @@ function linkify(text: string): ReactNode[] {
 export default function ChatWidget() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [pulse, setPulse] = useState(true);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
@@ -67,8 +66,6 @@ export default function ChatWidget() {
     } catch {
       /* ignore */
     }
-    const t = setTimeout(() => setPulse(false), 3000);
-    return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
@@ -156,12 +153,9 @@ export default function ChatWidget() {
             if (!v) track("chat_opened");
             return !v;
           });
-          setPulse(false);
         }}
         aria-label={open ? "Aizvērt čatu" : "Atvērt čatu"}
-        className={`fixed bottom-5 right-5 z-[70] flex h-14 w-14 items-center justify-center rounded-full bg-gold text-black shadow-[0_10px_30px_-8px_rgba(212,169,96,0.6)] transition-transform hover:scale-105 menu-open:hidden ${
-          pulse && !open ? "anabella-chat-pulse" : ""
-        }`}
+        className="fixed bottom-5 right-5 z-[70] flex h-14 w-14 items-center justify-center rounded-full bg-gold text-on-gold shadow-cta-sm transition-colors hover:bg-gold/90 menu-open:hidden cookie-open:hidden"
       >
         {open ? (
           <span className="text-2xl">✕</span>
@@ -177,7 +171,7 @@ export default function ChatWidget() {
         <div
           role="dialog"
           aria-label="Anabella Party čats"
-          className="fixed inset-0 z-[69] flex flex-col bg-navy sm:inset-auto sm:bottom-24 sm:right-5 sm:h-[560px] sm:w-[380px] sm:rounded-2xl sm:border sm:border-gold/30 sm:shadow-2xl overflow-hidden menu-open:hidden"
+          className="fixed inset-0 z-[69] flex flex-col bg-navy sm:inset-auto sm:bottom-24 sm:right-5 sm:h-[560px] sm:w-[380px] sm:rounded-card sm:border sm:border-gold/30 sm:shadow-2xl overflow-hidden menu-open:hidden"
         >
           {/* Galvene */}
           <div className="flex items-center justify-between border-b border-gold/25 bg-navy/80 px-4 py-3">
@@ -209,7 +203,7 @@ export default function ChatWidget() {
                     key={s}
                     type="button"
                     onClick={() => send(s)}
-                    className="block w-full rounded-lg border border-gold/25 bg-bg/40 px-3 py-2 text-left text-sm text-text/85 transition-colors hover:border-gold/60"
+                    className="block w-full rounded-control border border-gold/25 bg-bg/40 px-3 py-2 text-left text-sm text-text/85 transition-colors hover:border-gold/60"
                   >
                     {s}
                   </button>
@@ -252,7 +246,7 @@ export default function ChatWidget() {
               type="submit"
               disabled={streaming || !input.trim()}
               aria-label="Sūtīt"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-gold text-black transition-transform hover:scale-105 disabled:opacity-50"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-gold text-on-gold transition-colors disabled:opacity-50 hover:bg-gold/90"
             >
               ↑
             </button>
@@ -268,7 +262,7 @@ function Bubble({ role, children }: { role: "user" | "assistant"; children: Reac
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2 text-sm leading-relaxed ${
+        className={`max-w-[85%] whitespace-pre-wrap rounded-card px-4 py-2 text-sm leading-relaxed ${
           isUser
             ? "bg-gold text-black"
             : "border border-gold/20 bg-bg/50 text-text/90"

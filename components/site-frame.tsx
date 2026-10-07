@@ -6,7 +6,7 @@ import ChatWidget from "@/components/chat-widget";
 
 /**
  * Publiskā "chrome" (navbar/footer/čats) tikai publiskajās lapās.
- * /admin lapām — tikai saturs (tām ir savs izkārtojums).
+ * /admin lapām - tikai saturs (tām ir savs izkārtojums).
  * Navbar/Footer padoti kā props (servera komponenti), lai tos varētu
  * nosacīti renderēt no klienta komponenta.
  */
@@ -29,7 +29,9 @@ export default function SiteFrame({
   return (
     <>
       {navbar}
-      <main className="flex-1 overflow-x-clip">{children}</main>
+      <main id="saturs" tabIndex={-1} className="flex-1 overflow-x-clip outline-none">
+        {children}
+      </main>
       {footer}
       <ChatWidget />
     </>

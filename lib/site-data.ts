@@ -167,7 +167,16 @@ export async function getFeaturedGallery(): Promise<GalleryImage[]> {
       .eq("is_featured", true)
       .order("sort_order", { ascending: true })
       .limit(12);
-    if (data) return mapGallery(data, locale);
+    if (data && data.length) return mapGallery(data, locale);
+    // Rezerve: ja neviens attēls nav atzīmēts kā izcelts, sākumlapā rāda pirmos
+    // aktīvos (agrāk galerijas sadaļa sākumlapā palika tukša).
+    const { data: recent } = await sb
+      .from("site_gallery")
+      .select("*")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true })
+      .limit(8);
+    if (recent) return mapGallery(recent, locale);
   } catch {
     /* tukša galerija */
   }

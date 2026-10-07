@@ -92,7 +92,7 @@ export function IconDroplet(p: IconProps) {
   );
 }
 
-// Izklaides punkts (AI foto + spēles) — spēļu kontroliera ikona.
+// Izklaides punkts (AI foto + spēles) - spēļu kontroliera ikona.
 export function IconGamepad(p: IconProps) {
   return (
     <svg {...base} {...p}>
@@ -102,7 +102,7 @@ export function IconGamepad(p: IconProps) {
   );
 }
 
-// AI foto kaste — kamera ar dzirkstelēm (AI akcents).
+// AI foto kaste - kamera ar dzirkstelēm (AI akcents).
 export function IconAiCamera(p: IconProps) {
   return (
     <svg {...base} {...p}>
@@ -139,10 +139,10 @@ export function IconBadge({
 }) {
   return (
     <span
-      className={`inline-flex h-12 w-12 items-center justify-center rounded-full border border-gold/30 bg-gold/10 text-gold transition-all duration-300 group-hover:scale-110 group-hover:border-gold/70 group-hover:bg-gold/20 ${className}`}
+      className={`inline-flex h-12 w-12 items-center justify-center rounded-full border border-gold/30 bg-gold/10 text-gold transition-all duration-(--duration-base) group-hover:border-gold/70 group-hover:bg-gold/20 ${className}`}
     >
       <span
-        className="anabella-float inline-flex"
+        className="inline-flex"
         style={{ animationDelay: `${delay}s` }}
       >
         {children}

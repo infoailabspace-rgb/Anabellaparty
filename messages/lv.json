@@ -56,7 +56,24 @@
     "offerTitle": "Mūsu piedāvājums",
     "offerSubtitle": "Foto kastes, AI foto un svētku inventārs — viss vienuviet.",
     "viewInventory": "Apskatīt inventāru",
-    "b2bCta": "Pasākums uzņēmumam"
+    "b2bCta": "Pasākums uzņēmumam",
+    "heroEyebrow": "Foto kastes un pasākumu inventārs uzņēmumiem",
+    "heroAlt": "Ozola foto kaste korporatīvā vakarā - viesi apskata izdrukas",
+    "heroTrust1": "Līgums un PVN rēķins",
+    "heroTrust2": "Piegāde un uzstādīšana",
+    "heroTrust3": "Kopš 2022",
+    "productsEyebrow": "Galvenie produkti",
+    "productsTitle": "Foto kastes jūsu pasākumam",
+    "productsIntro": "Tūlītēja druka, asistents visu pasākumu un jūsu zīmola dizains. Cenas norādītas bez PVN.",
+    "priceFrom": "no {price} € + PVN",
+    "priceOnRequest": "Cena pēc pieprasījuma",
+    "bookThis": "Rezervēt",
+    "learnMore": "Uzzināt vairāk",
+    "moreInventory": "Viss inventārs",
+    "galleryEyebrow": "Galerija",
+    "faqEyebrow": "Biežāk uzdotie jautājumi",
+    "faqTitle": "Atbildes uz svarīgāko",
+    "faqAll": "Visi jautājumi"
   },
   "categories": {
     "foto-kasteName": "Foto kastes",
@@ -321,7 +338,9 @@
     "eachAdditionalHour": "Katra nākamā stunda",
     "priceByArrangement": "Cena vienojoties",
     "contactUs": "Sazināties",
-    "vatNote": "* Visas cenas norādītas bez PVN"
+    "vatNote": "* Visas cenas norādītas bez PVN",
+    "moreIncluded": "Vairāk iekļautā",
+    "b2bOffer": "Piedāvājums uzņēmumam"
   },
   "sec": {
     "cReachUs": "Sazinies ar mums",
@@ -459,7 +478,18 @@
     "card3Text": "Uzstādām, apkalpojam un savācam paši. Tehnika nepaliek bez uzraudzības.",
     "card4Title": "Piegāde visā Latvijā",
     "card4Text": "Braucam uz Rīgu, reģioniem un ārpus pilsētas. Piegādes maksu aprēķinām pēc attāluma.",
-    "cta": "Aprakstiet savu pasākumu"
+    "cta": "Aprakstiet savu pasākumu",
+    "eyebrow": "Uzņēmumiem un iestādēm",
+    "processTitle": "Kā notiek sadarbība",
+    "p1Title": "Pieprasījums",
+    "p1Text": "Aprakstiet pasākumu: datums, vieta, viesu skaits un vēlamais inventārs.",
+    "p2Title": "Piedāvājums",
+    "p2Text": "1 darba dienas laikā nosūtām piedāvājumu ar cenām un piegādes izmaksām.",
+    "p3Title": "Līgums un rēķins",
+    "p3Text": "Noslēdzam līgumu un izrakstām PVN rēķinu. Apmaksa pēc vienošanās.",
+    "p4Title": "Piegāde un uzstādīšana",
+    "p4Text": "Atvedam, uzstādām, apkalpojam pasākuma laikā un savācam.",
+    "imageAlt": "Koka foto kaste uzņēmuma pasākumā ar zīmola fonu"
   },
   "forMunicipal": {
     "title": "Pašvaldībām un valsts iestādēm",
@@ -531,5 +561,29 @@
     "point3": "Rezultāts uz jebkura ekrāna",
     "point4": "Arī personalizētas viktorīnas",
     "price": "Paketes no 11 EUR - ai-party.app"
+  },
+  "a11y": {
+    "skipToContent": "Pāriet uz saturu",
+    "pauseLogos": "Apturēt logo lenti",
+    "cookieRegion": "Sīkdatņu paziņojums",
+    "quickContact": "Ātrā saziņa",
+    "call": "Zvanīt",
+    "callAria": "Zvanīt {phone}",
+    "backToTop": "Uz lapas sākumu",
+    "language": "Valoda",
+    "categoriesHeading": "Inventāra kategorijas"
+  },
+  "cookies": {
+    "title": "Mēs izmantojam sīkdatnes",
+    "text": "Nepieciešamās sīkdatnes nodrošina lapas darbību. Ar Tavu piekrišanu izmantojam arī analītiskās un mārketinga sīkdatnes.",
+    "policy": "Sīkdatņu politika",
+    "settings": "Iestatījumi",
+    "acceptAll": "Pieņemt visas",
+    "necessaryOnly": "Tikai nepieciešamās",
+    "save": "Saglabāt izvēli",
+    "necessary": "Nepieciešamās (vienmēr aktīvas)",
+    "analytics": "Analītiskās (Google Tag Manager, GA4, Microsoft Clarity)",
+    "marketing": "Mārketinga (Facebook Pixel)",
+    "textShort": "Izmantojam sīkdatnes."
   }
 }

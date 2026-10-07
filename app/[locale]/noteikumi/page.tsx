@@ -50,7 +50,7 @@ export default async function NoteikumiPage({
         tagline="Skaidri noteikumi, lai sadarbība būtu vienkārša un droša abām pusēm."
       />
       <Prose>
-        <p className="text-sm text-text/50">
+        <p className="text-sm text-text-muted">
           Pēdējoreiz atjaunināts: 2026. gada augusts.
         </p>
         <LegalBindingNote />
@@ -58,7 +58,7 @@ export default async function NoteikumiPage({
         <h2>1. Vispārīgie noteikumi</h2>
         <p>
           Iznomātājs ir {COMPANY.legalName} (zīmols &bdquo;{COMPANY.brandName}
-          &rdquo;; turpmāk — Iznomātājs), reģistrācijas nr. {COMPANY.regNr}, PVN
+          &rdquo;; turpmāk - Iznomātājs), reģistrācijas nr. {COMPANY.regNr}, PVN
           reģ. nr. {COMPANY.vatNr}, juridiskā adrese {fullAddress}. Kontakti:
           tālrunis {COMPANY.contact.phoneDisplay}, e-pasts{" "}
           {COMPANY.contact.email}.
@@ -81,7 +81,7 @@ export default async function NoteikumiPage({
         <h2>3. Avanss un apmaksa</h2>
         <p>
           Rezervācija tiek apstiprināta pēc <b>50% avansa</b> iemaksas,
-          neatkarīgi no izvēlētās tehnikas vai pakalpojuma. Norēķini — bankas
+          neatkarīgi no izvēlētās tehnikas vai pakalpojuma. Norēķini - bankas
           pārskaitījums vai skaidra nauda. Visas cenas norādītas bez PVN 21%.
           Uzņēmumiem tiek izsniegts rēķins.
         </p>
@@ -124,7 +124,7 @@ export default async function NoteikumiPage({
           <li>220V elektrības pieslēgums.</li>
           <li>Atrakcija ne tālāk kā 25 m no elektrības pieslēguma.</li>
           <li>Vieta brīvi pieejama, bez šķēršļiem.</li>
-          <li>Ārā — līdzena, tīra pamatne (zāliens).</li>
+          <li>Ārā - līdzena, tīra pamatne (zāliens).</li>
           <li>
             Pamatnē nedrīkst būt akmeņi, čiekuri, būvgruži, asi priekšmeti vai
             melnzeme.
@@ -190,7 +190,7 @@ export default async function NoteikumiPage({
         <p>
           Šiem noteikumiem un nomas attiecībām piemērojami Latvijas Republikas
           tiesību akti. Strīdus puses risina pārrunu ceļā, bet, ja vienošanās nav
-          iespējama — Latvijas Republikas tiesā.
+          iespējama - Latvijas Republikas tiesā.
         </p>
       </Prose>
     </>

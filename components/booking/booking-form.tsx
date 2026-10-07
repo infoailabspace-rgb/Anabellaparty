@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -18,6 +18,7 @@ import {
 import PricePanel from "@/components/booking/price-panel";
 import { isInFreeZone } from "@/lib/delivery";
 import { rigaToday } from "@/lib/riga-time";
+import { displayName } from "@/lib/product-display";
 
 const STORAGE_KEY = "anabella-booking";
 // Vērtība (v) glabājas LV (konsekvence admin/e-pastos); attēlo (k) tulkoto.
@@ -98,7 +99,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
     "idle" | "loading" | "ok" | "error" | "confirm"
   >("idle");
   const [deliveryError, setDeliveryError] = useState("");
-  // Neatbilstības apstiprinājums (pilsēta ≠ atrastā vieta) — gaida klienta "Jā".
+  // Neatbilstības apstiprinājums (pilsēta ≠ atrastā vieta) - gaida klienta "Jā".
   const [deliveryConfirm, setDeliveryConfirm] = useState<{
     km: number | null;
     cost: number | null;
@@ -109,6 +110,24 @@ export default function BookingForm({ products }: { products: Product[] }) {
   } | null>(null);
   const [activeCat, setActiveCat] = useState(bookingCategories[0].id);
   const [errors, setErrors] = useState<string[]>([]);
+  // Pieejamība: kļūdas saņem fokusu (role=alert nolasa), soļa maiņā fokuss uz
+  // soļa virsrakstu, lai ekrānlasītājs un tastatūra sāk jaunā soļa sākumā.
+  const errorsRef = useRef<HTMLDivElement>(null);
+  const stepRef = useRef<HTMLDivElement>(null);
+  const stepMounted = useRef(false);
+  useEffect(() => {
+    if (!stepMounted.current) {
+      stepMounted.current = true;
+      return;
+    }
+    const h = stepRef.current?.querySelector<HTMLElement>("h2, h3");
+    if (h) {
+      h.tabIndex = -1;
+      h.focus({ preventScroll: false });
+    }
+  }, [step]);
+  const focusErrors = () =>
+    requestAnimationFrame(() => errorsRef.current?.focus());
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -188,7 +207,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
   async function computeDelivery(street: string, city: string) {
     const s = street.trim();
     const c = city.trim();
-    // Abi lauki obligāti. Bez pilsētas — negaida, nerāda kļūdu, neaprēķina.
+    // Abi lauki obligāti. Bez pilsētas - negaida, nerāda kļūdu, neaprēķina.
     if (!s || !c) {
       setDelivery(null);
       setDeliveryConfirm(null);
@@ -213,7 +232,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
         const inFree =
           data.inFreeZone ?? isInFreeZone(data.region ?? undefined, data.km ?? 0);
         if (data.cityMismatch) {
-          // Pilsēta ≠ atrastā vieta — NEIZMANTO uzreiz, prasa apstiprinājumu.
+          // Pilsēta ≠ atrastā vieta - NEIZMANTO uzreiz, prasa apstiprinājumu.
           setDelivery(null);
           setDeliveryConfirm({
             km: data.km,
@@ -332,6 +351,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
   function next() {
     const e = validateStep(step);
     setErrors(e);
+    if (e.length > 0) focusErrors();
     if (e.length === 0) {
       const nextStep = Math.min(4, step + 1);
       setStep(nextStep);
@@ -346,7 +366,10 @@ export default function BookingForm({ products }: { products: Product[] }) {
   async function submit() {
     const e = validateStep(4);
     setErrors(e);
-    if (e.length > 0) return;
+    if (e.length > 0) {
+      focusErrors();
+      return;
+    }
     setSubmitting(true);
     // Norises vieta = piegādes adrese (viens lauks abiem).
     const deliveryFull = [deliveryStreet.trim(), deliveryCity.trim()]
@@ -378,12 +401,13 @@ export default function BookingForm({ products }: { products: Product[] }) {
       if (!res.ok) {
         setErrors(data.errors ?? [data.error ?? t("errSend")]);
         setSubmitting(false);
+        focusErrors();
         return;
       }
       const value = computeQuote(items, products).subtotal + (delivery?.cost || 0);
       // booking_submitted patur REĀLO groza vērtību (ieņēmumu atskaitēm).
       trackConversion("booking_submitted", value, { source: "b2c" });
-      // generate_lead konversija (Google Ads + Meta Lead) — fiksēta lead-vērtība
+      // generate_lead konversija (Google Ads + Meta Lead) - fiksēta lead-vērtība
       // 150 EUR, lai rezervācija skaitās kopā ar pārējiem leadiem konsekventi.
       generateLead(LEAD_VALUE.reservation, "reservation");
       sessionStorage.removeItem(STORAGE_KEY);
@@ -391,6 +415,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
     } catch {
       setErrors([t("errSendConn")]);
       setSubmitting(false);
+      focusErrors();
     }
   }
 
@@ -404,26 +429,27 @@ export default function BookingForm({ products }: { products: Product[] }) {
     <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
       <div>
         {/* Progresa josla */}
-        <div className="mb-8 flex gap-2">
+        <ol className="mb-8 flex gap-2" aria-label={t("s1") + " - " + t("s4")}>
           {[1, 2, 3, 4].map((n) => (
-            <div key={n} className="flex-1">
+            <li key={n} className="flex-1" aria-current={n === step ? "step" : undefined}>
               <div
-                className={`h-1.5 rounded-full transition-colors ${
+                className={`h-1.5 rounded-full transition-transform ${
                   n <= step ? "bg-gold" : "bg-text/15"
                 }`}
               />
               <span
                 className={`mt-2 block text-xs ${
-                  n === step ? "text-gold" : "text-text/40"
+                  n === step ? "text-gold" : "text-text-muted"
                 }`}
               >
                 {[t("s1"), t("s2"), t("s3"), t("s4")][n - 1]}
               </span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ol>
 
-        <AnimatePresence mode="wait">
+        <div ref={stepRef}>
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={step}
             initial={reduce ? undefined : { opacity: 0, x: 24 * dir }}
@@ -478,14 +504,17 @@ export default function BookingForm({ products }: { products: Product[] }) {
             )}
           </motion.div>
         </AnimatePresence>
+        </div>
 
-        {errors.length > 0 && (
-          <ul className="mt-6 space-y-1 rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-300">
-            {errors.map((e) => (
-              <li key={e}>• {e}</li>
-            ))}
-          </ul>
-        )}
+        <div ref={errorsRef} tabIndex={-1} role="alert" className="outline-none">
+          {errors.length > 0 && (
+            <ul className="mt-6 space-y-1 rounded-tile border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-300">
+              {errors.map((e) => (
+                <li key={e}>• {e}</li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         {/* Navigācija */}
         <div className="mt-8 flex items-center justify-between gap-4">
@@ -493,7 +522,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
             type="button"
             onClick={back}
             disabled={step === 1}
-            className="rounded-full border border-gold/40 px-6 py-2.5 text-sm font-semibold text-text/80 transition-colors enabled:hover:border-gold disabled:opacity-30"
+            className="inline-flex min-h-11 items-center rounded-full border border-gold/40 px-6 text-sm font-semibold text-text/80 transition-colors enabled:hover:border-gold disabled:opacity-30"
           >
             {t("back")}
           </button>
@@ -501,7 +530,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
             <button
               type="button"
               onClick={next}
-              className="rounded-full bg-gold px-8 py-2.5 font-semibold text-black transition-transform hover:scale-[1.03]"
+              className="inline-flex min-h-11 items-center rounded-full bg-gold px-8 font-semibold text-on-gold transition-colors hover:bg-gold/90"
             >
               {t("next")}
             </button>
@@ -510,7 +539,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
               type="button"
               onClick={submit}
               disabled={submitting}
-              className="inline-flex items-center gap-2 rounded-full bg-gold px-8 py-2.5 font-semibold text-black transition-transform enabled:hover:scale-[1.03] disabled:opacity-60"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-gold px-8 font-semibold text-on-gold transition-colors disabled:opacity-60 hover:bg-gold/90"
             >
               {submitting && (
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
@@ -521,7 +550,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
         </div>
       </div>
 
-      {/* Cenas panelis — sticky desktopā */}
+      {/* Cenas panelis - sticky desktopā */}
       <aside className="lg:sticky lg:top-24 lg:self-start">
         <PricePanel
           items={items}
@@ -537,7 +566,7 @@ export default function BookingForm({ products }: { products: Product[] }) {
   );
 }
 
-/* ─────────────── Solis 1 — Inventārs ─────────────── */
+/* ─────────────── Solis 1 - Inventārs ─────────────── */
 function StepInventory({
   byCategory,
   activeCat,
@@ -570,7 +599,7 @@ function StepInventory({
   const list = byCategory(activeCat);
   return (
     <div>
-      <h2 className="font-display text-2xl font-bold">{t("invTitle")}</h2>
+      <h2 className="font-display text-block font-semibold">{t("invTitle")}</h2>
       <p className="mt-1 text-sm text-text/60">{t("invSubtitle")}</p>
 
       {/* Kategoriju cilnes */}
@@ -580,7 +609,7 @@ function StepInventory({
             key={c.id}
             type="button"
             onClick={() => setActiveCat(c.id as Product["category"])}
-            className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors ${
+            className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold transition-transform ${
               activeCat === c.id
                 ? "border-gold bg-gold text-black"
                 : "border-gold/30 text-text/80 hover:border-gold/60"
@@ -600,13 +629,13 @@ function StepInventory({
           return (
             <div
               key={p.slug}
-              className={`rounded-2xl border bg-navy/30 p-5 transition-colors ${
+              className={`rounded-card border bg-navy/30 p-5 transition-transform ${
                 selected ? "border-gold" : "border-gold/20"
               }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h3 className="font-display font-semibold">{p.name}</h3>
+                  <h3 className="font-display font-semibold">{displayName(p.name)}</h3>
                   <p className="mt-1 font-mono text-sm text-gold">
                     {p.contactOnly
                       ? t("priceAgree")
@@ -617,7 +646,7 @@ function StepInventory({
                   type="button"
                   onClick={() => toggle(p)}
                   aria-pressed={selected}
-                  className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+                  className={`inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition-transform ${
                     selected
                       ? "bg-gold text-black"
                       : "border border-gold/40 text-gold hover:bg-gold/10"
@@ -632,7 +661,7 @@ function StepInventory({
                   {/* Tarifa izvēle */}
                   {pricedTiers.length > 1 && (
                     <div>
-                      <p className="text-xs uppercase tracking-wide text-text/50">
+                      <p className="text-xs uppercase tracking-wide text-text-muted">
                         {t("tariff")}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
@@ -641,7 +670,7 @@ function StepInventory({
                             key={tr.duration + ti}
                             type="button"
                             onClick={() => patch(p.slug, { tierIndex: ti })}
-                            className={`rounded-lg border px-3 py-1 text-xs transition-colors ${
+                            className={`rounded-control border px-3 py-1 text-xs transition-transform ${
                               item.tierIndex === ti
                                 ? "border-gold bg-gold/15 text-gold"
                                 : "border-gold/25 text-text/70 hover:border-gold/50"
@@ -708,7 +737,7 @@ function AddOnToggle({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-5 w-5 shrink-0 accent-[#D4A960]"
+        className="h-5 w-5 shrink-0 accent-gold"
       />
     </label>
   );
@@ -750,7 +779,7 @@ function Counter({
   );
 }
 
-/* ─────────────── Solis 2 — Pasākums ─────────────── */
+/* ─────────────── Solis 2 - Pasākums ─────────────── */
 function StepEvent({
   event,
   setEvent,
@@ -798,10 +827,10 @@ function StepEvent({
   const t = useTranslations("booking");
   const set = (patch: Partial<BookingEvent>) => setEvent({ ...event, ...patch });
   const field =
-    "w-full rounded-lg border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold";
+    "w-full rounded-control border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold";
   return (
     <div>
-      <h2 className="font-display text-2xl font-bold">{t("evTitle")}</h2>
+      <h2 className="font-display text-block font-semibold">{t("evTitle")}</h2>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="text-sm text-text/70">{t("evDate")}</span>
@@ -860,7 +889,7 @@ function StepEvent({
                 name="io"
                 checked={event.indoorOutdoor === o.v}
                 onChange={() => set({ indoorOutdoor: o.v })}
-                className="accent-[#D4A960]"
+                className="accent-gold"
               />
               {t(o.k)}
             </label>
@@ -868,7 +897,7 @@ function StepEvent({
         </div>
       </div>
 
-      {/* Piegādes adrese — divi lauki (iela + obligāta pilsēta) ar auto-aprēķinu */}
+      {/* Piegādes adrese - divi lauki (iela + obligāta pilsēta) ar auto-aprēķinu */}
       <div className="mt-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
@@ -905,7 +934,7 @@ function StepEvent({
           </label>
         </div>
 
-        <div className="mt-2 rounded-xl border border-gold/20 bg-navy/25 p-4 text-sm">
+        <div className="mt-2 rounded-tile border border-gold/20 bg-navy/25 p-4 text-sm">
           {deliveryStatus === "loading" && (
             <span className="text-text/60">{t("computing")}</span>
           )}
@@ -934,7 +963,7 @@ function StepEvent({
               </p>
               <p className="text-text/85">{deliveryConfirm.label}</p>
               <p className="text-text/75">
-                {t("distanceFrom", { km: deliveryConfirm.km ?? 0 })} —{" "}
+                {t("distanceFrom", { km: deliveryConfirm.km ?? 0 })} -{" "}
                 <span className="font-mono font-semibold text-gold">
                   {t("deliveryLabel")}{" "}
                   {deliveryConfirm.cost != null && deliveryConfirm.cost > 0
@@ -948,14 +977,14 @@ function StepEvent({
                 <button
                   type="button"
                   onClick={onAcceptConfirm}
-                  className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black transition-transform hover:scale-[1.03]"
+                  className="inline-flex min-h-11 items-center rounded-full bg-gold px-5 text-sm font-semibold text-on-gold transition-colors hover:bg-gold/90"
                 >
                   {t("confirmYes")}
                 </button>
                 <button
                   type="button"
                   onClick={onRejectConfirm}
-                  className="rounded-full border border-gold/40 px-5 py-2 text-sm font-semibold text-text/80 transition-colors hover:border-gold"
+                  className="inline-flex min-h-11 items-center rounded-full border border-gold/40 px-5 text-sm font-semibold text-text/80 transition-colors hover:border-gold"
                 >
                   {t("confirmNo")}
                 </button>
@@ -966,7 +995,7 @@ function StepEvent({
             <span className="text-rose-gold">{deliveryError}</span>
           )}
           {deliveryStatus === "idle" && (
-            <span className="text-text/50">
+            <span className="text-text-muted">
               {deliveryStreet.trim() && !deliveryCity.trim()
                 ? t("deliveryNeedCity")
                 : t("deliveryIdle")}
@@ -978,7 +1007,7 @@ function StepEvent({
   );
 }
 
-/* ─────────────── Solis 3 — Kontakti ─────────────── */
+/* ─────────────── Solis 3 - Kontakti ─────────────── */
 function StepContact({
   contact,
   setContact,
@@ -990,10 +1019,10 @@ function StepContact({
   const set = (patch: Partial<BookingContact>) =>
     setContact({ ...contact, ...patch });
   const field =
-    "w-full rounded-lg border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold";
+    "w-full rounded-control border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold";
   return (
     <div>
-      <h2 className="font-display text-2xl font-bold">{t("cTitle")}</h2>
+      <h2 className="font-display text-block font-semibold">{t("cTitle")}</h2>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <label className="block sm:col-span-2">
           <span className="text-sm text-text/70">{t("cName")}</span>
@@ -1050,7 +1079,7 @@ function StepContact({
   );
 }
 
-/* ─────────────── Solis 4 — Apraksts + apstiprinājums ─────────────── */
+/* ─────────────── Solis 4 - Apraksts + apstiprinājums ─────────────── */
 function StepReview({
   items,
   event,
@@ -1073,7 +1102,7 @@ function StepReview({
   const t = useTranslations("booking");
   return (
     <div>
-      <h2 className="font-display text-2xl font-bold">{t("rTitle")}</h2>
+      <h2 className="font-display text-block font-semibold">{t("rTitle")}</h2>
 
       <label className="mt-6 block">
         <span className="text-sm text-text/70">{t("rDescLabel")}</span>
@@ -1082,19 +1111,19 @@ function StepReview({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder={t("rDescPh")}
-          className="mt-1 w-full rounded-lg border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold"
+          className="mt-1 w-full rounded-control border border-gold/25 bg-bg/60 px-4 py-2.5 text-text outline-none focus:border-gold"
         />
       </label>
 
-      <div className="mt-6 rounded-xl border border-gold/20 bg-navy/25 p-5 text-sm">
+      <div className="mt-6 rounded-tile border border-gold/20 bg-navy/25 p-5 text-sm">
         <h3 className="font-display font-semibold text-gold">{t("rSummary")}</h3>
         <p className="mt-2 text-text/80">
-          {t("rUnits", { n: items.length })} · {event.date || "—"}
-          {event.time ? " " + event.time : ""} · {event.type || "—"}
+          {t("rUnits", { n: items.length })} · {event.date || "-"}
+          {event.time ? " " + event.time : ""} · {event.type || "-"}
         </p>
         <p className="text-text/60">
-          {location || "—"} · {contact.name || "—"} ·{" "}
-          {contact.phone || "—"}
+          {location || "-"} · {contact.name || "-"} ·{" "}
+          {contact.phone || "-"}
         </p>
       </div>
 
@@ -1103,7 +1132,7 @@ function StepReview({
           type="checkbox"
           checked={consent}
           onChange={(e) => setConsent(e.target.checked)}
-          className="mt-0.5 accent-[#D4A960]"
+          className="mt-0.5 accent-gold"
         />
         <span className="text-text/80">
           {t("agreePrefix")}
@@ -1124,25 +1153,30 @@ function StepReview({
 /* ─────────────── Veiksmes ekrāns ─────────────── */
 function SuccessScreen({ name }: { name: string }) {
   const t = useTranslations("booking");
+  // Apstiprinājums: fokuss uz virsrakstu (tastatūra/ekrānlasītājs to uzreiz dzird).
+  const headRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    headRef.current?.focus();
+  }, []);
   return (
-    <div className="mx-auto max-w-xl rounded-3xl border border-gold/30 bg-navy/30 p-10 text-center">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold text-3xl text-black">
+    <div role="status" className="mx-auto max-w-xl rounded-panel border border-gold/30 bg-navy/30 p-10 text-center">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold text-3xl text-on-gold hover:bg-gold/90">
         ✓
       </div>
-      <h2 className="mt-6 font-display text-2xl font-bold">
+      <h2 ref={headRef} tabIndex={-1} className="mt-6 font-display text-block font-semibold outline-none">
         {t("sThanks", { name: name ? `, ${name}` : "" })}
       </h2>
       <p className="mt-3 text-text/80">{t("sReceived")}</p>
       <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
         <a
           href="tel:+37129222761"
-          className="rounded-full bg-gold px-7 py-3 font-semibold text-black"
+          className="inline-flex min-h-12 items-center justify-center rounded-full bg-gold px-7 font-semibold text-on-gold hover:bg-gold/90"
         >
           {t("sCall")}
         </a>
         <a
           href="https://wa.me/37129222761"
-          className="rounded-full border border-gold px-7 py-3 font-semibold text-gold hover:bg-gold/10"
+          className="inline-flex min-h-12 items-center justify-center rounded-full border border-gold px-7 font-semibold text-gold hover:bg-gold/10"
         >
           {t("sWhatsapp")}
         </a>

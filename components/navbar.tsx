@@ -15,7 +15,7 @@ type NavLink = { href?: string; label: string; external?: boolean; comingSoon?: 
 type NavItem = { label: string; href?: string; children?: NavLink[]; external?: boolean; comingSoon?: boolean; badge?: string };
 
 const linkBase =
-  "whitespace-nowrap rounded-full border px-4 py-2 text-[13px] xl:text-sm transition-colors duration-200";
+  "whitespace-nowrap rounded-full border px-4 py-2 text-[13px] xl:text-sm transition-colors duration-(--duration-fast)";
 
 export default function Navbar() {
   const t = useTranslations("nav");
@@ -35,6 +35,7 @@ export default function Navbar() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
+  const burgerRef = useRef<HTMLButtonElement | null>(null);
   const openDrop = (label: string) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     setOpenMenu(label);
@@ -53,7 +54,14 @@ export default function Navbar() {
   // Esc + klikšķis ārpusē + cleanup.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpenMenu(null);
+      if (e.key === "Escape") {
+        setOpenMenu(null);
+        // Esc aizver arī mobilo izvēlni un atgriež fokusu uz hamburgera pogu.
+        setOpen((wasOpen) => {
+          if (wasOpen) burgerRef.current?.focus();
+          return false;
+        });
+      }
     };
     const onDown = (e: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(e.target as Node))
@@ -125,15 +133,16 @@ export default function Navbar() {
         >
           <Image
             src="/logo/logo-full.png"
-            alt="Anabella Party — Svētku inventārs"
+            alt="Anabella Party - Svētku inventārs"
             width={500}
             height={500}
             priority
+            sizes="(min-width: 768px) 80px, 56px"
             className="h-14 w-auto md:h-20"
           />
         </Link>
 
-        {/* Desktop (xl+; zem tā — hamburgeris, lai nerastos horizontālā pārplūde) */}
+        {/* Desktop (xl+; zem tā - hamburgeris, lai nerastos horizontālā pārplūde) */}
         <div className="ml-6 hidden items-center gap-1 xl:flex">
           {nav.map((item) => {
             const active = isActive(item);
@@ -163,12 +172,12 @@ export default function Navbar() {
                 </button>
                 {openMenu === item.label && (
                   <div className="absolute left-0 top-full z-50 min-w-56 pt-3">
-                    <div className="anabella-drop rounded-xl border border-gold/25 bg-navy p-2 shadow-2xl shadow-black/50">
+                    <div className="anabella-drop rounded-tile border border-gold/25 bg-navy p-2 shadow-2xl shadow-black/50">
                       {item.children.map((c) =>
                         c.comingSoon ? (
                           <div
                             key={c.label}
-                            className="mt-1 block cursor-default whitespace-nowrap rounded-lg border-t border-gold/15 px-5 pb-2.5 pt-3 text-sm text-text/50"
+                            className="mt-1 block cursor-default whitespace-nowrap rounded-control border-t border-gold/15 px-5 pb-2.5 pt-3 text-sm text-text-muted"
                           >
                             <span className="flex items-center gap-2 font-semibold">
                               {c.label}
@@ -178,7 +187,7 @@ export default function Navbar() {
                                 </span>
                               )}
                             </span>
-                            {c.hint && <span className="mt-0.5 block text-xs text-text/35">{c.hint}</span>}
+                            {c.hint && <span className="mt-0.5 block text-xs text-text-muted">{c.hint}</span>}
                           </div>
                         ) : c.external ? (
                           <a
@@ -186,7 +195,7 @@ export default function Navbar() {
                             href={c.href!}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="mt-1 block whitespace-nowrap rounded-lg border-t border-gold/15 px-5 pb-2.5 pt-3 text-sm text-text/85 transition-colors hover:bg-gold hover:text-black"
+                            className="mt-1 block whitespace-nowrap rounded-control border-t border-gold/15 px-5 pb-2.5 pt-3 text-sm text-text/85 transition-colors hover:bg-gold hover:text-on-gold"
                           >
                             <span className="flex items-center gap-2 font-semibold">
                               <span aria-hidden>⚡</span>
@@ -197,13 +206,13 @@ export default function Navbar() {
                                 </span>
                               )}
                             </span>
-                            {c.hint && <span className="mt-0.5 block text-xs text-text/45">{c.hint}</span>}
+                            {c.hint && <span className="mt-0.5 block text-xs text-text-muted">{c.hint}</span>}
                           </a>
                         ) : (
                           <Link
                             key={c.href}
                             href={c.href!}
-                            className="block whitespace-nowrap rounded-lg px-5 py-2.5 text-sm text-text/85 transition-colors hover:bg-gold hover:text-black"
+                            className="block whitespace-nowrap rounded-control px-5 py-2.5 text-sm text-text/85 transition-colors hover:bg-gold hover:text-on-gold"
                           >
                             {c.label}
                           </Link>
@@ -216,7 +225,7 @@ export default function Navbar() {
             ) : item.comingSoon ? (
               <span
                 key={item.label}
-                className={`${linkBase} flex cursor-default items-center gap-1.5 border-transparent text-text/45`}
+                className={`${linkBase} flex cursor-default items-center gap-1.5 border-transparent text-text-muted`}
               >
                 {item.label}
                 {item.badge && (
@@ -254,7 +263,7 @@ export default function Navbar() {
           })}
           <Link
             href="/rezervet"
-            className="ml-6 whitespace-nowrap rounded-full bg-gold px-5 py-2 text-[13px] font-semibold text-black transition-transform hover:scale-[1.04] hover:shadow-[0_0_20px_rgba(212,169,96,0.5)] xl:text-sm"
+            className="ml-6 whitespace-nowrap rounded-full bg-gold px-5 py-2 text-[13px] font-semibold text-on-gold transition-colors xl:text-sm hover:bg-gold/90"
           >
             {t("rezervet")}
           </Link>
@@ -267,10 +276,12 @@ export default function Navbar() {
           <LocaleSwitcher />
           <button
             type="button"
+            ref={burgerRef}
             aria-label={t("izvelne")}
             aria-expanded={open}
+            aria-controls="mobila-izvelne"
             onClick={() => setOpen((v) => !v)}
-            className="flex flex-col gap-1.5"
+            className="flex h-11 w-11 flex-col items-center justify-center gap-1.5"
           >
             <span
               className={`h-0.5 w-6 bg-gold transition-transform ${
@@ -293,12 +304,12 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-gold/20 bg-bg/95 px-6 py-4 xl:hidden">
+        <div id="mobila-izvelne" className="border-t border-gold/20 bg-bg/95 px-6 py-4 xl:hidden">
           <div className="flex flex-col gap-1">
             {nav.map((item) =>
               item.children ? (
                 <div key={item.label} className="py-2">
-                  <p className="text-xs uppercase tracking-wide text-text/50">
+                  <p className="text-xs uppercase tracking-wide text-text-muted">
                     {item.label}
                   </p>
                   <div className="mt-2 flex flex-col gap-2 pl-3">
@@ -306,7 +317,7 @@ export default function Navbar() {
                       c.comingSoon ? (
                         <div
                           key={c.label}
-                          className="flex cursor-default items-center gap-2 font-semibold text-text/45"
+                          className="flex cursor-default items-center gap-2 font-semibold text-text-muted"
                         >
                           {c.label}
                           {c.badge && (
@@ -348,7 +359,7 @@ export default function Navbar() {
               ) : item.comingSoon ? (
                 <div
                   key={item.label}
-                  className="flex cursor-default items-center gap-2 py-2 font-semibold text-text/45"
+                  className="flex cursor-default items-center gap-2 py-2 font-semibold text-text-muted"
                 >
                   {item.label}
                   {item.badge && (
@@ -384,7 +395,7 @@ export default function Navbar() {
             <Link
               href="/rezervet"
               onClick={close}
-              className="mt-3 rounded-full bg-gold px-5 py-2 text-center font-semibold text-black"
+              className="mt-3 rounded-full bg-gold px-5 py-2 text-center font-semibold text-on-gold hover:bg-gold/90"
             >
               {t("rezervet")}
             </Link>
@@ -402,13 +413,13 @@ export default function Navbar() {
 // Sociālās ikonas: Instagram/Facebook statiskas; WhatsApp lēkā ik 4 sekundes.
 function NavSocials({ className = "flex" }: { className?: string }) {
   return (
-    <div className={`items-center gap-4 ${className}`}>
+    <div className={`items-center gap-1 ${className}`}>
       <a
         href="https://www.instagram.com/anabella_svetku_inventars/"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Instagram"
-        className="text-gold transition-colors hover:text-rose-gold"
+        className="inline-flex h-11 w-11 items-center justify-center text-gold transition-colors hover:text-rose-gold"
       >
         <InstagramIcon className="h-5 w-5" />
       </a>
@@ -417,7 +428,7 @@ function NavSocials({ className = "flex" }: { className?: string }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Facebook"
-        className="text-gold transition-colors hover:text-rose-gold"
+        className="inline-flex h-11 w-11 items-center justify-center text-gold transition-colors hover:text-rose-gold"
       >
         <FacebookIcon className="h-5 w-5" />
       </a>
@@ -426,9 +437,9 @@ function NavSocials({ className = "flex" }: { className?: string }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp"
-        className="text-gold transition-transform hover:scale-[1.15]"
+        className="text-gold transition-colors"
       >
-        <WhatsAppIcon className="anabella-wa-bounce h-5 w-5" />
+        <WhatsAppIcon className="h-5 w-5" />
       </a>
     </div>
   );

@@ -6,17 +6,18 @@ import { COMPANY, fullAddress } from "@/lib/company";
 
 export default async function Footer() {
   const t = await getTranslations("footer");
-  const linkCls = "transition-colors hover:text-gold";
+  // Mobilajā 44 px skāriena augstums (WCAG 2.5.5); desktopā kompakti.
+  const linkCls = "inline-flex min-h-11 min-w-11 items-center transition-colors hover:text-gold md:min-h-0 md:min-w-0";
   return (
     <footer className="border-t border-gold/30 bg-navy/40">
-      {/* 3 satura kolonnas — vienādi izplatītas, virsraksti vienā Y-līnijā */}
+      {/* 3 satura kolonnas - vienādi izplatītas, virsraksti vienā Y-līnijā */}
       <div className="mx-auto grid max-w-4xl gap-10 px-6 pb-10 pt-12 text-center sm:grid-cols-3 sm:text-left">
         {/* Pakalpojumi */}
         <div>
-          <h4 className="font-display text-sm font-semibold text-text">
+          <h2 className="font-display text-sm font-semibold text-text">
             {t("pakalpojumi")}
-          </h4>
-          <ul className="mt-3 space-y-2 text-sm text-text/70">
+          </h2>
+          <ul className="mt-3 text-sm text-text/70 md:space-y-2">
             <li>
               <Link href="/foto-kaste" className={linkCls}>
                 {t("fotoKastes")}
@@ -47,10 +48,10 @@ export default async function Footer() {
 
         {/* Uzņēmums */}
         <div>
-          <h4 className="font-display text-sm font-semibold text-text">
+          <h2 className="font-display text-sm font-semibold text-text">
             {t("uznemums")}
-          </h4>
-          <ul className="mt-3 space-y-2 text-sm text-text/70">
+          </h2>
+          <ul className="mt-3 text-sm text-text/70 md:space-y-2">
             <li>
               <Link href="/musu-draugi" className={linkCls}>
                 {t("musuDraugi")}
@@ -76,10 +77,10 @@ export default async function Footer() {
 
         {/* Juridiski */}
         <div>
-          <h4 className="font-display text-sm font-semibold text-text">
+          <h2 className="font-display text-sm font-semibold text-text">
             {t("juridiski")}
-          </h4>
-          <ul className="mt-3 space-y-2 text-sm text-text/70">
+          </h2>
+          <ul className="mt-3 text-sm text-text/70 md:space-y-2">
             <li>
               <Link href="/noteikumi" className={linkCls}>
                 {t("noteikumi")}
@@ -99,7 +100,7 @@ export default async function Footer() {
         </div>
       </div>
 
-      {/* Kontakti + sociālie — centrēti */}
+      {/* Kontakti + sociālie - centrēti */}
       <div className="mx-auto max-w-3xl border-t border-gold/10 px-6 py-8 text-center text-sm text-text/70">
         <ul className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-8">
           <li>
@@ -119,11 +120,11 @@ export default async function Footer() {
         </div>
       </div>
 
-      {/* Rekvizīti — redzami bez klikšķa (grāmatvedība/iepirkumi meklē pirmajā vizītē) */}
+      {/* Rekvizīti - redzami bez klikšķa (grāmatvedība/iepirkumi meklē pirmajā vizītē) */}
       <div className="mx-auto max-w-3xl border-t border-gold/10 px-6 py-6 text-center">
-        <h4 className="font-display text-sm font-semibold text-text">
+        <h2 className="font-display text-sm font-semibold text-text">
           {t("rekviziti")}
-        </h4>
+        </h2>
         <ul className="mt-3 space-y-0.5 text-xs text-text/60">
           <li>{COMPANY.legalName}</li>
           <li>Reģ. nr. {COMPANY.regNr} · PVN reģ. nr. {COMPANY.vatNr}</li>
@@ -134,25 +135,26 @@ export default async function Footer() {
         </ul>
       </div>
 
-      {/* Logo — pašā apakšā, virs copyright rindas */}
+      {/* Logo - pašā apakšā, virs copyright rindas */}
       <div className="flex flex-col items-center gap-3 px-6 pb-8">
         <Image
           src="/logo/logo-full.png"
-          alt="Anabella Party — Svētku inventārs"
+          alt="Anabella Party - Svētku inventārs"
           width={500}
           height={500}
+          sizes="80px"
           className="h-20 w-auto"
         />
-        <p className="max-w-md text-center text-xs text-text/50">
+        <p className="max-w-md text-center text-xs text-text-muted">
           {t("description")}
         </p>
       </div>
 
-      <div className="border-t border-gold/10 py-4 text-center text-xs text-text/50">
+      <div className="border-t border-gold/10 py-4 text-center text-xs text-text-muted">
         <p>
           © {new Date().getFullYear()} Anabella Party. {t("visasTiesibas")}
         </p>
-        <p className="mt-1 text-[10px] text-text/40">
+        <p className="mt-1 text-[10px] text-text-muted">
           {t("izstradaja")}:{" "}
           <a
             href="https://ai-labspace.eu"

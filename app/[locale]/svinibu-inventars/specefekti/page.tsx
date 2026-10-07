@@ -56,7 +56,7 @@ export default async function SpecefektiPage({
         heroKey="specefekti"
       />
 
-      <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="container-site py-16">
         <div className="space-y-12">
           {items.map((product, i) => (
             <ProductDetail key={product.slug} product={product} index={i} />
@@ -64,7 +64,7 @@ export default async function SpecefektiPage({
         </div>
 
         <Reveal>
-          <p className="mt-10 rounded-2xl border border-gold/25 bg-navy/25 p-5 text-center text-xs text-text/60">
+          <p className="mt-10 rounded-card border border-gold/25 bg-navy/25 p-5 text-center text-xs text-text/60">
             {ts("specNote")}
           </p>
         </Reveal>

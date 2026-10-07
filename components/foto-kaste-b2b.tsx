@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import Reveal from "@/components/reveal";
 
-// /foto-kaste B2B sekcijas (spec §5) — reklāmas galamērķis. Iekļauts cenā,
+// /foto-kaste B2B sekcijas (spec §5) - reklāmas galamērķis. Iekļauts cenā,
 // brendēšana, dokumenti/norēķini, cenu orientieris, BUJ, CTA uz anketu.
 export default async function FotoKasteB2b() {
   const t = await getTranslations("fkB2b");
@@ -40,8 +40,8 @@ export default async function FotoKasteB2b() {
     <div className="mt-12 space-y-12">
       {/* Kas iekļauts cenā */}
       <Reveal>
-        <div className="rounded-3xl border-2 border-gold/25 bg-navy/25 p-6 sm:p-10">
-          <h2 className="font-display text-2xl font-bold">{t("includedTitle")}</h2>
+        <div className="rounded-panel border-2 border-gold/25 bg-navy/25 p-6 sm:p-10">
+          <h2 className="font-display text-block font-semibold">{t("includedTitle")}</h2>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2">
             {included.map((item) => (
               <li key={item} className="flex items-start gap-3 text-text/85">
@@ -50,7 +50,7 @@ export default async function FotoKasteB2b() {
               </li>
             ))}
           </ul>
-          {/* Piegāde NAV iekļauta cenā (izņemot Jūrmalu) — atsevišķa rinda, ne saraksta punkts. */}
+          {/* Piegāde NAV iekļauta cenā (izņemot Jūrmalu) - atsevišķa rinda, ne saraksta punkts. */}
           <p className="mt-6 border-t border-gold/15 pt-6 text-sm leading-relaxed text-text/70">
             {t("deliveryNote")}
           </p>
@@ -60,7 +60,7 @@ export default async function FotoKasteB2b() {
       {/* Brendēšana + Dokumenti/norēķini + Cenu orientieris */}
       <div className="grid gap-6 lg:grid-cols-3">
         <Reveal>
-          <div className="h-full rounded-2xl border border-gold/25 bg-navy/30 p-6">
+          <div className="h-full rounded-card border border-gold/25 bg-navy/30 p-6">
             <h3 className="font-display text-lg font-semibold text-gold">
               {t("brandingTitle")}
             </h3>
@@ -70,7 +70,7 @@ export default async function FotoKasteB2b() {
           </div>
         </Reveal>
         <Reveal delay={0.05}>
-          <div className="h-full rounded-2xl border border-gold/25 bg-navy/30 p-6">
+          <div className="h-full rounded-card border border-gold/25 bg-navy/30 p-6">
             <h3 className="font-display text-lg font-semibold text-gold">
               {t("docsTitle")}
             </h3>
@@ -80,7 +80,7 @@ export default async function FotoKasteB2b() {
           </div>
         </Reveal>
         <Reveal delay={0.1}>
-          <div className="h-full rounded-2xl border border-gold/25 bg-gold/10 p-6">
+          <div className="h-full rounded-card border border-gold/25 bg-gold/10 p-6">
             <h3 className="font-display text-lg font-semibold text-gold">
               {t("priceTitle")}
             </h3>
@@ -91,10 +91,10 @@ export default async function FotoKasteB2b() {
         </Reveal>
       </div>
 
-      {/* Atbildes formas sadaļas (AEO C4) — pirmais teikums = pilna atbilde */}
+      {/* Atbildes formas sadaļas (AEO C4) - pirmais teikums = pilna atbilde */}
       <Reveal>
         <div>
-          <h2 className="font-display text-2xl font-bold">{taeo("priceQTitle")}</h2>
+          <h2 className="font-display text-block font-semibold">{taeo("priceQTitle")}</h2>
           <p className="mt-3 max-w-3xl leading-relaxed text-text/80">
             {taeo("priceQAnswer")}
           </p>
@@ -102,7 +102,7 @@ export default async function FotoKasteB2b() {
       </Reveal>
       <Reveal>
         <div>
-          <h2 className="font-display text-2xl font-bold">{taeo("chooseQTitle")}</h2>
+          <h2 className="font-display text-block font-semibold">{taeo("chooseQTitle")}</h2>
           <p className="mt-3 max-w-3xl leading-relaxed text-text/80">
             {taeo("chooseQAnswer")}
           </p>
@@ -112,9 +112,9 @@ export default async function FotoKasteB2b() {
       {/* Tehniskās prasības */}
       <Reveal>
         <div>
-          <h2 className="font-display text-2xl font-bold">{t("techTitle")}</h2>
+          <h2 className="font-display text-block font-semibold">{t("techTitle")}</h2>
           <p className="mt-3 max-w-2xl text-text/75">{t("techIntro")}</p>
-          <dl className="mt-6 overflow-hidden rounded-2xl border border-gold/20">
+          <dl className="mt-6 overflow-hidden rounded-card border border-gold/20">
             {tech.map(([k, v], i) => (
               <div
                 key={k}
@@ -127,7 +127,7 @@ export default async function FotoKasteB2b() {
               </div>
             ))}
           </dl>
-          <div className="mt-6 rounded-2xl border border-amber-500/60 bg-amber-500/10 p-5">
+          <div className="mt-6 rounded-card border border-amber-500/60 bg-amber-500/10 p-5">
             <p className="font-semibold text-amber-300">⚠ {t("warnTitle")}</p>
             <p className="mt-2 text-sm leading-relaxed text-amber-200/90">
               {t("warnText")}
@@ -139,13 +139,13 @@ export default async function FotoKasteB2b() {
       {/* Ko saskaņojam pirms pasākuma */}
       <Reveal>
         <div>
-          <h2 className="font-display text-2xl font-bold">{t("coordTitle")}</h2>
+          <h2 className="font-display text-block font-semibold">{t("coordTitle")}</h2>
           <p className="mt-3 max-w-2xl text-text/75">{t("coordIntro")}</p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {coord.map((c) => (
               <div
                 key={c.title}
-                className="flex gap-4 rounded-2xl border border-gold/20 bg-navy/25 p-5"
+                className="flex gap-4 rounded-card border border-gold/20 bg-navy/25 p-5"
               >
                 <span className="text-2xl leading-none" aria-hidden>
                   {c.icon}
@@ -167,12 +167,12 @@ export default async function FotoKasteB2b() {
       {/* BUJ */}
       <Reveal>
         <div>
-          <h2 className="font-display text-2xl font-bold">{t("faqTitle")}</h2>
+          <h2 className="font-display text-block font-semibold">{t("faqTitle")}</h2>
           <div className="mt-6 space-y-3">
             {faq.map((f) => (
               <details
                 key={f.q}
-                className="group rounded-2xl border border-gold/20 bg-navy/25 p-5 [&_summary::-webkit-details-marker]:hidden"
+                className="group rounded-card border border-gold/20 bg-navy/25 p-5 [&_summary::-webkit-details-marker]:hidden"
               >
                 <summary className="flex cursor-pointer items-center justify-between font-semibold text-text/90">
                   {f.q}
@@ -189,14 +189,14 @@ export default async function FotoKasteB2b() {
 
       {/* CTA uz B2B anketu */}
       <Reveal>
-        <div className="rounded-3xl border-2 border-gold bg-gold/10 p-8 text-center sm:p-10">
-          <h2 className="font-display text-2xl font-bold sm:text-3xl">
+        <div className="rounded-panel border-2 border-gold bg-gold/10 p-8 text-center sm:p-10">
+          <h2 className="font-display text-block font-semibold">
             {t("ctaTitle")}
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-text/80">{t("ctaText")}</p>
           <Link
             href="/kontakti/#pieprasijums"
-            className="mt-6 inline-block rounded-full bg-gold px-8 py-3 font-semibold text-black transition-transform hover:scale-[1.03]"
+            className="mt-6 inline-block rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-colors hover:bg-gold/90"
           >
             {t("ctaButton")} →
           </Link>

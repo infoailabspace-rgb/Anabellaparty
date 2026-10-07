@@ -1,4 +1,3 @@
-import Reveal from "@/components/reveal";
 import HeroMedia from "@/components/hero-media";
 import { getHeroMedia } from "@/lib/hero-media";
 
@@ -37,17 +36,17 @@ export default async function SectionHero({
             image={image}
             posClass={posClass}
           />
-          <div className="absolute inset-0 bg-bg/70" />
+          <div className="absolute inset-0 bg-bg/75" />
         </>
       ) : (
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(212,169,96,0.15),transparent_60%)]" />
+        <div className="absolute inset-0 bg-navy/30" />
       )}
-      <Reveal className="relative z-10 mx-auto max-w-3xl px-6 py-[7.5rem] text-center sm:py-[8.75rem]">
-        <h1 className="font-display text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-          {title}
-        </h1>
-        <p className="mx-auto mt-5 max-w-xl text-lg text-text/80">{tagline}</p>
-      </Reveal>
+      {/* Bez Reveal: H1 ir virs pirmā ekrāna (LCP) - redzams uzreiz. */}
+      <div className="relative z-10 mx-auto max-w-3xl px-6 py-20 text-center sm:py-28">
+        <div aria-hidden className="mx-auto mb-6 h-px w-14 bg-gold" />
+        <h1 className="font-display text-page font-semibold tracking-tight">{title}</h1>
+        <p className="mx-auto mt-5 max-w-xl text-lead text-text/80">{tagline}</p>
+      </div>
     </section>
   );
 }

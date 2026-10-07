@@ -1,0 +1,114 @@
+/*
+ * Anabella Party - dizaina tokeni (viens patiesības avots publiskajai lapai).
+ * Krāsas ir esošās zīmola krāsas (logo: tumši zils + zelts), jauna palete nav
+ * ieviesta. Tailwind v4 @theme kartē tās uz utilītām (bg-navy, text-gold,
+ * text-text-muted, rounded-card, shadow-glow, text-section, ease-brand, ...).
+ *
+ * Kontrasts (WCAG 2.2 AA, pārbaudīts uz visiem lapas faniem #0f1419..#1a3a4a):
+ *   --text            ≥ 13:1
+ *   --text-muted      ≥ 5.0:1  (sekundārs teksts; agrāk text/40-50 = 3.1-4.8:1)
+ *   --gold            ≥ 5.5:1  (teksts un UI uz tumšā fona)
+ *   melns uz --gold   = 9.6:1  (primārās pogas)
+ */
+
+:root {
+  /* Krāsas */
+  --navy: #1a3a4a;
+  --gold: #d4a960;
+  --gold-rgb: 212 169 96;
+  --rose-gold: #e8a87c;
+  --bg: #0f1419;
+  --bg-rgb: 15 20 25;
+  --text: #f5f5f0;
+  --text-muted: rgb(245 245 240 / 0.65);
+  --on-gold: #000000;
+  --border-subtle: rgb(var(--gold-rgb) / 0.25);
+
+  /* Kustība - tikai jēgpilna (hover, fokuss, ieeja); reduced-motion atslēdz */
+  --duration-fast: 200ms;
+  --duration-base: 300ms;
+  --duration-slow: 500ms;
+  --duration-reveal: 600ms;
+  --ease-brand-curve: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Virsrakstu fonts: noklusējums Space Grotesk (admin); publiskā lapa to pārdefinē
+     uz Playfair Display ([locale]/layout.tsx), admin paliek nemainīts. */
+  --font-heading: var(--font-space-grotesk);
+
+  /* Ritms: vienots sekciju vertikālais solis un satura platums */
+  --section-y: clamp(4.5rem, 2.5rem + 6vw, 8rem);
+  --container: 76rem;
+  --gutter: clamp(1.25rem, 0.75rem + 2.5vw, 2.5rem);
+
+  /* Pieejamība */
+  --touch-min: 44px;
+  --focus-ring: 2px solid var(--gold);
+  --focus-offset: 2px;
+}
+
+@theme inline {
+  /* Krāsas → bg-*, text-*, border-* */
+  --color-navy: var(--navy);
+  --color-gold: var(--gold);
+  --color-rose-gold: var(--rose-gold);
+  --color-bg: var(--bg);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-on-gold: var(--on-gold);
+
+  /* Fonti (next/font mainīgie; kirilica - atsevišķa Inter saime bez preload) */
+  --font-display: var(--font-heading);
+  --font-body: var(--font-inter-cyrillic), var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+
+  /* Tipogrāfijas skala (display/H1/H2/H3/body/small) →
+     text-hero / text-page / text-section / text-block / text-card / text-lead */
+  --text-hero: clamp(2.25rem, 1.2rem + 5vw, 5rem);
+  --text-hero--line-height: 1.05;
+  --text-page: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem);
+  --text-page--line-height: 1.1;
+  --text-section: clamp(2rem, 1.5rem + 2vw, 3rem);
+  --text-section--line-height: 1.12;
+  --text-block: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+  --text-block--line-height: 1.2;
+  --text-card: clamp(1.25rem, 1.15rem + 0.4vw, 1.5rem);
+  --text-card--line-height: 1.25;
+  --text-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  --text-lead--line-height: 1.65;
+
+  /* Rādiusi → rounded-control / -tile / -card / -panel (rounded-full = pill) */
+  --radius-control: 0.5rem;
+  --radius-tile: 0.75rem;
+  --radius-card: 1rem;
+  --radius-panel: 1.5rem;
+
+  /* Ēnas (zelta mirdzums uz tumša fona) → shadow-glow / -lift / -cta / -cta-sm / -hero / -depth */
+  --shadow-glow: 0 0 24px rgb(var(--gold-rgb) / 0.5);
+  --shadow-lift: 0 20px 60px -30px rgb(var(--gold-rgb) / 0.35);
+  --shadow-cta: 0 20px 60px -20px rgb(var(--gold-rgb) / 0.5);
+  --shadow-cta-sm: 0 10px 30px -8px rgb(var(--gold-rgb) / 0.6);
+  --shadow-hero: 0 28px 70px -24px rgb(var(--gold-rgb) / 0.4);
+  --shadow-depth: 0 20px 60px -20px rgb(var(--bg-rgb) / 0.6);
+
+  /* Kustība → ease-brand */
+  --ease-brand: var(--ease-brand-curve);
+}
+
+/* Vienots sekciju ritms un satura konteiners (redizains). */
+@utility section-y {
+  padding-block: var(--section-y);
+}
+@utility container-site {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+/* Virsraksta "acs" (eyebrow) - mazs zelta uzraksts virs H2 */
+@utility eyebrow {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+}

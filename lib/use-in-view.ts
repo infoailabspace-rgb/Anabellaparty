@@ -20,6 +20,8 @@ export function useInView<T extends Element = HTMLDivElement>(
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
+    // Hidratācija notikusi → galvas skripts vairs nenoņems .js-reveal (skat. app/layout.tsx).
+    (window as unknown as { __revealReady?: boolean }).__revealReady = true;
     const el = ref.current;
     if (!el) return;
     if (typeof IntersectionObserver === "undefined") {

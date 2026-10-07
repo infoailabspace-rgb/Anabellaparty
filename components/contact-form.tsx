@@ -29,7 +29,7 @@ export default function ContactForm() {
   }
 
   const field =
-    "w-full rounded-lg border border-gold/25 bg-bg/60 px-4 py-3 text-text placeholder:text-text/40 outline-none focus:border-gold";
+    "w-full rounded-control border border-gold/25 bg-bg/60 px-4 py-3 text-text placeholder:text-text-muted outline-none focus:border-gold";
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -54,7 +54,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="self-start rounded-full bg-gold px-8 py-3 font-semibold text-black transition-shadow hover:shadow-[0_0_25px_rgba(212,169,96,0.5)] disabled:opacity-60"
+        className="self-start rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-shadow disabled:opacity-60 hover:bg-gold/90"
       >
         {status === "sending" ? t("sending") : t("send")}
       </button>

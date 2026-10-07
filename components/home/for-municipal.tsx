@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation";
 import Reveal from "@/components/reveal";
 import CallButton from "@/components/call-button";
 
-// "Pašvaldībām un valsts iestādēm" (B2B spec §4.6) — vizuāli atdalīta (cits fons),
+// "Pašvaldībām un valsts iestādēm" (B2B spec §4.6) - vizuāli atdalīta (cits fons),
 // 3 kolonnas + dokumentu pogas + CTA uz anketu ar source=pasvaldibam.
 export default async function ForMunicipal() {
   const t = await getTranslations("forMunicipal");
@@ -15,11 +15,11 @@ export default async function ForMunicipal() {
   return (
     <section
       id="pasvaldibam"
-      className="scroll-mt-28 border-y border-gold/10 bg-navy/40 py-24 md:py-28"
+      className="scroll-mt-28 border-y border-gold/10 bg-navy/40 section-y"
     >
-      <div className="mx-auto max-w-6xl px-6">
+      <div className="container-site">
         <Reveal>
-          <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
+          <h2 className="font-display text-section font-semibold tracking-tight">
             {t("title")}
           </h2>
           <p className="mt-4 max-w-2xl leading-relaxed text-text/75">
@@ -30,7 +30,7 @@ export default async function ForMunicipal() {
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {cols.map((c, i) => (
             <Reveal key={c.title} delay={i * 0.06}>
-              <div className="h-full rounded-2xl border border-gold/25 bg-bg/40 p-6">
+              <div className="h-full rounded-card border border-gold/25 bg-bg/40 p-6">
                 <h3 className="font-display text-lg font-semibold text-gold">
                   {c.title}
                 </h3>
@@ -46,7 +46,7 @@ export default async function ForMunicipal() {
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
               href="/kontakti/?source=pasvaldibam#pieprasijums"
-              className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-black transition-transform hover:scale-[1.03]"
+              className="inline-flex items-center rounded-full bg-gold px-8 py-3 font-semibold text-on-gold transition-colors hover:bg-gold/90"
             >
               {t("cta")} →
             </Link>

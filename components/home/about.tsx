@@ -4,9 +4,9 @@ import Reveal from "@/components/reveal";
 import { COMPANY } from "@/lib/company";
 import { getSiteImage } from "@/lib/site-content";
 
-// "Par mums" (B2B spec §4.5) — B2B tonis + kompaktas horizontālas komandas
+// "Par mums" (B2B spec §4.5) - B2B tonis + kompaktas horizontālas komandas
 // kartītes ar foto (Supabase site_content team.*, fallback iniciāļu aplis).
-// Lielais attēls = pasākuma kadrs (about.photo); ja nav — teksts vienā centrētā
+// Lielais attēls = pasākuma kadrs (about.photo); ja nav - teksts vienā centrētā
 // kolonnā (bez dublēšanās ar komandas kartītēm).
 export default async function About({ image }: { image?: string | null }) {
   const t = await getTranslations("about");
@@ -21,7 +21,7 @@ export default async function About({ image }: { image?: string | null }) {
     getSiteImage("team.solvita"),
   ]);
 
-  // E-pastu kartītēs nerāda — visiem kopīgs info@; atstāj tikai tālruni (kur ir).
+  // E-pastu kartītēs nerāda - visiem kopīgs info@; atstāj tikai tālruni (kur ir).
   const team = [
     { name: "Aiva Dimante", role: t("teamAivaRole"), phone: COMPANY.contact.phone, phoneDisplay: COMPANY.contact.phoneDisplay, initials: "AD", photo: imgAiva },
     { name: "Roberts Dimants", role: t("teamRobertsRole"), phone: COMPANY.altContact.phone, phoneDisplay: COMPANY.altContact.phoneDisplay, initials: "RD", photo: imgRoberts },
@@ -34,7 +34,7 @@ export default async function About({ image }: { image?: string | null }) {
       <p className="font-mono text-sm uppercase tracking-[0.2em] text-gold">
         {t("eyebrow")}
       </p>
-      <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl">
+      <h2 className="mt-3 font-display text-section font-semibold tracking-tight">
         {t("heading")}
       </h2>
       <div className="mt-6 space-y-4 leading-relaxed text-text/80">
@@ -44,7 +44,7 @@ export default async function About({ image }: { image?: string | null }) {
       </div>
 
       {/* KĀPĒC MŪS IZVĒLAS */}
-      <div className="mt-8 rounded-2xl border border-gold/30 bg-navy/25 p-6 text-left">
+      <div className="mt-8 rounded-card border border-gold/30 bg-navy/25 p-6 text-left">
         <p className="font-display text-sm font-semibold uppercase tracking-wide text-gold">
           {t("plusesTitle")}
         </p>
@@ -61,13 +61,13 @@ export default async function About({ image }: { image?: string | null }) {
   );
 
   return (
-    <section className="py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-6">
+    <section className="section-y">
+      <div className="container-site">
         {photo ? (
           <div className="grid items-center gap-12 lg:grid-cols-2">
             {/* Pasākuma kadrs */}
             <Reveal className="order-first lg:order-last" delay={0.1}>
-              <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-xl border border-gold/25 shadow-[0_20px_60px_-30px_rgba(212,169,96,0.35)]">
+              <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-tile border border-gold/25 shadow-lift">
                 <Image
                   src={photo}
                   alt="Anabella Party pasākumā"
@@ -85,17 +85,17 @@ export default async function About({ image }: { image?: string | null }) {
           </Reveal>
         )}
 
-        {/* Komandas bloks — kompaktas horizontālas kartītes */}
+        {/* Komandas bloks - kompaktas horizontālas kartītes */}
         <Reveal delay={0.1}>
           <div className="mt-16">
-            <h3 className="text-center font-display text-xl font-semibold text-gold">
+            <h3 className="text-center font-display text-card font-semibold text-gold">
               {t("teamTitle")}
             </h3>
             <div className="mx-auto mt-8 grid max-w-3xl items-stretch gap-4 sm:grid-cols-2">
               {team.map((m) => (
                 <div
                   key={m.name}
-                  className="flex h-full items-center gap-4 rounded-2xl border border-gold/25 bg-navy/25 p-4"
+                  className="flex h-full items-center gap-4 rounded-card border border-gold/25 bg-navy/25 p-4"
                 >
                   <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full sm:h-24 sm:w-24">
                     {m.photo ? (
@@ -107,7 +107,7 @@ export default async function About({ image }: { image?: string | null }) {
                         className="object-cover"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center rounded-full border border-gold/40 bg-gold/10 font-display text-xl font-bold text-gold">
+                      <div className="flex h-full w-full items-center justify-center rounded-full border border-gold/40 bg-gold/10 font-display text-xl font-semibold text-gold">
                         {m.initials}
                       </div>
                     )}
@@ -118,7 +118,7 @@ export default async function About({ image }: { image?: string | null }) {
                     {m.phone && (
                       <a
                         href={`tel:${m.phone}`}
-                        className="mt-1 inline-block text-sm font-semibold text-gold hover:underline"
+                        className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-gold hover:underline"
                       >
                         {m.phoneDisplay}
                       </a>

@@ -1,32 +1,15 @@
 @import "tailwindcss";
+@import "./tokens.css";
 
 /* Aktīvs, kad navbar iestata <body data-menu-open> (mobilā izvēlne atvērta).
    Lieto: menu-open:hidden peldošajām pogām (zvans/čats), lai nepārklāj izvēlni. */
 @custom-variant menu-open (body[data-menu-open] &);
-
-:root {
-  --navy: #1a3a4a;
-  --gold: #d4a960;
-  --rose-gold: #e8a87c;
-  --bg: #0f1419;
-  --text: #f5f5f0;
-}
-
-@theme inline {
-  --color-navy: var(--navy);
-  --color-gold: var(--gold);
-  --color-rose-gold: var(--rose-gold);
-  --color-bg: var(--bg);
-  --color-text: var(--text);
-
-  --font-display: var(--font-space-grotesk);
-  --font-body: var(--font-inter);
-  --font-mono: var(--font-jetbrains-mono);
-}
+/* Aktīvs, kamēr redzams sīkdatņu paziņojums (cookie-consent.tsx). */
+@custom-variant cookie-open (body[data-cookie-open] &);
 
 html {
   scroll-behavior: smooth;
-  /* clip (nevis hidden) — ierobežo horizontālo pārplūdi, BET neizveido ritināšanas
+  /* clip (nevis hidden) - ierobežo horizontālo pārplūdi, BET neizveido ritināšanas
      konteineru, tāpēc navbar position: sticky turpina strādāt. */
   overflow-x: clip;
 }
@@ -35,22 +18,42 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body), sans-serif;
+  line-height: 1.65;
   overflow-x: clip;
 }
 
 ::selection {
   background: var(--gold);
-  color: #000;
+  color: var(--on-gold);
 }
 
 /* Zelta fokusa gredzens visiem interaktīvajiem elementiem (piekļūstamība). */
 :focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
   border-radius: 4px;
 }
 
-/* Klientu logo bezgalīgā lente (marquee) — tīrs CSS. Ilgumu iestata inline
+/* "Pāriet uz saturu" saite - redzama tikai tastatūras fokusā (WCAG 2.4.1). */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 100;
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  border-radius: 9999px;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-weight: 600;
+}
+.skip-link:focus {
+  top: 0.75rem;
+}
+
+/* Klientu logo bezgalīgā lente (marquee) - tīrs CSS. Ilgumu iestata inline
    (animation-duration) atkarībā no logo skaita; hover-pauzi Tailwind grupa. */
 @keyframes anabella-clients-marquee {
   from {
@@ -66,6 +69,18 @@ body {
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
+/* Pauze: hover, tastatūras fokuss lentē vai pauzes slēdzis (WCAG 2.2.2). */
+.anabella-marquee-wrap:hover .anabella-clients-marquee,
+.anabella-marquee-wrap:focus-within .anabella-clients-marquee,
+.anabella-marquee-wrap:has(.anabella-marquee-toggle:checked) .anabella-clients-marquee {
+  animation-play-state: paused;
+}
+.anabella-marquee-wrap:has(.anabella-marquee-toggle:checked) .anabella-marquee-pause {
+  display: none;
+}
+.anabella-marquee-wrap:has(.anabella-marquee-toggle:checked) .anabella-marquee-play {
+  display: block;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .anabella-clients-marquee {
@@ -75,33 +90,33 @@ body {
 
 /* Bloga raksta tipogrāfija (marked HTML izvade) */
 .prose-blog {
-  color: rgba(245, 245, 240, 0.85);
+  color: rgb(245 245 240 / 0.85);
 }
 .prose-blog p {
   margin: 1.1em 0;
 }
 .prose-blog h2 {
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-heading), serif;
   font-size: 1.6em;
   font-weight: 700;
   line-height: 1.2;
   margin: 1.6em 0 0.5em;
-  color: #f5f5f0;
+  color: var(--text);
 }
 .prose-blog h3 {
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-heading), serif;
   font-size: 1.3em;
   font-weight: 600;
   margin: 1.4em 0 0.4em;
-  color: #f5f5f0;
+  color: var(--text);
 }
 .prose-blog a {
-  color: #d4a960;
+  color: var(--gold);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 .prose-blog strong {
-  color: #f5f5f0;
+  color: var(--text);
   font-weight: 700;
 }
 .prose-blog ul,
@@ -121,14 +136,14 @@ body {
 .prose-blog img {
   width: 100%;
   border-radius: 0.75rem;
-  border: 1px solid rgba(212, 169, 96, 0.2);
+  border: 1px solid rgb(var(--gold-rgb) / 0.2);
   margin: 1.6em 0;
 }
 .prose-blog blockquote {
-  border-left: 3px solid #d4a960;
+  border-left: 3px solid var(--gold);
   padding-left: 1em;
   margin: 1.3em 0;
-  color: rgba(245, 245, 240, 0.7);
+  color: var(--text-muted);
   font-style: italic;
 }
 .prose-blog code {
@@ -140,28 +155,12 @@ body {
 }
 .prose-blog hr {
   border: 0;
-  border-top: 1px solid rgba(212, 169, 96, 0.2);
+  border-top: 1px solid rgb(var(--gold-rgb) / 0.2);
   margin: 2em 0;
 }
 
 /* Lēna zelta gradienta pulsācija CTA fonam. */
-@keyframes anabella-glow-pulse {
-  0%,
-  100% {
-    opacity: 0.45;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.75;
-    transform: scale(1.08);
-  }
-}
-
-.anabella-glow-pulse {
-  animation: anabella-glow-pulse 6s ease-in-out infinite;
-}
-
-/* Hero zelta hairline ievelkas (transform, ne width — bez CLS). */
+/* Hero zelta hairline ievelkas (transform, ne width - bez CLS). */
 @keyframes anabella-hairline {
   from {
     transform: scaleX(0);
@@ -173,7 +172,7 @@ body {
 
 .anabella-hairline {
   transform-origin: left center;
-  animation: anabella-hairline 0.9s 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: anabella-hairline 0.9s 0.5s var(--ease-brand-curve) both;
 }
 
 /* Scroll indikatora maigā pulsācija. */
@@ -189,123 +188,7 @@ body {
   }
 }
 
-.anabella-scroll-hint {
-  animation: anabella-scroll-hint 2s ease-in-out infinite;
-}
-
-/* Maiga ikonu peldēšana kartītēs. */
-@keyframes anabella-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-.anabella-float {
-  animation: anabella-float 3.5s ease-in-out infinite;
-}
-
-/* Čata pogas uzmanības pulsācija (pirmās 3 sekundes). */
-@keyframes anabella-chat-pulse {
-  0%,
-  100% {
-    box-shadow:
-      0 10px 30px -8px rgba(212, 169, 96, 0.6),
-      0 0 0 0 rgba(212, 169, 96, 0.5);
-  }
-  50% {
-    box-shadow:
-      0 10px 30px -8px rgba(212, 169, 96, 0.6),
-      0 0 0 12px rgba(212, 169, 96, 0);
-  }
-}
-
-.anabella-chat-pulse {
-  animation: anabella-chat-pulse 1.4s ease-out infinite;
-}
-
-/* Zelta mirdzums, kas periodiski pārslīd pāri kartītēm ("dzīvs"). */
-.anabella-shimmer {
-  background-image: linear-gradient(
-    100deg,
-    transparent 30%,
-    rgba(229, 184, 122, 0.14) 45%,
-    rgba(245, 222, 184, 0.28) 50%,
-    rgba(229, 184, 122, 0.14) 55%,
-    transparent 70%
-  );
-  background-size: 200% 100%;
-  background-repeat: no-repeat;
-  animation: anabella-shine 5s ease-in-out infinite;
-}
-
-@keyframes anabella-shine {
-  0% {
-    background-position: 200% 0;
-  }
-  60%,
-  100% {
-    background-position: -100% 0;
-  }
-}
-
-/* Smalka zelta punktu tekstūra navy sekcijām. */
-.anabella-navy-texture {
-  background-image: radial-gradient(
-    rgba(212, 169, 96, 0.05) 1px,
-    transparent 1px
-  );
-  background-size: 22px 22px;
-}
-
-/* Globālā luxury tekstūra — divi zelta glow, lēns drift (GPU transform/opacity). */
-@keyframes anabella-drift-a {
-  0% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.55;
-  }
-  50% {
-    transform: translate(8%, 6%) scale(1.18);
-    opacity: 0.95;
-  }
-  100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.55;
-  }
-}
-@keyframes anabella-drift-b {
-  0% {
-    transform: translate(0, 0) scale(1.05);
-    opacity: 0.45;
-  }
-  50% {
-    transform: translate(-9%, -7%) scale(1);
-    opacity: 0.8;
-  }
-  100% {
-    transform: translate(0, 0) scale(1.05);
-    opacity: 0.45;
-  }
-}
-.anabella-tex-a {
-  animation: anabella-drift-a 16s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-.anabella-tex-b {
-  animation: anabella-drift-b 20s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-@media (prefers-reduced-motion: reduce) {
-  .anabella-tex-a,
-  .anabella-tex-b {
-    animation: none;
-  }
-}
-
-/* Navbar dropdown — fade + slide 4px lejup, 180ms. */
+/* Navbar dropdown - fade + slide 4px lejup, 180ms. */
 @keyframes anabella-drop-in {
   from {
     opacity: 0;
@@ -317,44 +200,43 @@ body {
   }
 }
 .anabella-drop {
-  animation: anabella-drop-in 180ms ease-out;
+  animation: anabella-drop-in var(--duration-fast) ease-out;
 }
 
-/* Scroll-reveal (aizstāj framer whileInView) — fade + slīde uz augšu, kad
-   IntersectionObserver pievieno .is-visible. Aizkavi iestata inline
-   (transition-delay). Lieto: Reveal, EventGallery kartītes. */
-.reveal-up {
-  opacity: 0;
-  transform: translateY(24px);
-  transition:
-    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.reveal-up.is-visible {
-  opacity: 1;
-  transform: none;
-}
+/* Scroll-reveal kā PROGRESSIVE ENHANCEMENT: saturs pēc noklusējuma ir redzams
+   (bez JS, robotiem, drukai). Slēpts tikai tad, ja <html> ir .js-reveal (uzliek
+   galvas skripts app/layout.tsx; ja hidratācija neiestājas 3 s laikā, klasi noņem)
+   UN lietotājs nav izvēlējies samazinātu kustību. IntersectionObserver pievieno
+   .is-visible. Lieto: Reveal, SlideReveal, EventGallery kartītes. */
+@media (prefers-reduced-motion: no-preference) {
+  .js-reveal .reveal-up {
+    transition:
+      opacity var(--duration-reveal) var(--ease-brand-curve),
+      transform var(--duration-reveal) var(--ease-brand-curve);
+  }
+  .js-reveal .reveal-up:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(24px);
+  }
 
-/* Produktu bloku ieslīdēšana no sāna (SlideReveal). Virziens (--slide-x) un
-   mobilais fallback iestatīts inline; desktopā slīde no sāna + neliels scale. */
-.slide-reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Produktu bloki - mobilajā tikai fade+slīde uz augšu; desktopā no sāna. */
+  .js-reveal .slide-reveal {
+    transition:
+      opacity 0.9s var(--ease-brand-curve),
+      transform 0.9s var(--ease-brand-curve);
+  }
+  .js-reveal .slide-reveal:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(28px);
+  }
 }
-@media (min-width: 768px) {
-  .slide-reveal {
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  .js-reveal .slide-reveal:not(.is-visible) {
     transform: translateX(var(--slide-x, 0)) scale(0.94);
   }
 }
-.slide-reveal.is-visible {
-  opacity: 1;
-  transform: none;
-}
 
-/* Hero virsraksta vārdu (word-by-word) parādīšanās — aizkavi inline. */
+/* Hero virsraksta vārdu (word-by-word) parādīšanās - aizkavi inline. */
 @keyframes anabella-word {
   from {
     opacity: 0;
@@ -368,7 +250,7 @@ body {
 .anabella-word {
   display: inline-block;
   opacity: 0;
-  animation: anabella-word 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: anabella-word 0.5s var(--ease-brand-curve) both;
 }
 
 /* Hero apakšvirsraksta/pogu parādīšanās uz ielādes (aizkavi inline). */
@@ -384,33 +266,10 @@ body {
 }
 .anabella-fade-up {
   opacity: 0;
-  animation: anabella-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: anabella-fade-up 0.6s var(--ease-brand-curve) both;
 }
 
-/* Navbar WhatsApp ikonas periodiska lēkāšana (~ik 4 s, kā iepriekš framer). */
-@keyframes anabella-wa-bounce {
-  0% {
-    transform: translateY(0);
-  }
-  3.75% {
-    transform: translateY(-6px);
-  }
-  7.5% {
-    transform: translateY(0);
-  }
-  11.25% {
-    transform: translateY(-3px);
-  }
-  15%,
-  100% {
-    transform: translateY(0);
-  }
-}
-.anabella-wa-bounce {
-  animation: anabella-wa-bounce 4s ease-in-out infinite;
-}
-
-/* prefers-reduced-motion — visas animācijas izslēdzas, saturs paliek redzams. */
+/* prefers-reduced-motion - visas animācijas izslēdzas, saturs paliek redzams. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -430,5 +289,10 @@ body {
   .slide-reveal {
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  /* Klientu logo lente stāv (WCAG 2.2.2). */
+  .anabella-clients-marquee {
+    animation: none;
   }
 }

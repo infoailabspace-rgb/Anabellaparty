@@ -61,7 +61,7 @@ export default function ArticleContent({ html }: { html: string }) {
             src={imgs[active]}
             alt=""
             onClick={(e) => e.stopPropagation()}
-            className="max-h-[85vh] max-w-[92vw] rounded-lg object-contain"
+            className="max-h-[85vh] max-w-[92vw] rounded-control object-contain"
           />
           {imgs.length > 1 && (
             <button onClick={(e) => { e.stopPropagation(); go(1); }} aria-label="Nākamais" className="absolute right-4 text-4xl text-text/80 hover:text-gold">›</button>

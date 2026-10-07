@@ -18,7 +18,7 @@ export default async function PriceBlock({ product }: { product: Product }) {
         </span>
         <Link
           href="/kontakti"
-          className="rounded-full border-2 border-gold px-5 py-2 text-sm font-semibold text-gold transition-colors hover:bg-gold/10"
+          className="inline-flex min-h-11 items-center rounded-full border-2 border-gold px-5 text-sm font-semibold text-gold transition-colors hover:bg-gold/10"
         >
           {t("contactUs")}
         </Link>
@@ -32,14 +32,14 @@ export default async function PriceBlock({ product }: { product: Product }) {
   return (
     <div className="space-y-2">
       {priced.length > 1 ? (
-        // Vairāki tarifi — tabula (24h / 48h / 72h u.tml.)
+        // Vairāki tarifi - tabula (24h / 48h / 72h u.tml.)
         <div className="flex flex-wrap gap-2">
           {priced.map((t) => (
             <div
               key={t.duration}
-              className="rounded-lg border border-gold/25 bg-bg/40 px-3 py-2 text-center"
+              className="rounded-control border border-gold/25 bg-bg/40 px-3 py-2 text-center"
             >
-              <div className="text-xs uppercase tracking-wide text-text/50">
+              <div className="text-xs uppercase tracking-wide text-text-muted">
                 {t.duration}
               </div>
               <div className="font-mono text-lg font-bold text-gold">
@@ -54,7 +54,7 @@ export default async function PriceBlock({ product }: { product: Product }) {
       ) : priced.length === 1 ? (
         // Viens tarifs
         <p className="font-mono text-2xl font-bold text-gold">
-          {priced[0].duration} — {formatPrice(priced[0].price)}
+          {priced[0].duration} - {formatPrice(priced[0].price)}
           {priced[0].note && (
             <span className="ml-2 text-sm text-rose-gold">{priced[0].note}</span>
           )}
@@ -70,7 +70,7 @@ export default async function PriceBlock({ product }: { product: Product }) {
 
       {contactTiers.map((ct) => (
         <p key={ct.duration} className="text-sm text-text/70">
-          {ct.duration} — {ct.note ?? t("priceByArrangement")}
+          {ct.duration} - {ct.note ?? t("priceByArrangement")}
         </p>
       ))}
 
@@ -79,7 +79,7 @@ export default async function PriceBlock({ product }: { product: Product }) {
           {addOns.map((a) => (
             <li key={a.name}>
               + {a.name}
-              {a.unit ? ` (${a.unit})` : ""} —{" "}
+              {a.unit ? ` (${a.unit})` : ""} -{" "}
               <span className="font-mono text-rose-gold">
                 {formatPrice(a.price)}
               </span>
@@ -88,7 +88,7 @@ export default async function PriceBlock({ product }: { product: Product }) {
         </ul>
       )}
 
-      <p className="pt-1 text-xs text-text/40">{t("vatNote")}</p>
+      <p className="pt-1 text-xs text-text-muted">{t("vatNote")}</p>
     </div>
   );
 }

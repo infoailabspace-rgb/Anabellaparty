@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 
 // Valodu pārslēdzējs. Divi režīmi:
-//  - "dropdown" (noklusējums) — kompakta poga + izvēlne, desktop navbar.
-//  - "inline" — visas valodas kā segmentētas pogas, skaidri redzamas telefonā.
+//  - "dropdown" (noklusējums) - kompakta poga + izvēlne, desktop navbar.
+//  - "inline" - visas valodas kā segmentētas pogas, skaidri redzamas telefonā.
 // Patur to pašu ceļu, maina tikai valodu.
 export default function LocaleSwitcher({
   className = "",
@@ -17,6 +17,7 @@ export default function LocaleSwitcher({
   variant?: "dropdown" | "inline";
 }) {
   const locale = useLocale();
+  const t = useTranslations("a11y");
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -52,7 +53,8 @@ export default function LocaleSwitcher({
               type="button"
               aria-current={active ? "true" : undefined}
               onClick={() => switchTo(l)}
-              className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase transition-colors ${
+              lang={l}
+              className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border px-3 text-xs font-semibold uppercase transition-colors ${
                 active
                   ? "border-gold bg-gold text-black"
                   : "border-gold/30 text-text/70 hover:border-gold hover:text-gold"
@@ -74,9 +76,9 @@ export default function LocaleSwitcher({
         type="button"
         aria-haspopup="true"
         aria-expanded={open}
-        aria-label="Valoda"
+        aria-label={`${locale.toUpperCase()} - ${t("language")}`}
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-semibold uppercase text-gold transition-colors hover:text-gold"
+        className="flex min-h-11 min-w-11 items-center justify-center gap-1 rounded-control px-2 text-xs font-semibold uppercase text-gold transition-colors hover:text-gold"
       >
         {locale}
         <span aria-hidden className="text-[10px]">
@@ -84,13 +86,14 @@ export default function LocaleSwitcher({
         </span>
       </button>
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 min-w-[3rem] rounded-lg border border-gold/25 bg-navy p-1 shadow-2xl shadow-black/50">
+        <div className="absolute right-0 top-full z-50 mt-2 min-w-[3rem] rounded-control border border-gold/25 bg-navy p-1 shadow-2xl shadow-black/50">
           {others.map((l) => (
             <button
               key={l}
               type="button"
               onClick={() => switchTo(l)}
-              className="block w-full rounded px-3 py-1.5 text-center text-xs font-semibold uppercase text-text/70 transition-colors hover:bg-gold hover:text-black"
+              lang={l}
+              className="flex min-h-11 w-full items-center justify-center rounded-control px-3 text-center text-xs font-semibold uppercase text-text/80 transition-colors hover:bg-gold hover:text-on-gold"
             >
               {l}
             </button>

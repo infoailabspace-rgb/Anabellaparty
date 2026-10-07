@@ -51,7 +51,7 @@ export default async function PrivatumaPolitikaPage({
         tagline="Tavu datu privātums mums ir svarīgs. Šeit skaidrojam, kā tos apstrādājam."
       />
       <Prose>
-        <p className="text-sm text-text/50">
+        <p className="text-sm text-text-muted">
           Pēdējoreiz atjaunināts: 2026. gada augusts.
         </p>
         <LegalBindingNote />
@@ -95,9 +95,9 @@ export default async function PrivatumaPolitikaPage({
         <p>
           Datus apstrādājam, pamatojoties uz līguma izpildi (VDAR 6. panta 1.
           punkta b) apakšpunkts), juridisku pienākumu izpildi (piem., grāmatvedība
-          — c) apakšpunkts), mūsu leģitīmajām interesēm (piem., pakalpojuma
-          uzlabošana — f) apakšpunkts) un atsevišķos gadījumos uz Tavu piekrišanu
-          (piem., mārketinga sīkdatnes vai fotogrāfiju publicēšana — a)
+          - c) apakšpunkts), mūsu leģitīmajām interesēm (piem., pakalpojuma
+          uzlabošana - f) apakšpunkts) un atsevišķos gadījumos uz Tavu piekrišanu
+          (piem., mārketinga sīkdatnes vai fotogrāfiju publicēšana - a)
           apakšpunkts).
         </p>
 
@@ -121,13 +121,13 @@ export default async function PrivatumaPolitikaPage({
         <h2>6. Datu saņēmēji (apstrādātāji)</h2>
         <p>Datu apstrādei izmantojam uzticamus pakalpojumu sniedzējus:</p>
         <ul>
-          <li>Vercel — mājaslapas mitināšana (ES)</li>
-          <li>Supabase — datubāze (ES)</li>
-          <li>Resend — e-pastu piegāde</li>
-          <li>Anthropic — mājaslapas čatbota darbība</li>
-          <li>OpenRouteService — piegādes attāluma aprēķins</li>
-          <li>Google — mājaslapas analītika (GA4 / Google Tag Manager)</li>
-          <li>Meta — reklāmas mērīšana (Meta Pixel)</li>
+          <li>Vercel - mājaslapas mitināšana (ES)</li>
+          <li>Supabase - datubāze (ES)</li>
+          <li>Resend - e-pastu piegāde</li>
+          <li>Anthropic - mājaslapas čatbota darbība</li>
+          <li>OpenRouteService - piegādes attāluma aprēķins</li>
+          <li>Google - mājaslapas analītika (GA4 / Google Tag Manager)</li>
+          <li>Meta - reklāmas mērīšana (Meta Pixel)</li>
         </ul>
         <p>
           Ar analītikas un reklāmas rīkiem saistītie dati tiek apstrādāti tikai
@@ -137,13 +137,13 @@ export default async function PrivatumaPolitikaPage({
         <h2>7. Glabāšanas termiņi</h2>
         <ul>
           <li>
-            Rezervāciju pieteikumi un ar tiem saistītie grāmatvedības dokumenti —
+            Rezervāciju pieteikumi un ar tiem saistītie grāmatvedības dokumenti -
             3 gadi (normatīvo prasību izpildei).
           </li>
-          <li>Audio/video viesu grāmatu faili — 30 dienas.</li>
-          <li>Mājaslapas čatbota sarunas — 90 dienas.</li>
+          <li>Audio/video viesu grāmatu faili - 30 dienas.</li>
+          <li>Mājaslapas čatbota sarunas - 90 dienas.</li>
           <li>
-            Sīkdatnes — atbilstoši{" "}
+            Sīkdatnes - atbilstoši{" "}
             <Link href="/sikdatnu-politika">sīkdatņu politikai</Link>.
           </li>
         </ul>
@@ -166,7 +166,7 @@ export default async function PrivatumaPolitikaPage({
         <p>
           Mājaslapā izmantojam sīkdatnes un līdzīgas tehnoloģijas. Analītikas un
           reklāmas sīkdatnes ieslēdzam tikai pēc Tavas piekrišanas (Google Consent
-          Mode v2). Piekrišanu vari mainīt vai atsaukt jebkurā brīdī. Sīkāk —{" "}
+          Mode v2). Piekrišanu vari mainīt vai atsaukt jebkurā brīdī. Sīkāk -{" "}
           <Link href="/sikdatnu-politika">sīkdatņu politikā</Link>.
         </p>
 

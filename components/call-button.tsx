@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { COMPANY } from "@/lib/company";
 import { trackPhoneClick } from "@/lib/analytics";
 
@@ -23,19 +24,19 @@ function PhoneIcon({ className = "h-5 w-5" }: { className?: string }) {
 }
 
 const VARIANTS: Record<string, string> = {
-  primary: "bg-gold text-black hover:scale-[1.03]",
+  primary: "bg-gold text-on-gold hover:scale-[1.03]",
   outline: "border border-gold text-gold hover:bg-gold/10",
   ghost: "border border-gold/40 text-text/80 hover:border-gold hover:text-gold",
   // Uz gaišā (zelta) fona, piem. noslēdzošais CTA.
-  dark: "border-2 border-[#0F1419]/70 text-[#0F1419] hover:border-[#0F1419]",
+  dark: "border-2 border-bg/70 text-bg hover:border-bg",
 };
 
 const SIZES: Record<string, string> = {
-  md: "px-8 py-3",
-  lg: "px-10 py-4 text-lg",
+  md: "min-h-12 px-8",
+  lg: "min-h-14 px-10 text-lg",
 };
 
-// Zvanīšanas poga — tel: saite + GA4 phone_click(lead_source=source). Numurs no
+// Zvanīšanas poga - tel: saite + GA4 phone_click(lead_source=source). Numurs no
 // COMPANY (viens patiesības avots). Noklusējuma teksts responsīvs: mobilajā
 // "Zvanīt", desktopā ar numuru. Vizuāli sekundāra (outline), lai nekonkurē ar
 // galveno "Rezervēt" pogu.
@@ -52,6 +53,7 @@ export default function CallButton({
   label?: string;
   className?: string;
 }) {
+  const t = useTranslations("a11y");
   return (
     <a
       href={`tel:${COMPANY.contact.phone}`}
@@ -65,7 +67,7 @@ export default function CallButton({
         label
       ) : (
         <span>
-          Zvanīt
+          {t("call")}
           <span className="hidden sm:inline">
             &nbsp;{COMPANY.contact.phoneDisplay}
           </span>

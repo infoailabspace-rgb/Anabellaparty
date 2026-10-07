@@ -56,7 +56,24 @@
     "offerTitle": "Our offering",
     "offerSubtitle": "Photo booths, AI photo and event equipment — all in one place.",
     "viewInventory": "Browse inventory",
-    "b2bCta": "An event for your company"
+    "b2bCta": "An event for your company",
+    "heroEyebrow": "Photo booths and event equipment for companies",
+    "heroAlt": "Oak photo booth at a corporate evening - guests looking at prints",
+    "heroTrust1": "Contract and VAT invoice",
+    "heroTrust2": "Delivery and setup",
+    "heroTrust3": "Since 2022",
+    "productsEyebrow": "Main products",
+    "productsTitle": "Photo booths for your event",
+    "productsIntro": "Instant prints, an attendant for the whole event and your brand design. Prices exclude VAT.",
+    "priceFrom": "from {price} € + VAT",
+    "priceOnRequest": "Price on request",
+    "bookThis": "Book",
+    "learnMore": "Learn more",
+    "moreInventory": "All equipment",
+    "galleryEyebrow": "Gallery",
+    "faqEyebrow": "Frequently asked questions",
+    "faqTitle": "Answers to what matters",
+    "faqAll": "All questions"
   },
   "categories": {
     "foto-kasteName": "Photo booths",
@@ -321,7 +338,9 @@
     "eachAdditionalHour": "Each additional hour",
     "priceByArrangement": "Price by arrangement",
     "contactUs": "Contact us",
-    "vatNote": "* All prices excluding VAT"
+    "vatNote": "* All prices excluding VAT",
+    "moreIncluded": "More included",
+    "b2bOffer": "Offer for a company"
   },
   "sec": {
     "cReachUs": "Get in touch",
@@ -459,7 +478,18 @@
     "card3Text": "We set up, operate and pack up ourselves. Equipment is never left unattended.",
     "card4Title": "Delivery across Latvia",
     "card4Text": "We travel to Riga, the regions and outside the city. We calculate the delivery fee by distance.",
-    "cta": "Describe your event"
+    "cta": "Describe your event",
+    "eyebrow": "For companies and institutions",
+    "processTitle": "How we work together",
+    "p1Title": "Request",
+    "p1Text": "Describe the event: date, venue, number of guests and the equipment you want.",
+    "p2Title": "Offer",
+    "p2Text": "Within 1 business day we send an offer with prices and delivery costs.",
+    "p3Title": "Contract and invoice",
+    "p3Text": "We sign a contract and issue a VAT invoice. Payment terms by agreement.",
+    "p4Title": "Delivery and setup",
+    "p4Text": "We deliver, set up, attend during the event and collect.",
+    "imageAlt": "Wooden photo booth at a company event with a branded backdrop"
   },
   "forMunicipal": {
     "title": "For municipalities and public institutions",
@@ -531,5 +561,29 @@
     "point3": "The result on any screen",
     "point4": "Personalised quizzes too",
     "price": "Packages from EUR 11 - ai-party.app"
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "pauseLogos": "Pause logo carousel",
+    "cookieRegion": "Cookie notice",
+    "quickContact": "Quick contact",
+    "call": "Call",
+    "callAria": "Call {phone}",
+    "backToTop": "Back to top",
+    "language": "Language",
+    "categoriesHeading": "Equipment categories"
+  },
+  "cookies": {
+    "title": "We use cookies",
+    "text": "Necessary cookies keep the site working. With your consent we also use analytics and marketing cookies.",
+    "policy": "Cookie policy",
+    "settings": "Settings",
+    "acceptAll": "Accept all",
+    "necessaryOnly": "Necessary only",
+    "save": "Save choice",
+    "necessary": "Necessary (always on)",
+    "analytics": "Analytics (Google Tag Manager, GA4, Microsoft Clarity)",
+    "marketing": "Marketing (Facebook Pixel)",
+    "textShort": "We use cookies."
   }
 }

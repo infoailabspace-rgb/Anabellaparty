@@ -78,12 +78,15 @@ export default async function RezervetPage({
               <a
                 key={label}
                 href={c.href}
-                className="flex items-center gap-3 rounded-2xl bg-gold px-5 py-4 font-semibold text-black transition-transform hover:scale-[1.02]"
+                className="flex min-h-16 items-center gap-4 rounded-card border border-gold/30 bg-navy/25 px-5 py-4 font-semibold text-text transition-colors hover:border-gold"
               >
-                <c.Icon />
+                {/* Ikonas izmērs fiksēts (agrāk WhatsApp SVG bez izmēra aizpildīja visu kartīti) */}
+                <span aria-hidden className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gold/40 text-gold [&>svg]:h-5 [&>svg]:w-5">
+                  <c.Icon />
+                </span>
                 <span className="leading-tight">
                   {label}
-                  <span className="block text-sm font-normal text-black/70">
+                  <span className="block text-sm font-normal text-text-muted">
                     {sub}
                   </span>
                 </span>
@@ -96,7 +99,7 @@ export default async function RezervetPage({
           {ts("rOrForm")}
         </div>
 
-        {/* Anketa. Kubli/pirts iet caur partneri (zvans) — ne kalkulatorā. */}
+        {/* Anketa. Kubli/pirts iet caur partneri (zvans) - ne kalkulatorā. */}
         <BookingForm products={products.filter((p) => p.category !== "kubli")} />
       </div>
     </>
