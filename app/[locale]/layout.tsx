@@ -1,3 +1,4 @@
+import "../globals.css";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
@@ -14,6 +15,11 @@ import BackToTop from "@/components/back-to-top";
 import StickyCall from "@/components/sticky-call";
 import SiteFrame from "@/components/site-frame";
 import SiteTexture from "@/components/site-texture";
+import { RootShell, rootMetadata } from "@/lib/root-shell";
+
+// Noklusējuma metadati (metadataBase, nosaukums, OG rezerve) - tie paši, kas agrāk
+// app/layout.tsx; lapu generateMetadata tos pārraksta kā līdz šim.
+export const generateMetadata = rootMetadata;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -37,31 +43,26 @@ export default async function LocaleLayout({
   const clientMessages = pickMessages(await getMessages(), CLIENT_NAMESPACES);
   const ta = await getTranslations("a11y");
 
+  // <html lang> jau servera HTML (lokāle no params, lapas paliek statiskas).
   return (
-    <NextIntlClientProvider locale={locale} messages={clientMessages}>
-      {/* Root <html lang> ir statiski "lv"; en/ru lapām uzstāda pareizo valodu. */}
-      {locale !== "lv" && (
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `document.documentElement.lang=${JSON.stringify(locale)}`,
-          }}
-        />
-      )}
-      {/* WCAG 2.4.1: pirmais fokusējamais elements - pāreja uz galveno saturu */}
-      <a href="#saturs" className="skip-link">
-        {ta("skipToContent")}
-      </a>
-      <GtagScripts />
-      <SiteTexture />
-      <ScrollToTopOnNav />
-      <SiteFrame navbar={<Navbar />} footer={<Footer />}>
-        {children}
-      </SiteFrame>
-      <BackToTop />
-      <StickyCall />
-      <CookieConsent />
-      <AnalyticsListener />
-      <Analytics />
-    </NextIntlClientProvider>
+    <RootShell lang={locale}>
+      <NextIntlClientProvider locale={locale} messages={clientMessages}>
+        {/* WCAG 2.4.1: pirmais fokusējamais elements - pāreja uz galveno saturu */}
+        <a href="#saturs" className="skip-link">
+          {ta("skipToContent")}
+        </a>
+        <GtagScripts />
+        <SiteTexture />
+        <ScrollToTopOnNav />
+        <SiteFrame navbar={<Navbar />} footer={<Footer />}>
+          {children}
+        </SiteFrame>
+        <BackToTop />
+        <StickyCall />
+        <CookieConsent />
+        <AnalyticsListener />
+        <Analytics />
+      </NextIntlClientProvider>
+    </RootShell>
   );
 }

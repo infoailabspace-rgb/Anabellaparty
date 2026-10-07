@@ -1,8 +1,10 @@
+// Kopīgais <html>/<body> apvalks abiem root izkārtojumiem: publiskajam
+// app/[locale]/layout.tsx (lang = lokāle no params, statiski) un app/admin/layout.tsx
+// (lang="lv"). Fonti, reveal skripts un noklusējuma metadati - viens avots.
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
 import { SITE_URL } from "@/lib/seo";
 import { getSiteImage } from "@/lib/site-content";
-import "./globals.css";
 
 // Publiskā lapa: TIKAI virsraksti (Space Grotesk) + teksts (Inter). Abi ir MAINĪGIE
 // (variable) fonti → viens woff2 uz apakškopu (latin + latin-ext), aptver visus svarus
@@ -33,13 +35,13 @@ const interCyrillic = Inter({
 
 // Reveal animācijas tikai ar JS (progressive enhancement, skat. globals.css .js-reveal).
 // Ja hidratācija 3 s laikā nenotiek (lēns tīkls/JS kļūda), klasi noņem → saturs redzams.
-const REVEAL_SCRIPT =
+export const REVEAL_SCRIPT =
   "(function(){var d=document.documentElement;d.classList.add('js-reveal');" +
   "setTimeout(function(){if(!window.__revealReady)d.classList.remove('js-reveal')},3000)})()";
 
 // Rezerves OG attēls (og.fallback) — ja admin to iestatījis, kļūst par
 // noklusējuma OG. Per-lapas metadata (ogMetadata) to pārraksta ar dinamisko /og.
-export async function generateMetadata(): Promise<Metadata> {
+export async function rootMetadata(): Promise<Metadata> {
   const ogFallback = await getSiteImage("og.fallback");
   return {
     metadataBase: new URL(SITE_URL),
@@ -52,19 +54,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-// Root layout — <html>/<body>, fonti. Lokalizēto chrome nodrošina [locale]/layout.
-// Admin (/admin/*) renderējas šeit bez publiskā chrome (tam savs izkārtojums).
-// lang="lv" statiski (LV ir noklusējums; en/ru ir noindex sekundārie) — NElieto
-// getLocale(), kas lasa headers un padarītu VISUS maršrutus dinamiskus. Pareizo
-// valodu en/ru lapām uzstāda [locale]/layout ar mazu inline skriptu.
-export default function RootLayout({
+export function RootShell({
+  lang,
   children,
 }: {
+  lang: string;
   children: React.ReactNode;
 }) {
   return (
     <html
-      lang="lv"
+      lang={lang}
       suppressHydrationWarning
       className={`${spaceGrotesk.variable} ${inter.variable} ${interCyrillic.variable} h-full antialiased`}
     >
