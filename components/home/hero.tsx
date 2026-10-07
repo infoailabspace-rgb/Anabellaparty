@@ -1,16 +1,10 @@
-// Servera komponente. Redizains: foto vadīts hero - reāls foto no galerijas
-// (foto kaste korporatīvā pasākumā), viens primārais CTA + sekundāra B2B saite.
-// Bez fona video un dekoratīviem efektiem; ieeja tikai ar īsu fade (reduced-motion
-// to atslēdz globals.css).
-import Image from "next/image";
+// Servera komponente (nav "use client"): tikai useTranslations (server-saderīgs)
+// un CSS animācijas (anabella-word/fade-up). Nav klienta JS → mazāks sākumlapas bundle.
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import HeroMedia from "@/components/hero-media";
+import CallButton from "@/components/call-button";
 import type { HeroMedia as HeroMediaT } from "@/lib/hero-media";
-
-// Noklusējuma foto: Ozola foto kaste korporatīvā vakarā (site_gallery). Ja admins
-// iestata hero.home attēlu, tas ir prioritārs.
-export const HOME_HERO_IMAGE =
-  "https://uewpetpyckpuzqywtcmf.supabase.co/storage/v1/object/public/site-images/gallery/96053b9c-acc8-41af-beb0-9440a0e0bef4.jpg";
 
 export default function Hero({
   media,
@@ -25,67 +19,96 @@ export default function Hero({
 }) {
   const tn = useTranslations("nav");
   const th = useTranslations("home");
-  const image = media?.image || HOME_HERO_IMAGE;
-  // Akcenta vārds - kursīvā zeltā (virsraksta teksts pats nemainās, nāk no DB).
-  const words = title.split(" ");
+  const HEADLINE = title.split(" ");
+  const GOLD_WORD = accent;
 
   return (
-    <section className="relative overflow-hidden border-b border-gold/15">
-      <div className="container-site grid items-center gap-8 pb-12 pt-6 sm:pt-10 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:py-24">
-        {/* Foto - mobilajā zem teksta (CTA paliek pirmajā ekrānā virs sīkdatņu joslas),
-            desktopā labajā kolonnā */}
-        <div className="relative order-last aspect-[16/11] overflow-hidden rounded-panel border border-gold/25 lg:aspect-[4/5]">
-          <Image
-            src={image}
-            alt={th("heroAlt")}
-            fill
-            priority
-            fetchPriority="high"
-            quality={70}
-            sizes="(min-width: 1024px) 40vw, 100vw"
-            className="object-cover object-[30%_50%]"
+    <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden">
+      {/* Fons — hero medijs (video/attēls), citādi premium gradients + zelta glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-navy via-bg to-black" />
+      {media && (media.mp4 || media.image) ? (
+        <>
+          <HeroMedia
+            mp4={media.mp4}
+            webm={media.webm}
+            poster={media.poster}
+            image={media.image}
+            preloadMeta
           />
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-bg/40 via-transparent to-transparent" />
-        </div>
+          <div className="absolute inset-0 bg-bg/60" />
+        </>
+      ) : (
+        <>
+          <div
+            className="absolute left-1/2 top-[20%] h-[45vh] w-[70vw] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(212,169,96,0.22),transparent_65%)] blur-2xl anabella-glow-pulse"
+            aria-hidden
+          />
+          <div className="absolute inset-0 bg-bg/40" />
+        </>
+      )}
 
-        <div className="anabella-fade-up">
-          {/* Īsos ekrānos (≤700 px augstums) eyebrow paslēpts, lai CTA paliek virs sīkdatņu joslas */}
-          <p className="eyebrow [@media(max-height:700px)]:hidden">{th("heroEyebrow")}</p>
-          <h1 className="mt-4 font-display [@media(max-height:700px)]:mt-0 text-hero font-semibold tracking-tight text-text">
-            {words.map((w, i) => (
-              <span key={`${w}-${i}`} className={w === accent ? "italic text-gold" : undefined}>
-                {w}
-                {i < words.length - 1 ? " " : ""}
-              </span>
-            ))}
-          </h1>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-text/80 sm:mt-5 sm:text-lead">{subtitle}</p>
-
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 sm:mt-8">
-            <Link
-              href="/rezervet"
-              className="inline-flex min-h-12 items-center rounded-full bg-gold px-8 font-semibold text-on-gold transition-colors duration-(--duration-fast) hover:bg-gold/90"
+      <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
+        <h1 className="font-display font-bold leading-[0.95] tracking-tight text-[clamp(2.5rem,7vw,5.5rem)]">
+          {HEADLINE.map((w, i) => (
+            <span
+              key={`${w}-${i}`}
+              className={`anabella-word ${w === GOLD_WORD ? "text-gold" : ""}`}
+              style={{ animationDelay: `${i * 0.06}s` }}
             >
-              {tn("rezervet")}
-            </Link>
-            <Link
-              href="/kontakti/#pieprasijums"
-              className="inline-flex min-h-11 items-center font-semibold text-gold underline decoration-gold/40 underline-offset-[6px] transition-colors hover:decoration-gold"
-            >
-              {th("b2bCta")} →
-            </Link>
-          </div>
+              {w}
+              {i < HEADLINE.length - 1 ? " " : ""}
+            </span>
+          ))}
+        </h1>
 
-          {/* Uzticības rinda: B2B pamatnosacījumi vienā skatienā */}
-          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 border-t border-gold/15 pt-6 text-sm text-text-muted">
-            {[th("heroTrust1"), th("heroTrust2"), th("heroTrust3")].map((x) => (
-              <li key={x} className="flex items-center gap-2">
-                <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-gold" />
-                {x}
-              </li>
-            ))}
-          </ul>
+        {/* Zelta hairline, kas ievelkas */}
+        <div className="mx-auto mt-6 h-px w-20 bg-gold anabella-hairline" />
+
+        <p
+          className="anabella-fade-up mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text/80"
+          style={{ animationDelay: "0.4s" }}
+        >
+          {subtitle}
+        </p>
+
+        <div
+          className="anabella-fade-up mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+          style={{ animationDelay: "0.55s" }}
+        >
+          <Link
+            href="/rezervet"
+            className="rounded-full bg-gold px-8 py-3 font-semibold text-black shadow-[0_20px_60px_-20px_rgba(212,169,96,0.5)] transition-transform hover:scale-[1.03]"
+          >
+            {tn("rezervet")}
+          </Link>
+          {/* B2B poga (§4.1) — TIKAI desktopā (mobilajā rāda Rezervēt + Zvanīt) */}
+          <Link
+            href="/kontakti/#pieprasijums"
+            className="hidden rounded-full border border-gold px-8 py-3 font-semibold text-gold transition-colors hover:bg-gold/10 sm:inline-flex"
+          >
+            {th("b2bCta")} →
+          </Link>
+          {/* Zvanīšana — sekundāra (outline), vienmēr redzama */}
+          <CallButton source="hero" variant="outline" />
         </div>
+      </div>
+
+      {/* Scroll indikators */}
+      <div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 anabella-scroll-hint"
+        aria-hidden
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          className="text-gold"
+        >
+          <path d="M12 5v14M6 13l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </div>
     </section>
   );
